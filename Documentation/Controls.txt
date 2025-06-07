@@ -1,0 +1,33 @@
+Camera:
+    wasd = movement
+    q = zoom in
+    e = zoom out
+
+placement:
+    left click = place
+    right click = remove
+    z = rotate left
+    c = rotate right
+    scroll wheel = change sprite
+    x to x = create a grid
+    x to z = erase a grid
+
+commands
+    cntrl S = save
+    cntrl L = load
+    cntrl b = commandline
+    r = show data
+
+commandline:
+    showallcol = shows all collisions
+    hideallcol = hides all collisions
+    camera or cam = changes camposition
+    screencol = changes background color 
+    showallrender = shows all the hiden objects
+    hideallrender = removes that
+    showallcol = shows all collisions
+    hideallcol = hides all collisions
+    
+
+
+
