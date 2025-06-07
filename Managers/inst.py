@@ -80,12 +80,21 @@ class obj(pygame.sprite.Sprite):
 
 	def update(self, camera,fm,dim:int,alpha:int,om):
 		sprite = self.sprites[self.info["sn"]]
+		pos = self.info["pos"]
 		if self.inchunk(camera,self.realestpos,dim):
-			self.image =  pygame.transform.rotate(pygame.transform.scale(self.bart,  [self.realsize[0] * abs(camera.size),self.realsize[1] * abs(camera.size)]  ) ,self.rot)
-			self.image.set_alpha(alpha)
-			self.rect = self.image.get_rect(center = ((self.realpos[0] - camera.x - (self.screen.get_width()/30 * (1- self.sizen[0])) ) * camera.size + self.screen.get_width()//2    ,(self.realpos[1] - camera.y - (self.screen.get_width()/30 * (1- self.sizen[1])) ) * camera.size + self.screen.get_height()//2     ))
+			if self.info["rendercond"]:
+				# self.image =  pygame.transform.rotate(pygame.transform.scale(self.bart,  [self.realsize[0] * abs(camera.size),self.realsize[1] * abs(camera.size)]  ) ,self.rot)
+				# self.image.set_alpha(alpha)
+				b = sprite
+				b = pygame.transform.rotate(a,self.info["rot"])
+				b.set_alpha(self.info["alpha"])
+				self.rect = self.image.get_rect((pos[0] - camera.x) * round(camera.size,2) + univars.screen.get_width()//2 - b.get_width()/2 ,(pos[1] - camera.y) * round(camera.size,2) + univars.screen.get_height()//2 - b.get_height()/2)
 		else:
 			self.image = pygame.Surface((0,0))
+
+
+		univars.screen.blit(b,((pos[0] - camera.x) * round(camera.size,2) + univars.screen.get_width()//2 - b.get_width()/2 ,(pos[1] - camera.y) * round(camera.size,2) + univars.screen.get_height()//2 - b.get_height()/2))
+
 
 		if self.name in om.toreinst:
 			self.reinstsprite(om)

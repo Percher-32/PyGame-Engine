@@ -21,6 +21,7 @@ class object_manager:
 		self.rects = {}
 		self.instances = {}
 		self.instables = []
+		self.toreinst = []
 		self.loadedmap = "Null"
 		self.renderdist = 32
 		self.dodist = 128
