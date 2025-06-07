@@ -195,16 +195,14 @@ class object_manager:
 
 	def translate(self,GameManager,id:str,sv:list):
 		if not GameManager == "none":
-			self.objects[id][0][0] += (sv[0] * GameManager.frame_manager.dt * self.speed) * self.screen.get_width()/self.realscreen.get_width()
-			self.objects[id][0][1] -= (sv[1] * GameManager.frame_manager.dt * self.speed) * self.screen.get_width()/self.realscreen.get_width()
+			self.objects[id]["pos"][0] += (sv[0] * GameManager.frame_manager.dt * self.speed) * self.screen.get_width()/self.realscreen.get_width()
+			self.objects[id]["pos"][1] -= (sv[1] * GameManager.frame_manager.dt * self.speed) * self.screen.get_width()/self.realscreen.get_width()
 			if id in self.rects.keys():
 				self.rects[id].center = self.objects[id][0]
 
 	def rotate(self,GameManager,id,ang):
 		if not GameManager == "none":
-			print(self.objects[id]["rot"])
-			self.objects[id]["rot"] = self.objects[id]["rot"] + (ang * GameManager.frame_manager.dt * self.speed)
-			print(self.objects[id]["rot"])
+			self.objects[id]["rot"] += (ang * GameManager.frame_manager.dt * self.speed)
 
 	def scaleto(self,id,scale):
 		self.sprites[id] = self.func.getspritesscale(self.objects[id][1],scale)

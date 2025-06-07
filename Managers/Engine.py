@@ -86,7 +86,7 @@ class Runchinld(Gamemananager.GameManager):
 
 	def cond(self,obj,info):
 		if info["name"] == "enemy":
-			om.rotate(self,obj,20)
+			om.translate(self,obj,[1,1])
 
 
 
