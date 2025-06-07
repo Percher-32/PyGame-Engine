@@ -202,7 +202,9 @@ class object_manager:
 
 	def rotate(self,GameManager,id,ang):
 		if not GameManager == "none":
-			self.objects[id][3] = self.objects[id][3] + (ang * GameManager.frame_manager.dt * self.speed)
+			print(self.objects[id]["rot"])
+			self.objects[id]["rot"] = self.objects[id]["rot"] + (ang * GameManager.frame_manager.dt * self.speed)
+			print(self.objects[id]["rot"])
 
 	def scaleto(self,id,scale):
 		self.sprites[id] = self.func.getspritesscale(self.objects[id][1],scale)
@@ -580,15 +582,15 @@ class object_manager:
 		self.speed = speed
 
 	def render(self,camera,GameManager,dim:int):
-		campos = [round(camera.x),round(camera.y)]
+		#camera-chunk
 		camposdim = [round(camera.x/(dim * self.renderdist)),round(camera.y/(dim * self.renderdist))]
+		#availabe chunks
 		ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
-		# layerlike = [self.objects[i][8] for i in self.objects.keys()   if not self.objects[i][1] == "inst"]
 		lof = [  b   for b in self.instances.keys() for i in ranges   if b[0] == ( i[0]  + camposdim[0],i[1] + camposdim[1]   )]
+
+		#rendering the instanciates
 		if len(lof) > 0:
 			for i in lof:
-				# print(self.renderinst)
-				# print(i[1])
 				if not i[1] in self.renderinst:
 					alpha = 400
 					if i[1] in self.aplhainst.keys():
@@ -599,30 +601,11 @@ class object_manager:
 					self.instances[i].update(camera,GameManager.frame_manager,GameManager.dim,100)
 					self.instances[i].draw(self.screen)
 
-
+		#rendering the non-instanciates
 		for groupid in sorted(self.layers.keys()):
 			self.layers[groupid].update(camera,self)
 			self.layers[groupid].draw(self.screen)
 
-
-		# if len(layerlike) > 0:
-		# 	for a in sorted(set(layerlike)):
-		# 		layerdict = dict(zip(self.objects.keys(),layerlike))
-		# 		newval = self.func.get(layerdict,a)
-		# 		newpos = self.getcull(campos,(1/camera.size) * 64/3,dim)
-		# 		for i in self.func.intersect(newval,newpos):
-		# 			temp_surf = self.sprites[i][self.objects[i][4]]
-		# 			if self.objects[i][6]:
-		# 				temp_surf.set_alpha(self.objects[i][7])
-		# 				GameManager.blitsurf(temp_surf,self.objects[i][0],self.objects[i][3],camera)
-		# 			else:
-		# 				if self.showall:
-		# 					temp_surf.set_alpha(70)
-		# 					GameManager.blitsurf(temp_surf,self.objects[i][0],self.objects[i][3],camera)
-
-
-		# for i in self.getcull(campos,(1/camera.size) * 128,dim):
-		# 	self.cond(i,GameManager,camera)
 		if self.showmap:
 			self.tm.drawtext2(f"Map : {self.loadedmap}","pixel2.ttf",40,0,0,0,(50,50,50),-0.97,0.75)
-		self.tileup = 0
+

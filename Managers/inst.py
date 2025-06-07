@@ -80,7 +80,7 @@ class obj(pygame.sprite.Sprite):
 			return False
 
 	def update(self, camera,om):
-		info = om.objects[self.name]
+		self.info = om.objects[self.name]
 		sprite = self.sprites[self.info["sn"]]
 		pos = self.info["pos"]
 		# if self.inchunk(camera,self.realestpos,dim):

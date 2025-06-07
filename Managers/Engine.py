@@ -84,6 +84,9 @@ class Runchinld(Gamemananager.GameManager):
 				self.sp("jump",0)
 				self.sp("mode","norm")
 
+	def cond(self,obj,info):
+		if info["name"] == "enemy":
+			om.rotate(self,obj,20)
 
 
 

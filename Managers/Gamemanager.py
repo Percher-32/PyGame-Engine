@@ -159,6 +159,14 @@ class GameManager():
 		else:
 			return False
 
+	def inum(self):
+		for obj in om.objects.keys():
+			self.cond(obj,om.objects[obj])
+
+	def cond(self,obj,info):
+		pass
+
+
 	def wait(self,name:str,time:float):
 		if not name in self.timers.values:
 			self.timers[name] = time
@@ -222,6 +230,7 @@ class GameManager():
 		univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid,renderwid)),(0,-1 * renderwid//4))
 		univars.screen.fill((self.screen_colour))
 		self.render_ob(om,cam,self.dim)
+		self.inum()
 		Tiled.Run(self.work,40,self,cam,om,self.dim,self.leveledit,cm,sm.state)
 		um.update()
 		self.keybind()
