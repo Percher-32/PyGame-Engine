@@ -510,22 +510,22 @@ class object_manager:
 		ans = { "topleft":a,"topmid":b,"topright":c,"midleft":d,"midmid":e,"midright":f,"botleft":g,"botmid":j,"botright":k,"left":l,"up":u,"right":r,"down":p}
 		return ans
 
-
 	def remove(self,pos:list,dim:int):
-		pass
-		# poslist = dict(zip(self.objects.keys(),(self.objects[i][0] for i in self.objects.keys())))
-		# postodel = self.func.get(poslist,[pos[0],pos[1]])
-		# if not postodel == []:
-		# 	self.objects.pop(postodel[0])
-		# 	if postodel[0] in self.sprites.keys():
-		# 		self.sprites.pop(postodel[0])
-		# 	if postodel[0] in self.rects.keys():
-		# 		self.rects.pop(postodel[0])
-		# lof = [  b   for b in self.instances.keys() if b[0] == ( round(pos[0]/(dim * self.renderdist)),round(pos[1]/(dim * self.renderdist))   )]
-		# if len(lof) > 0:
-		# 	rems = [(i,b) for i in lof for b in self.instances[i] if b.realestpos == pos ]
-		# 	for i in rems:
-		# 		self.instances[i[0]].remove(i[1])
+		poslist = dict(zip(self.objects.keys(),(self.objects[i]["pos"] for i in self.objects.keys())))
+		postodel = self.func.get(poslist,[pos[0],pos[1]])
+		if not postodel == []:
+			self.objects.pop(postodel[0])
+			for a in self.layers.keys():
+				layer = self.layers[a]
+				for b in layer:
+					if b.name == postodel[0]:
+						self.layers[a].remove(b)
+
+		lof = [  b   for b in self.instances.keys() if b[0] == ( round(pos[0]/(dim * self.renderdist)),round(pos[1]/(dim * self.renderdist))   )]
+		if len(lof) > 0:
+			rems = [(i,b) for i in lof for b in self.instances[i] if b.realestpos == pos ]
+			for i in rems:
+				self.instances[i[0]].remove(i[1])
 
 	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen):
 		self.remove(pos,dim)
@@ -549,7 +549,7 @@ class object_manager:
 			rect.center = (pos[0],pos[1])
 			add = {"pos":list(pos),"name":sprites,"type":sprites,"rot":rot,"sn":0,"gothru":0,"rendercond":1,"alpha":1000,"layer":0,"animname":"none","size":size}
 			self.objects.update({str(self.tracker):add})
-			finalobj = inst.obj(self.tracker,add)
+			finalobj = inst.obj(str(self.tracker),add)
 			if not layer in self.layers.keys():
 				self.layers[layer] = pygame.sprite.Group()
 			self.layers[layer].add(finalobj)
