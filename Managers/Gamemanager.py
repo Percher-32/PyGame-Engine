@@ -78,6 +78,12 @@ class GameManager():
 		b = pygame.transform.rotate(a,rot)
 		univars.screen.blit(b,((pos[0] - camera.x) * round(camera.size,2) + univars.screen.get_width()//2 - b.get_width()/2 ,(pos[1] - camera.y) * round(camera.size,2) + univars.screen.get_height()//2 - b.get_height()/2))
 
+	def blitrect(self,surf,pos,rot,camera):
+		a = surf
+		a = pygame.transform.scale_by(a,abs(camera.size))
+		b = pygame.transform.rotate(a,rot)
+		univars.screen.blit(b,((pos[0] - camera.x) * round(camera.size,2) + univars.screen.get_width()//2 - b.get_width()/2 ,(pos[1] - camera.y) * round(camera.size,2) + univars.screen.get_height()//2 - b.get_height()/2))
+
 	def realblit(self,surf,rect,rot,camera):
 		a = surf
 		a = pygame.transform.scale_by(a,abs(camera.size))
