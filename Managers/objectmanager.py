@@ -11,6 +11,7 @@ class object_manager:
 	def __init__(self,realscreeen,screen,grandim,alpha,rend):
 		self.objects = {}
 		self.values = {}
+		self.layers = []
 		self.func = funcs.func(screen,grandim)
 		self.screen = screen
 		self.realscreen = realscreeen
@@ -537,6 +538,7 @@ class object_manager:
 
 	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int):
 		if not sprites in self.instables:
+			layer = 0
 			self.remove(pos,dim)
 			self.tracker += 1
 			dummy  = self.func.getsprites(sprites)[0]
@@ -544,8 +546,10 @@ class object_manager:
 			realsprite = self.func.getspritesscale(sprites,size)
 			rect = pygame.Surface.get_rect(realsprite[0])
 			rect.center = (pos[0],pos[1])
-			add = [list(pos),sprites,type,rot,0,0,1,1000,0,sprites,"none"]
+			add = {"pos":list(pos),"name":sprites,"type":sprites,"rot":rot,"sn":0,"gothru":0,"rendercond":1,"alpha":1000,"layer":0,"animname":"none"}
 			self.objects.update({str(self.tracker):add})
+			if not layer in self.layers:
+				self.layers[layer] = pygame.sprite.Group()
 			self.sprites.update({str(self.tracker):realsprite})
 			self.rects.update({str(self.tracker):rect})
 		else:

@@ -86,7 +86,7 @@ class obj(pygame.sprite.Sprite):
 				# self.image =  pygame.transform.rotate(pygame.transform.scale(self.bart,  [self.realsize[0] * abs(camera.size),self.realsize[1] * abs(camera.size)]  ) ,self.rot)
 				# self.image.set_alpha(alpha)
 				b = sprite
-				b = pygame.transform.rotate(a,self.info["rot"])
+				b = pygame.transform.rotate(b,self.info["rot"])
 				b.set_alpha(self.info["alpha"])
 				self.rect = self.image.get_rect((pos[0] - camera.x) * round(camera.size,2) + univars.screen.get_width()//2 - b.get_width()/2 ,(pos[1] - camera.y) * round(camera.size,2) + univars.screen.get_height()//2 - b.get_height()/2)
 		else:
