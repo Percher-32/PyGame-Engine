@@ -39,7 +39,7 @@ hideentypes = ["camz"]
 
 aplhatypes = {}
 
-map = "mapmen"
+map = "null"
 
 startuistate = "def"
 
