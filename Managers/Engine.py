@@ -26,7 +26,7 @@ class Runchinld(Gamemananager.GameManager):
 			om.objects["player"][8] = 4
 			self.sp("velx",0)
 			self.sp("vely",0)
-			self.sp("speedupy",14
+			self.sp("speedupy",14)
 			self.sp("jump",0)
 			self.sp("mode","norm")
 
