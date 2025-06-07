@@ -71,6 +71,7 @@ class TiledSoftwre:
 			self.comm = False
 			self.loadingmap = False
 			self.dim = dim
+			#savemode for level editing
 			if self.savemode == 0:
 				if debug:
 					object_manager.showall = True
@@ -238,7 +239,7 @@ class TiledSoftwre:
 							b.fill((50,50,50))
 							b.set_alpha(200)
 							GameManager.Gotomousepos2(b)
-							self.tm.textatmouse(f"Normal Object\nId = {a}\nName = {object_manager.objects[a][1]}\nRot = {object_manager.objects[a][3]}\nType = {object_manager.objects[a][9]}\nRender = {bool(object_manager.objects[a][6])}\nPos = {object_manager.objects[a][0]}","pixel2.ttf",30,0,(255,255,255),GameManager.event_manager,10,-20)
+							self.tm.textatmouse(f"Normal Object\nId = {a}\nName = {object_manager.objects[a]['name']}\nRot = {object_manager.objects[a]['rot']}\nType = {object_manager.objects[a]['type']}\nRender = {bool(object_manager.objects[a]['rendercond'])}\nPos = {object_manager.objects[a]['pos']}","pixel2.ttf",30,0,(255,255,255),GameManager.event_manager,10,-20)
 							try:
 								off = 0
 								if len(list(object_manager.values[a].keys())) > 0:
