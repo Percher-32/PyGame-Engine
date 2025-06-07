@@ -11,7 +11,7 @@ class object_manager:
 	def __init__(self,realscreeen,screen,grandim,alpha,rend):
 		self.objects = {}
 		self.values = {}
-		self.layers = []
+		self.layers = {}
 		self.func = funcs.func(screen,grandim)
 		self.screen = screen
 		self.realscreen = realscreeen
@@ -512,19 +512,20 @@ class object_manager:
 
 
 	def remove(self,pos:list,dim:int):
-		poslist = dict(zip(self.objects.keys(),(self.objects[i][0] for i in self.objects.keys())))
-		postodel = self.func.get(poslist,[pos[0],pos[1]])
-		if not postodel == []:
-			self.objects.pop(postodel[0])
-			if postodel[0] in self.sprites.keys():
-				self.sprites.pop(postodel[0])
-			if postodel[0] in self.rects.keys():
-				self.rects.pop(postodel[0])
-		lof = [  b   for b in self.instances.keys() if b[0] == ( round(pos[0]/(dim * self.renderdist)),round(pos[1]/(dim * self.renderdist))   )]
-		if len(lof) > 0:
-			rems = [(i,b) for i in lof for b in self.instances[i] if b.realestpos == pos ]
-			for i in rems:
-				self.instances[i[0]].remove(i[1])
+		pass
+		# poslist = dict(zip(self.objects.keys(),(self.objects[i][0] for i in self.objects.keys())))
+		# postodel = self.func.get(poslist,[pos[0],pos[1]])
+		# if not postodel == []:
+		# 	self.objects.pop(postodel[0])
+		# 	if postodel[0] in self.sprites.keys():
+		# 		self.sprites.pop(postodel[0])
+		# 	if postodel[0] in self.rects.keys():
+		# 		self.rects.pop(postodel[0])
+		# lof = [  b   for b in self.instances.keys() if b[0] == ( round(pos[0]/(dim * self.renderdist)),round(pos[1]/(dim * self.renderdist))   )]
+		# if len(lof) > 0:
+		# 	rems = [(i,b) for i in lof for b in self.instances[i] if b.realestpos == pos ]
+		# 	for i in rems:
+		# 		self.instances[i[0]].remove(i[1])
 
 	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen):
 		self.remove(pos,dim)
@@ -546,14 +547,16 @@ class object_manager:
 			realsprite = self.func.getspritesscale(sprites,size)
 			rect = pygame.Surface.get_rect(realsprite[0])
 			rect.center = (pos[0],pos[1])
-			add = {"pos":list(pos),"name":sprites,"type":sprites,"rot":rot,"sn":0,"gothru":0,"rendercond":1,"alpha":1000,"layer":0,"animname":"none"}
+			add = {"pos":list(pos),"name":sprites,"type":sprites,"rot":rot,"sn":0,"gothru":0,"rendercond":1,"alpha":1000,"layer":0,"animname":"none","size":size}
 			self.objects.update({str(self.tracker):add})
-			if not layer in self.layers:
+			finalobj = inst.obj(self.tracker,add)
+			if not layer in self.layers.keys():
 				self.layers[layer] = pygame.sprite.Group()
-			self.sprites.update({str(self.tracker):realsprite})
-			self.rects.update({str(self.tracker):rect})
+			self.layers[layer].add(finalobj)
+			# self.sprites.update({str(self.tracker):realsprite})
+			# self.rects.update({str(self.tracker):rect})
 		else:
-			self.addinst(pos,sprites,dim,rot,type,sizen)
+			self.addinst(pos,sprites,dim,rot,sprites,sizen)
 
 	def adds(self,pos,sprites,type,info,rot,size,alpha,layer):
 		dummy  = self.func.getsprites(sprites)[0]
@@ -580,7 +583,7 @@ class object_manager:
 		campos = [round(camera.x),round(camera.y)]
 		camposdim = [round(camera.x/(dim * self.renderdist)),round(camera.y/(dim * self.renderdist))]
 		ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
-		layerlike = [self.objects[i][8] for i in self.objects.keys()   if not self.objects[i][1] == "inst"]
+		# layerlike = [self.objects[i][8] for i in self.objects.keys()   if not self.objects[i][1] == "inst"]
 		lof = [  b   for b in self.instances.keys() for i in ranges   if b[0] == ( i[0]  + camposdim[0],i[1] + camposdim[1]   )]
 		if len(lof) > 0:
 			for i in lof:
@@ -597,25 +600,29 @@ class object_manager:
 					self.instances[i].draw(self.screen)
 
 
-
-		if len(layerlike) > 0:
-			for a in sorted(set(layerlike)):
-				layerdict = dict(zip(self.objects.keys(),layerlike))
-				newval = self.func.get(layerdict,a)
-				newpos = self.getcull(campos,(1/camera.size) * 64/3,dim)
-				for i in self.func.intersect(newval,newpos):
-					temp_surf = self.sprites[i][self.objects[i][4]]
-					if self.objects[i][6]:
-						temp_surf.set_alpha(self.objects[i][7])
-						GameManager.blitsurf(temp_surf,self.objects[i][0],self.objects[i][3],camera)
-					else:
-						if self.showall:
-							temp_surf.set_alpha(70)
-							GameManager.blitsurf(temp_surf,self.objects[i][0],self.objects[i][3],camera)
+		for groupid in sorted(self.layers.keys()):
+			self.layers[groupid].update(camera,self)
+			self.layers[groupid].draw(self.screen)
 
 
-		for i in self.getcull(campos,(1/camera.size) * 128,dim):
-			self.cond(i,GameManager,camera)
+		# if len(layerlike) > 0:
+		# 	for a in sorted(set(layerlike)):
+		# 		layerdict = dict(zip(self.objects.keys(),layerlike))
+		# 		newval = self.func.get(layerdict,a)
+		# 		newpos = self.getcull(campos,(1/camera.size) * 64/3,dim)
+		# 		for i in self.func.intersect(newval,newpos):
+		# 			temp_surf = self.sprites[i][self.objects[i][4]]
+		# 			if self.objects[i][6]:
+		# 				temp_surf.set_alpha(self.objects[i][7])
+		# 				GameManager.blitsurf(temp_surf,self.objects[i][0],self.objects[i][3],camera)
+		# 			else:
+		# 				if self.showall:
+		# 					temp_surf.set_alpha(70)
+		# 					GameManager.blitsurf(temp_surf,self.objects[i][0],self.objects[i][3],camera)
+
+
+		# for i in self.getcull(campos,(1/camera.size) * 128,dim):
+		# 	self.cond(i,GameManager,camera)
 		if self.showmap:
 			self.tm.drawtext2(f"Map : {self.loadedmap}","pixel2.ttf",40,0,0,0,(50,50,50),-0.97,0.75)
 		self.tileup = 0

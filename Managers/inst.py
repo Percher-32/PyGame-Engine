@@ -43,7 +43,7 @@ class inst(pygame.sprite.Sprite):
 			self.image = pygame.Surface((0,0))
 
 class obj(pygame.sprite.Sprite):
-	def __init__(self,screen,grandim,name:str,info:dict):
+	def __init__(self,name:str,info:dict):
 		#info has [
 		# 0 = pos
 		# 1 = name
@@ -57,10 +57,11 @@ class obj(pygame.sprite.Sprite):
 		# 9 = type
 		# 10 = animname]
 		pygame.sprite.Sprite.__init__(self)
-		self.screen = screen
+		screen = univars.screen
+		grandim = univars.grandim
 		self.func = funcs.func(screen,grandim)
 		self.info = info
-		self.sprites = self.func.getspritesscale(info["sprite"],info["size"])
+		self.sprites = self.func.getspritesscale(info["name"],info["size"])
 		self.name = name
 
 	def inchunk(self,cam,object,dim):
@@ -78,22 +79,21 @@ class obj(pygame.sprite.Sprite):
 		else:
 			return False
 
-	def update(self, camera,fm,dim:int,alpha:int,om):
+	def update(self, camera,om):
 		sprite = self.sprites[self.info["sn"]]
 		pos = self.info["pos"]
-		if self.inchunk(camera,self.realestpos,dim):
-			if self.info["rendercond"]:
-				# self.image =  pygame.transform.rotate(pygame.transform.scale(self.bart,  [self.realsize[0] * abs(camera.size),self.realsize[1] * abs(camera.size)]  ) ,self.rot)
-				# self.image.set_alpha(alpha)
-				b = sprite
-				b = pygame.transform.rotate(b,self.info["rot"])
-				b.set_alpha(self.info["alpha"])
-				self.rect = self.image.get_rect((pos[0] - camera.x) * round(camera.size,2) + univars.screen.get_width()//2 - b.get_width()/2 ,(pos[1] - camera.y) * round(camera.size,2) + univars.screen.get_height()//2 - b.get_height()/2)
+		# if self.inchunk(camera,self.realestpos,dim):
+		if self.info["rendercond"]:
+			# self.image =  pygame.transform.rotate(pygame.transform.scale(self.bart,  [self.realsize[0] * abs(camera.size),self.realsize[1] * abs(camera.size)]  ) ,self.rot)
+			# self.image.set_alpha(alpha)
+			b = sprite
+			b = pygame.transform.rotate(b,self.info["rot"])
+			b.set_alpha(self.info["alpha"])
+			b = pygame.transform.scale(b,[self.info["size"][0] * camera.size,self.info["size"][1] * camera.size])
+			self.image = b
+			self.rect = self.image.get_rect(topleft = ( (pos[0] - camera.x) * round(camera.size,2) + univars.screen.get_width()//2 - b.get_width()/2 ,(pos[1] - camera.y) * round(camera.size,2) + univars.screen.get_height()//2 - b.get_height()/2))
 		else:
 			self.image = pygame.Surface((0,0))
-
-
-		univars.screen.blit(b,((pos[0] - camera.x) * round(camera.size,2) + univars.screen.get_width()//2 - b.get_width()/2 ,(pos[1] - camera.y) * round(camera.size,2) + univars.screen.get_height()//2 - b.get_height()/2))
 
 
 		if self.name in om.toreinst:
