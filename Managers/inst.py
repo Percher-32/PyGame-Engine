@@ -62,15 +62,15 @@ class obj(pygame.sprite.Sprite):
 		self.func = funcs.func(screen,grandim)
 		self.info = info
 		self.sprites = self.func.getspritesscale(info["name"],info["size"])
+		self.fakerect = pygame.Rect(info["pos"][0],info["pos"][1],info["size"][0],info["size"][1])
 		self.name = name
 
-	def inchunk(self,cam,object,dim):
-		dist = 1/cam.size * 9
-		if cam.x - (dim * dist) - self.realsize[0] <= object[0] <= cam.x + (dim * dist) + self.realsize[0]:
+	def inchunk(self,cam,dist,dim):
+		if cam.x - (dim * dist) - self.info["size"][0] <= self.info["pos"][0] <= cam.x + (dim * dist) + self.info["size"][0]:
 			x = True
 		else:
 			x = False
-		if cam.y - (dim * dist) - self.realsize[1] <= object[1] <= cam.y + (dim * dist) - self.realsize[1]:
+		if cam.y - (dim * dist) - self.info["size"][1] <= self.info["pos"][1] <= cam.y + (dim * dist) - self.info["size"][1]:
 			y = True
 		else:
 			y = False
@@ -79,11 +79,11 @@ class obj(pygame.sprite.Sprite):
 		else:
 			return False
 
-	def update(self, camera,om):
+	def update(self, camera,om,dim):
 		self.info = om.objects[self.name]
 		sprite = self.sprites[self.info["sn"]]
 		pos = self.info["pos"]
-		# if self.inchunk(camera,self.realestpos,dim):
+		# if self.inchunk(camera,32,dim):
 		if self.info["rendercond"]:
 			# self.image =  pygame.transform.rotate(pygame.transform.scale(self.bart,  [self.realsize[0] * abs(camera.size),self.realsize[1] * abs(camera.size)]  ) ,self.rot)
 			# self.image.set_alpha(alpha)
@@ -103,5 +103,6 @@ class obj(pygame.sprite.Sprite):
 	def reinstsprite(self,om):
 		info = om.objects[self.name]
 		self.sprite = self.func.getspritesscale(info["sprite"],info["size"])[info["sn"]]
+		self.fakerect = pygame.Rect(info["pos"][0],info["pos"][1],info["size"][0],info["size"][1])
 
 	

@@ -100,7 +100,7 @@ class object_manager:
 			return "True"
 		
 	def getcull(self,pos,grid_size,dim) -> list:
-		patch = [i for i in list(self.objects.keys()) if (pos[0]) - (grid_size * dim) <= self.objects[i][0][0] <= (pos[0]) + (grid_size * dim)    and (pos[1]) - (grid_size * dim) <= self.objects[i][0][1] <= (pos[1]) + (grid_size * dim)]                                                  
+		patch = [i for i in list(self.objects.keys()) if (pos[0]) - (grid_size * dim) <= self.objects[i]["pos"][0] <= (pos[0]) + (grid_size * dim)    and (pos[1]) - (grid_size * dim) <= self.objects[i]["pos"][1] <= (pos[1]) + (grid_size * dim)]                                                  
 		return patch
 
 	def playanim(self,gm,i,anim,animname):
@@ -217,20 +217,44 @@ class object_manager:
 			self.values[info] = {}
 			self.values[info][name] = value
 
-	def collide(self,id,type,dim):
-		r1 = self.rects[id]
-		typel = self.getcull(self.objects[id][0],1,dim)
-		types = (self.objects[i][2] for i in self.objects.keys())
+	def objfromid(self,id):
+		print(id)
+		for a in self.layers.keys():
+			layer = self.layers[a]
+			for b in layer:
+				if str(b.name) == str(id):
+					return b
+
+	def collide(self,id,type,dim,show,camera):
+		id = str(id)
+		r1 = self.objfromid(id).fakerect
+		typel = self.getcull(self.objects[id]["pos"],1,dim)
+		types = (self.objects[i]["type"] for i in self.objects.keys())
 		typedict = zip(list(self.objects.keys()),types)
 		typel2 = self.func.get(typedict,type)
-		olist = []
+		noninst = []
 		type3 = self.func.intersect(typel,typel2)
 		for i in type3:
-			r2 = self.rects[i] 
+			r2 = self.objfromid(i).fakerect
 			if r1.colliderect(r2):
-				olist.append(i)
-		return olist
-	
+				noninst.append(self.objfromid(i))
+		typel = self.getcull([r1.x,r1.y],1,dim)
+		types = ( i["types"] for i in self.objects.values() )
+		typedict = dict(zip(list(self.objects.keys()),types))
+		typel2 = [self.func.get(typedict,i) for i in type]
+		typel2 = list(itertools.chain.from_iterable(typel2))
+		type3 = self.func.intersect(typel,typel2)
+		type4 = self.func.intersect(type3,self.rects)
+		inst = [ i for i in type4 if r1.colliderect(self.rects[i])]
+		if show:
+			if len(inst or noninst) > 0:
+				self.func.rectblit([r1.x,r1.y],[r1.width,r1.height],(0,225,0),camera,dim)
+			else:
+				self.func.rectblit([r1.x,r1.y],[r1.width,r1.height],(225,0,0),camera,dim)
+			
+		return {"noninst":noninst,"inst":inst}
+
+
 	def collidein(self,pos,width,type,show,camera,dim) -> list: 
 		r1 = pygame.Rect(pos[0], pos[1], width[0],width[1])
 		typel = self.getcull(pos,1,dim)
@@ -601,7 +625,7 @@ class object_manager:
 
 		#rendering the non-instanciates
 		for groupid in sorted(self.layers.keys()):
-			self.layers[groupid].update(camera,self)
+			self.layers[groupid].update(camera,self,dim)
 			self.layers[groupid].draw(self.screen)
 
 		if self.showmap:
