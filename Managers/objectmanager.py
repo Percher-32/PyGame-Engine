@@ -5,6 +5,7 @@ import pygame
 import Textmanager
 import itertools
 import inst
+import time
 import os
 
 class object_manager: 
@@ -534,9 +535,9 @@ class object_manager:
 		ans = { "topleft":a,"topmid":b,"topright":c,"midleft":d,"midmid":e,"midright":f,"botleft":g,"botmid":j,"botright":k,"left":l,"up":u,"right":r,"down":p}
 		return ans
 
-	def remove(self,pos,dim:int):
-		poslist = dict(zip(self.objects.keys(),(self.objects[i]["pos"] for i in self.objects.keys())))
-		postodel = self.func.get(poslist,[pos[0],pos[1]])
+	def remove(self,pos):
+		postodel = self.func.get(dict(zip(self.objects.keys(),(self.objects[i]["pos"] for i in self.objects.keys()))),[pos[0],pos[1]])
+
 
 		#deleting non-instances
 		if not postodel == []:
@@ -551,14 +552,20 @@ class object_manager:
 		#deleting instances
 		for a in self.instances.keys():
 			for inst in self.instances[a]:
-				if int(round(inst.realestpos[0])) == int(pos[0]) and int(round(inst.realestpos[1])) == int(pos[1]):
+				if int(round(inst.realpos[0])) == int(pos[0]) and int(round(inst.realpos[1])) == int(pos[1]):
 					self.instances[a].remove(inst)
 
-
 	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen):
-		self.remove(list(pos),dim)
-		newt = inst.inst(self.screen,self.grandim,name,pos[0],pos[1],rot,sizen,type)
-		name = (round(pos[0]/(dim * self.renderdist)),round(pos[1]/(dim * self.renderdist)))
+		self.remove(list(pos))
+		if not type in self.renderinst:
+			if not type in self.aplhainst.keys():
+				alp = 400
+			else:
+				alp = self.aplhainst[type]
+		else:
+			alp = 0
+		newt = inst.inst(self.screen,self.grandim,name,pos[0],pos[1],rot,sizen,type,alp)
+		name = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
 		try:
 			self.instances[name].add(newt)
 		except:
@@ -568,7 +575,7 @@ class object_manager:
 	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int):
 		if not sprites in self.instables:
 			layer = 0
-			self.remove(pos,dim)
+			self.remove(pos)
 			self.tracker += 1
 			dummy  = self.func.getsprites(sprites)[0]
 			size = [dummy.get_width() * sizen[0],dummy.get_height() * sizen[1]]
@@ -584,7 +591,7 @@ class object_manager:
 			# self.sprites.update({str(self.tracker):realsprite})
 			# self.rects.update({str(self.tracker):rect})
 		else:
-			self.addinst(pos,sprites,dim,rot,sprites,sizen)
+			self.addinst(pos,sprites,dim,rot,type,sizen)
 
 	def adds(self,pos,sprites,type,info,rot,size,alpha,layer):
 		dummy  = self.func.getsprites(sprites)[0]
@@ -608,6 +615,7 @@ class object_manager:
 		self.speed = speed
 
 	def render(self,camera,GameManager,dim:int):
+		# start_time = time.time()
 		#camera-chunk
 		camposdim = [round(camera.x/(dim * self.renderdist)),round(camera.y/(dim * self.renderdist))]
 		#availabe chunks
@@ -617,8 +625,7 @@ class object_manager:
 		#rendering the instanciates
 		if len(lof) > 0:
 			for i in lof:
-				alpha = 400
-				self.instances[i].update(camera,GameManager.frame_manager,GameManager.dim,alpha)
+				self.instances[i].update(camera,GameManager.dim,self.showall)
 				self.instances[i].draw(self.screen)
 
 		#rendering the non-instanciates
@@ -628,4 +635,5 @@ class object_manager:
 
 		if self.showmap:
 			self.tm.drawtext2(f"Map : {self.loadedmap}","pixel2.ttf",40,0,0,0,(50,50,50),-0.97,0.75)
+		# end_time = time.time()
 

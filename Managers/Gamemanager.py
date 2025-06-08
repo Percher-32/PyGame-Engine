@@ -166,7 +166,6 @@ class GameManager():
 	def cond(self,obj,info):
 		pass
 
-
 	def wait(self,name:str,time:float):
 		if not name in self.timers.values:
 			self.timers[name] = time

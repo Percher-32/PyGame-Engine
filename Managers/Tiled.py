@@ -122,6 +122,8 @@ class TiledSoftwre:
 					if self.grip == 1:
 						GameManager.blit(self.func.getsprites(self.spritenames[self.sprite])[0],self.func.getsprites(self.spritenames[self.sprite])[0].get_rect(center = (self.pos1)),self.rot,camera)
 
+
+					#multi place/delete
 					if self.gridable < 1:
 						if self.grip == 1:
 							if GameManager.event_manager.key[pygame.K_x]:
@@ -199,7 +201,7 @@ class TiledSoftwre:
 											x += self.dim
 										else:
 											x -= self.dim
-										self.om.remove((x,y),dim)		
+										self.om.remove((x,y))		
 
 					if self.rectable < 1:
 						if self.recter == 0:
@@ -227,7 +229,7 @@ class TiledSoftwre:
 							self.placable = 1
 
 					if GameManager.event_manager.mouse[2]:
-						object_manager.remove(gridpos,dim)
+						object_manager.remove(gridpos)
 					
 					if GameManager.event_manager.key[pygame.K_r]:
 						tp = list(set(self.typelist))
