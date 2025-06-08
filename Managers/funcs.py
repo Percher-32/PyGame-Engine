@@ -56,3 +56,8 @@ class func:
     def lerp(self,val,max,sm):
         val = val + (max - val)/sm
         return val
+    
+    def ssblitrect(self,rect,col,camera,thickness):
+        """"blits a rect onto screen space  , (for thinckness -1 means filled)"""
+        rect = pygame.Rect((rect.x - camera.x) * camera.size + self.screen.get_width()//2,(rect.y - camera.y) * camera.size + self.screen.get_height()//2 ,rect.width * abs(camera.size),rect.height * abs(camera.size))
+        pygame.draw.rect(self.screen,col,rect,thickness)

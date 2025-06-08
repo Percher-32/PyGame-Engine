@@ -6,6 +6,7 @@ import Textmanager
 import itertools
 import inst
 import time
+import univars
 import os
 
 class object_manager: 
@@ -19,8 +20,7 @@ class object_manager:
 		self.grandim = grandim
 		self.tm = Textmanager.Textmanager(realscreeen)
 		self.loadingmap = False
-		self.sprites = {}
-		self.rects = {}
+		#chunk id stored in a tuple "(x,y)"
 		self.instances = {}
 		self.instables = []
 		self.toreinst = []
@@ -219,42 +219,40 @@ class object_manager:
 			self.values[info][name] = value
 
 	def objfromid(self,id):
-		print(id)
 		for a in self.layers.keys():
 			layer = self.layers[a]
 			for b in layer:
 				if str(b.name) == str(id):
 					return b
 
-	def collide(self,id,type,dim,show,camera):
-		id = str(id)
-		r1 = self.objfromid(id).fakerect
-		typel = self.getcull(self.objects[id]["pos"],1,dim)
-		types = (self.objects[i]["type"] for i in self.objects.keys())
-		typedict = zip(list(self.objects.keys()),types)
-		typel2 = self.func.get(typedict,type)
-		noninst = []
-		type3 = self.func.intersect(typel,typel2)
-		for i in type3:
-			r2 = self.objfromid(i).fakerect
-			if r1.colliderect(r2):
-				noninst.append(self.objfromid(i))
-		typel = self.getcull([r1.x,r1.y],1,dim)
-		types = ( i["types"] for i in self.objects.values() )
-		typedict = dict(zip(list(self.objects.keys()),types))
-		typel2 = [self.func.get(typedict,i) for i in type]
-		typel2 = list(itertools.chain.from_iterable(typel2))
-		type3 = self.func.intersect(typel,typel2)
-		type4 = self.func.intersect(type3,self.rects)
-		inst = [ i for i in type4 if r1.colliderect(self.rects[i])]
-		if show:
-			if len(inst or noninst) > 0:
-				self.func.rectblit([r1.x,r1.y],[r1.width,r1.height],(0,225,0),camera,dim)
-			else:
-				self.func.rectblit([r1.x,r1.y],[r1.width,r1.height],(225,0,0),camera,dim)
-			
-		return {"noninst":noninst,"inst":inst}
+	def collide(self,id,show,camera) -> dict:
+		"""return noninst:obj[]   return inst:inst[]"""
+		if not self.objfromid(id) == None:
+			#coll for non-inst
+			dim = univars.grandim
+			id = str(id)
+			r1 = self.objfromid(id).fakerect
+			typel = self.getcull(self.objects[id]["pos"],1,dim)
+			typel.remove(id)
+			noninst = []
+			[noninst.append(self.objfromid(i)) for i in typel if r1.colliderect(self.objfromid(i).fakerect) ]
 
+			#coll for inst
+			camchunk = (int(round(r1.x/(dim * self.renderdist))),int(round(r1.y/(dim * self.renderdist))))
+			inst = []
+			if camchunk in self.instances.keys():
+				inst = [ i for i in self.instances[camchunk] if r1.colliderect(i.fakerect)]
+
+			#render the collbox
+			if show:
+				if len(inst or noninst) > 0:
+					col = (0,225,0)
+				else:
+					col = (225,0,0)
+				self.func.ssblitrect(r1,col,camera,5)
+
+
+			return {"noninst":noninst,"inst":inst}
 
 	def collidein(self,pos,width,type,show,camera,dim) -> list: 
 		r1 = pygame.Rect(pos[0], pos[1], width[0],width[1])
@@ -566,9 +564,9 @@ class object_manager:
 			alp = 0
 		newt = inst.inst(self.screen,self.grandim,name,pos[0],pos[1],rot,sizen,type,alp)
 		name = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
-		try:
+		if name in self.instances.keys():
 			self.instances[name].add(newt)
-		except:
+		else:
 			self.instances[name] = pygame.sprite.Group()
 			self.instances[name].add(newt)
 
@@ -593,17 +591,18 @@ class object_manager:
 		else:
 			self.addinst(pos,sprites,dim,rot,type,sizen)
 
-	def adds(self,pos,sprites,type,info,rot,size,alpha,layer):
+	def adds(self,name,pos,sprites,type,rot,size,alpha,layer):
 		dummy  = self.func.getsprites(sprites)[0]
-		if size == "none":
-			size = [dummy.get_width(),dummy.get_height()]
+		size = [dummy.get_width() * size[0],dummy.get_height() * size[1]]
 		realsprite = self.func.getspritesscale(sprites,size)
 		rect = pygame.Surface.get_rect(realsprite[0])
 		rect.center = (pos[0],pos[1])
-		add = [list(pos),sprites,type,rot,0,0,1,alpha,layer,type,"none"]
-		self.objects[info] = add
-		self.sprites[info] = realsprite
-		self.rects[info] = rect
+		add = {"pos":list(pos),"name":sprites,"type":type,"rot":rot,"sn":0,"gothru":0,"rendercond":1,"alpha":alpha,"layer":layer,"animname":"none","size":size}
+		self.objects.update({str(name):add})
+		finalobj = inst.obj(str(name),add)
+		if not layer in self.layers.keys():
+			self.layers[layer] = pygame.sprite.Group()
+		self.layers[layer].add(finalobj)
 
 	def tile(self):
 		speed = self.speed
