@@ -537,6 +537,8 @@ class object_manager:
 	def remove(self,pos:list,dim:int):
 		poslist = dict(zip(self.objects.keys(),(self.objects[i]["pos"] for i in self.objects.keys())))
 		postodel = self.func.get(poslist,[pos[0],pos[1]])
+
+		#deleting non-instances
 		if not postodel == []:
 			self.objects.pop(postodel[0])
 			for a in self.layers.keys():
@@ -545,16 +547,17 @@ class object_manager:
 					if b.name == postodel[0]:
 						self.layers[a].remove(b)
 
-		lof = [  b   for b in self.instances.keys() if b[0] == ( round(pos[0]/(dim * self.renderdist)),round(pos[1]/(dim * self.renderdist))   )]
-		if len(lof) > 0:
-			rems = [(i,b) for i in lof for b in self.instances[i] if b.realestpos == pos ]
-			for i in rems:
-				self.instances[i[0]].remove(i[1])
+		#deleting instances
+		for pos in self.instances.keys():
+			for inst in self.instances[pos]:
+				if inst.realpos == pos:
+					self.instances[pos].remove(inst)
+
 
 	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen):
 		self.remove(pos,dim)
 		newt = inst.inst(self.screen,self.grandim,name,pos[0],pos[1],rot,sizen,type)
-		name = ((round(pos[0]/(dim * self.renderdist)),round(pos[1]/(dim * self.renderdist))),type)
+		name = (round(pos[0]/(dim * self.renderdist)),round(pos[1]/(dim * self.renderdist)))
 		try:
 			self.instances[name].add(newt)
 		except:
@@ -608,20 +611,14 @@ class object_manager:
 		camposdim = [round(camera.x/(dim * self.renderdist)),round(camera.y/(dim * self.renderdist))]
 		#availabe chunks
 		ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
-		lof = [  b   for b in self.instances.keys() for i in ranges   if b[0] == ( i[0]  + camposdim[0],i[1] + camposdim[1]   )]
+		lof = [  b   for b in self.instances.keys() for i in ranges   if b == ( i[0]  + camposdim[0],i[1] + camposdim[1]   )]
 
 		#rendering the instanciates
 		if len(lof) > 0:
 			for i in lof:
-				if not i[1] in self.renderinst:
-					alpha = 400
-					if i[1] in self.aplhainst.keys():
-						alpha = self.aplhainst[i[1]]
-					self.instances[i].update(camera,GameManager.frame_manager,GameManager.dim,alpha)
-					self.instances[i].draw(self.screen)
-				elif self.showall:
-					self.instances[i].update(camera,GameManager.frame_manager,GameManager.dim,100)
-					self.instances[i].draw(self.screen)
+				alpha = 400
+				self.instances[i].update(camera,GameManager.frame_manager,GameManager.dim,alpha)
+				self.instances[i].draw(self.screen)
 
 		#rendering the non-instanciates
 		for groupid in sorted(self.layers.keys()):

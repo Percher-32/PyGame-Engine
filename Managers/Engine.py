@@ -19,7 +19,7 @@ class Runchinld(Gamemananager.GameManager):
 
 	def initial(self):
 		self.defs()
-		om.add([0,0],"enemy",0,"none",[32,32],self.dim)
+		# om.add([0,0],"enemy",0,"none",[32,32],self.dim)
 		if "test" in self.states:
 			cm.addcam("playercam",[0,0],0.4)
 			cm.setcam("playercam")
@@ -32,7 +32,7 @@ class Runchinld(Gamemananager.GameManager):
 			self.sp("mode","norm")
 
 	def update(self):
-		om.collide(1,univars.instables,self.dim,True,cam)
+		# om.collide(1,univars.instables,self.dim,True,cam)
 		if "test" in self.states:
 			ib = om.collideinst9b("player",univars.instables,0,cam,4,self.dim)
 			i = om.collideinst9("player",univars.instables,  0,cam,4,self.dim)
