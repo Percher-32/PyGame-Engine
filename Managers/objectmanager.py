@@ -534,7 +534,7 @@ class object_manager:
 		ans = { "topleft":a,"topmid":b,"topright":c,"midleft":d,"midmid":e,"midright":f,"botleft":g,"botmid":j,"botright":k,"left":l,"up":u,"right":r,"down":p}
 		return ans
 
-	def remove(self,pos:list,dim:int):
+	def remove(self,pos,dim:int):
 		poslist = dict(zip(self.objects.keys(),(self.objects[i]["pos"] for i in self.objects.keys())))
 		postodel = self.func.get(poslist,[pos[0],pos[1]])
 
@@ -547,15 +547,16 @@ class object_manager:
 					if b.name == postodel[0]:
 						self.layers[a].remove(b)
 
+
 		#deleting instances
-		for pos in self.instances.keys():
-			for inst in self.instances[pos]:
-				if inst.realpos == pos:
-					self.instances[pos].remove(inst)
+		for a in self.instances.keys():
+			for inst in self.instances[a]:
+				if int(round(inst.realestpos[0])) == int(pos[0]) and int(round(inst.realestpos[1])) == int(pos[1]):
+					self.instances[a].remove(inst)
 
 
 	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen):
-		self.remove(pos,dim)
+		self.remove(list(pos),dim)
 		newt = inst.inst(self.screen,self.grandim,name,pos[0],pos[1],rot,sizen,type)
 		name = (round(pos[0]/(dim * self.renderdist)),round(pos[1]/(dim * self.renderdist)))
 		try:

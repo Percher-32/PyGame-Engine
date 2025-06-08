@@ -2,20 +2,21 @@ import pygame
 import funcs
 import Cameramod
 import univars
+import sys
 cam = Cameramod.cam
 class inst(pygame.sprite.Sprite):
 	def __init__(self,screen,grandim,name:str,x:int,y:int,rot:int,sizen:list,type:str):
 		pygame.sprite.Sprite.__init__(self)
 		self.screen = screen
 		self.func = funcs.func(screen,grandim)
-		self.sizen = sizen
-		self.name = name
+		self.sizen = list(sizen)
+		self.name = str(name)
 		self.type = type
 		self.bart = self.func.getsprites(name)[0]
 		self.image = self.func.getsprites(name)[0]
 		self.rot = rot
 		self.realpos = (x + (self.screen.get_width()/30 * (1- self.sizen[0])) ,y + (self.screen.get_width()/30 * (1- self.sizen[1])) )
-		self.realestpos = (x,y)
+		self.realestpos = (int(x),int(y))
 		self.realsize = [self.func.getsprites(name)[0].get_width() * sizen[0],self.func.getsprites(name)[0].get_height() * sizen[1]]
 		self.rect = self.image.get_rect(center = (x + cam.x,y + cam.y))
 
