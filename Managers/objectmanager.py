@@ -226,7 +226,7 @@ class object_manager:
 					return b
 
 	def collide(self,id,show,camera) -> dict:
-		"""return noninst:obj[]   return inst:inst[]"""
+		""" id:id of the object return noninst:obj[]   return inst:inst[]"""
 		if not self.objfromid(id) == None:
 			#coll for non-inst
 			dim = univars.grandim
@@ -254,6 +254,34 @@ class object_manager:
 
 			return {"noninst":noninst,"inst":inst}
 
+	def colliderect(self,pos,dimensions,show,camera) -> dict:
+		"""return noninst:obj[]   return inst:inst[]"""
+		#coll for non-inst
+		dim = univars.grandim
+		id = str(id)
+		r1 = pygame.Rect(pos[0],pos[1],dimensions[0],dimensions[1])
+		typel = self.getcull(pos,1,dim)
+		noninst = []
+		[noninst.append(self.objfromid(i)) for i in typel if r1.colliderect(self.objfromid(i).fakerect) ]
+
+		#coll for inst
+		camchunk = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
+		inst = []
+		if camchunk in self.instances.keys():
+			inst = [ i for i in self.instances[camchunk] if r1.colliderect(i.fakerect)]
+
+		#render the collbox
+		if show:
+			if len(inst or noninst) > 0:
+				col = (0,225,0)
+			else:
+				col = (225,0,0)
+			self.func.ssblitrect(r1,col,camera,5)
+
+
+		return {"noninst":noninst,"inst":inst}
+
+
 	def collidein(self,pos,width,type,show,camera,dim) -> list: 
 		r1 = pygame.Rect(pos[0], pos[1], width[0],width[1])
 		typel = self.getcull(pos,1,dim)
@@ -272,7 +300,7 @@ class object_manager:
 			
 		return olist
 
-	def collide4(self,posof,wid,i,type,show,camera,dim):
+	def tempcollide4(self,posof,wid,i,type,show,camera,dim):
 		if posof == "none":
 			posof = [[0,0],[0,0],[0,0],[0,0]]
 		if not self.showcolist == "all":
@@ -314,51 +342,53 @@ class object_manager:
 		c = self.collidein( (self.objects[i][0][0] + posof[2][0] - self.sprites[i][int(self.objects[i][4])].get_width()/2,self.objects[i][0][1] + posof[2][1]- self.sprites[i][int(self.objects[i][4])].get_height()/2  - wid[2][0]) , (wid[2][1],wid[2][0]) , type , show , camera ,dim)
 		d = self.collidein( (self.objects[i][0][0] + posof[3][0] - self.sprites[i][int(self.objects[i][4])].get_width()/2,self.objects[i][0][1] + posof[3][1] + self.sprites[i][int(self.objects[i][4])].get_height()/2)             , (wid[3][1],wid[3][0]) , type , show , camera,dim )
 		return (a,b,c,d)
+	
 
-	def collideinst4(self,posof,wid,i,type,show,camera,dim):
-		if posof == "none":
-			posof = [[0,0],[0,0],[0,0],[0,0]]
-		if not self.showcolist == "all":
-			if self.objects[i][0] in self.showcolist:
-				show = True
-		else:
-			show = True
+
+	# def collideinst4(self,posof,wid,i,type,show,camera,dim):
+	# 	if posof == "none":
+	# 		posof = [[0,0],[0,0],[0,0],[0,0]]
+	# 	if not self.showcolist == "all":
+	# 		if self.objects[i][0] in self.showcolist:
+	# 			show = True
+	# 	else:
+	# 		show = True
 
 		
-		if isinstance(wid[0], int):
-			nop = [wid[0],self.sprites[i][int(self.objects[i][4])].get_width()]
-			wid[0] = nop
-		if isinstance(wid[1], int):
-			nop = [wid[1],self.sprites[i][int(self.objects[i][4])].get_width()]
-			wid[1] = nop
-		if isinstance(wid[2], int):
-			nop = [wid[2],self.sprites[i][int(self.objects[i][4])].get_height()]
-			wid[2] = nop
-		if isinstance(wid[3], int):
-			nop = [wid[3],self.sprites[i][int(self.objects[i][4])].get_height()]
-			wid[3] = nop
+	# 	if isinstance(wid[0], int):
+	# 		nop = [wid[0],self.sprites[i][int(self.objects[i][4])].get_width()]
+	# 		wid[0] = nop
+	# 	if isinstance(wid[1], int):
+	# 		nop = [wid[1],self.sprites[i][int(self.objects[i][4])].get_width()]
+	# 		wid[1] = nop
+	# 	if isinstance(wid[2], int):
+	# 		nop = [wid[2],self.sprites[i][int(self.objects[i][4])].get_height()]
+	# 		wid[2] = nop
+	# 	if isinstance(wid[3], int):
+	# 		nop = [wid[3],self.sprites[i][int(self.objects[i][4])].get_height()]
+	# 		wid[3] = nop
 
-		if wid[0][1] == "none":
-			wid[0][1] = self.sprites[i][int(self.objects[i][4])].get_width()
-		if wid[1][1] == "none":
-			wid[1][1] = self.sprites[i][int(self.objects[i][4])].get_width()
-		if wid[2][1] == "none":
-			wid[2][1] = self.sprites[i][int(self.objects[i][4])].get_height()
-		if wid[3][1] == "none":
-			wid[3][1] = self.sprites[i][int(self.objects[i][4])].get_height()
+	# 	if wid[0][1] == "none":
+	# 		wid[0][1] = self.sprites[i][int(self.objects[i][4])].get_width()
+	# 	if wid[1][1] == "none":
+	# 		wid[1][1] = self.sprites[i][int(self.objects[i][4])].get_width()
+	# 	if wid[2][1] == "none":
+	# 		wid[2][1] = self.sprites[i][int(self.objects[i][4])].get_height()
+	# 	if wid[3][1] == "none":
+	# 		wid[3][1] = self.sprites[i][int(self.objects[i][4])].get_height()
 
-		wid[0][0] *= dim/64
-		wid[1][0] *= dim/64
-		wid[2][0] *= dim/64
-		wid[3][0] *= dim/64
+	# 	wid[0][0] *= dim/64
+	# 	wid[1][0] *= dim/64
+	# 	wid[2][0] *= dim/64
+	# 	wid[3][0] *= dim/64
 
-		a = self.collideinst( (self.objects[i][0][0] + posof[0][0] + self.sprites[i][int(self.objects[i][4])].get_width()/2,self.objects[i][0][1] + posof[0][1] - self.sprites[i][int(self.objects[i][4])].get_height()/2)             , (wid[0][0],wid[0][1]) , type , show , camera ,dim)
-		b = self.collideinst( (self.objects[i][0][0] + posof[1][0] - self.sprites[i][int(self.objects[i][4])].get_width()/2 - wid[1][0],self.objects[i][0][1] + posof[1][1] - self.sprites[i][int(self.objects[i][4])].get_height()/2) , (wid[1][0],wid[1][1]) , type , show , camera ,dim)
-		c = self.collideinst( (self.objects[i][0][0] + posof[2][0] - self.sprites[i][int(self.objects[i][4])].get_width()/2,self.objects[i][0][1] + posof[2][1]- self.sprites[i][int(self.objects[i][4])].get_height()/2  - wid[2][0]) , (wid[2][1],wid[2][0]) , type , show , camera ,dim)
-		d = self.collideinst( (self.objects[i][0][0] + posof[3][0] - self.sprites[i][int(self.objects[i][4])].get_width()/2,self.objects[i][0][1] + posof[3][1] + self.sprites[i][int(self.objects[i][4])].get_height()/2)             , (wid[3][1],wid[3][0]) , type , show , camera,dim )
-		return (a,b,c,d)
+	# 	a = self.collideinst( (self.objects[i][0][0] + posof[0][0] + self.sprites[i][int(self.objects[i][4])].get_width()/2,self.objects[i][0][1] + posof[0][1] - self.sprites[i][int(self.objects[i][4])].get_height()/2)             , (wid[0][0],wid[0][1]) , type , show , camera ,dim)
+	# 	b = self.collideinst( (self.objects[i][0][0] + posof[1][0] - self.sprites[i][int(self.objects[i][4])].get_width()/2 - wid[1][0],self.objects[i][0][1] + posof[1][1] - self.sprites[i][int(self.objects[i][4])].get_height()/2) , (wid[1][0],wid[1][1]) , type , show , camera ,dim)
+	# 	c = self.collideinst( (self.objects[i][0][0] + posof[2][0] - self.sprites[i][int(self.objects[i][4])].get_width()/2,self.objects[i][0][1] + posof[2][1]- self.sprites[i][int(self.objects[i][4])].get_height()/2  - wid[2][0]) , (wid[2][1],wid[2][0]) , type , show , camera ,dim)
+	# 	d = self.collideinst( (self.objects[i][0][0] + posof[3][0] - self.sprites[i][int(self.objects[i][4])].get_width()/2,self.objects[i][0][1] + posof[3][1] + self.sprites[i][int(self.objects[i][4])].get_height()/2)             , (wid[3][1],wid[3][0]) , type , show , camera,dim )
+	# 	return (a,b,c,d)
 
-	def collideinst(self,pos,width,type,show,camera,dim) -> list: 
+	# def collideinst(self,pos,width,type,show,camera,dim) -> list: 
 		r1 = pygame.Rect(pos[0], pos[1], width[0],width[1])
 		inpos = (round(pos[0]/(dim * self.renderdist)),round(pos[1]/(dim * self.renderdist)))
 		typel = [self.instances.get((inpos,i),"none") for i in type]
@@ -380,25 +410,34 @@ class object_manager:
 			
 		return olist
 
-	def collidepb(self,pos,type,show,camera,size,dim) -> list: 
+	def collidepb(self,pos,show,camera,dim,pointsize=5) -> list: 
+		"""return noninst:obj[]   return inst:inst[]"""
+		#coll for non-inst
+		dim = univars.grandim
 		typel = self.getcull(pos,1,dim)
-		types = ( i[2] for i in self.objects.values() )
-		typedict = dict(zip(list(self.objects.keys()),types))
-		typel2 = [self.func.get(typedict,i) for i in type]
-		typel2 = list(itertools.chain.from_iterable(typel2))
-		type3 = self.func.intersect(typel,typel2)
-		type4 = self.func.intersect(type3,self.rects)
-		olist = [ i for i in type4 if self.rects[i].collidepoint(pos)]
+		noninst = []
+		[noninst.append(self.objfromid(i)) for i in typel if self.objfromid(i).fakerect.collidepoint(pos) ]
+
+		#coll for inst
+		camchunk = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
+		inst = []
+		if camchunk in self.instances.keys():
+			inst = [ i for i in self.instances[camchunk] if i.fakerect.collidepoint(pos)]
+
+		#render the collpoint
+		r1 = pygame.Rect(pos[0],pos[1],(1/camera.size) * pointsize,(1/camera.size) * pointsize)
 		if show:
-			if len(olist) > 0:
-				self.func.rectblit([pos[0],pos[1]],[(1/camera.size) * size,(1/camera.size) * size],(0,225,0),camera,dim)
+			if len(inst or noninst) > 0:
+				col = (0,225,0)
 			else:
-				self.func.rectblit([pos[0],pos[1]],[(1/camera.size) * size,(1/camera.size) * size],(225,0,0),camera,dim)
-		if len(olist) > 0:
-			return True
-		else:
-			return False
-		
+				col = (225,0,0)
+			self.func.ssblitrect(r1,col,camera,0)
+
+
+		return {"noninst":noninst,"inst":inst}
+
+
+
 	def collidep(self,pos,type,show,camera,size,dim) -> list: 
 		typel = self.getcull(pos,1,dim)
 		types = ( i[2] for i in self.objects.values() )
