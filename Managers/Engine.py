@@ -38,7 +38,8 @@ class Runchinld(Gamemananager.GameManager):
 			self.sp("mode","norm")
 
 	def update(self):
-		om.collidep((0,0),1,cam,self.dim)
+		if om.collidep((0,0),1,cam,self.dim)["if"]:
+			print("booya")
 		if "test" in self.states:
 			ib = om.collideinst9b("player",univars.instables,0,cam,4,self.dim)
 			i = om.collideinst9("player",univars.instables,  0,cam,4,self.dim)

@@ -226,7 +226,7 @@ class object_manager:
 					return b
 
 	def collide(self,id,show,camera) -> dict:
-		""" id:id of the object return noninst:obj[]   return inst:inst[]"""
+		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		if not self.objfromid(id) == None:
 			#coll for non-inst
 			dim = univars.grandim
@@ -252,7 +252,7 @@ class object_manager:
 				self.func.ssblitrect(r1,col,camera,5)
 
 
-			return {"noninst":noninst,"inst":inst}
+			return {"noninst":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
 
 	def colliderect(self,pos,dimensions,show,camera) -> dict:
 		"""return noninst:obj[]   return inst:inst[]"""
@@ -392,8 +392,8 @@ class object_manager:
 			
 	# 	return olist
 
-	def collidep(self,pos,show,camera,dim,pointsize=5) -> list: 
-		"""return noninst:obj[]   return inst:inst[]"""
+	def collidep(self,pos,show,camera,dim,pointsize=5) -> dict: 
+		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		#coll for non-inst
 		dim = univars.grandim
 		typel = self.getcull(pos,1,dim)
@@ -416,7 +416,8 @@ class object_manager:
 			self.func.ssblitrect(r1,col,camera,0)
 
 
-		return {"noninst":noninst,"inst":inst}
+		
+		return {"obj":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
 
 
 
