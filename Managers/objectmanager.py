@@ -65,31 +65,24 @@ class object_manager:
 		self.showall = False
 
 	def loadtilemap(self,name):
-		# try:
 		if not name == "null":
 			self.loadedmap = name
-			with open(f"Saved/tilemaps/{self.loadedmap}/datap.pickle","rb") as file:
-				a = pk.load(file)
-			self.objects = a["objects"]
-			self.values = a["values"]
-			self.rects = a["rects"]
 			self.decodeinst(32)
-			self.decodespr()
+			self.decodeobj()
 		else:
 			self.default()
-		# except:
-		# 	self.default()
+
 
 	def savetilemap(self,name):
 		if os.path.exists(f"Saved/tilemaps/{name}"):
 			return "No"
 		else:
 			os.mkdir(f"Saved/tilemaps/{name}")
-			with open(f"Saved/tilemaps/{name}/datap.pickle","wb") as file:
-				todump = {"objects":self.objects,"values":self.values,"rects":self.rects}
+			with open(f"Saved/tilemaps/{name}/inst.pickle","wb") as file:
+				todump = self.encodeinst()
 				pk.dump(todump,file)
-			with open(f"Saved/tilemaps/{name}/dataj.json","w") as file:
-				todump = {"names": [ [i,self.objects[i][1],self.sprites[i][0].get_size()] for i in self.objects.keys() ],"instvalues":[ [b.name,b.realpos,b.rot,b.type,b.sizen] for a in self.instances.values() for b in a ]}
+			with open(f"Saved/tilemaps/{name}/non-inst.json","w") as file:
+				todump = self.objects
 				json.dump(todump,file)
 			self.loadtilemap(name)
 			return "True"
@@ -109,21 +102,27 @@ class object_manager:
 			else:
 				self.objects[i][10] = "none"
 
-	def decodeinst(self,dim):
-		self.instances = {}
-		folder = f"Saved/tilemaps/{self.loadedmap}/dataj.json"
-		with open(folder,"r") as file:
-			a = json.load(file)["instvalues"]
-		for i in a:
-			self.addinst(i[1],i[0],dim,i[2],i[3],i[4])
+	def encodeinst(self):
+		insts = {}
+		for chunk in self.instances.keys():
+			for inst in chunk:
+				insts[inst] = {"pos":inst.realpos,"name":inst.name,"rot":inst.rot,"type":inst.type,"sizen":inst.sizen}
+		return insts
 
-	def decodespr(self):
-		folder = f"Saved/tilemaps/{self.loadedmap}/dataj.json"
-		with open(folder,"r") as file:
-			a = json.load(file)["names"]
-		for i in a:
-			self.sprites[i[0]] = self.func.getspritesscale(i[1],i[2])
-		
+
+
+	def decodeinst(self,dim):
+		with open(f"Saved/tilemaps/{self.loadedmap}/inst.pickle","rb") as file:
+			allinst = pk.load(file)
+			for inst in allinst:
+				self.addinst(inst["pos"],inst["name"],dim,inst["rot"],inst["type"],inst["sizen"])
+
+	def decodeobj(self):
+		with open(f"Saved/tilemaps/{self.loadedmap}/non-inst.json","r") as file:
+			allobj = json.load(file)
+			for obj in allobj.keys():
+				self.datatoobj(obj,allobj[obj])
+
 	def tilemap(self,i,gm,a,uld,urd,ldr,ulr,lr,ud,n,dt,dl,ur,ul,dr,rt,lt,ut):
 		if self.tileup:
 			posl = [self.objects[i][0][0] - gm.dim,self.objects[i][0][1]]
@@ -527,19 +526,23 @@ class object_manager:
 			self.tracker += 1
 			dummy  = self.func.getsprites(sprites)[0]
 			size = [dummy.get_width() * sizen[0],dummy.get_height() * sizen[1]]
-			realsprite = self.func.getspritesscale(sprites,size)
-			rect = pygame.Surface.get_rect(realsprite[0])
-			rect.center = (pos[0],pos[1])
-			add = {"pos":list(pos),"name":sprites,"type":sprites,"rot":rot,"sn":0,"gothru":0,"rendercond":1,"alpha":1000,"layer":0,"animname":"none","size":size}
+			add = {"pos":list(pos),"name":sprites,"type":sprites,"rot":rot,"sn":0,"gothru":0,"rendercond":1,"alpha":1000,"layer":layer,"animname":"none","size":size}
 			self.objects.update({str(self.tracker):add})
 			finalobj = inst.obj(str(self.tracker),add)
 			if not layer in self.layers.keys():
 				self.layers[layer] = pygame.sprite.Group()
 			self.layers[layer].add(finalobj)
-			# self.sprites.update({str(self.tracker):realsprite})
-			# self.rects.update({str(self.tracker):rect})
 		else:
 			self.addinst(pos,sprites,dim,rot,type,sizen)
+
+	def datatoobj(self,id,data):
+		add = data
+		self.objects.update({id:add})
+		finalobj = inst.obj(id,add)
+		if not data["layer"] in self.layers.keys():
+			self.layers[data["layer"]] = pygame.sprite.Group()
+		self.layers[data["layer"]].add(finalobj)
+
 
 	def adds(self,name,pos,sprites,type,rot,size,alpha,layer):
 		"""add special for more unique items"""
