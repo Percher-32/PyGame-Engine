@@ -2,6 +2,8 @@ import Gamemanager as Gamemananager
 import univars as univars
 import sys
 
+
+
 em = Gamemananager.em
 tm = Gamemananager.tm
 fm = Gamemananager.fm
@@ -11,6 +13,8 @@ cam =Gamemananager.cam
 cm = Gamemananager.cm
 sm = Gamemananager.sm
 um = Gamemananager.um
+
+
 
 
 
@@ -34,7 +38,7 @@ class Runchinld(Gamemananager.GameManager):
 			self.sp("mode","norm")
 
 	def update(self):
-		# om.collide("player",True,cam)
+		om.collidep((0,0),1,cam,self.dim)
 		if "test" in self.states:
 			ib = om.collideinst9b("player",univars.instables,0,cam,4,self.dim)
 			i = om.collideinst9("player",univars.instables,  0,cam,4,self.dim)
