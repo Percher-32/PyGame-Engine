@@ -86,7 +86,6 @@ class object_manager:
 			os.mkdir(f"Saved/tilemaps/{name}")
 			with open(f"Saved/tilemaps/{name}/inst.json","w") as file:
 				todump = self.encodeinst()
-				print(todump)
 				json.dump(todump,file)
 			with open(f"Saved/tilemaps/{name}/non-inst.json","w") as file:
 				todump = self.objects
@@ -113,14 +112,13 @@ class object_manager:
 		insts = []
 		for chunk in self.instances.keys():
 			for inst in self.instances[chunk]:
-				insts.append([{"pos":inst.realpos,"name":inst.name,"rot":inst.rot,"type":inst.type,"sizen":inst.sizen},chunk])
+				insts.append([{"pos":inst.realpos,"name":inst.name,"rot":inst.rot,"type":inst.type,"sizen":inst.sizen,"alpha":inst.alpha},chunk])
 		return insts
 
 	def decodeinst(self,dim):
 		with open(f"Saved/tilemaps/{self.loadedmap}/inst.json","r") as file:
 			allinst = json.load(file)
 			for inst in allinst:
-				print(inst[1])
 				self.datatoinst(inst[1],inst[0])
 
 	def decodeobj(self):
@@ -548,10 +546,8 @@ class object_manager:
 		self.layers[data["layer"]].add(finalobj)
 
 	def datatoinst(self,chunk,data):
-		# print(chunk)
-		# print(data)
-		newt = data
-		name = chunk
+		newt = inst.inst(self.screen,self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],data["type"],data["alpha"])
+		name = tuple(chunk)
 		if name in list(self.instances.keys()):
 			self.instances[name].add(newt)
 		else:
