@@ -71,6 +71,7 @@ class object_manager:
 
 	def loadtilemap(self,name):
 		if not name == "null":
+			self.default()
 			self.loadedmap = name
 			self.decodeinst(32)
 			self.decodeobj()
@@ -109,19 +110,18 @@ class object_manager:
 				self.objects[i][10] = "none"
 
 	def encodeinst(self):
-		insts = {}
-		for group in self.instances.values():
-			for inst in group:
-				{"pos":inst.realpos,"name":inst.name,"rot":inst.rot,"type":inst.type,"sizen":inst.sizen}
+		insts = []
+		for chunk in self.instances.keys():
+			for inst in self.instances[chunk]:
+				insts.append([{"pos":inst.realpos,"name":inst.name,"rot":inst.rot,"type":inst.type,"sizen":inst.sizen},chunk])
 		return insts
-
-
 
 	def decodeinst(self,dim):
 		with open(f"Saved/tilemaps/{self.loadedmap}/inst.json","r") as file:
 			allinst = json.load(file)
 			for inst in allinst:
-				self.addinst(inst["pos"],inst["name"],dim,inst["rot"],inst["type"],inst["sizen"])
+				print(inst[1])
+				self.datatoinst(inst[1],inst[0])
 
 	def decodeobj(self):
 		with open(f"Saved/tilemaps/{self.loadedmap}/non-inst.json","r") as file:
@@ -546,6 +546,17 @@ class object_manager:
 		if not data["layer"] in self.layers.keys():
 			self.layers[data["layer"]] = pygame.sprite.Group()
 		self.layers[data["layer"]].add(finalobj)
+
+	def datatoinst(self,chunk,data):
+		# print(chunk)
+		# print(data)
+		newt = data
+		name = chunk
+		if name in list(self.instances.keys()):
+			self.instances[name].add(newt)
+		else:
+			self.instances[name] = pygame.sprite.Group()
+			self.instances[name].add(newt)
 
 
 	def adds(self,name,pos,sprites,type,rot,size,alpha,layer):
