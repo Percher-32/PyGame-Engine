@@ -52,8 +52,12 @@ class object_manager:
 	def default(self):
 		self.objects = {}
 		self.values = {}
-		self.sprites = {}
-		self.rects = {}
+		self.layers = {}
+		self.loadingmap = False
+		#chunk id stored in a tuple "(x,y)"
+		self.instances = {}
+		self.instables = []
+		self.toreinst = []
 		self.loadedmap = "Null"
 		self.renderdist = 32
 		self.dodist = 128
@@ -63,6 +67,7 @@ class object_manager:
 		self.loadedchunk = 0
 		self.showcolist = []
 		self.showall = False
+		self.speed = 0
 
 	def loadtilemap(self,name):
 		if not name == "null":
@@ -78,9 +83,10 @@ class object_manager:
 			return "No"
 		else:
 			os.mkdir(f"Saved/tilemaps/{name}")
-			with open(f"Saved/tilemaps/{name}/inst.pickle","wb") as file:
+			with open(f"Saved/tilemaps/{name}/inst.json","w") as file:
 				todump = self.encodeinst()
-				pk.dump(todump,file)
+				print(todump)
+				json.dump(todump,file)
 			with open(f"Saved/tilemaps/{name}/non-inst.json","w") as file:
 				todump = self.objects
 				json.dump(todump,file)
@@ -104,16 +110,16 @@ class object_manager:
 
 	def encodeinst(self):
 		insts = {}
-		for chunk in self.instances.keys():
-			for inst in chunk:
-				insts[inst] = {"pos":inst.realpos,"name":inst.name,"rot":inst.rot,"type":inst.type,"sizen":inst.sizen}
+		for group in self.instances.values():
+			for inst in group:
+				{"pos":inst.realpos,"name":inst.name,"rot":inst.rot,"type":inst.type,"sizen":inst.sizen}
 		return insts
 
 
 
 	def decodeinst(self,dim):
-		with open(f"Saved/tilemaps/{self.loadedmap}/inst.pickle","rb") as file:
-			allinst = pk.load(file)
+		with open(f"Saved/tilemaps/{self.loadedmap}/inst.json","r") as file:
+			allinst = json.load(file)
 			for inst in allinst:
 				self.addinst(inst["pos"],inst["name"],dim,inst["rot"],inst["type"],inst["sizen"])
 
@@ -179,8 +185,6 @@ class object_manager:
 		if not GameManager == "none":
 			self.objects[id]["pos"][0] += (sv[0] * GameManager.frame_manager.dt * self.speed) * self.screen.get_width()/self.realscreen.get_width()
 			self.objects[id]["pos"][1] -= (sv[1] * GameManager.frame_manager.dt * self.speed) * self.screen.get_width()/self.realscreen.get_width()
-			if id in self.rects.keys():
-				self.rects[id].center = self.objects[id][0]
 
 	def rotate(self,GameManager,id,ang):
 		if not GameManager == "none":
