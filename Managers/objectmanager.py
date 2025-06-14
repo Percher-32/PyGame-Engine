@@ -70,14 +70,13 @@ class object_manager:
 		self.speed = 0
 
 	def loadtilemap(self,name):
-		if not name == "null":
+		if not name == "null" and os.path.exists(f"Saved/tilemaps/{name}"):
 			self.default()
 			self.loadedmap = name
-			self.decodeinst(32)
+			self.decodeinst()
 			self.decodeobj()
 		else:
 			self.default()
-
 
 	def savetilemap(self,name):
 		if os.path.exists(f"Saved/tilemaps/{name}"):
@@ -93,6 +92,18 @@ class object_manager:
 			self.loadtilemap(name)
 			return "True"
 		
+	def forcesavetilemap(self,name):
+		if os.path.exists(f"Saved/tilemaps/{name}"):
+			with open(f"Saved/tilemaps/{name}/inst.json","w") as file:
+				todump = self.encodeinst()
+				json.dump(todump,file)
+			with open(f"Saved/tilemaps/{name}/non-inst.json","w") as file:
+				todump = self.objects
+				json.dump(todump,file)
+			self.loadtilemap(name)
+			return "True"
+		
+
 	def getcull(self,pos,grid_size,dim) -> list:
 		patch = [i for i in list(self.objects.keys()) if (pos[0]) - (grid_size * dim) <= self.objects[i]["pos"][0] <= (pos[0]) + (grid_size * dim)    and (pos[1]) - (grid_size * dim) <= self.objects[i]["pos"][1] <= (pos[1]) + (grid_size * dim)]                                                  
 		return patch
@@ -113,14 +124,15 @@ class object_manager:
 		for chunk in self.instances.keys():
 			for inst in self.instances[chunk]:
 				insts.append([{"pos":inst.realpos,"name":inst.name,"rot":inst.rot,"type":inst.type,"sizen":inst.sizen,"alpha":inst.alpha},chunk])
-		return insts
+		return [insts,self.tracker]
 
-	def decodeinst(self,dim):
+	def decodeinst(self):
 		with open(f"Saved/tilemaps/{self.loadedmap}/inst.json","r") as file:
 			allinst = json.load(file)
-			for inst in allinst:
+			for inst in allinst[0]:
 				self.datatoinst(inst[1],inst[0])
-
+		self.tracker = allinst[1] + 1
+		
 	def decodeobj(self):
 		with open(f"Saved/tilemaps/{self.loadedmap}/non-inst.json","r") as file:
 			allobj = json.load(file)
@@ -238,7 +250,7 @@ class object_manager:
 			return {"noninst":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
 
 	def colliderect(self,pos,dimensions,show,camera) -> dict:
-		"""return noninst:obj[]   return inst:inst[]"""
+		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		#coll for non-inst
 		dim = univars.grandim
 		id = str(id)
@@ -262,118 +274,7 @@ class object_manager:
 			self.func.ssblitrect(r1,col,camera,5)
 
 
-		return {"noninst":noninst,"inst":inst}
-
-
-	# def tempcollide4(self,posof,wid,i,type,show,camera,dim):
-	# 	if posof == "none":
-	# 		posof = [[0,0],[0,0],[0,0],[0,0]]
-	# 	if not self.showcolist == "all":
-	# 		if self.objects[i][0] in self.showcolist:
-	# 			show = True
-	# 	else:
-	# 		show = True
-
-		
-	# 	if isinstance(wid[0], int):
-	# 		nop = [wid[0],self.sprites[i][int(self.objects[i][4])].get_width()]
-	# 		wid[0] = nop
-	# 	if isinstance(wid[1], int):
-	# 		nop = [wid[1],self.sprites[i][int(self.objects[i][4])].get_width()]
-	# 		wid[1] = nop
-	# 	if isinstance(wid[2], int):
-	# 		nop = [wid[2],self.sprites[i][int(self.objects[i][4])].get_height()]
-	# 		wid[2] = nop
-	# 	if isinstance(wid[3], int):
-	# 		nop = [wid[3],self.sprites[i][int(self.objects[i][4])].get_height()]
-	# 		wid[3] = nop
-
-	# 	if wid[0][1] == "none":
-	# 		wid[0][1] = self.sprites[i][int(self.objects[i][4])].get_width()
-	# 	if wid[1][1] == "none":
-	# 		wid[1][1] = self.sprites[i][int(self.objects[i][4])].get_width()
-	# 	if wid[2][1] == "none":
-	# 		wid[2][1] = self.sprites[i][int(self.objects[i][4])].get_height()
-	# 	if wid[3][1] == "none":
-	# 		wid[3][1] = self.sprites[i][int(self.objects[i][4])].get_height()
-
-	# 	wid[0][0] *= dim/64
-	# 	wid[1][0] *= dim/64
-	# 	wid[2][0] *= dim/64
-	# 	wid[3][0] *= dim/64
-
-	# 	a = self.collidein( (self.objects[i][0][0] + posof[0][0] + self.sprites[i][int(self.objects[i][4])].get_width()/2,self.objects[i][0][1] + posof[0][1] - self.sprites[i][int(self.objects[i][4])].get_height()/2)             , (wid[0][0],wid[0][1]) , type , show , camera ,dim)
-	# 	b = self.collidein( (self.objects[i][0][0] + posof[1][0] - self.sprites[i][int(self.objects[i][4])].get_width()/2 - wid[1][0],self.objects[i][0][1] + posof[1][1] - self.sprites[i][int(self.objects[i][4])].get_height()/2) , (wid[1][0],wid[1][1]) , type , show , camera ,dim)
-	# 	c = self.collidein( (self.objects[i][0][0] + posof[2][0] - self.sprites[i][int(self.objects[i][4])].get_width()/2,self.objects[i][0][1] + posof[2][1]- self.sprites[i][int(self.objects[i][4])].get_height()/2  - wid[2][0]) , (wid[2][1],wid[2][0]) , type , show , camera ,dim)
-	# 	d = self.collidein( (self.objects[i][0][0] + posof[3][0] - self.sprites[i][int(self.objects[i][4])].get_width()/2,self.objects[i][0][1] + posof[3][1] + self.sprites[i][int(self.objects[i][4])].get_height()/2)             , (wid[3][1],wid[3][0]) , type , show , camera,dim )
-	# 	return (a,b,c,d)
-	
-
-
-	# # def collideinst4(self,posof,wid,i,type,show,camera,dim):
-	# # 	if posof == "none":
-	# # 		posof = [[0,0],[0,0],[0,0],[0,0]]
-	# # 	if not self.showcolist == "all":
-	# # 		if self.objects[i][0] in self.showcolist:
-	# # 			show = True
-	# # 	else:
-	# # 		show = True
-
-		
-	# # 	if isinstance(wid[0], int):
-	# # 		nop = [wid[0],self.sprites[i][int(self.objects[i][4])].get_width()]
-	# # 		wid[0] = nop
-	# # 	if isinstance(wid[1], int):
-	# # 		nop = [wid[1],self.sprites[i][int(self.objects[i][4])].get_width()]
-	# # 		wid[1] = nop
-	# # 	if isinstance(wid[2], int):
-	# # 		nop = [wid[2],self.sprites[i][int(self.objects[i][4])].get_height()]
-	# # 		wid[2] = nop
-	# # 	if isinstance(wid[3], int):
-	# # 		nop = [wid[3],self.sprites[i][int(self.objects[i][4])].get_height()]
-	# # 		wid[3] = nop
-
-	# # 	if wid[0][1] == "none":
-	# # 		wid[0][1] = self.sprites[i][int(self.objects[i][4])].get_width()
-	# # 	if wid[1][1] == "none":
-	# # 		wid[1][1] = self.sprites[i][int(self.objects[i][4])].get_width()
-	# # 	if wid[2][1] == "none":
-	# # 		wid[2][1] = self.sprites[i][int(self.objects[i][4])].get_height()
-	# # 	if wid[3][1] == "none":
-	# # 		wid[3][1] = self.sprites[i][int(self.objects[i][4])].get_height()
-
-	# # 	wid[0][0] *= dim/64
-	# # 	wid[1][0] *= dim/64
-	# # 	wid[2][0] *= dim/64
-	# # 	wid[3][0] *= dim/64
-
-	# # 	a = self.collideinst( (self.objects[i][0][0] + posof[0][0] + self.sprites[i][int(self.objects[i][4])].get_width()/2,self.objects[i][0][1] + posof[0][1] - self.sprites[i][int(self.objects[i][4])].get_height()/2)             , (wid[0][0],wid[0][1]) , type , show , camera ,dim)
-	# # 	b = self.collideinst( (self.objects[i][0][0] + posof[1][0] - self.sprites[i][int(self.objects[i][4])].get_width()/2 - wid[1][0],self.objects[i][0][1] + posof[1][1] - self.sprites[i][int(self.objects[i][4])].get_height()/2) , (wid[1][0],wid[1][1]) , type , show , camera ,dim)
-	# # 	c = self.collideinst( (self.objects[i][0][0] + posof[2][0] - self.sprites[i][int(self.objects[i][4])].get_width()/2,self.objects[i][0][1] + posof[2][1]- self.sprites[i][int(self.objects[i][4])].get_height()/2  - wid[2][0]) , (wid[2][1],wid[2][0]) , type , show , camera ,dim)
-	# # 	d = self.collideinst( (self.objects[i][0][0] + posof[3][0] - self.sprites[i][int(self.objects[i][4])].get_width()/2,self.objects[i][0][1] + posof[3][1] + self.sprites[i][int(self.objects[i][4])].get_height()/2)             , (wid[3][1],wid[3][0]) , type , show , camera,dim )
-	# # 	return (a,b,c,d)
-
-	# # def collideinst(self,pos,width,type,show,camera,dim) -> list: 
-	# 	r1 = pygame.Rect(pos[0], pos[1], width[0],width[1])
-	# 	inpos = (round(pos[0]/(dim * self.renderdist)),round(pos[1]/(dim * self.renderdist)))
-	# 	typel = [self.instances.get((inpos,i),"none") for i in type]
-	# 	typel = list(itertools.chain.from_iterable(typel))
-	# 	if not typel == "none":
-	# 		typel2 = [pygame.Rect(sprite.realpos[0]- dim/2,sprite.realpos[1]- dim/2,sprite.realsize[0],sprite.realsize[1]) for sprite in typel]
-	# 		if not r1.collidelist(typel2) == -1:
-	# 			olist = True
-	# 		else:
-	# 			olist = False
-	# 	else:
-	# 		olist = False
-
-	# 	if show:
-	# 		if olist:
-	# 			self.func.rectblit([pos[0],pos[1]],width,(0,225,0),camera,dim)
-	# 		else:
-	# 			self.func.rectblit([pos[0],pos[1]],width,(225,0,0),camera,dim)
-			
-	# 	return olist
+		return {"noninst":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
 
 	def collidep(self,pos,show,camera,dim,pointsize=5,instcol = (0,225,0),noninstcol=(0,225,150),ignore_id = None) -> dict: 
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
@@ -404,7 +305,6 @@ class object_manager:
 		
 		return {"obj":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
 
-
 	def collide9(self,id,show,camera,dim,pointsize = 5,offsets = { "topleft":[0,0],"topmid":[0,0],"topright":[0,0],"midleft":[0,0],"midmid":[0,0],"midright":[0,0],"botleft":[0,0],"botmid":[0,0],"botright":[0,0]}) -> dict:
 		"""points ->  [topleft , topmid , topright  , midleft  , midmid  ,  midright  ,  botleft  , botmid  , botleft] . for each point ( collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if")   """
 		if id in self.objects.keys():
@@ -424,65 +324,6 @@ class object_manager:
 			botright = self.collidep((x + w + offsets["botright"][0]  ,  y + h + offsets["botright"][1]),show,camera,dim,pointsize,ignore_id=id)
 			ans = { "topleft":topleft,"topmid":topmid,"topright":topright,"midleft":midleft,"midmid":midmid,"midright":midright,"botleft":botleft,"botmid":botmid,"botright":botright}
 			return ans
-
-	def collideinst9(self,i,type,show,camera,point_size,dim) -> dict:
-		x = self.objects[i][0][0]
-		y = self.objects[i][0][1]
-		w = self.sprites[i][0].get_width()/2
-		h = self.sprites[i][0].get_height()/2
-		a = self.collidepinst((x - w,y - h),type,show,camera,point_size,dim)
-		b = self.collidepinst((x  ,  y - h),type,show,camera,point_size,dim)
-		c = self.collidepinst((x + w,y - h),type,show,camera,point_size,dim)
-		d = self.collidepinst((x - w,  y  ),type,show,camera,point_size,dim)
-		e = self.collidepinst((x    ,  y  ),type,show,camera,point_size,dim)
-		f = self.collidepinst((x + w,  y  ),type,show,camera,point_size,dim)
-		g = self.collidepinst((x - w,y + h),type,show,camera,point_size,dim)
-		j = self.collidepinst((x  ,  y + h),type,show,camera,point_size,dim)
-		k = self.collidepinst((x + w,y + h),type,show,camera,point_size,dim)
-		l = a or d or g
-		u = a or b or c
-		r = c or f or k
-		p = g or j or k
-		ans = { "topleft":a,"topmid":b,"topright":c,"midleft":d,"midmid":e,"midright":f,"botleft":g,"botmid":j,"botright":k,"left":l,"up":u,"right":r,"down":p}
-		return ans
-
-	def collide9b(self,i,type,show,camera,point_size,dim) -> dict:
-		x = self.objects[i][0][0]
-		y = self.objects[i][0][1]
-		w = self.sprites[i][0].get_width()/2
-		h = self.sprites[i][0].get_height()/2
-		a = self.collidep((x - w,y - w),type,show,camera,point_size,dim)
-		b = self.collidep((x  ,  y - w),type,show,camera,point_size,dim)
-		c = self.collidep((x + w,y - w),type,show,camera,point_size,dim)
-		d = self.collidep((x - w,  y  ),type,show,camera,point_size,dim)
-		e = self.collidep((x    ,  y  ),type,show,camera,point_size,dim)
-		f = self.collidep((x + w,  y  ),type,show,camera,point_size,dim)
-		g = self.collidep((x - w,y + w),type,show,camera,point_size,dim)
-		j = self.collidep((x  ,  y + w),type,show,camera,point_size,dim)
-		k = self.collidep((x + w,y + w),type,show,camera,point_size,dim)
-		ans = { "topleft":a,"topmid":b,"topright":c,"midleft":d,"midmid":e,"midright":f,"botleft":g,"botmid":j,"botright":k}
-		return ans
-
-	def collideinst9b(self,i,type,show,camera,point_size,dim) -> dict:
-		x = self.objects[i][0][0]
-		y = self.objects[i][0][1]
-		w = self.sprites[i][0].get_width()/2
-		h = self.sprites[i][0].get_height()/2
-		a = self.collidepinstb((x - w,y - h),type,show,camera,point_size,dim)
-		b = self.collidepinstb((x  ,  y - h),type,show,camera,point_size,dim)
-		c = self.collidepinstb((x + w,y - h),type,show,camera,point_size,dim)
-		d = self.collidepinstb((x - w,  y  ),type,show,camera,point_size,dim)
-		e = self.collidepinstb((x    ,  y  ),type,show,camera,point_size,dim)
-		f = self.collidepinstb((x + w,  y  ),type,show,camera,point_size,dim)
-		g = self.collidepinstb((x - w,y + h),type,show,camera,point_size,dim)
-		j = self.collidepinstb((x  ,  y + h),type,show,camera,point_size,dim)
-		k = self.collidepinstb((x + w,y + h),type,show,camera,point_size,dim)
-		l = a or d or g
-		u = a or b or c
-		r = c or f or k
-		p = g or j or k
-		ans = { "topleft":a,"topmid":b,"topright":c,"midleft":d,"midmid":e,"midright":f,"botleft":g,"botmid":j,"botright":k,"left":l,"up":u,"right":r,"down":p}
-		return ans
 
 	def remove(self,pos):
 		postodel = self.func.get(dict(zip(self.objects.keys(),(self.objects[i]["pos"] for i in self.objects.keys()))),[pos[0],pos[1]])

@@ -99,7 +99,6 @@ class GameManager():
 		a = surf
 		univars.realscreeen.blit(a,(pos[0]  * univars.realscreeen.get_width()//2 - (a.get_width()/2)  + univars.realscreeen.get_width()//2  ,-1 * pos[1]  * univars.realscreeen.get_width()//2 - (a.get_height()/2)  + univars.realscreeen.get_height()//2 ))
 
-
 	def blituis(self,surf,pos,size,rot,alpha):
 		a = surf
 		a = pygame.transform.scale(a,(abs(size[0]),abs(size[1])))

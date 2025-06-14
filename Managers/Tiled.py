@@ -110,8 +110,6 @@ class TiledSoftwre:
 					GameManager.blitsurf(thingtogo,((round(a1/dim) * dim),(round(a2/dim) * dim)),self.rot,camera)
 					gridpos = (round(mousepos[0]/self.dim) * self.dim , round(mousepos[1]/self.dim) * self.dim)
 
-
-
 					if self.gridable < 1:
 						if self.grip == 0:
 							if GameManager.event_manager.key[pygame.K_x]:	
@@ -121,7 +119,6 @@ class TiledSoftwre:
 
 					if self.grip == 1:
 						GameManager.blit(self.func.getsprites(self.spritenames[self.sprite])[0],self.func.getsprites(self.spritenames[self.sprite])[0].get_rect(center = (self.pos1)),self.rot,camera)
-
 
 					#multi place/delete
 					if self.gridable < 1:
@@ -209,11 +206,6 @@ class TiledSoftwre:
 								self.pos3 = gridpos
 								self.recter = 1
 								self.rectable = 10
-
-
-					
-
-
 
 					if self.rotable < 1:
 						if GameManager.event_manager.key[pygame.K_z]:
@@ -305,8 +297,12 @@ class TiledSoftwre:
 					if GameManager.event_manager.key[pygame.K_s]:
 						if GameManager.event_manager.key[pygame.K_LCTRL]:
 							if self.saveable < 1:
-								self.savemode = 1
-								self.savestring = ""
+								if not object_manager.loadedmap == "Null":
+									self.savemode = 2
+									self.savestring = object_manager.loadedmap
+								else:
+									self.savemode = 1
+									self.savestring = ""
 								self.saveable = 10
 
 					if GameManager.event_manager.key[pygame.K_v]:
@@ -342,6 +338,7 @@ class TiledSoftwre:
 									self.showdata = 1
 									self.showdatable = 10
 
+			#savemode to name save-file
 			elif self.savemode == 1:
 				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
 				if not GameManager.event_manager.key[pygame.K_RETURN]:
@@ -357,7 +354,8 @@ class TiledSoftwre:
 							self.savemode = 2
 						else:
 							self.savemode = 0
-					
+			
+			#savemode to force-save
 			elif self.savemode == 2:
 				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
 				self.tm.drawtext2(f"{self.savestring.rstrip()} already exists do you want to replace it Y/N","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
