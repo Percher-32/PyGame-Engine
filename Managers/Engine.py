@@ -40,13 +40,14 @@ class Runchinld(Gamemananager.GameManager):
 	def update(self):
 		om.collide9("player",1,cam,self.dim)
 		if "test" in self.states:
-			ib = om.collideinst9b("player",univars.instables,0,cam,4,self.dim)
-			i = om.collideinst9("player",univars.instables,  0,cam,4,self.dim)
-			cb = om.collide9b("player",["grass","dirt"],     0,cam,4,self.dim)
-			c = om.collide9("player",["grass","dirt"],       0,cam,4,self.dim)
-			self.camfoc()
-			self.gravity(ib,i,cb,c)
-			self.playermovex(ib,i,cb,c)
+			# ib = om.collideinst9b("player",univars.instables,0,cam,4,self.dim)
+			# i = om.collideinst9("player",univars.instables,  0,cam,4,self.dim)
+			# cb = om.collide9b("player",["grass","dirt"],     0,cam,4,self.dim)
+			# c = om.collide9("player",["grass","dirt"],       0,cam,4,self.dim)
+			# self.camfoc()
+			# self.gravity(ib,i,cb,c)
+			# self.playermovex(ib,i,cb,c)
+			pass
 
 	def camfoc(self):
 		cm.cam_focus_size("playercam",om.objects["player"][0],4,0.3)
