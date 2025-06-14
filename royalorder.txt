@@ -1,0 +1,44 @@
+0 = pos
+1 = name
+2 = type
+3 = rot
+4 = sn
+5 = gothru
+6 = rendercond
+7 = alpha
+8 = layer
+9 = type
+10 = animname
+
+
+
+stuff = [name,type,rot,gothru,rendercond,alpha,layer,type,animname]
+stuff = [1,2,3,5,6,7,8,9,10]
+
+instanced:
+0 = name
+1 = type
+2 = rot
+3 = gothru
+4 = rendercond
+5 = alpha
+6 = layer
+7 = type
+8 = animname
+
+HEX :rgb(25, 14, 79)
+HEX :rgb(0, 127, 255)
+HEX :rgb(196, 183, 203)
+HEX :rgb(191, 237, 239)
+HEX :rgb(152, 226, 198)
+
+
+
+
+
+
+
+
+
+
+

@@ -19,7 +19,11 @@ grandim = 32
 name = "Project ender"
 
 
-theme = [(100, 13, 95),(217, 22, 86),(235, 91, 0),(255, 178, 0)]
+theme = [(25, 14, 79),
+(0, 127, 255),
+(196, 183, 203),
+(191, 237, 239),
+(152, 226, 198)]
 
 
 screen = pygame.Surface((64 * pixelscale,64 * pixelscale))

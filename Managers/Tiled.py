@@ -238,17 +238,17 @@ class TiledSoftwre:
 										maxlen = strb
 									off += 1
 							b = pygame.Surface((maxlen,250 + (off * 30)))
-							b.fill((50,50,50))
+							b.fill(univars.theme[0])
 							b.set_alpha(150)
 							GameManager.Gotomousepos2(b)
-							self.tm.textatmouse(f"Normal Object\nId = { mousecol['obj'][0].name }\nName = {a['name']}\nRot = {a['rot']}\nType = {a['type']}\nRender = {bool(a['rendercond'])}\nPos = {a['pos']}","pixel2.ttf",30,0,(255,255,255),GameManager.event_manager,10,-20)
+							self.tm.textatmouse(f"Normal Object\nId = { mousecol['obj'][0].name }\nName = {a['name']}\nRot = {a['rot']}\nType = {a['type']}\nRender = {bool(a['rendercond'])}\nPos = {a['pos']}","pixel2.ttf",30,0,univars.theme[3],GameManager.event_manager,10,-20)
 							if a1 in object_manager.values.keys():
 								off = 0
 								for i in object_manager.values[a1].keys():
-									self.tm.textatmouse(f"{i} : {object_manager.values[a1][i]}","pixel2.ttf",30,0,(255,255,255),GameManager.event_manager,10,(-1 * off * 30) - 210)
+									self.tm.textatmouse(f"{i} : {object_manager.values[a1][i]}","pixel2.ttf",30,0,univars.theme[3],GameManager.event_manager,10,(-1 * off * 30) - 210)
 									off += 1
 							else:
-								self.tm.textatmouse(f"No variables","pixel2.ttf",30,0,(255,255,255),GameManager.event_manager,10,0 - 210)
+								self.tm.textatmouse(f"No variables","pixel2.ttf",30,0,univars.theme[3],GameManager.event_manager,10,0 - 210)
 
 							# 	if GameManager.event_manager.key[pygame.K_LCTRL]:
 							# 		try:
@@ -260,10 +260,10 @@ class TiledSoftwre:
 						if len(mousecol["inst"]) > 0:
 							a = mousecol["inst"][0]
 							b = pygame.Surface((270,250))
-							b.fill((50,50,50))
+							b.fill(univars.theme[0])
 							b.set_alpha(150)
 							GameManager.Gotomousepos2(b)
-							self.tm.textatmouse(f"Instanciated Object\nType = {a.type}\nName = { a.name }\nPos = {a.realpos}\nRot = {a.rot}\nSize = {a.size}\nAlpha = {a.alpha}","pixel2.ttf",30,0,(255,255,255),GameManager.event_manager,10,-20)
+							self.tm.textatmouse(f"Instanciated Object\nType = {a.type}\nName = { a.name }\nPos = {a.realpos}\nRot = {a.rot}\nSize = {a.size}\nAlpha = {a.alpha}","pixel2.ttf",30,0,univars.theme[3],GameManager.event_manager,10,-20)
 
 							# 	if GameManager.event_manager.key[pygame.K_LCTRL]:
 							# 		try:
