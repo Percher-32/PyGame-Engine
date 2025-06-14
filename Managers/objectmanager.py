@@ -8,6 +8,7 @@ import inst
 import time
 import univars
 import os
+# from render import render
 
 class object_manager: 
 	def __init__(self,realscreeen,screen,grandim,alpha,rend):
@@ -192,12 +193,12 @@ class object_manager:
 	def get_value(self,info,name):
 		return self.values[info][name]
 		
-	def set_value(self,info,name,value):
+	def set_value(self,id,name,value):
 		try:
-			self.values[info][name] = value
+			self.values[id][name] = value
 		except:
-			self.values[info] = {}
-			self.values[info][name] = value
+			self.values[id] = {}
+			self.values[id][name] = value
 
 	def objfromid(self,id):
 		for a in self.layers.keys():
@@ -403,68 +404,9 @@ class object_manager:
 		return {"obj":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
 
 
-
-	# def collidep(self,pos,type,show,camera,size,dim) -> list: 
-	# 	typel = self.getcull(pos,1,dim)
-	# 	types = ( i[2] for i in self.objects.values() )
-	# 	typedict = dict(zip(list(self.objects.keys()),types))
-	# 	typel2 = [self.func.get(typedict,i) for i in type]
-	# 	typel2 = list(itertools.chain.from_iterable(typel2))
-	# 	type3 = self.func.intersect(typel,typel2)
-	# 	type4 = self.func.intersect(type3,self.rects)
-	# 	olist = [ i for i in type4 if self.rects[i].collidepoint(pos)]
-	# 	if show:
-	# 		if len(olist) > 0:
-	# 			self.func.rectblit([pos[0],pos[1]],[(1/camera.size) * size,(1/camera.size) * size],(0,225,0),camera,dim)
-	# 		else:
-	# 			self.func.rectblit([pos[0],pos[1]],[(1/camera.size) * size,(1/camera.size) * size],(225,0,0),camera,dim)
-	# 	return olist
-		
-	def collidepinstb(self,pos,type,show,camera,size,dim) -> bool: 
-		inpos = (round(pos[0]/(dim * self.renderdist)),round(pos[1]/(dim * self.renderdist)))
-		typel = [self.instances.get((inpos,i),"none") for i in type ]
-		olist = []
-		for a in typel:
-			if not a == "none":
-				typel2 = [pygame.Rect(sprite.realpos[0]- dim/2,sprite.realpos[1]- dim/2,sprite.realsize[0],sprite.realsize[1]) for sprite in a  ]
-				for i in typel2:
-					if i.collidepoint(pos):
-						olist.append(i)
-		
-		if len(olist) > 0:
-			if show:
-				self.func.rectblit([pos[0],pos[1]],[(1/camera.size) * size,(1/camera.size) * size],(0,225,0),camera,dim)
-			return True
-		else:
-			if show:
-				self.func.rectblit([pos[0],pos[1]],[(1/camera.size) * size,(1/camera.size) * size],(225,0,0),camera,dim)
-			return False
-			
-	def collidepinst(self,pos,type,show,camera,size,dim) -> bool: 
-		inpos = (round(pos[0]/(dim * self.renderdist)),round(pos[1]/(dim * self.renderdist)))
-		typel = [self.instances.get((inpos,i),"none") for i in type ]
-		olist = []
-		for a in typel:
-			if not a == "none":
-				typel2 = [  [pygame.Rect(sprite.realpos[0]- dim/2,sprite.realpos[1]- dim/2,sprite.realsize[0],sprite.realsize[1]),sprite] for sprite in a  ]
-				for i in typel2:
-					# self.func.rectblit([i[0].x,i[0].y],[i[0].width,i[0].height],(0,225,0),camera,dim)
-					if i[0].collidepoint(pos):
-						olist.append(i[1])
-
-
-		if len(olist) > 0:
-			if show:
-				self.func.rectblit([pos[0],pos[1]],[(1/camera.size) * size,(1/camera.size) * size],(0,225,0),camera,dim)
-		else:
-			if show:
-				self.func.rectblit([pos[0],pos[1]],[(1/camera.size) * size,(1/camera.size) * size],(225,0,0),camera,dim)
-				
-		return olist
-
 	def collide9(self,id,show,camera,dim,pointsize = 5,offsets = { "topleft":[0,0],"topmid":[0,0],"topright":[0,0],"midleft":[0,0],"midmid":[0,0],"midright":[0,0],"botleft":[0,0],"botmid":[0,0],"botright":[0,0]}) -> dict:
+		"""points ->  [topleft , topmid , topright  , midleft  , midmid  ,  midright  ,  botleft  , botmid  , botleft] . for each point ( collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if")   """
 		if id in self.objects.keys():
-			"""points ->  [topleft , topmid , topright  , midleft  , midmid  ,  midright  ,  botleft  , botmid  , botleft] . for each point ( collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if")   """
 			x = self.objects[id]["pos"][0]
 			y = self.objects[id]["pos"][1]
 			w = self.objects[id]["size"][0]/2
