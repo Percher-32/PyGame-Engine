@@ -231,17 +231,17 @@ class TiledSoftwre:
 					if GameManager.event_manager.mouse[2]:
 						object_manager.remove(gridpos)
 					
+					#to check an inst or non-inst's info
 					if GameManager.event_manager.key[pygame.K_r]:
 						tp = list(set(self.typelist))
-						g1 = self.om.collidep(gridpos,tp,False,cam,4,dim)
-						g2 = self.om.collidepinst(gridpos,tp,False,cam,4,dim)
-						if len(g1) > 0:
-							a = g1[0]
-							b = pygame.Surface((250,500))
+						mousecol = object_manager.collidep(gridpos,0,camera,dim)
+						if len(mousecol["obj"]) > 0:
+							a = mousecol["obj"][0].info
+							b = pygame.Surface((270,500))
 							b.fill((50,50,50))
 							b.set_alpha(200)
 							GameManager.Gotomousepos2(b)
-							self.tm.textatmouse(f"Normal Object\nId = {a}\nName = {object_manager.objects[a]['name']}\nRot = {object_manager.objects[a]['rot']}\nType = {object_manager.objects[a]['type']}\nRender = {bool(object_manager.objects[a]['rendercond'])}\nPos = {object_manager.objects[a]['pos']}","pixel2.ttf",30,0,(255,255,255),GameManager.event_manager,10,-20)
+							self.tm.textatmouse(f"Normal Object\nId = { mousecol['obj'][0].name }\nName = {a['name']}\nRot = {a['rot']}\nType = {a['type']}\nRender = {bool(a['rendercond'])}\nPos = {a['pos']}","pixel2.ttf",30,0,(255,255,255),GameManager.event_manager,10,-20)
 							try:
 								off = 0
 								if len(list(object_manager.values[a].keys())) > 0:
@@ -258,15 +258,21 @@ class TiledSoftwre:
 							# 			self.savemode = "alterobj"
 							# 		except:
 							# 			pass
-
-							pass
-						if len(g2) > 0:
-							a = g2[0]
-							b = pygame.Surface((250,500))
+						if len(mousecol["inst"]) > 0:
+							a = mousecol["inst"][0]
+							b = pygame.Surface((270,500))
 							b.fill((50,50,50))
 							b.set_alpha(200)
 							GameManager.Gotomousepos2(b)
-							self.tm.textatmouse(f"Inst-object\nName = {a.name}\nSize = {a.realsize}\nPos = {[round(a.realestpos[0]),round(a.realestpos[1])]}\nRot = {a.rot}\nType = {a.type}","pixel2.ttf",30,0,(255,255,255),GameManager.event_manager,10,-20)
+							self.tm.textatmouse(f"Instanciated Object\nType = {a.type}\nName = { a.name }\nPos = {a.realpos}\nRot = {a.rot}\nSize = {a.size}\nAlpha = {a.alpha}","pixel2.ttf",30,0,(255,255,255),GameManager.event_manager,10,-20)
+							try:
+								off = 0
+								if len(list(object_manager.values[a].keys())) > 0:
+									for i in object_manager.values[a].keys():
+										self.tm.textatmouse(f"{i} : {object_manager.values[a][i]}","pixel2.ttf",30,0,(255,255,255),GameManager.event_manager,10,(-1 * off * 30) - 210)
+										off += 1
+							except:
+								self.tm.textatmouse(f"No variables","pixel2.ttf",30,0,(255,255,255),GameManager.event_manager,10,0 - 210)
 
 							# 	if GameManager.event_manager.key[pygame.K_LCTRL]:
 							# 		try:
@@ -275,6 +281,20 @@ class TiledSoftwre:
 							# 			self.savemode = "alterobj"
 							# 		except:
 							# 			pass
+						# 	a = g2[0]
+						# 	b = pygame.Surface((250,500))
+						# 	b.fill((50,50,50))
+						# 	b.set_alpha(200)
+						# 	GameManager.Gotomousepos2(b)
+						# 	self.tm.textatmouse(f"Inst-object\nName = {a.name}\nSize = {a.realsize}\nPos = {[round(a.realestpos[0]),round(a.realestpos[1])]}\nRot = {a.rot}\nType = {a.type}","pixel2.ttf",30,0,(255,255,255),GameManager.event_manager,10,-20)
+
+						# 	# 	if GameManager.event_manager.key[pygame.K_LCTRL]:
+						# 	# 		try:
+						# 	# 			self.dostring2 = ""
+						# 	# 			self.dostring = self.func.get(pogg,list(gridpos))[0]
+						# 	# 			self.savemode = "alterobj"
+						# 	# 		except:
+						# 	# 			pass
 
 					if GameManager.event_manager.key[pygame.K_l]:
 						if GameManager.event_manager.key[pygame.K_LCTRL]:

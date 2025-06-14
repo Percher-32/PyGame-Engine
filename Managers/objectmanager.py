@@ -37,13 +37,6 @@ class object_manager:
 		self.renderinst = rend
 		self.speed = 0
 
-	def moveto(self,info,place):
-		self.objects[info][8] = place
-
-	def removecol(self,id):
-		if id in self.rects.keys():
-			self.rects.pop(id)
-
 	def inchunk(self,campos,object,dim,dist):
 		if campos[0] - (dim * dist) <= object[0] <= campos[0] + (dim * dist):
 			x = True
@@ -130,18 +123,6 @@ class object_manager:
 		for i in a:
 			self.sprites[i[0]] = self.func.getspritesscale(i[1],i[2])
 		
-
-
-	def cond(self,id:str,gm,cam):
-		name = self.objects[id][1]
-		if self.speed == 0:
-			self.objects[id][0] = [ round( self.objects[id][0][0]/gm.dim ) * gm.dim      ,   round( self.objects[id][0][1]/gm.dim ) * gm.dim       ]
-		if name == "bird":
-			self.playanim(gm,id,[0,1,0,1,0],"flap")
-
-
-
-
 	def tilemap(self,i,gm,a,uld,urd,ldr,ulr,lr,ud,n,dt,dl,ur,ul,dr,rt,lt,ut):
 		if self.tileup:
 			posl = [self.objects[i][0][0] - gm.dim,self.objects[i][0][1]]
@@ -481,23 +462,6 @@ class object_manager:
 				
 		return olist
 
-	# def collide9(self,i,type,show,camera,point_size,dim) -> dict:
-	# 	x = self.objects[i][0][0]
-	# 	y = self.objects[i][0][1]
-	# 	w = self.sprites[i][0].get_width()/2
-	# 	h = self.sprites[i][0].get_height()/2
-	# 	a = self.collidep((x - w,y - w),type,show,camera,point_size,dim)
-	# 	b = self.collidep((x  ,  y - w),type,show,camera,point_size,dim)
-	# 	c = self.collidep((x + w,y - w),type,show,camera,point_size,dim)
-	# 	d = self.collidep((x - w,  y  ),type,show,camera,point_size,dim)
-	# 	e = self.collidep((x    ,  y  ),type,show,camera,point_size,dim)
-	# 	f = self.collidep((x + w,  y  ),type,show,camera,point_size,dim)
-	# 	g = self.collidep((x - w,y + w),type,show,camera,point_size,dim)
-	# 	j = self.collidep((x  ,  y + w),type,show,camera,point_size,dim)
-	# 	k = self.collidep((x + w,y + w),type,show,camera,point_size,dim)
-	# 	ans = { "topleft":a,"topmid":b,"topright":c,"midleft":d,"midmid":e,"midright":f,"botleft":g,"botmid":j,"botright":k}
-	# 	return ans
-
 	def collide9(self,id,show,camera,dim,pointsize = 5,offsets = { "topleft":[0,0],"topmid":[0,0],"topright":[0,0],"midleft":[0,0],"midmid":[0,0],"midright":[0,0],"botleft":[0,0],"botmid":[0,0],"botright":[0,0]}) -> dict:
 		if id in self.objects.keys():
 			"""points ->  [topleft , topmid , topright  , midleft  , midmid  ,  midright  ,  botleft  , botmid  , botleft] . for each point ( collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if")   """
@@ -636,6 +600,7 @@ class object_manager:
 			self.addinst(pos,sprites,dim,rot,type,sizen)
 
 	def adds(self,name,pos,sprites,type,rot,size,alpha,layer):
+		"""add special for more unique items"""
 		dummy  = self.func.getsprites(sprites)[0]
 		size = [dummy.get_width() * size[0],dummy.get_height() * size[1]]
 		realsprite = self.func.getspritesscale(sprites,size)
@@ -663,6 +628,7 @@ class object_manager:
 		camposdim = [round(camera.x/(dim * self.renderdist)),round(camera.y/(dim * self.renderdist))]
 		#availabe chunks
 		ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
+		#the instanciate chunks to be rendered
 		lof = [  b   for b in self.instances.keys() for i in ranges   if b == ( i[0]  + camposdim[0],i[1] + camposdim[1]   )]
 
 		#rendering the instanciates

@@ -71,6 +71,8 @@ class obj(pygame.sprite.Sprite):
 		self.info = om.objects[self.name]
 		sprite = self.sprites[self.info["sn"]]
 		pos = self.info["pos"]
+		pos = [int(round(pos[0])),int(round(pos[1]))]
+		self.info["pos"] = pos
 		self.fakerect = pygame.Rect(self.info["pos"][0] - self.info["size"][0]//2,self.info["pos"][1] - self.info["size"][1]//2,self.info["size"][0],self.info["size"][1])
 		if self.info["rendercond"]:
 			g = [round(self.info["pos"][0]/(dim * om.renderdist)),round(self.info["pos"][1]/(dim * om.renderdist))]
