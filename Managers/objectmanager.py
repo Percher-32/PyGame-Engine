@@ -392,13 +392,13 @@ class object_manager:
 			
 	# 	return olist
 
-	def collidep(self,pos,show,camera,dim,pointsize=5) -> dict: 
+	def collidep(self,pos,show,camera,dim,pointsize=5,instcol = (0,225,0),noninstcol=(0,225,150),ignore_id = None) -> dict: 
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		#coll for non-inst
 		dim = univars.grandim
 		typel = self.getcull(pos,1,dim)
 		noninst = []
-		[noninst.append(self.objfromid(i)) for i in typel if self.objfromid(i).fakerect.collidepoint(pos) ]
+		[noninst.append(self.objfromid(i)) for i in typel if self.objfromid(i).fakerect.collidepoint(pos)  and not self.objfromid(i).name == ignore_id ]
 
 		#coll for inst
 		camchunk = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
@@ -409,8 +409,10 @@ class object_manager:
 		#render the collpoint
 		r1 = pygame.Rect(pos[0],pos[1],(1/camera.size) * pointsize,(1/camera.size) * pointsize)
 		if show:
-			if len(inst or noninst) > 0:
-				col = (0,225,0)
+			if len(inst) > 0:
+				col = instcol
+			elif len(noninst) > 0:
+				col = noninstcol
 			else:
 				col = (225,0,0)
 			self.func.ssblitrect(r1,col,camera,0)
@@ -479,21 +481,39 @@ class object_manager:
 				
 		return olist
 
-	def collide9(self,i,type,show,camera,point_size,dim) -> dict:
-		x = self.objects[i][0][0]
-		y = self.objects[i][0][1]
-		w = self.sprites[i][0].get_width()/2
-		h = self.sprites[i][0].get_height()/2
-		a = self.collidep((x - w,y - w),type,show,camera,point_size,dim)
-		b = self.collidep((x  ,  y - w),type,show,camera,point_size,dim)
-		c = self.collidep((x + w,y - w),type,show,camera,point_size,dim)
-		d = self.collidep((x - w,  y  ),type,show,camera,point_size,dim)
-		e = self.collidep((x    ,  y  ),type,show,camera,point_size,dim)
-		f = self.collidep((x + w,  y  ),type,show,camera,point_size,dim)
-		g = self.collidep((x - w,y + w),type,show,camera,point_size,dim)
-		j = self.collidep((x  ,  y + w),type,show,camera,point_size,dim)
-		k = self.collidep((x + w,y + w),type,show,camera,point_size,dim)
-		ans = { "topleft":a,"topmid":b,"topright":c,"midleft":d,"midmid":e,"midright":f,"botleft":g,"botmid":j,"botright":k}
+	# def collide9(self,i,type,show,camera,point_size,dim) -> dict:
+	# 	x = self.objects[i][0][0]
+	# 	y = self.objects[i][0][1]
+	# 	w = self.sprites[i][0].get_width()/2
+	# 	h = self.sprites[i][0].get_height()/2
+	# 	a = self.collidep((x - w,y - w),type,show,camera,point_size,dim)
+	# 	b = self.collidep((x  ,  y - w),type,show,camera,point_size,dim)
+	# 	c = self.collidep((x + w,y - w),type,show,camera,point_size,dim)
+	# 	d = self.collidep((x - w,  y  ),type,show,camera,point_size,dim)
+	# 	e = self.collidep((x    ,  y  ),type,show,camera,point_size,dim)
+	# 	f = self.collidep((x + w,  y  ),type,show,camera,point_size,dim)
+	# 	g = self.collidep((x - w,y + w),type,show,camera,point_size,dim)
+	# 	j = self.collidep((x  ,  y + w),type,show,camera,point_size,dim)
+	# 	k = self.collidep((x + w,y + w),type,show,camera,point_size,dim)
+	# 	ans = { "topleft":a,"topmid":b,"topright":c,"midleft":d,"midmid":e,"midright":f,"botleft":g,"botmid":j,"botright":k}
+	# 	return ans
+
+	def collide9(self,id,show,camera,dim,pointsize = 5,offsets = { "topleft":[0,0],"topmid":[0,0],"topright":[0,0],"midleft":[0,0],"midmid":[0,0],"midright":[0,0],"botleft":[0,0],"botmid":[0,0],"botright":[0,0]}) -> dict:
+		x = self.objects[id]["pos"][0]
+		y = self.objects[id]["pos"][1]
+		w = self.objects[id]["size"][0]/2
+		h = self.objects[id]["size"][1]/2
+		
+		topleft  = self.collidep((x - w +  offsets["topleft"][0]  ,  y - h +  offsets["topleft"][1]),show,camera,dim,pointsize,ignore_id=id)
+		topmid   = self.collidep((x     +   offsets["topmid"][0]  ,  y - h +   offsets["topmid"][1]),show,camera,dim,pointsize,ignore_id=id)
+		topright = self.collidep((x + w + offsets["topright"][0]  ,  y - h + offsets["topright"][1]),show,camera,dim,pointsize,ignore_id=id)
+		midleft  = self.collidep((x - w +  offsets["midleft"][0]  ,    y   +  offsets["midleft"][1]),show,camera,dim,pointsize,ignore_id=id)
+		midmid   = self.collidep((x     +   offsets["midmid"][0]  ,    y   +   offsets["midmid"][1]),show,camera,dim,pointsize,ignore_id=id)
+		midright = self.collidep((x + w + offsets["midright"][0]  ,    y   + offsets["midright"][1]),show,camera,dim,pointsize,ignore_id=id)
+		botleft  = self.collidep((x - w +  offsets["botleft"][0]  ,  y + h +  offsets["botleft"][1]),show,camera,dim,pointsize,ignore_id=id)
+		botmid   = self.collidep((x     +   offsets["botmid"][0]  ,  y + h +   offsets["botmid"][1]),show,camera,dim,pointsize,ignore_id=id)
+		botright = self.collidep((x + w + offsets["botright"][0]  ,  y + h + offsets["botright"][1]),show,camera,dim,pointsize,ignore_id=id)
+		ans = { "topleft":topleft,"topmid":topmid,"topright":topright,"midleft":midleft,"midmid":midmid,"midright":midright,"botleft":botleft,"botmid":botmid,"botright":botright}
 		return ans
 
 	def collideinst9(self,i,type,show,camera,point_size,dim) -> dict:
