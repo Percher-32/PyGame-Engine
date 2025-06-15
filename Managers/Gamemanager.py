@@ -143,9 +143,6 @@ class GameManager():
 
 		self.realblit(newsurface,temp_rect,rot,camera)
 
-	def render_ob(self,og,camera,dim):
-		og.render(camera,self,dim)
-
 	def on(self,frame):
 		if round(self.frame_manager.frame) % frame == 0:
 			return True
@@ -158,9 +155,11 @@ class GameManager():
 		else:
 			return False
 
-	def inum(self):
+	def inum(self,campos,camsize:float):
 		for obj in om.objects.keys():
-			self.cond(obj,om.objects[obj])
+			range =  2000
+			if funcs.func.dist(om.objects[obj]["pos"],campos) < range:
+				self.cond(obj,om.objects[obj])
 
 	def cond(self,obj,info):
 		pass
@@ -196,6 +195,7 @@ class GameManager():
 		om.speed = sm.speed
 		self.states = sm.states
 		Tiled.showdata = sm.showui
+		om.showall = sm.showall
 
 	def sp(self,val:str,to):
 		om.set_value("player",val,to)
@@ -219,6 +219,7 @@ class GameManager():
 		self.debug = True
 
 	def start(self):
+		"""run at the start of every frame"""
 		if Tiled.comm:
 			sm.state = Tiled.cht
 			self.initial()
@@ -227,8 +228,8 @@ class GameManager():
 		renderwid = univars.realscreeen.get_width()
 		univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid,renderwid)),(0,-1 * renderwid//4))
 		univars.screen.fill((self.screen_colour))
-		self.render_ob(om,cam,self.dim)
-		self.inum()
+		om.render(cam,self,self.dim)
+		self.inum([cam.x,cam.y],cam.size)
 		Tiled.Run(self.work,40,self,cam,om,self.dim,self.leveledit,cm,sm.state)
 		um.update()
 		self.keybind()
@@ -236,12 +237,7 @@ class GameManager():
 		cam.update()
 
 	def update(self):			
-		if not Tiled.loadingmap:
-			if "test" in self.states:
-				coll = om.collideinst9b("player",["grass","dirt"],1,cam,4,self.dim)
-				cm.cam_focus("playercam",om.objects["player"][0],7)
-				cm.setcam("playercam")
-				self.playermovex()
+		pass
 				
 	def end(self):
 		self.updatetime()

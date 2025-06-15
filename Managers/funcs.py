@@ -25,9 +25,10 @@ class func:
             except:
                 print("duygfre")
         return sprites
-    def allsprites(self,):
+    def allsprites(self):
         return os.listdir("Graphics/sprites")
-    def dist(self,pos1:float,pos2:float):
+    
+    def dist(pos1:list,pos2:list):
         return ((((pos1[0] - pos2[0]) ** 2) + ((pos1[1] - pos2[1]) ** 2)) ** 0.5)
     def rectblit(self,pos,width,col,camera,dim):
         rect = pygame.Rect((pos[0] - camera.x) * camera.size + self.screen.get_width()//2,(pos[1] - camera.y) * camera.size + self.screen.get_height()//2 ,width[0] * abs(camera.size),width[1] * abs(camera.size))

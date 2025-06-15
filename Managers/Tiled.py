@@ -93,7 +93,6 @@ class TiledSoftwre:
 			#savemode for level editing
 			if self.savemode == 0:
 				if debug:
-					object_manager.showall = True
 					#random
 					if len(self.typelist) < len(self.spritenames):
 						for i in range(len(self.spritenames) - len(self.typelist)):
@@ -478,65 +477,15 @@ class TiledSoftwre:
 						camera.x = int(self.dostring.rstrip())
 						camera.y = int(self.dostring2.rstrip())
 						self.savemode = 0
-				
-			elif self.savemode in ["Comscreencol" ,"Comscreen colour" ,"Comscreen col" ,"Comscreen-color" ,"Comscreen-col" ,"Comscreen-colour" ,"Comscreen color" ,"Comscreencolor"]:
-				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
-				if not GameManager.event_manager.key[pygame.K_RETURN]:
-					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
-						self.dostring = self.dostring[:-1]
-					else:
-						if GameManager.event_manager.keyb:
-							self.dostring += GameManager.event_manager.code
-					self.tm.drawtext2(f"What red value: {self.dostring}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
-				else:
-					if not self.dostring == "":
-						self.dostring2 = ""
-						self.savemode = "screeng"
 
 			elif self.savemode == "Comspeed":
-				GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
-				if not GameManager.event_manager.key[pygame.K_RETURN]:
-					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
-						self.dostring = self.dostring[:-1]
-					else:
-						if GameManager.event_manager.keyb:
-							self.dostring += GameManager.event_manager.code
-					self.tm.drawtext2(f"What speed do you want to set the speed to: {self.dostring}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.95,-0.9)
+				a = self.commandline(GameManager,self.dostring,"What Speed ?:")
+				if not a == self.secretword:
+					self.dostring = a
 				else:
-					if not self.dostring.rstrip() == "":
-						object_manager.speed = float(self.dostring.rstrip())
-						self.savemode = 0
+					object_manager.speed = float(self.dostring.rstrip())
+					self.savemode = 0
 
-
-
-			elif self.savemode == "screeng":
-				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
-				if not GameManager.event_manager.key[pygame.K_RETURN]:
-					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
-						self.dostring2 = self.dostring2[:-1]
-					else:
-						if GameManager.event_manager.keyb:
-							self.dostring2 += GameManager.event_manager.code
-					self.tm.drawtext2(f"What green value: {self.dostring2}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
-				else:
-					if not self.dostring2 == "":
-						self.dostring3 = ""
-						self.savemode = "screenb"
-
-			elif self.savemode == "screenb":
-				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
-				if not GameManager.event_manager.key[pygame.K_RETURN]:
-					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
-						self.dostring3 = self.dostring3[:-1]
-					else:
-						if GameManager.event_manager.keyb:
-							self.dostring3 += GameManager.event_manager.code
-					self.tm.drawtext2(f"What blue value: {self.dostring3}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
-				else:
-					if not self.dostring3 == "":
-						GameManager.screen_colour = (int(self.dostring),int(self.dostring2),int(self.dostring3))
-						self.savemode = 0
-				
 			elif "show" in self.savemode and "all" in self.savemode and "col" in self.savemode and "Com" in self.savemode:
 				object_manager.showcolist = "all"
 				self.savemode = 0
@@ -676,10 +625,16 @@ class TiledSoftwre:
 				self.tm.drawtext(f"Camera-name : {cm.currentcam}"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.6,-0.9)
 				self.tm.drawtext2(f"Camera size: { round(1 / camera.size,2)}"            ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],0,-0.9)
 				self.tm.drawtext2(f"Camera pos: {[round(camera.x),-1 * round(camera.y)]}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.6,-0.9)
+				GameManager.uibox((400,160),(-0.78,0.75),univars.theme["dark"],200)
+				self.tm.drawtext2(f"State : {smate}",                                     "pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.97,0.85 - 0.05)
+				self.tm.drawtext2(f"Map : {object_manager.loadedmap}",                    "pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.97,0.75 - 0.05)
+					
 
+
+				#the ui for object placement
 				if debug:
-					GameManager.uibox((360,252),(0.8,0.65),univars.theme["dark"],200)
-					GameManager.uibox((64 + 10,64 + 10),(0.8,0.8),univars.theme["semibright"],400)
+					GameManager.uibox((360,252),(0.8,0.65),        univars.theme["dark"],200)
+					GameManager.uibox((64 + 10,64 + 10),(0.8,0.8 ),univars.theme["semibright"],400)
 					GameManager.uibox((64 + 10,64 + 10),(0.92,0.8),univars.theme["semibright"],50)
 					GameManager.uibox((64 + 10,64 + 10),(0.68,0.8),univars.theme["semibright"],50)
 					GameManager.blituis(self.func.getsprites(self.spritenames[self.sprite])[0],(0.8,0.8),(64,64),self.rot,1000)
@@ -690,15 +645,8 @@ class TiledSoftwre:
 
 
 
-				GameManager.uibox((400,160),(-0.78,0.75),univars.theme["dark"],200)
-				self.tm.drawtext2(f"State : {smate}",                                         "pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.97,0.85 - 0.05)
-				self.tm.drawtext2(f"Map : {object_manager.loadedmap}",                        "pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.97,0.75 - 0.05)
-					
 
-				
-				
 
-				object_manager.showmap = True
 				GameManager.frame_manager.showfps = 1
 			else:
 				object_manager.showmap = False

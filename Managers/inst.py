@@ -16,18 +16,18 @@ class inst(pygame.sprite.Sprite):
 		self.image = self.func.getsprites(name)[0]
 		self.rot = int(rot)
 		self.realpos = (int(x),int(y))
-		self.size = [int(round(self.func.getsprites(name)[0].get_width() * sizen[0])),int(round(self.func.getsprites(name)[0].get_height() * sizen[1]))]
+		self.size = [self.func.getsprites(name)[0].get_width() * sizen[0],self.func.getsprites(name)[0].get_height() * sizen[1]]
 		self.rect = self.image.get_rect(center = (x + cam.x,y + cam.y))
 		self.fakerect = pygame.Rect(x - self.size[0]//2,y - self.size[1]//2,self.size[0],self.size[1])
 		self.alpha = alpha
 
 	def inchunk(self,cam,object,dim):
 		dist = 1/cam.size * 9
-		if cam.x - (dim * dist) - self.size[0] <= object[0] <= cam.x + (dim * dist) + self.size[0]:
+		if cam.x - (dim * dist) - (self.size[0] * dim) <= object[0] <= cam.x + (dim * dist) + (self.size[0] * dim):
 			x = True
 		else:
 			x = False
-		if cam.y - (dim * dist) - self.size[1] <= object[1] <= cam.y + (dim * dist) - self.size[1]:
+		if cam.y - (dim * dist) - (self.size[1] * dim) <= object[1] <= cam.y + (dim * dist) + (self.size[1] * dim):
 			y = True
 		else:
 			y = False
@@ -39,10 +39,11 @@ class inst(pygame.sprite.Sprite):
 	def update(self, camera,dim:int,showall):
 		if self.inchunk(camera,self.realpos,dim):
 			self.image =  pygame.transform.rotate(pygame.transform.scale(self.bart,  [self.size[0] * abs(camera.size),self.size[1] * abs(camera.size)]  ) ,self.rot)
-			self.image.set_alpha(self.alpha)
+			alpha = self.alpha
 			if showall:
 				if self.alpha == 0:
-					self.alpha = 400
+					alpha = 170
+			self.image.set_alpha(alpha)
 			self.rect = self.image.get_rect(topleft = ( (int(round(self.realpos[0] - camera.x) * round(camera.size,2) + univars.screen.get_width()//2 - self.image.get_width()/2)),int(round((self.realpos[1] - camera.y) * round(camera.size,2) + univars.screen.get_height()//2 - self.image.get_height()/2))))
 		else:
 			self.image = pygame.Surface((0,0))

@@ -395,7 +395,6 @@ class object_manager:
 			self.instances[name] = pygame.sprite.Group()
 			self.instances[name].add(newt)
 
-
 	def adds(self,name,pos,sprites,type,rot,size,alpha,layer):
 		"""add special for more unique items"""
 		dummy  = self.func.getsprites(sprites)[0]
@@ -420,7 +419,6 @@ class object_manager:
 		self.speed = speed
 
 	def render(self,camera,GameManager,dim:int):
-		# start_time = time.time()
 		#camera-chunk
 		camposdim = [round(camera.x/(dim * self.renderdist)),round(camera.y/(dim * self.renderdist))]
 		#availabe chunks
@@ -440,5 +438,4 @@ class object_manager:
 			self.layers[groupid].draw(self.screen)
 
 
-		# end_time = time.time()
 

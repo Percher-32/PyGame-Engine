@@ -16,17 +16,20 @@ class sm:
             self.leveledit = False
             self.speed = 1
             self.showui = False
+            self.showall = False
         if self.state == "editgame":
             self.states = ["test"]
             self.leveledit = True
             self.work = True
             self.speed = 1
             self.showui = True
+            self.showall = True
         if self.state == "edit":
             self.states = ["Editor"]
             self.leveledit = True
             self.work = True
             self.speed = 0
             self.showui = True
+            self.showall = True
 
 
