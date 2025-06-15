@@ -439,7 +439,6 @@ class object_manager:
 			self.layers[groupid].update(camera,self,dim)
 			self.layers[groupid].draw(self.screen)
 
-		if self.showmap:
-			self.tm.drawtext2(f"Map : {self.loadedmap}","pixel2.ttf",40,0,0,0,(50,50,50),-0.97,0.75)
+
 		# end_time = time.time()
 
