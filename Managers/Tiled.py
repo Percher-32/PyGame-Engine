@@ -1,5 +1,6 @@
 import pygame
 import Cameramod
+import Cammanager
 import Textmanager
 import funcs
 import univars
@@ -82,8 +83,6 @@ class TiledSoftwre:
 				return self.secretword
 			else:
 				return dostring
-
-
 
 	def Run(self,work,speed,GameManager,camera,object_manager,dim,debug,cm,smate):
 		if work:
@@ -461,22 +460,17 @@ class TiledSoftwre:
 					self.dostring = a
 				else:
 					self.dostring2 = ""
+					Cammanager.camager.setcond("def","posx",float(self.dostring.rstrip()))
 					self.savemode = "camy"
 
 			elif self.savemode == "camy":
-				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
-				if not GameManager.event_manager.key[pygame.K_RETURN]:
-					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
-						self.dostring2 = self.dostring2[:-1]
-					else:
-						if GameManager.event_manager.keyb:
-							self.dostring2 += GameManager.event_manager.code
-					self.tm.drawtext2(f"What Camera y: {self.dostring2}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
+				a = self.commandline(GameManager,self.dostring2,"What Camera Y:")
+				if not a == self.secretword:
+					self.dostring2 = a
 				else:
-					if not self.dostring2 == "":
-						camera.x = int(self.dostring.rstrip())
-						camera.y = int(self.dostring2.rstrip())
-						self.savemode = 0
+					Cammanager.camager.setcond("def","posy",-1 * float(self.dostring2.rstrip()))
+					self.savemode = 0
+
 
 			elif self.savemode == "Comspeed":
 				a = self.commandline(GameManager,self.dostring,"What Speed ?:")

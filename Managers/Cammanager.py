@@ -8,9 +8,11 @@ class Cammanager:
 		self.cam = cam
 
 	def addcam(self,name,pos,size):
+		"""add a new camera or set the conditions of a camera"""
 		self.cameras[name] = [pos,size,0]
 
 	def setcam(self,name):
+		"""set the in-use camera to a different one"""
 		self.cam.x = self.cameras[name][0][0]
 		self.cam.y = self.cameras[name][0][1]
 		self.cam.size = self.cameras[name][1]
@@ -18,11 +20,18 @@ class Cammanager:
 		self.currentcam = name
 	
 	def setcond(self,cam,item,val):
+		"""to set the conditions for a camera , cam : camera-name  ,  item : [ pos ,size or shake ]  ,  val :  what to set it to  """
 		index = {"pos":0,"size":1,"shake":2}
-		toch = index[item]
-		self.cameras[cam][toch] = val
+		if item == "posx":
+			self.cameras[cam][0][0] = val
+		elif item == "posy":
+			self.cameras[cam][0][1] = val
+		else:
+			toch = index[item]
+			self.cameras[cam][toch] = val
 
 	def delcam(self,name):
+		"""remove a camera"""
 		self.cameras.pop(name)
 
 	def cam_focus(self,name,end_pos,smoothing):
