@@ -10,7 +10,7 @@ screen_w = 1500
 screen_h = 1000
 
 
-pixelscale = 8
+pixelscale = 10
 
 
 grandim = 32

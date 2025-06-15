@@ -8,6 +8,7 @@ import inst
 import time
 import univars
 import os
+import math
 # from render import render
 
 class object_manager: 
@@ -291,7 +292,11 @@ class object_manager:
 			inst = [ i for i in self.instances[camchunk] if i.fakerect.collidepoint(pos)]
 
 		#render the collpoint
-		r1 = pygame.Rect(pos[0],pos[1],(1/camera.size) * pointsize,(1/camera.size) * pointsize)
+		num = (1/camera.size)
+		bar = 0.6
+		if num < bar:
+			num = bar
+		r1 = pygame.Rect(pos[0],pos[1],num * pointsize,num * pointsize)
 		if show:
 			if len(inst) > 0:
 				col = instcol

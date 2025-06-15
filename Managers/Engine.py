@@ -1,6 +1,6 @@
 import Gamemanager as Gamemananager
 import univars as univars
-import sys
+
 
 
 
@@ -25,7 +25,10 @@ class Runchinld(Gamemananager.GameManager):
 	def initial(self):
 		self.defs()
 		self.a = 0
-		# om.adds("player",[0,0],"enemy","player",0,[1,1],400,5)
+		om.adds("player",[0,0],"enemy","player",0,[1,1],400,5)
+		om.set_value("player","testing","HELLO")
+		om.set_value("player","testing2","HELLO")
+		om.set_value("player","testing3","HELLO")
 		if "test" in self.states:
 			cm.addcam("playercam",[0,0],0.4)
 			cm.setcam("playercam")

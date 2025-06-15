@@ -225,7 +225,7 @@ class GameManager():
 			self.initial()
 		if Tiled.loadingmap:
 			self.initial()
-		renderwid = univars.realscreeen.get_width()
+		renderwid = max([univars.realscreeen.get_width(),univars.realscreeen.get_height()])
 		univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid,renderwid)),(0,-1 * renderwid//4))
 		univars.screen.fill((self.screen_colour))
 		om.render(cam,self,self.dim)
