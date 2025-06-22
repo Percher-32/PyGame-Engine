@@ -16,6 +16,8 @@ class object_manager:
 		self.objects = {}
 		self.values = {}
 		self.layers = {}
+		self.anims = {}
+		self.forceplay = {}
 		self.func = funcs.func(screen,grandim)
 		self.screen = screen
 		self.realscreen = realscreeen
@@ -109,16 +111,35 @@ class object_manager:
 		patch = [i for i in list(self.objects.keys()) if (pos[0]) - (grid_size * dim) <= self.objects[i]["pos"][0] <= (pos[0]) + (grid_size * dim)    and (pos[1]) - (grid_size * dim) <= self.objects[i]["pos"][1] <= (pos[1]) + (grid_size * dim)]                                                  
 		return patch
 
-	def playanim(self,gm,i,anim,animname):
-		if not gm == "none":
-			if not self.objects[i][10] == animname:
-				self.objects[i][5] = 0
-				self.objects[i][10] = animname
-			self.objects[i][5] += gm.frame_manager.dt * self.speed
-			if round(self.objects[i][5]/5) < len(anim):
-				self.objects[i][4] = anim[round(self.objects[i][5]/5)]
+
+	def addanim(self,id:str,name:str,frames:dict,forceplay = False):
+		""" adds a new animation to a sprite  , eg frames  =  {"1":3,"2":5,"5":7} """
+		if not id in self.anims.keys():
+			self.anims[id] = {}
+			self.forceplay[id] = {}
+		self.anims[id][name] = frames
+		self.forceplay[id][name] = forceplay
+
+
+
+	def playanim(self,dt,id,name):
+		if not self.objects[id]["animname"] == name:
+			if self.forceplay[id]:
+				self.objects[id]["animname"] = name
+				self.objects[id]["gothru"] = 0
 			else:
-				self.objects[i][10] = "none"
+				if self.objects[id]["gothru"] == 0:
+					self.objects[id]["animname"] = name
+		
+		frame = int(round(self.objects[id]["gothru"]))
+		if not frame == max(self.anims[id][name].keys()):
+			self.objects[id]["gothru"] += dt
+			if frame in self.anims[id][name].keys():
+				self.objects[id]["sn"] = frame
+		else:
+			self.gothru = 0
+
+
 
 	def encodeinst(self):
 		insts = []
@@ -194,8 +215,8 @@ class object_manager:
 
 	def translate(self,GameManager,id:str,sv:list):
 		if not GameManager == "none":
-			self.objects[id]["pos"][0] += (sv[0] * GameManager.frame_manager.dt * self.speed) * self.screen.get_width()/self.realscreen.get_width()
-			self.objects[id]["pos"][1] -= (sv[1] * GameManager.frame_manager.dt * self.speed) * self.screen.get_width()/self.realscreen.get_width()
+			self.objects[id]["pos"][0] += int(round((sv[0] * GameManager.frame_manager.dt * self.speed) * self.screen.get_width()/self.realscreen.get_width()))
+			self.objects[id]["pos"][1] -= int(round((sv[1] * GameManager.frame_manager.dt * self.speed) * self.screen.get_width()/self.realscreen.get_width()))
 
 	def rotate(self,GameManager,id,ang):
 		if not GameManager == "none":

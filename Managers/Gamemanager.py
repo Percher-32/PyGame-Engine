@@ -230,7 +230,7 @@ class GameManager():
 		univars.screen.fill((self.screen_colour))
 		om.render(cam,self,self.dim)
 		self.inum([cam.x,cam.y],cam.size)
-		Tiled.Run(self.work,40,self,cam,self.dim,self.leveledit,cm,sm.state)
+		Tiled.Run(self.work,univars.camspeeed,self,cam,self.dim,self.leveledit,cm,sm.state)
 		um.update()
 		self.keybind()
 		cm.update()

@@ -98,6 +98,6 @@ class obj(pygame.sprite.Sprite):
 
 	def reinstsprite(self,om):
 		info = om.objects[self.name]
-		self.sprite = self.func.getspritesscale(info["sprite"],info["size"])[info["sn"]]
+		self.sprite = self.func.getspritesscale(info["sprite"],info["size"])
 
 	

@@ -25,80 +25,117 @@ class Runchinld(Gamemananager.GameManager):
 	def initial(self):
 		self.defs()
 		self.a = 0
-		om.adds("player",[0,0],"enemy","player",0,[1,1],400,5)
-		om.set_value("player","testing","HELLO")
-		om.set_value("player","testing2","HELLO")
-		om.set_value("player","testing3","HELLO")
 		if "test" in self.states:
 			cm.addcam("playercam",[0,0],0.4)
 			cm.setcam("playercam")
-			om.adds((cam.x,cam.y),"enemy","player","player",0,[32,32],1000,1)
-			om.objects["player"][8] = 4
+			om.adds("player",[0,0],"enemy","player",0,[1,1],400,5)
 			self.sp("velx",0)
 			self.sp("vely",0)
 			self.sp("speedupy",14)
 			self.sp("jump",0)
-			self.sp("mode","norm")
+			self.sp("mode","falling or stat")
 
 	def update(self):
-		om.collide9("player",1,cam,self.dim)
 		if "test" in self.states:
-			# ib = om.collideinst9b("player",univars.instables,0,cam,4,self.dim)
-			# i = om.collideinst9("player",univars.instables,  0,cam,4,self.dim)
-			# cb = om.collide9b("player",["grass","dirt"],     0,cam,4,self.dim)
-			# c = om.collide9("player",["grass","dirt"],       0,cam,4,self.dim)
-			# self.camfoc()
-			# self.gravity(ib,i,cb,c)
-			# self.playermovex(ib,i,cb,c)
-			pass
+			c = om.collide9("player",0,cam,self.dim)
+			self.camfoc()
+			self.gravity(c)
+			self.playermovex(c)
 
 	def camfoc(self):
-		cm.cam_focus_size("playercam",om.objects["player"][0],4,0.3)
+		cm.cam_focus_size("playercam",om.objects["player"]["pos"],4,0.4)
 			
-	def playermovex(self,ib,i,cb,c):
-		self.sp("maxx",self.key["x"] * 40)
-		if ib["botmid"]:
-			self.sp("speedup",10)
-		else:
-			self.sp("speedup",25)
-		self.sp("velx",univars.func.lerp(self.gp("velx"),self.gp("maxx"),self.gp("speedup")))
-		om.objects["player"][0][0] += self.gp("velx")
+	def playermovex(self,c):
+		a = c["botmid"]["inst"]
+		b = c["botleft"]["inst"]
+		d = c["botright"]["inst"]
 
-	def gravity(self,ib,i,cb,c):
+		if len(a) > 0:
+			normt = True
+			norm = a
+		elif len(d) > 0:
+			normt = True
+			norm = d
+		elif len(b) > 0:
+			normt = True
+			norm = b
+		else:
+			normt = False
+			norm = None
+		self.sp("maxx",self.key["x"] * 40)
+		if normt:
+			self.sp("speedup",12)
+		else:
+			self.sp("speedup",16)
+		
+		if normt:
+			if self.key["x"] == 0:
+				if self.key["y"] == -1:
+					self.sp("speedup",7)
+		if abs(self.gp("velx")) < 2:
+			self.sp("velx",0)
+			
+		self.sp("velx",int(round(univars.func.lerp(self.gp("velx"),self.gp("maxx"),self.gp("speedup")))))
+		om.objects["player"]["pos"][0] += self.gp("velx")
+
+	def gravity(self,c):
 		if self.key["action"]:
 			if self.gp("jump"):
 				self.sp("mode","jumping")
-				self.sp("speedjump",5)
-				self.sp("jumph",20)
+				self.sp("speedjump",10)
+				self.sp("jumph",10)
 				self.sp("jumpd",1)
-				self.sp("maxh",50)
-		if self.gp("mode") == "norm":
-			if ib["botmid"]:
+				self.sp("maxh",30)
+
+		a = c["botmid"]["inst"]
+		b = c["botleft"]["inst"]
+		d = c["botright"]["inst"]
+
+		if len(a) > 0:
+			normt = True
+			norm = a
+		elif len(d) > 0:
+			normt = True
+			norm = d
+		elif len(b) > 0:
+			normt = True
+			norm = b
+		else:
+			normt = False
+			norm = None
+
+		if self.gp("mode") == "falling or stat":
+			if normt:
 				self.sp("maxy",0)
 				self.sp("vely",0)
-				if not ib["midleft"] or not ib["midright"]:
-					om.objects["player"][0][1] = i["botmid"][0].realestpos[1] - self.dim
-				if ib["midmid"]:
-					om.objects["player"][0][1] -= self.dim
+				# if not len(c["midleft"]["inst"]) or not len(c["midright"]["inst"]):
+				om.objects["player"]["pos"][1] = norm[0].realpos[1] - self.dim
+				if len(c["midmid"]["inst"]):
+					om.objects["player"]["pos"][1] -= self.dim
 				self.sp("jump",1)
 			else:
 				self.sp("maxy",-40)
 				self.sp("vely",univars.func.lerp(self.gp("vely"),self.gp("maxy"),self.gp("speedupy")))
-				om.objects["player"][0][1] -= self.gp("vely")
+				om.objects["player"]["pos"][1] -= self.gp("vely")
 		elif self.gp("mode") == "jumping":
 			if not self.gp("vely") > self.gp("maxh") and not self.gp("jumph") < 0:
 				self.sp("vely",self.gp("vely") + self.gp("jumph"))
 				self.sp("maxy",-20)
+				if self.key["action"]:
+					self.sp("vely",self.gp("vely") + 90)
+					self.sp("maxh",self.gp("vely"))
+					self.sp("jumph",20)
 				self.sp("vely",univars.func.lerp(self.gp("vely"),self.gp("maxy"),self.gp("speedupy")))
-				om.objects["player"][0][1] -= self.gp("vely")
+				om.objects["player"]["pos"][1] -= self.gp("vely")
 				self.sp("jumph",self.gp("jumph") - self.gp("jumpd"))
+
 			else:
 				self.sp("jump",0)
-				self.sp("mode","norm")
+				self.sp("mode","falling or stat")
 
 	def cond(self,obj,info):
-		if info["name"] == "enemy":
-			om.translate(self,obj,[1,1])
+		"""obj -> the id   info -> the info for the id"""
+
 
 
 

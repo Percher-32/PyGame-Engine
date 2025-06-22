@@ -60,6 +60,6 @@ startuistate = "def"
 
 screencol = (110,189,234)
 
-startstate = "edit"
+startstate = "editgame"
 
-
+camspeeed = 45
