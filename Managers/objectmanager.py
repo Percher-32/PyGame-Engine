@@ -215,6 +215,7 @@ class object_manager:
 			self.values[id][name] = value
 
 	def objfromid(self,id):
+		"""returns an object class with an id of the input "id" """
 		for a in self.layers.keys():
 			layer = self.layers[a]
 			for b in layer:
@@ -350,6 +351,18 @@ class object_manager:
 				if int(round(inst.realpos[0])) == int(pos[0]) and int(round(inst.realpos[1])) == int(pos[1]):
 					self.instances[a].remove(inst)
 
+	def removeid(self,id):
+		"""removes an object and its class"""
+		postodel = id
+		self.objects.pop(postodel)
+		for a in self.layers.keys():
+			layer = self.layers[a]
+			for b in layer:
+				if b.name == postodel:
+					self.layers[a].remove(b)
+
+
+
 	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen):
 		self.remove(list(pos))
 		if not type in self.renderinst:
@@ -368,6 +381,7 @@ class object_manager:
 			self.instances[name].add(newt)
 
 	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int):
+		"adds an object to the manager  , gives an id of type str"
 		if not sprites in self.instables:
 			layer = 0
 			self.remove(pos)
@@ -444,3 +458,4 @@ class object_manager:
 
 
 
+om = object_manager(univars.realscreeen,univars.screen,univars.grandim,univars.aplhatypes,univars.hideentypes)

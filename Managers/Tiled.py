@@ -6,9 +6,13 @@ import funcs
 import univars
 import Uimanager
 import Cammanager
+import objectmanager
 um = Uimanager.Uimanager()
 cam = Cameramod.cam
 cam = Cammanager.camager.cameras["def"]
+
+object_manager = objectmanager.om
+
 class TiledSoftwre:
 	def __init__(self,realscreen,theme,grandim,screen,om):
 		self.pause = True
@@ -84,14 +88,15 @@ class TiledSoftwre:
 			else:
 				return dostring
 
-	def textline(self,GameManager,dostring,precursur,x,y):
+	def textline(self,GameManager,dostring,precursur):
+		GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],600)
 		if not GameManager.event_manager.key[pygame.K_RETURN]:
 			if GameManager.event_manager.key[pygame.K_BACKSPACE]:
 						dostring = dostring[:-1]
 			else:
 				if GameManager.event_manager.keyb:
 					dostring += GameManager.event_manager.code
-			self.tm.drawtext2(f"{precursur} {dostring}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],x,y)
+			self.tm.drawtext2(f"{precursur} {dostring}","pixel2.ttf",40,0,0,0,univars.theme["bright"],-0.95,-0.9)
 			return dostring
 		else:
 			if not dostring == "":
@@ -99,7 +104,9 @@ class TiledSoftwre:
 			else:
 				return dostring
 
-	def Run(self,work,speed,GameManager,camera,object_manager,dim,debug,cm,smate):
+
+
+	def Run(self,work,speed,GameManager,camera,dim,debug,cm,smate):
 		if work:
 			self.comm = False
 			self.loadingmap = False
@@ -495,6 +502,7 @@ class TiledSoftwre:
 				object_manager.tile()
 				self.savemode = 0
 
+			#savemode for object veiw
 			elif self.savemode == "alterobj":
 				GameManager.uibox((400,self.realscreeen.get_height() - 200),(-0.75,0.15),self.theme["dark"] ,400)
 				b = self.dostring
@@ -511,8 +519,8 @@ class TiledSoftwre:
 					self.tm.drawtext(f"no variables"                                                                                                                                                              ,"pixel2.ttf",40,0,0,0,self.theme["bright"],-0.8,-0.2)
 					
 
-				if not self.commandline(GameManager,self.dostring2,f"what command for object {b.name}:")== self.secretword:
-					self.dostring2 = self.commandline(GameManager,self.dostring2,f"what command for object {b.name}:")
+				if not self.textline(GameManager,self.dostring2,f"what command for object {b.name}:")== self.secretword:
+					self.dostring2 = self.textline(GameManager,self.dostring2,f"what command for object {b.name}:")
 				else:
 					self.savemode = "Obj" + self.dostring2.rstrip()
 
@@ -584,11 +592,27 @@ class TiledSoftwre:
 				self.savemode = "alterobj"
 
 			else:
-				if not self.commmandtring.rstrip() == "Com":
+				if not self.commmandtring.rstrip() in ["Com","Obj"]:
 					if "state:" in self.commmandtring.rstrip():
 						self.cht = self.commmandtring.rstrip().replace("state:", "")
 						self.comm = True
-				self.savemode = 0
+						self.savemode = 0
+					elif "find:" in self.commmandtring.rstrip():
+						self.cht = self.commmandtring.rstrip().replace("find:", "")
+						self.dostring = object_manager.objfromid(self.cht)
+						if not self.dostring == None:
+							self.dostring2 = ""
+							self.savemode = "alterobj"
+						self.commmandtring = ""
+					elif "delete:" in self.commmandtring.rstrip():
+						self.cht = self.commmandtring.rstrip().replace("delete:", "")
+						self.dostring = object_manager.objfromid(self.cht)
+						if not self.dostring == None:
+							object_manager.removeid(self.cht)
+						self.commmandtring = ""
+					else:
+						self.savemode = 0
+
 
 			self.placable -= 1 * GameManager.frame_manager.dt
 			self.rotable -= 1 * GameManager.frame_manager.dt

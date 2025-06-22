@@ -16,7 +16,7 @@ pygame.joystick.init()
 em = event_manager.event_manager()
 tm = Textmanager.Textmanager(univars.realscreeen)
 fm = framemanager.frame_manager(em,tm)
-om = objectmanager.object_manager(univars.realscreeen,univars.screen,univars.grandim,univars.aplhatypes,univars.hideentypes)
+om = objectmanager.om
 Tiled = Tiled.TiledSoftwre(univars.realscreeen,univars.theme,univars.grandim,univars.screen,om)
 cam = Cameramod.cam
 cm = Cammanager.camager
@@ -230,7 +230,7 @@ class GameManager():
 		univars.screen.fill((self.screen_colour))
 		om.render(cam,self,self.dim)
 		self.inum([cam.x,cam.y],cam.size)
-		Tiled.Run(self.work,40,self,cam,om,self.dim,self.leveledit,cm,sm.state)
+		Tiled.Run(self.work,40,self,cam,self.dim,self.leveledit,cm,sm.state)
 		um.update()
 		self.keybind()
 		cm.update()
