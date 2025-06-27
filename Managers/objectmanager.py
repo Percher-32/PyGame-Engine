@@ -11,6 +11,8 @@ import os
 import math
 # from render import render
 
+
+
 class object_manager: 
 	def __init__(self,realscreeen,screen,grandim,alpha,rend):
 		self.objects = {}
