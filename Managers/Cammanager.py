@@ -19,6 +19,17 @@ class Cammanager:
 		self.cam.screenshakevalue = self.cameras[name][2]
 		self.currentcam = name
 	
+	def getcam(self,cam,item):
+		"""to get the conditions for a camera , cam : camera-name  ,  item : [ pos ,size or shake ] """
+		index = {"pos":0,"size":1,"shake":2}
+		if item == "posx":
+			return self.cameras[cam][0][0]
+		elif item == "posy":
+			return self.cameras[cam][0][1]
+		else:
+			toch = index[item]
+			return self.cameras[cam][toch]
+
 	def setcond(self,cam,item,val):
 		"""to set the conditions for a camera , cam : camera-name  ,  item : [ pos ,size or shake ]  ,  val :  what to set it to  """
 		index = {"pos":0,"size":1,"shake":2}

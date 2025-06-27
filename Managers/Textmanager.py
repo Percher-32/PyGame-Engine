@@ -1,5 +1,5 @@
-#Textmanager
 import pygame
+
 class Textmanager:
     def __init__(self,screen):
         self.realscreen = screen

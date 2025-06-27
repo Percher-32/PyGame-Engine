@@ -318,7 +318,7 @@ class TiledSoftwre:
 
 							if GameManager.event_manager.key[pygame.K_LCTRL]:
 								self.dostring2 = ""
-								self.dostring = mousecol["obj"][0]
+								self.dostring = mousecol["inst"][0]
 								self.savemode = "alterinst"
 
 
@@ -506,8 +506,8 @@ class TiledSoftwre:
 			elif self.savemode == "alterobj":
 				GameManager.uibox((400,self.realscreeen.get_height() - 200),(-0.75,0.15),self.theme["dark"] ,400)
 				b = self.dostring
-				Cammanager.camager.setcond("def","pos",b.info["pos"])
-				Cammanager.camager.setcond("def","size",((max(b.info["size"])/dim)))
+				Cammanager.camager.setcond("def","pos",   univars.func.lerp(Cammanager.camager.getcam("def","pos"),b.info["pos"],4)    )
+				Cammanager.camager.setcond("def","size",   univars.func.lerp(Cammanager.camager.getcam("def","size"),((max(b.info["size"])/dim)),4)    )
 				GameManager.blituis(b.image,(-0.8,0.7),(3 * 64,3 * 64),self.rot,1000)
 				self.tm.drawtext2(f"pos = {b.info['pos']}\nId = {b.name}\nName = {b.info['name']}\nSize = {b.info['size']}\nRot = {b.info['rot']}\nType = {b.info['type']}\nRender = {bool(b.info['rendercond'])}","pixel2.ttf",40,0,0,0,self.theme["bright"],-0.9,0.2)
 				if b.name in object_manager.values.keys():
@@ -523,6 +523,32 @@ class TiledSoftwre:
 					self.dostring2 = self.textline(GameManager,self.dostring2,f"what command for object {b.name}:")
 				else:
 					self.savemode = "Obj" + self.dostring2.rstrip()
+
+			elif "Obj" in self.savemode and "addvar:" in self.savemode:
+				st = self.savemode.rstrip()
+				st = st.strip()
+				st = st.replace("Objaddvar:", "")
+				varname = ""
+				varlue = ""
+				gate = 0
+				for i in st:
+					if gate:
+						varlue = varlue + str(i)
+					if not i == "=" and not gate:
+						varname = varname + str(i)
+					else:
+						gate = 1
+					
+				varname = str(varname)
+				varlue = str(varlue)
+				print(self.dostring.name)
+				object_manager.set_value(self.dostring.name,varname,varlue)
+				print(varname)
+				print(varlue)
+				self.savemode = "alterobj"
+
+						
+				
 
 
 

@@ -55,7 +55,11 @@ class func:
         a = pygame.transform.scale(a,(abs(size[0]),abs(size[1])))
         realscreeen.blit(a,(pos[0]  * realscreeen.get_width()//2 - (a.get_width()/2)  + realscreeen.get_width()//2  ,-1 * pos[1]  * realscreeen.get_width()//2 - (a.get_height()/2)  + realscreeen.get_height()//2 ))
     def lerp(self,val,max,sm):
-        val = val + (max - val)/sm
+        if not type(val) == list:
+            val = val + (max - val)/sm
+        else:
+            for i in range(len(val)):
+                val[i] += (max[1] - val[i])/sm
         return val
     
     def ssblitrect(self,rect,col,camera,thickness):
