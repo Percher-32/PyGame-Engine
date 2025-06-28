@@ -5,7 +5,10 @@ import univars
 import numpy as np
 cam = Cameramod.cam
 class inst(pygame.sprite.Sprite):
-	def __init__(self,screen,grandim,name:str,x:int,y:int,rot:int,sizen:list,type:str,alpha):
+	__slots__ = ["screen","grandim","name","x","y","rot","sizen","type","alpha"]
+
+
+	def __init__(self,screen,grandim,name,x,y,rot,sizen,type,alpha):
 		pygame.sprite.Sprite.__init__(self)
 		self.screen = screen
 		self.func = funcs.func(screen,grandim)

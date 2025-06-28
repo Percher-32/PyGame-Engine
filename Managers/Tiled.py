@@ -506,7 +506,7 @@ class TiledSoftwre:
 			elif self.savemode == "alterobj":
 				GameManager.uibox((400,self.realscreeen.get_height() - 200),(-0.75,0.15),self.theme["dark"] ,400)
 				b = self.dostring
-				Cammanager.camager.setcond("def","pos",   univars.func.lerp(Cammanager.camager.getcam("def","pos"),b.info["pos"],4)    )
+				Cammanager.camager.setcond("def","pos",   univars.func.lerp(Cammanager.camager.getcam("def","pos")   ,b.info["pos"],4)    )
 				Cammanager.camager.setcond("def","size",   univars.func.lerp(Cammanager.camager.getcam("def","size"),((max(b.info["size"])/dim)),4)    )
 				GameManager.blituis(b.image,(-0.8,0.7),(3 * 64,3 * 64),self.rot,1000)
 				self.tm.drawtext2(f"pos = {b.info['pos']}\nId = {b.name}\nName = {b.info['name']}\nSize = {b.info['size']}\nRot = {b.info['rot']}\nType = {b.info['type']}\nRender = {bool(b.info['rendercond'])}","pixel2.ttf",40,0,0,0,self.theme["bright"],-0.9,0.2)
@@ -524,10 +524,10 @@ class TiledSoftwre:
 				else:
 					self.savemode = "Obj" + self.dostring2.rstrip()
 
-			elif "Obj" in self.savemode and "addvar:" in self.savemode:
+			elif "Objvar:" in self.savemode:
 				st = self.savemode.rstrip()
 				st = st.strip()
-				st = st.replace("Objaddvar:", "")
+				st = st.replace("Objvar:", "")
 				varname = ""
 				varlue = ""
 				gate = 0
@@ -541,13 +541,21 @@ class TiledSoftwre:
 					
 				varname = str(varname)
 				varlue = str(varlue)
-				print(self.dostring.name)
 				object_manager.set_value(self.dostring.name,varname,varlue)
-				print(varname)
-				print(varlue)
 				self.savemode = "alterobj"
+				self.dostring2 = ""
 
-						
+			elif "Objdelvar:" in self.savemode:
+				st = self.savemode.rstrip()
+				st = st.strip()
+				st = st.replace("Objdelvar:", "")
+				varname = st
+				if self.dostring.name in object_manager.values.keys():
+					if varname in object_manager.values[self.dostring.name].keys():
+						object_manager.values[self.dostring.name].pop(varname)
+				self.savemode = "alterobj"
+				self.dostring2 = ""
+		
 				
 
 
