@@ -462,7 +462,7 @@ class object_manager:
 
 	def render(self,camera,GameManager,dim:int):
 		#camera-chunk
-		camposdim = [int(round(camera.x/(dim * self.renderdist))),int(round(camera.y/(dim * self.renderdist)))]
+		camposdim = [round(camera.x/(dim * self.renderdist)),round(camera.y/(dim * self.renderdist))]
 		#availabe chunks
 		ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
 		#the instanciate chunks to be rendered

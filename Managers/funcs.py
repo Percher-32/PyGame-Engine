@@ -59,7 +59,7 @@ class func:
             val = val + (max - val)/sm
         else:
             for i in range(len(val)):
-                val[i] += (max[i] - val[i])/sm
+                val[i] += (max[1] - val[i])/sm
         return val
     
     def ssblitrect(self,rect,col,camera,thickness):
