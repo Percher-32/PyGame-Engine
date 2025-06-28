@@ -231,7 +231,7 @@ class GameManager():
 		om.render(cam,self,self.dim)
 		self.inum([cam.x,cam.y],cam.size)
 		Tiled.Run(self.work,univars.camspeeed,self,cam,self.dim,self.leveledit,cm,sm.state)
-		um.update()
+		um.update(em)
 		self.keybind()
 		cm.update()
 		cam.update()

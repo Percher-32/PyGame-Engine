@@ -23,6 +23,10 @@ class Runchinld(Gamemananager.GameManager):
 		super().__init__(screen,fm)
 
 	def initial(self):
+		um.addbutton((100,50),["default"],(0,0),"testbutton",univars.theme["dark"],255)
+		um.addglide("testbutton",univars.sizes["smallbutton"],univars.sizes["mediumbutton"])
+		
+
 		self.defs()
 		self.a = 0
 		if "test" in self.states:

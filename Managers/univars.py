@@ -63,3 +63,9 @@ screencol = (110,189,234)
 startstate = "edit"
 
 camspeeed = 45
+
+sizes = {
+    "smallbutton": (150,75),
+    "mediumbutton": (200,100),
+    "largebutton": (300,150),
+}
