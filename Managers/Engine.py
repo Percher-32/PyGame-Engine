@@ -23,6 +23,15 @@ class Runchinld(Gamemananager.GameManager):
 		super().__init__(screen,fm)
 
 	def initial(self):
+		self.maxbg = [univars.realscreeen.get_width(),univars.realscreeen.get_height()]
+		um.addrect(self.maxbg,["default"],(0,0),"bg2",univars.theme["dark"],255)
+		um.addrect([univars.realscreeen.get_width() - 200,0],["default"],(0,0),"bg",univars.theme["mid"],100)
+		um.addbutton((100,50),["default"],(0,-2),"playbutton",univars.theme["dark"],255)
+		um.addtext("playtext","play",univars.defont,(0,-1),univars.theme["semibright"],40,["default"])
+		um.bindtobutton("playtext","playbutton")
+		um.addglide("playbutton",univars.sizes["mediumbutton"],univars.sizes["largebutton"])
+		self.enppos = [0,-0.5]
+		self.uis = 1
 
 		self.defs()
 		self.a = 0
@@ -37,6 +46,19 @@ class Runchinld(Gamemananager.GameManager):
 			self.sp("mode","falling or stat")
 
 	def update(self):
+		fm.showfps = 0
+		self.maxbg = [univars.realscreeen.get_width(),univars.realscreeen.get_height()]
+		um.elements["bg2"]["dimension"] = univars.func.lerp(um.elements["bg2"]["dimensions"],self.maxbg,1)
+		self.wait("intro",2)
+		if self.ondone("intro"):
+			um.elements["playbutton"]["pos"] = univars.func.lerp(um.elements["playbutton"]["pos"],self.enppos,4)
+			um.elements["bg"]["dimension"] = univars.func.lerp(um.elements["bg"]["dimensions"],[univars.realscreeen.get_width() - 200,univars.realscreeen.get_height() - 200],4)
+		if um.elements["playbutton"]["click"]:
+			self.uis = 2
+		if self.uis == 2:
+			um.elements["playbutton"]["pos"] = univars.func.lerp(um.elements["playbutton"]["pos"],[0,-2],4)
+			um.elements["bg"]["dimension"] = univars.func.lerp(um.elements["bg"]["dimensions"],[univars.realscreeen.get_width() - 200,0],4)
+			um.elements["bg2"]["dimension"] = univars.func.lerp(um.elements["bg2"]["dimensions"],[0,0],1)
 		
 
 		if "test" in self.states:

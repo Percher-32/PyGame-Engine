@@ -18,13 +18,13 @@ class Uimanager:
 		self.elements[name] = {"name":name,"pos":pos}
 		self.sprites.add(ui)
 		
-	def addrect(self,dimensions,states,pos,name,color=(0,0,0),alpha=255):
-		ui = Uielement.Uirect(dimensions,states,pos,name)
+	def addrect(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None):
+		ui = Uielement.Uirect(dimensions,states,pos,name,surf = surf)
 		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"pos":pos}
 		self.sprites.add(ui)
 
-	def addbutton(self,dimensions,states,pos,name,color=(0,0,0),alpha=255):
-		ui = Uielement.Uibutton(dimensions,states,pos,name)
+	def addbutton(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None):
+		ui = Uielement.Uibutton(dimensions,states,pos,name,surf = surf)
 		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"click":0,"hover":0,"command":[],"pos":pos}
 		self.sprites.add(ui)
 
@@ -44,7 +44,6 @@ class Uimanager:
 			self.elements[button]["glidenorm"] = glidenorm
 			self.elements[button]["glidehov"] = glidehov
 			if "text" in self.elements[button].keys():
-				print("yapy")
 				text = self.elements[self.elements[button]["text"]]
 				ratio = glidehov[0] / glidenorm[0]
 				base = text["size"]

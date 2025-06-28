@@ -107,7 +107,7 @@ tm = Textmanager.Textmanager(univars.realscreeen)
 #             tm.drawtext2(self.text,self.font,self.size,0,0,0,self.col,self.pos[0],self.pos[1])
 
 class Ui(pygame.sprite.Sprite):
-    def __init__(self,surf,states,pos,name):
+    def __init__(self,surf,states,pos,name,cando = True):
         pygame.sprite.Sprite.__init__(self)
         self.image = surf
         self.pos = pos
@@ -115,11 +115,15 @@ class Ui(pygame.sprite.Sprite):
         self.baseimg = surf
         self.rect = self.baseimg.get_rect(center = pos)
         self.states = states
+        self.cando = cando
 
     def update(self,state,elements,em):
         if state in self.states:
             if self.name in elements.keys():
-                self.baseimg.fill(elements[self.name]["color"])
+                if self.cando:
+                    self.baseimg.fill(elements[self.name]["color"])
+                else:
+                    print(self.surf)
                 self.baseimg.set_alpha(elements[self.name]["alpha"])
                 self.baseimg = pygame.transform.scale(self.baseimg,elements[self.name]["dimensions"])
                 self.pos = elements[self.name]["pos"]
@@ -135,15 +139,24 @@ class Ui(pygame.sprite.Sprite):
     def extra(self,em,element,state):
         pass
 
+
 class Uirect(Ui):
-    def __init__(self,dimensions,states,pos,name):
-        super().__init__(pygame.Surface(dimensions),states, pos, name)
+    def __init__(self,dimensions,states,pos,name,surf = None):
+        if not surf == None:
+            img = surf
+            cd = 0
+        else:
+            img = pygame.Surface(dimensions)
+            cd  = 1
+        
+        super().__init__(img,states, pos, name,cando=cd)
+        self.surf = surf
         self.dimensions = dimensions
 
         
 class Uibutton(Uirect):
-    def __init__(self, dimensions, states, pos,name):
-        super().__init__(dimensions, states, pos,name)
+    def __init__(self, dimensions, states, pos,name,surf = None):
+        super().__init__(dimensions, states, pos,name,surf=surf)
         self.click = 0
         self.hover = 0
 
