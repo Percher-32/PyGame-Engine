@@ -10,7 +10,7 @@ import objectmanager
 um = Uimanager.Uimanager()
 cam = Cameramod.cam
 cam = Cammanager.camager.cameras["def"]
-
+tm = Textmanager.tm
 object_manager = objectmanager.om
 
 class TiledSoftwre:
@@ -18,7 +18,6 @@ class TiledSoftwre:
 		self.pause = True
 		self.realscreeen = realscreen
 		self.theme = theme
-		self.tm = Textmanager.Textmanager(realscreen)
 		self.func = funcs.func(screen,grandim)
 		self.om = om
 		self.secretword = "404 error"
@@ -55,15 +54,15 @@ class TiledSoftwre:
 		# GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),self.theme["dark"]	,400)
 		# GameManager.uibox((400,self.realscreeen.get_height() - 40),(-0.75,0),self.theme[1] ,400)
 		# GameManager.blituis(object_manager.sprites[self.dostring][0],(-0.8,0.7),(3 * 64,3 * 64),self.rot,1000)
-		# self.tm.drawtext2(f"pos = {object_manager.objects[self.dostring][0]}\nId = {self.dostring}\nName = {object_manager.objects[self.dostring][1]}\nSize = {(object_manager.sprites[self.dostring][0].get_width(),object_manager.sprites[self.dostring][0].get_height())}   \nRot = {object_manager.objects[self.dostring][3]}\nType = {object_manager.objects[self.dostring][9]}\nRender = {bool(object_manager.objects[self.dostring][6])}","pixel2.ttf",40,0,0,0,self.theme["semibright"],-0.9,0.2)
+		# tm.drawtext2(f"pos = {object_manager.objects[self.dostring][0]}\nId = {self.dostring}\nName = {object_manager.objects[self.dostring][1]}\nSize = {(object_manager.sprites[self.dostring][0].get_width(),object_manager.sprites[self.dostring][0].get_height())}   \nRot = {object_manager.objects[self.dostring][3]}\nType = {object_manager.objects[self.dostring][9]}\nRender = {bool(object_manager.objects[self.dostring][6])}","pixel2.ttf",40,0,0,0,self.theme["semibright"],-0.9,0.2)
 		# try:
 		# 	off = 0
 		# 	if len(list(object_manager.values[self.dostring].keys())) > 0:
 		# 		for i in object_manager.values[self.dostring].keys():
-		# 			self.tm.drawtext(f"{i} : {object_manager.values[self.dostring][i]}","pixel2.ttf",40,0,0,0,self.theme["semibright"],-0.8,off/10 - 0.2)
+		# 			tm.drawtext(f"{i} : {object_manager.values[self.dostring][i]}","pixel2.ttf",40,0,0,0,self.theme["semibright"],-0.8,off/10 - 0.2)
 		# 			off += 1
 		# except:
-		# 	self.tm.drawtext(f"no variables","pixel2.ttf",40,0,0,0,self.theme["semibright"],-0.8,-0.2)
+		# 	tm.drawtext(f"no variables","pixel2.ttf",40,0,0,0,self.theme["semibright"],-0.8,-0.2)
 
 	def extra(self,extras):
 		if not extras == ["none"]:
@@ -80,7 +79,7 @@ class TiledSoftwre:
 			else:
 				if GameManager.event_manager.keyb:
 					dostring += GameManager.event_manager.code
-			self.tm.drawtext2(f"{precursur} {dostring}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.95,-0.9)
+			tm.drawtext2(f"{precursur} {dostring}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.95,-0.9)
 			return dostring
 		else:
 			if not dostring == "":
@@ -96,7 +95,7 @@ class TiledSoftwre:
 			else:
 				if GameManager.event_manager.keyb:
 					dostring += GameManager.event_manager.code
-			self.tm.drawtext2(f"{precursur} {dostring}","pixel2.ttf",40,0,0,0,univars.theme["bright"],-0.95,-0.9)
+			tm.drawtext2(f"{precursur} {dostring}","pixel2.ttf",40,0,0,0,univars.theme["bright"],-0.95,-0.9)
 			return dostring
 		else:
 			if not dostring == "":
@@ -294,14 +293,14 @@ class TiledSoftwre:
 							b.fill(univars.theme["dark"])
 							b.set_alpha(150)
 							GameManager.Gotomousepos2(b)
-							self.tm.textatmouse(f"Normal Object\nId = { mousecol['obj'][0].name }\nName = {a['name']}\nSize = {a['size']}\nRot = {a['rot']}\nType = {a['type']}\nRender = {bool(a['rendercond'])}\nPos = {a['pos']}","pixel2.ttf",30,0,univars.theme["bright"],GameManager.event_manager,10,-20)
+							tm.textatmouse(f"Normal Object\nId = { mousecol['obj'][0].name }\nName = {a['name']}\nSize = {a['size']}\nRot = {a['rot']}\nType = {a['type']}\nRender = {bool(a['rendercond'])}\nPos = {a['pos']}","pixel2.ttf",30,0,univars.theme["bright"],GameManager.event_manager,10,-20)
 							if a1 in object_manager.values.keys():
 								off = 0
 								for i in object_manager.values[a1].keys():
-									self.tm.textatmouse(f"{i} : {object_manager.values[a1][i]}","pixel2.ttf",30,0,univars.theme["bright"],GameManager.event_manager,10,(-1 * off * 30) - 240)
+									tm.textatmouse(f"{i} : {object_manager.values[a1][i]}","pixel2.ttf",30,0,univars.theme["bright"],GameManager.event_manager,10,(-1 * off * 30) - 240)
 									off += 1
 							else:
-								self.tm.textatmouse(f"No variables","pixel2.ttf",30,0,univars.theme["bright"],GameManager.event_manager,10,0 - 240)
+								tm.textatmouse(f"No variables","pixel2.ttf",30,0,univars.theme["bright"],GameManager.event_manager,10,0 - 240)
 
 							if GameManager.event_manager.key[pygame.K_LCTRL]:
 								self.dostring2 = ""
@@ -314,7 +313,7 @@ class TiledSoftwre:
 							b.fill(univars.theme["dark"])
 							b.set_alpha(150)
 							GameManager.Gotomousepos2(b)
-							self.tm.textatmouse(f"Instanciated Object\nType = {a.type}\nName = { a.name }\nPos = {a.realpos}\nRot = {a.rot}\nSize = {a.size}\nAlpha = {a.alpha}","pixel2.ttf",30,0,univars.theme["bright"],GameManager.event_manager,10,-20)
+							tm.textatmouse(f"Instanciated Object\nType = {a.type}\nName = { a.name }\nPos = {a.realpos}\nRot = {a.rot}\nSize = {a.size}\nAlpha = {a.alpha}","pixel2.ttf",30,0,univars.theme["bright"],GameManager.event_manager,10,-20)
 
 							if GameManager.event_manager.key[pygame.K_LCTRL]:
 								self.dostring2 = ""
@@ -393,7 +392,7 @@ class TiledSoftwre:
 					else:
 						if GameManager.event_manager.keyb:
 							self.savestring += GameManager.event_manager.code
-					self.tm.drawtext2(f"What do you want to name your file: {self.savestring}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
+					tm.drawtext2(f"What do you want to name your file: {self.savestring}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
 				else:
 					if not self.savestring == "":
 						if object_manager.savetilemap(self.savestring.rstrip()) == "No":
@@ -404,7 +403,7 @@ class TiledSoftwre:
 			#savemode to force-save
 			elif self.savemode == 2:
 				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
-				self.tm.drawtext2(f"{self.savestring.rstrip()} already exists do you want to replace it Y/N","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
+				tm.drawtext2(f"{self.savestring.rstrip()} already exists do you want to replace it Y/N","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
 				if GameManager.event_manager.keyb:
 					if GameManager.event_manager.code == "y":
 						object_manager.forcesavetilemap(self.savestring.rstrip())
@@ -420,7 +419,7 @@ class TiledSoftwre:
 					else:
 						if GameManager.event_manager.keyb:
 							self.savestring += GameManager.event_manager.code
-					self.tm.drawtext2(f"What file do you want to load: {self.savestring}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
+					tm.drawtext2(f"What file do you want to load: {self.savestring}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
 				else:
 					object_manager.loadtilemap(self.savestring.rstrip())
 					self.loadingmap = True
@@ -436,7 +435,7 @@ class TiledSoftwre:
 						else:
 							if GameManager.event_manager.keyb:
 								self.chunksave += GameManager.event_manager.code
-						self.tm.drawtext2(f"What chunksize?: {self.chunksave}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
+						tm.drawtext2(f"What chunksize?: {self.chunksave}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
 					else:
 						if not self.chunksave == "":
 							if object_manager.savetilemap(self.savestring.rstrip(),self.chunksave.rstrip()) == "No":
@@ -452,7 +451,7 @@ class TiledSoftwre:
 					else:
 						if GameManager.event_manager.keyb:
 							self.commmandtring += GameManager.event_manager.code
-					self.tm.drawtext2(f"Input a command: {self.commmandtring}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.95,-0.9)
+					tm.drawtext2(f"Input a command: {self.commmandtring}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.95,-0.9)
 				else:
 					self.dostring = ""
 					self.savemode = "Com" + self.commmandtring.rstrip()
@@ -509,14 +508,14 @@ class TiledSoftwre:
 				Cammanager.camager.setcond("def","pos",   univars.func.lerp(Cammanager.camager.getcam("def","pos")   ,b.info["pos"],4)    )
 				Cammanager.camager.setcond("def","size",   univars.func.lerp(Cammanager.camager.getcam("def","size"),((max(b.info["size"])/dim)),4)    )
 				GameManager.blituis(b.image,(-0.8,0.7),(3 * 64,3 * 64),self.rot,1000)
-				self.tm.drawtext2(f"pos = {b.info['pos']}\nId = {b.name}\nName = {b.info['name']}\nSize = {b.info['size']}\nRot = {b.info['rot']}\nType = {b.info['type']}\nRender = {bool(b.info['rendercond'])}","pixel2.ttf",40,0,0,0,self.theme["bright"],-0.9,0.2)
+				tm.drawtext2(f"pos = {b.info['pos']}\nId = {b.name}\nName = {b.info['name']}\nSize = {b.info['size']}\nRot = {b.info['rot']}\nType = {b.info['type']}\nRender = {bool(b.info['rendercond'])}","pixel2.ttf",40,0,0,0,self.theme["bright"],-0.9,0.2)
 				if b.name in object_manager.values.keys():
 					off = 0
 					for i in object_manager.values[b.name].keys():
-						self.tm.drawtext2(f"{i} : {object_manager.values[b.name][i]}"                                                                                                                             ,"pixel2.ttf",40,0,0,0,self.theme["bright"],-0.9,(-1 * 0.08 * off) - 0.3)
+						tm.drawtext2(f"{i} : {object_manager.values[b.name][i]}"                                                                                                                             ,"pixel2.ttf",40,0,0,0,self.theme["bright"],-0.9,(-1 * 0.08 * off) - 0.3)
 						off += 1
 				else:
-					self.tm.drawtext(f"no variables"                                                                                                                                                              ,"pixel2.ttf",40,0,0,0,self.theme["bright"],-0.8,-0.2)
+					tm.drawtext(f"no variables"                                                                                                                                                              ,"pixel2.ttf",40,0,0,0,self.theme["bright"],-0.8,-0.2)
 					
 
 				if not self.textline(GameManager,self.dostring2,f"what command for object {b.name}:")== self.secretword:
@@ -574,9 +573,9 @@ class TiledSoftwre:
 					else:
 						if GameManager.event_manager.keyb:
 							self.dostring3 += GameManager.event_manager.code
-					self.tm.drawtext2(f"What type do you want to set it's type to?","pixel2.ttf",60,0,0,0,self.theme["semibright"],-0.4,0.9)
+					tm.drawtext2(f"What type do you want to set it's type to?","pixel2.ttf",60,0,0,0,self.theme["semibright"],-0.4,0.9)
 					GameManager.uibox((1170,80),(0.2,-0.6),self.theme[2],400)
-					self.tm.drawtext2(f"{self.dostring3}","pixel2.ttf",60,0,0,0,self.theme["semibright"],-0.4,-0.6)
+					tm.drawtext2(f"{self.dostring3}","pixel2.ttf",60,0,0,0,self.theme["semibright"],-0.4,-0.6)
 					GameManager.blituis(object_manager.sprites[self.dostring][0],(0.2,0.1),(7 * 64,7 * 64),self.rot,1000)
 				else:
 					if not self.dostring3 == "":
@@ -592,8 +591,8 @@ class TiledSoftwre:
 						if GameManager.event_manager.keyb:
 							self.dostring3 += GameManager.event_manager.code
 					GameManager.blituis(object_manager.sprites[self.dostring][0],(0,0.5),(4 * self.dim,4 * self.dim),self.rot,1000)
-					self.tm.drawtext(f"name = {self.dostring}","pixel2.ttf",70,0,0,0,(0,0,0),0,-0.1)
-					self.tm.drawtext2(f"width: {self.dostring3}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,-0.5)
+					tm.drawtext(f"name = {self.dostring}","pixel2.ttf",70,0,0,0,(0,0,0),0,-0.1)
+					tm.drawtext2(f"width: {self.dostring3}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,-0.5)
 				else:
 					if not self.dostring3 == "":
 						self.dostring4 = ""
@@ -608,8 +607,8 @@ class TiledSoftwre:
 						if GameManager.event_manager.keyb:
 							self.dostring4 += GameManager.event_manager.code
 					GameManager.blituis(object_manager.sprites[self.dostring][0],(0,0.5),(4 * self.dim,4 * self.dim),self.rot,1000)
-					self.tm.drawtext(f"name = {self.dostring}","pixel2.ttf",70,0,0,0,(0,0,0),0,-0.1)
-					self.tm.drawtext2(f"Height: {self.dostring4}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,-0.5)
+					tm.drawtext(f"name = {self.dostring}","pixel2.ttf",70,0,0,0,(0,0,0),0,-0.1)
+					tm.drawtext2(f"Height: {self.dostring4}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,-0.5)
 				else:
 					if not self.dostring4 == "":
 						object_manager.scaleto(self.dostring,[int(self.dostring3.rstrip()) * self.dim, int(self.dostring4.rstrip()) * self.dim])
@@ -659,12 +658,12 @@ class TiledSoftwre:
 			if self.showdata and self.savemode == 0 :
 				fulllist = self.spritenames + self.spritenames
 				GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
-				self.tm.drawtext(f"Camera-name : {cm.currentcam}"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.6,-0.9)
-				self.tm.drawtext2(f"Camera size: { round(1 / camera.size,2)}"            ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],0,-0.9)
-				self.tm.drawtext2(f"Camera pos: {[round(camera.x),-1 * round(camera.y)]}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.6,-0.9)
+				tm.drawtext(f"Camera-name : {cm.currentcam}"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.6,-0.9)
+				tm.drawtext2(f"Camera size: { round(1 / camera.size,2)}"            ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],0,-0.9)
+				tm.drawtext2(f"Camera pos: {[round(camera.x),-1 * round(camera.y)]}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.6,-0.9)
 				GameManager.uibox((400,160),(-0.78,0.75),univars.theme["dark"],200)
-				self.tm.drawtext2(f"State : {smate}",                                     "pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.97,0.85 - 0.05)
-				self.tm.drawtext2(f"Map : {object_manager.loadedmap}",                    "pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.97,0.75 - 0.05)
+				tm.drawtext2(f"State : {smate}",                                     "pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.97,0.85 - 0.05)
+				tm.drawtext2(f"Map : {object_manager.loadedmap}",                    "pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.97,0.75 - 0.05)
 					
 
 
@@ -677,8 +676,8 @@ class TiledSoftwre:
 					GameManager.blituis(self.func.getsprites(self.spritenames[self.sprite])[0],(0.8,0.8),(64,64),self.rot,1000)
 					GameManager.blituis(self.func.getsprites(fulllist[self.sprite + 1])[0],(0.92,0.8),(64,64),self.rot,100)
 					GameManager.blituis(self.func.getsprites(self.spritenames[self.sprite - 1])[0],(0.68,0.8),(64,64),self.rot,100)
-					self.tm.drawtext(f"Object-name : {self.spritenames[self.sprite]}",       "pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.8,0.6)
-					self.tm.drawtext(f"Object-type : {self.typelist[self.sprite]}",          "pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.8,0.5)
+					tm.drawtext(f"Object-name : {self.spritenames[self.sprite]}",       "pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.8,0.6)
+					tm.drawtext(f"Object-type : {self.typelist[self.sprite]}",          "pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.8,0.5)
 
 
 

@@ -14,8 +14,8 @@ pygame.init()
 pygame.joystick.init()
 
 em = event_manager.event_manager()
-tm = Textmanager.Textmanager(univars.realscreeen)
-fm = framemanager.frame_manager(em,tm)
+tm = Textmanager.tm
+fm = framemanager.frame_manager(em)
 om = objectmanager.om
 Tiled = Tiled.TiledSoftwre(univars.realscreeen,univars.theme,univars.grandim,univars.screen,om)
 cam = Cameramod.cam
@@ -98,6 +98,10 @@ class GameManager():
 	def blitui2(self,surf,pos):
 		a = surf
 		univars.realscreeen.blit(a,(pos[0]  * univars.realscreeen.get_width()//2 - (a.get_width()/2)  + univars.realscreeen.get_width()//2  ,-1 * pos[1]  * univars.realscreeen.get_width()//2 - (a.get_height()/2)  + univars.realscreeen.get_height()//2 ))
+
+	def blitui2pos(self,surf,pos):
+		a = surf
+		return (pos[0]  * univars.realscreeen.get_width()//2 - (a.get_width()/2)  + univars.realscreeen.get_width()//2  ,-1 * pos[1]  * univars.realscreeen.get_width()//2 - (a.get_height()/2)  + univars.realscreeen.get_height()//2 )
 
 	def blituis(self,surf,pos,size,rot,alpha):
 		a = surf
@@ -235,6 +239,7 @@ class GameManager():
 		self.keybind()
 		cm.update()
 		cam.update()
+		tm.update()
 
 	def update(self):			
 		pass
