@@ -23,9 +23,6 @@ class Runchinld(Gamemananager.GameManager):
 		super().__init__(screen,fm)
 
 	def initial(self):
-		um.addbutton((100,50),["default"],(0,0),"testbutton",univars.theme["dark"],255)
-		um.addglide("testbutton",univars.sizes["smallbutton"],univars.sizes["mediumbutton"])
-		
 
 		self.defs()
 		self.a = 0
@@ -40,6 +37,8 @@ class Runchinld(Gamemananager.GameManager):
 			self.sp("mode","falling or stat")
 
 	def update(self):
+		
+
 		if "test" in self.states:
 			c = om.collide9("player",0,cam,self.dim)
 			self.camfoc()

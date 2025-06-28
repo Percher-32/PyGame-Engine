@@ -122,15 +122,17 @@ class Ui(pygame.sprite.Sprite):
                 self.baseimg.fill(elements[self.name]["color"])
                 self.baseimg.set_alpha(elements[self.name]["alpha"])
                 self.baseimg = pygame.transform.scale(self.baseimg,elements[self.name]["dimensions"])
+                self.pos = elements[self.name]["pos"]
             self.image = self.baseimg
             pos = self.pos
             a = self.baseimg
-            self.rect = self.baseimg.get_rect(center = (pos[0]  * univars.realscreeen.get_width()//2   + univars.realscreeen.get_width()//2  ,-1 * pos[1]  * univars.realscreeen.get_width()//2   + univars.realscreeen.get_height()//2 ))
-            self.getclick(em)
+            wh = self.image.get_size()
+            self.rect = self.baseimg.get_rect(center = (pos[0] * univars.realscreeen.get_width()//2  + univars.realscreeen.get_width()//2 ,-1 * pos[1] * univars.realscreeen.get_height()//2  + univars.realscreeen.get_height()//2 ))
+            self.extra(em,elements,state)
         else:
             self.image = pygame.Surface((0,0))
     
-    def getclick(self,em):
+    def extra(self,em,element,state):
         pass
 
 class Uirect(Ui):
@@ -138,8 +140,6 @@ class Uirect(Ui):
         super().__init__(pygame.Surface(dimensions),states, pos, name)
         self.dimensions = dimensions
 
-    def getclick(self,em):
-        pass
         
 class Uibutton(Uirect):
     def __init__(self, dimensions, states, pos,name):
@@ -147,7 +147,7 @@ class Uibutton(Uirect):
         self.click = 0
         self.hover = 0
 
-    def getclick(self,em):
+    def extra(self,em,elements,state):
         if em.x or em.mouse:
             if self.rect.collidepoint(pygame.mouse.get_pos()):
                 self.hover = True
@@ -158,6 +158,35 @@ class Uibutton(Uirect):
             else:
                 self.hover = False
                 self.click = False
+
+
+class Uitext(pygame.sprite.Sprite):
+    def __init__(self, name, text, font, pos, col, size,states):
+        self.name = name
+        self.text = text
+        self.font = font
+        self.pos = pos
+        self.col = col
+        self.states = states
+        self.realfont = pygame.font.Font(f"Graphics/Fonts/{font}",100)
+        self.bart = self.realfont.render(text,1,col)
+        self.image = self.realfont.render(text,1,col)
+        self.rect = self.image.get_rect(center = (self.pos[0] * univars.realscreeen.get_width()//2 + univars.realscreeen.get_width()//2, -1 * self.pos[1] * univars.realscreeen.get_height()//2 + univars.realscreeen.get_height()//2))
+        pygame.sprite.Sprite.__init__(self)
+    def update(self,state,element,em):
+        if state in self.states:
+            self.col = element[self.name]["color"]
+            self.pos = element[self.name]["pos"]
+            pos = self.pos
+            self.image = self.realfont.render(element[self.name]["text"], 1, self.col)
+            self.image = pygame.transform.scale_by(self.bart,[element[self.name]["size"]/100,element[self.name]["size"]/100])
+            wh = self.image.get_size()
+            self.rect = self.image.get_rect(center = (pos[0] * univars.realscreeen.get_width()//2 + univars.realscreeen.get_width()//2 ,-1 * pos[1] * univars.realscreeen.get_height()//2   + univars.realscreeen.get_height()//2 ))
+        else:
+            self.image = pygame.Surface((0, 0))
+            self.rect = pygame.Rect(0, 0, 0, 0)
+
+    
 
 
 

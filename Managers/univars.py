@@ -69,3 +69,6 @@ sizes = {
     "mediumbutton": (200,100),
     "largebutton": (300,150),
 }
+
+
+defont = "pixel2.ttf"

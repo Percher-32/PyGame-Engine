@@ -165,16 +165,15 @@ class GameManager():
 		pass
 
 	def wait(self,name:str,time:float):
-		if not name in self.timers.values:
-			self.timers[name] = time
+		if not name in self.timers.keys():
+			self.timers[name] = time * 45
 
 	def updatetime(self):
 		self.dons = []
 		for i in self.timers.keys():
-			self.timers[i] -= self.frame_manager.dt
+			self.timers[i] = self.timers[i] - self.frame_manager.dt
 			if self.timers[i] < 0:
 				self.dons.append(i)
-				self.timers.pop[i]
 
 	def ondone(self,name:str) -> bool:
 		if name in self.dons:
@@ -234,13 +233,13 @@ class GameManager():
 		um.update(em)
 		self.keybind()
 		cm.update()
+		self.updatetime()
 		cam.update()
 
 	def update(self):			
 		pass
 				
 	def end(self):
-		self.updatetime()
 		self.frame_manager.next(self.fpsmax)
 
 	def initial(self):
