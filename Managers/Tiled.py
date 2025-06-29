@@ -589,6 +589,46 @@ class TiledSoftwre:
 				object_manager.objects[self.dostring.name]["rot"] = varname
 				self.savemode = "alterobj"
 				self.dostring2 = ""
+
+
+
+			elif self.savemode == "Objanim":
+				self.savemode = "animate"
+				self.showdata = False
+				um.state = "anim"
+				self.animstr = self.dostring.name
+				self.animobj = object_manager.objects[self.animstr]
+				um.addrect([2000,2000],["anim"],[0,0],"animbg",color = univars.theme["dark"])
+				um.addrect([64 * 2.4,64 * 2.4],["anim"],[2,0.7],"animspriteuibox",color=univars.theme["semibright"])
+				um.addrect([64 * 2,64 * 2],["anim"],[2,0.7],"animspriteui",surf = self.animobj["name"],sn = self.animobj["sn"])
+				um.addtext("spritenames","None",univars.defont,[2,0.7],univars.theme["bright"],60,["anim"])
+				self.snts = ""
+
+
+
+
+
+			elif self.savemode == "animate":
+				um.lerpval("animspriteuibox","pos",[-0.8,0.7],4)
+				um.lerpval("animspriteui","pos",[-0.8,0.7],6)
+				um.lerpval("spritenames","pos",[-0.5,0.7],6)
+				um.elements["spritenames"]["text"] = f"sprite-num:{self.animobj['sn']}"
+				if not self.textline(GameManager,self.snts,f"/s , /o , /p, /f:")== self.secretword:
+					self.snts = self.textline(GameManager,self.snts,f"/s , /o , /p, /f:")
+				else:
+					try:
+						if int(self.snts) in range(len(univars.func.getsprites(self.animobj["name"]))):
+							object_manager.objects[self.animstr]["sn"] = int(self.snts)
+							um.elements["animspriteui"]["surf"] = univars.func.getsprites(self.animobj["name"])[self.animobj["sn"]]
+					except:
+						pass
+					self.snts = ""
+
+
+
+
+
+
 					
 
 
@@ -596,9 +636,9 @@ class TiledSoftwre:
 
 
 			elif self.savemode == "Objinst":
-				self.om.instables.append(self.om.objects[self.dostring][1])
+				self.om.instables.append(self.om.objects[self.dostring.name]["name"])
 				self.dostring = 0
-				self.savemode = "alterobj"
+				self.savemode = 0
 
 			elif self.savemode in ["Objretype","Objtype","Objre-type","Objre type"]:
 				self.altmode(GameManager,object_manager)

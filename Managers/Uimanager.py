@@ -18,14 +18,18 @@ class Uimanager:
 		self.elements[name] = {"name":name,"pos":pos}
 		self.sprites.add(ui)
 		
-	def addrect(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None):
+	def addrect(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = 0):
+		if not surf == None:
+			surf = univars.func.getsprites(surf)[sn]
 		ui = Uielement.Uirect(dimensions,states,pos,name,surf = surf)
-		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"pos":pos,"states":states}
+		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"pos":pos,"states":states,"surf":surf}
 		self.sprites.add(ui)
 
-	def addbutton(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None):
+	def addbutton(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = 0):
+		if not surf == None:
+			surf = univars.func.getsprites(surf)[sn]
 		ui = Uielement.Uibutton(dimensions,states,pos,name,surf = surf)
-		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"click":0,"hover":0,"command":[],"pos":pos,"states":states}
+		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"click":0,"hover":0,"command":[],"pos":pos,"states":states,"surf":surf}
 		self.sprites.add(ui)
 
 	def addtext(self,name, text, font, pos, col, size,states):
@@ -37,6 +41,12 @@ class Uimanager:
 	def bindtobutton(self,text,button):
 		self.elements[text]["button"] = button
 		self.elements[button]["text"] = text
+
+
+	def lerpval(self,elem,val,max,sm):
+		self.elements[elem][val] =   univars.func.lerp(self.elements[elem][val],max,sm)
+ 
+	
 
 	def addglide(self,button,glidenorm,glidehov):
 		if button in self.elements.keys():

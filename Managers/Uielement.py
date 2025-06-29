@@ -186,13 +186,15 @@ class Uitext(pygame.sprite.Sprite):
         self.image = self.realfont.render(text,1,col)
         self.rect = self.image.get_rect(center = (self.pos[0] * univars.realscreeen.get_width()//2 + univars.realscreeen.get_width()//2, -1 * self.pos[1] * univars.realscreeen.get_height()//2 + univars.realscreeen.get_height()//2))
         pygame.sprite.Sprite.__init__(self)
+
     def update(self,state,element,em):
         if state in self.states:
             self.col = element[self.name]["color"]
             self.pos = element[self.name]["pos"]
             self.states = element[self.name]["states"]
             pos = self.pos
-            self.image = self.realfont.render(element[self.name]["text"], 1, self.col)
+            self.text = element[self.name]["text"]
+            self.bart = self.realfont.render(self.text, 1, self.col)
             self.image = pygame.transform.scale_by(self.bart,[element[self.name]["size"]/100,element[self.name]["size"]/100])
             self.rect = self.image.get_rect(center = (pos[0] * univars.realscreeen.get_width()//2 + univars.realscreeen.get_width()//2 ,-1 * pos[1] * univars.realscreeen.get_height()//2   + univars.realscreeen.get_height()//2 ))
         else:
