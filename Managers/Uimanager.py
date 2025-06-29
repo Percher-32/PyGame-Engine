@@ -20,17 +20,17 @@ class Uimanager:
 		
 	def addrect(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None):
 		ui = Uielement.Uirect(dimensions,states,pos,name,surf = surf)
-		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"pos":pos}
+		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"pos":pos,"states":states}
 		self.sprites.add(ui)
 
 	def addbutton(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None):
 		ui = Uielement.Uibutton(dimensions,states,pos,name,surf = surf)
-		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"click":0,"hover":0,"command":[],"pos":pos}
+		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"click":0,"hover":0,"command":[],"pos":pos,"states":states}
 		self.sprites.add(ui)
 
 	def addtext(self,name, text, font, pos, col, size,states):
 		ui = Uielement.Uitext(name,text,font,pos,col,size,states)
-		self.elements[name] = {"name":name,"text":text,"color":col,"size":size,"command":[],"pos":pos}
+		self.elements[name] = {"name":name,"text":text,"color":col,"size":size,"command":[],"pos":pos,"states":states}
 		self.sprites.add(ui)
 
 
@@ -74,6 +74,7 @@ class Uimanager:
 						else:
 							self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidenorm"],4)
 					self.elements[a.name]["pos"] = self.elements[self.elements[a.name]["button"]]["pos"]
+					self.elements[a.name]["states"] = self.elements[self.elements[a.name]["button"]]["states"]
 
 
 			

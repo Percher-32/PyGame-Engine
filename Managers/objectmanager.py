@@ -223,6 +223,8 @@ class object_manager:
 	def rotate(self,GameManager,id,ang):
 		if not GameManager == "none":
 			self.objects[id]["rot"] += (ang * GameManager.frame_manager.dt * self.speed)
+			if self.objects[id]["rot"] > 360:
+				self.objects[id]["rot"] = self.objects[id]["rot"] - 360
 
 	def scaleto(self,id,scale):
 		self.sprites[id] = self.func.getspritesscale(self.objects[id][1],scale)

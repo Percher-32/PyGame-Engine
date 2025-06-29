@@ -7,7 +7,7 @@ import univars
 import Uimanager
 import Cammanager
 import objectmanager
-um = Uimanager.Uimanager()
+um = Uimanager.ingame
 cam = Cameramod.cam
 cam = Cammanager.camager.cameras["def"]
 
@@ -556,7 +556,41 @@ class TiledSoftwre:
 				self.savemode = "alterobj"
 				self.dostring2 = ""
 		
-				
+			elif "Objmove:" in self.savemode:
+				st = self.savemode.rstrip()
+				st = st.strip()
+				st = st.replace("Objmove:[", "")
+				st = st.replace("]", "")
+				st = st.strip()
+				varname = st
+				x = []
+				y = []
+				gate = 0
+				for i in st:
+					if gate:
+						x.append(int(i))
+					if not i == "," and not gate:
+						y.append(int(i))
+					else:
+						gate = 1
+				xnum = int(''.join(str(i) for i in x))
+				ynum = int(''.join(str(i) for i in y))
+				object_manager.objects[self.dostring.name]["pos"] = [xnum,ynum]
+				self.savemode = "alterobj"
+				self.dostring2 = ""
+
+
+			elif "Objrot:" in self.savemode:
+				st = self.savemode.rstrip()
+				st = st.strip()
+				st = st.replace("Objrot:", "")
+				st = st.strip()
+				varname = int(st)
+				object_manager.objects[self.dostring.name]["rot"] = varname
+				self.savemode = "alterobj"
+				self.dostring2 = ""
+					
+
 
 
 

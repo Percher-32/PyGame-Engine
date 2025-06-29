@@ -10,6 +10,7 @@ import Tiled as Tiled
 import univars as univars
 import statemanager as statemanager
 import Uimanager
+import copy
 pygame.init()
 pygame.joystick.init()
 
@@ -175,11 +176,19 @@ class GameManager():
 			if self.timers[i] < 0:
 				self.dons.append(i)
 
+		timer_copy = copy.copy(self.timers)
+		for i in timer_copy.keys():
+			if i in self.dons:
+				self.timers.pop(i)
+
 	def ondone(self,name:str) -> bool:
 		if name in self.dons:
 			return True
 		else:
 			return False
+		
+	def commence(self):
+		pass
 
 	def defs(self):
 		sm.update()
@@ -203,6 +212,7 @@ class GameManager():
 		return om.get_value("player",val)
 
 	def Run(self):
+		self.commence()
 		self.initial()
 		while(1): 
 			self.start()   

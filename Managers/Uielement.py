@@ -123,14 +123,14 @@ class Ui(pygame.sprite.Sprite):
                 if self.cando:
                     self.baseimg.fill(elements[self.name]["color"])
                 else:
-                    print(self.surf)
+                    self.baseimg = elements[self.name]["surf"]
+                self.states = elements[self.name]["states"]
                 self.baseimg.set_alpha(elements[self.name]["alpha"])
-                self.baseimg = pygame.transform.scale(self.baseimg,elements[self.name]["dimensions"])
+                baseimg1 = pygame.transform.scale(self.baseimg,elements[self.name]["dimensions"])
+                self.baseimg = baseimg1
                 self.pos = elements[self.name]["pos"]
             self.image = self.baseimg
             pos = self.pos
-            a = self.baseimg
-            wh = self.image.get_size()
             self.rect = self.baseimg.get_rect(center = (pos[0] * univars.realscreeen.get_width()//2  + univars.realscreeen.get_width()//2 ,-1 * pos[1] * univars.realscreeen.get_height()//2  + univars.realscreeen.get_height()//2 ))
             self.extra(em,elements,state)
         else:
@@ -190,10 +190,10 @@ class Uitext(pygame.sprite.Sprite):
         if state in self.states:
             self.col = element[self.name]["color"]
             self.pos = element[self.name]["pos"]
+            self.states = element[self.name]["states"]
             pos = self.pos
             self.image = self.realfont.render(element[self.name]["text"], 1, self.col)
             self.image = pygame.transform.scale_by(self.bart,[element[self.name]["size"]/100,element[self.name]["size"]/100])
-            wh = self.image.get_size()
             self.rect = self.image.get_rect(center = (pos[0] * univars.realscreeen.get_width()//2 + univars.realscreeen.get_width()//2 ,-1 * pos[1] * univars.realscreeen.get_height()//2   + univars.realscreeen.get_height()//2 ))
         else:
             self.image = pygame.Surface((0, 0))

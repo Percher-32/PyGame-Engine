@@ -3,6 +3,7 @@ import funcs
 import Cameramod
 import univars
 import numpy as np
+import math
 cam = Cameramod.cam
 class inst(pygame.sprite.Sprite):
 	__slots__ = ["screen","grandim","name","x","y","rot","sizen","type","alpha"]
@@ -41,7 +42,9 @@ class inst(pygame.sprite.Sprite):
 
 	def update(self, camera,dim:int,showall):
 		if self.inchunk(camera,self.realpos,dim):
-			self.image =  pygame.transform.rotate(pygame.transform.scale(self.bart,  [self.size[0] * abs(camera.size),self.size[1] * abs(camera.size)]  ) ,self.rot)
+			
+			ext =  int(abs(dim * math.sin(self.rot/28.6 )))
+			self.image =  pygame.transform.rotate(pygame.transform.scale(self.bart,  [self.size[0] * abs(camera.size)+ ext,self.size[1] * abs(camera.size) +ext] ) ,self.rot)
 			alpha = self.alpha
 			if showall:
 				if self.alpha == 0:
@@ -84,8 +87,10 @@ class obj(pygame.sprite.Sprite):
 			if self.supvar(g,h):
 				b = sprite
 				b = pygame.transform.rotate(b,self.info["rot"])
+
 				b.set_alpha(self.info["alpha"])
-				b = pygame.transform.scale(b,[self.info["size"][0] * camera.size,self.info["size"][1] * camera.size])
+				ext =  abs(dim * math.sin(self.info["rot"]/28.6 ))
+				b = pygame.transform.scale(b,[self.info["size"][0] * camera.size + ext,self.info["size"][1] * camera.size + ext])
 				self.image = b
 				self.rect = self.image.get_rect(topleft = ( (pos[0] - camera.x) * round(camera.size,2) + univars.screen.get_width()//2 - b.get_width()/2 ,(pos[1] - camera.y) * round(camera.size,2) + univars.screen.get_height()//2 - b.get_height()/2))
 			else:
