@@ -134,12 +134,24 @@ class object_manager:
 					self.objects[id]["animname"] = name
 		
 		frame = int(round(self.objects[id]["gothru"]))
-		if not frame == max(self.anims[id][name].keys()):
+		g = self.anims[id][name].keys()
+		g = [int(g) for i in g]
+		if not frame == int(max(g)):
 			self.objects[id]["gothru"] += dt
-			if frame in self.anims[id][name].keys():
+			if frame in g:
 				self.objects[id]["sn"] = frame
 		else:
 			self.gothru = 0
+
+
+	def saveanim(self,obj,animname,dict):
+		os.mkdir(f"Saved/animation/{name}")
+		with open(f"Saved/tilemaps/{name}/inst.json","w") as file:
+			todump = self.encodeinst()
+			json.dump(todump,file)
+
+
+
 
 
 

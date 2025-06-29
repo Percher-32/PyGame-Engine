@@ -616,12 +616,14 @@ class TiledSoftwre:
 				if not self.textline(GameManager,self.snts,f"/s , /o , /p, /f:")== self.secretword:
 					self.snts = self.textline(GameManager,self.snts,f"/s , /o , /p, /f:")
 				else:
-					try:
-						if int(self.snts) in range(len(univars.func.getsprites(self.animobj["name"]))):
-							object_manager.objects[self.animstr]["sn"] = int(self.snts)
-							um.elements["animspriteui"]["surf"] = univars.func.getsprites(self.animobj["name"])[self.animobj["sn"]]
-					except:
-						pass
+					if "/s" in self.snts:
+						self.snts = self.snts.replace("/s","")
+						try:
+							if int(self.snts) in range(len(univars.func.getsprites(self.animobj["name"]))):
+								object_manager.objects[self.animstr]["sn"] = int(self.snts)
+								um.elements["animspriteui"]["surf"] = univars.func.getsprites(self.animobj["name"])[self.animobj["sn"]]
+						except:
+							pass
 					self.snts = ""
 
 
