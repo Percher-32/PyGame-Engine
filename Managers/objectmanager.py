@@ -144,11 +144,19 @@ class object_manager:
 			self.gothru = 0
 
 
-	def saveanim(self,obj,animname,dict):
-		os.mkdir(f"Saved/animation/{name}")
-		with open(f"Saved/tilemaps/{name}/inst.json","w") as file:
-			todump = self.encodeinst()
-			json.dump(todump,file)
+	def saveanim(self,name:str,animname:str,anim:dict):
+		""""obj -> name of object   animname -> animation name  , anim -> actual animation"""
+		if not os.path.exists(f"Saved/tilemaps/{name}"):
+			os.mkdir(f"Saved/animations/{name}")
+		with open(f"Saved/animations/{name}/{animname}.json","w") as file:
+			json.dump(anim,file)
+			
+
+
+	def loadanim(self,name,animname):
+		with open(f"Saved/animations/{name}/{animname}.json","r") as file:
+			anim = json.load(file)
+		om.objects[name]["animname"] = anim
 
 
 
