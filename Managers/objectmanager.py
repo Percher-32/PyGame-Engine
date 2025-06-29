@@ -42,6 +42,7 @@ class object_manager:
 		self.aplhainst = alpha
 		self.renderinst = rend
 		self.speed = 0
+		self.animations = {}
 
 	def inchunk(self,campos,object,dim,dist):
 		if campos[0] - (dim * dist) <= object[0] <= campos[0] + (dim * dist):
@@ -114,39 +115,36 @@ class object_manager:
 		return patch
 
 
-	def addanim(self,id:str,name:str,frames:dict,forceplay = False):
-		""" adds a new animation to a sprite  , eg frames  =  {"1":3,"2":5,"5":7} """
-		if not id in self.anims.keys():
-			self.anims[id] = {}
-			self.forceplay[id] = {}
-		self.anims[id][name] = frames
-		self.forceplay[id][name] = forceplay
 
 
 
 	def playanim(self,dt,id,name):
+		a = name
+		forceplay = self.animations[self.objects[id]['name']][a][1]
 		if not self.objects[id]["animname"] == name:
-			if self.forceplay[id]:
+			if forceplay:
 				self.objects[id]["animname"] = name
 				self.objects[id]["gothru"] = 0
 			else:
 				if self.objects[id]["gothru"] == 0:
 					self.objects[id]["animname"] = name
 		
+		
 		frame = int(round(self.objects[id]["gothru"]))
-		g = self.anims[id][name].keys()
-		g = [int(g) for i in g]
-		if not frame == int(max(g)):
-			self.objects[id]["gothru"] += dt
+		g = self.animations[self.objects[id]['name']][a][0].keys()
+		g = [int(i) for i in g]
+		if not frame >= max(g):
+			self.objects[id]["gothru"] += dt/10
 			if frame in g:
-				self.objects[id]["sn"] = frame
+				self.objects[id]["sn"] = self.animations[self.objects[id]['name']][a][0][str(frame)]
 		else:
-			self.gothru = 0
+			self.objects[id]["gothru"] = 0
+		
 
 
 	def saveanim(self,name:str,animname:str,anim:dict):
 		""""obj -> name of object   animname -> animation name  , anim -> actual animation"""
-		if not os.path.exists(f"Saved/tilemaps/{name}"):
+		if not os.path.exists(f"Saved/animations/{name}"):
 			os.mkdir(f"Saved/animations/{name}")
 		with open(f"Saved/animations/{name}/{animname}.json","w") as file:
 			json.dump(anim,file)
@@ -154,9 +152,16 @@ class object_manager:
 
 
 	def loadanim(self,name,animname):
+		"""obj -> name   , animname -> animation name"""
 		with open(f"Saved/animations/{name}/{animname}.json","r") as file:
 			anim = json.load(file)
-		om.objects[name]["animname"] = anim
+		
+		if name in self.animations.keys():
+			self.animations[name][animname] = anim
+		else:
+			self.animations[name] = {}
+			self.animations[name][animname] = anim
+
 
 
 

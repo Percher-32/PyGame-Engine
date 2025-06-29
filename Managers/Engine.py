@@ -25,6 +25,12 @@ class Runchinld(Gamemananager.GameManager):
 	def initial(self):
 		self.defs()
 		self.a = 0
+		
+		
+		om.saveanim("bird","fly",[{"0":0,"10":1,"19":0},False])
+		om.loadanim("bird","fly")
+		om.saveanim("bird","fly2",[{"0":0,"1":1,"2":0,"3":1,"5":0,"6":1,"7":0,"8":1},False])
+		om.loadanim("bird","fly2")
 		if "test" in self.states:
 			cm.addcam("playercam",[0,0],0.4)
 			cm.setcam("playercam")
@@ -49,6 +55,7 @@ class Runchinld(Gamemananager.GameManager):
 
 
 	def update(self):
+		om.speed = 1
 		# fm.showfps = 0
 		# self.maxbg = [univars.realscreeen.get_width(),univars.realscreeen.get_height()]
 		# if um == "default" or "test2":
@@ -166,6 +173,9 @@ class Runchinld(Gamemananager.GameManager):
 
 	def cond(self,obj,info):
 		"""obj -> the id   info -> the info for the id"""
+		if info["name"] == "bird":
+			om.playanim(fm.dt,obj,"fly2")
+			om.translate(self,obj,[4,4])
 
 
 
