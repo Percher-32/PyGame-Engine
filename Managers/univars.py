@@ -67,8 +67,16 @@ camspeeed = 45
 sizes = {
     "smallbutton": (150,75),
     "mediumbutton": (200,100),
+    "semilargebutton":(250,250/2),
     "largebutton": (300,150),
 }
 
 
 defont = "pixel2.ttf"
+
+
+def update():
+    global screen_w
+    global screen_h 
+    screen_w = realscreeen.get_width()
+    screen_h = realscreeen.get_height()

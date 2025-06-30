@@ -88,8 +88,8 @@ class TiledSoftwre:
 			else:
 				return dostring
 
-	def textline(self,GameManager,dostring,precursur):
-		GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],600)
+	def textline(self,GameManager,dostring,precursur,col = univars.theme["dark"]):
+		GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),col,600)
 		if not GameManager.event_manager.key[pygame.K_RETURN]:
 			if GameManager.event_manager.key[pygame.K_BACKSPACE]:
 						dostring = dostring[:-1]
@@ -593,15 +593,26 @@ class TiledSoftwre:
 
 
 			elif self.savemode == "Objanim":
+				self.buttonsforanim = []
 				self.savemode = "animate"
 				self.showdata = False
 				um.state = "anim"
 				self.animstr = self.dostring.name
 				self.animobj = object_manager.objects[self.animstr]
-				um.addrect([2000,2000],["anim"],[0,0],"animbg",color = univars.theme["dark"])
-				um.addrect([64 * 2.4,64 * 2.4],["anim"],[2,0.7],"animspriteuibox",color=univars.theme["semibright"])
-				um.addrect([64 * 2,64 * 2],["anim"],[2,0.7],"animspriteui",surf = self.animobj["name"],sn = self.animobj["sn"])
-				um.addtext("spritenames","None",univars.defont,[2,0.7],univars.theme["bright"],60,["anim"])
+				um.addrect([2000,2000],["anim","animplaying"],[0,0],"animbg",color = univars.theme["dark"])
+				um.addrect([64 * 2.4,64 * 2.4],["anim","animplaying"],[2,0.7],"animspriteuibox",color=univars.theme["semibright"])
+				um.addrect([64 * 2,64 * 2],["anim","animplaying"],[2,0.7],"animspriteui",surf = self.animobj["name"],sn = self.animobj["sn"])
+				self.curanim = None
+				a = -1.1
+				for i in object_manager.animations[self.animobj["name"]].keys():
+					a += 0.3
+					um.addbutton(univars.sizes["smallbutton"],["anim","animplaying"],[a,0],i + "button",color=univars.theme["mid"])
+					um.addtext(i + "text",i,univars.defont,[a,0],univars.theme["bright"],30,["anim","animplaying"])
+					um.bindtobutton(i + "text",i + "button")
+					um.addglide(i + "button",univars.sizes["mediumbutton"],univars.sizes["semilargebutton"])
+					self.buttonsforanim.append(i + "button")
+				um.addrect([2000,60],["animplaying"],[0,-0.5],"frame bar",univars.theme["accent"],alpha = 150)
+				um.addtext("spritenames","None",univars.defont,[2,0.7],univars.theme["bright"],60,["anim","animplaying"])
 				self.snts = ""
 
 
@@ -609,22 +620,51 @@ class TiledSoftwre:
 
 
 			elif self.savemode == "animate":
+				self.animobj = object_manager.objects[self.animstr]
 				um.lerpval("animspriteuibox","pos",[-0.8,0.7],4)
 				um.lerpval("animspriteui","pos",[-0.8,0.7],6)
-				um.lerpval("spritenames","pos",[-0.5,0.7],6)
-				um.elements["spritenames"]["text"] = f"sprite-num:{self.animobj['sn']}"
-				if not self.textline(GameManager,self.snts,f"/s , /o , /p, /f:")== self.secretword:
-					self.snts = self.textline(GameManager,self.snts,f"/s , /o , /p, /f:")
-				else:
-					if "/s" in self.snts:
-						self.snts = self.snts.replace("/s","")
-						try:
-							if int(self.snts) in range(len(univars.func.getsprites(self.animobj["name"]))):
-								object_manager.objects[self.animstr]["sn"] = int(self.snts)
-								um.elements["animspriteui"]["surf"] = univars.func.getsprites(self.animobj["name"])[self.animobj["sn"]]
-						except:
-							pass
-					self.snts = ""
+				um.lerpval("spritenames","pos",[-0.4,0.7],6)
+				um.elements["animspriteui"]["surf"] = univars.func.getsprites(self.animobj["name"])[self.animobj["sn"]]
+				um.elements["spritenames"]["text"] = f"sprite-num:{self.animobj['sn']} \ncurrent anim:{self.curanim}"
+				um.elements["frame bar"]["dimensions"][0] = univars.screen_w - 60
+
+
+				for i in self.buttonsforanim:
+					if GameManager.key["x"] != 0:
+						um.elements[i]["pos"][0] = um.elements[i]["pos"][0] - GameManager.key["x"]/10
+							
+					if um.elements[i]["click"]:
+						object_manager.speed = 1
+						self.curanim = i.replace("button","")
+
+
+
+					if self.curanim == i.replace("button",""):
+						um.elements[i]["color"] = univars.theme["accent"]
+					else:
+						um.elements[i]["color"] = univars.theme["mid"]
+
+				if not self.curanim == None:
+					object_manager.playanim(GameManager.frame_manager.dt,self.animstr,self.curanim)
+					um.state = "animplaying"
+
+
+
+				
+
+
+				# if not self.textline(GameManager,self.snts,f"/s , /o , /p, /f:")== self.secretword:
+				# 	self.snts = self.textline(GameManager,self.snts,f"/s , /o , /p, /f:",col = univars.theme["accent"])
+				# else:
+				# 	if "/s" in self.snts:
+				# 		self.snts = self.snts.replace("/s","")
+				# 		try:
+				# 			if int(self.snts) in range(len(univars.func.getsprites(self.animobj["name"]))):
+				# 				object_manager.objects[self.animstr]["sn"] = int(self.snts)
+				# 				um.elements["animspriteui"]["surf"] = univars.func.getsprites(self.animobj["name"])[self.animobj["sn"]]
+				# 		except:
+				# 			pass
+				# 	self.snts = ""
 
 
 

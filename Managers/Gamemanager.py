@@ -229,12 +229,11 @@ class GameManager():
         self.debug = True
 
         for filename in os.listdir("Saved/animations"):
-            print(filename)
-            if os.path.isfile(os.path.join("Saved/animations", filename)) and not filename ==  "None":
-                objfile = os.path.join("Saved/animations", filename)
+            if  not filename ==  "None":
+                objfile = "Saved/animations" + "/" + filename
                 for anim in os.listdir(objfile):
-                    if os.path.isfile(os.path.join(objfile, anim)):
-                        om.loadanim(filename,anim)
+                    anim = anim.replace(".json","")
+                    om.loadanim(filename,anim)
 
 
     def start(self):
@@ -244,7 +243,7 @@ class GameManager():
             self.initial()
         if Tiled.loadingmap:
             self.initial()
-        renderwid = max([univars.realscreeen.get_width(),univars.realscreeen.get_height()])
+        renderwid = max([univars.screen_w,univars.screen_h])
         univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid,renderwid)),(0,-1 * renderwid//4))
         univars.screen.fill((self.screen_colour))
         om.render(cam,self,self.dim)
@@ -254,6 +253,7 @@ class GameManager():
         self.keybind()
         cm.update()
         self.updatetime()
+        univars.update()
         cam.update()
 
     def update(self):			

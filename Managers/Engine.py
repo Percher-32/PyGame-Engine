@@ -174,8 +174,9 @@ class Runchinld(Gamemananager.GameManager):
 	def cond(self,obj,info):
 		"""obj -> the id   info -> the info for the id"""
 		if info["name"] == "bird":
-			om.playanim(fm.dt,obj,"fly2")
-			om.translate(self,obj,[4,4])
+			# om.playanim(fm.dt,obj,"fly2")
+			# om.translate(self,obj,[4,4])
+			pass
 
 
 
