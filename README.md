@@ -29,6 +29,28 @@ contains a class that gives the outout for user inputs like mouseclicks and key 
 ### funcs.py
 contains useful functions
 
-###f ramemananager
+### framemananager
 contains basic functions to be ran every frame.
 handles frame-rate
+
+### statemanager
+contains the editors different states
+
+### cammanager
+has a class that controls how the camera will behave
+
+### cameramod.py
+contains the camera
+
+### ui element.py  
+contains the classes for the ui elements eg button text and rect
+
+### ui manager.py
+manages these ui elements
+
+
+
+## What's it for
+im eventually going to use this engine for a game
+
+
