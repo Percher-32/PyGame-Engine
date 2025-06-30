@@ -38,6 +38,8 @@ class Uimanager:
 		self.sprites.add(ui)
 
 
+
+
 	def bindtobutton(self,text,button):
 		self.elements[text]["button"] = button
 		self.elements[button]["text"] = text
