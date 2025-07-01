@@ -118,9 +118,8 @@ class object_manager:
 
 
 
-	def playanim(self,dt,id,name):
+	def playanim(self,dt,id,name,forceplay = False):
 		a = name
-		forceplay = self.animations[self.objects[id]['name']][a][1]
 		if not self.objects[id]["animname"] == name:
 			if forceplay:
 				self.objects[id]["animname"] = name
@@ -131,12 +130,12 @@ class object_manager:
 		
 		
 		frame = int(round(self.objects[id]["gothru"]))
-		g = self.animations[self.objects[id]['name']][a][0].keys()
+		g = self.animations[self.objects[id]['name']][a].keys()
 		g = [int(i) for i in g]
 		if not frame >= max(g):
 			self.objects[id]["gothru"] += dt/10
 			if frame in g:
-				self.objects[id]["sn"] = self.animations[self.objects[id]['name']][a][0][str(frame)]
+				self.objects[id]["sn"] = self.animations[self.objects[id]['name']][a][str(frame)]
 		else:
 			self.objects[id]["gothru"] = 0
 		

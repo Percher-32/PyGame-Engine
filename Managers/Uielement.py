@@ -135,6 +135,8 @@ class Ui(pygame.sprite.Sprite):
             self.extra(em,elements,state)
         else:
             self.image = pygame.Surface((0,0))
+            self.hover = 0
+            self.click = 0
     
     def extra(self,em,element,state):
         pass
