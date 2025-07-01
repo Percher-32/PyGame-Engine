@@ -677,7 +677,7 @@ class TiledSoftwre:
 
 				
 
-				if not self.curanim == None:
+				if not self.curanim == None and not um.state == "newanim":
 					object_manager.playanim(GameManager.frame_manager.dt,self.animstr,self.curanim)
 					um.state = "animplaying"
 
@@ -692,45 +692,45 @@ class TiledSoftwre:
 					if not self.textline(GameManager,self.snts,f"input the command:")== self.secretword:
 						self.snts = self.textline(GameManager,self.snts,f"input the command:",col = univars.theme["accent"])
 					else:
-						# try:
-						if "fr:" in self.snts:
-							self.snts = self.snts.replace("fr:","")
-							self.snts = self.snts.strip()
-							self.snts = self.snts.replace("="," ")
-							a = self.snts.split()
-							self.newanim[str(a[0])] = int(a[1])
+						try:
+							if "fr:" in self.snts:
+								self.snts = self.snts.replace("fr:","")
+								self.snts = self.snts.strip()
+								self.snts = self.snts.replace("="," ")
+								a = self.snts.split()
+								self.newanim[str(a[0])] = int(a[1])
 
-							for b in self.textsfornewanim:
-								um.elements[b]["text"] = ""
-
-
-							self.textsforanim = []
-							a = -1.1
-							for g in sorted(self.newanim.keys()):
-								a += 0.2
-								um.addtext(g + "newframepoint",g + "\n" + str(self.newanim[g]),univars.defont,[a,-0.5],univars.theme["bright"],30,["newanim"])
-								self.textsfornewanim.append(g + "newframepoint")
-
-						if "v:" in self.snts:
-							self.snts = self.snts.replace("v:","")
-							self.snts = self.snts.strip()
-							object_manager.objects[self.animstr]["sn"] = int(self.snts)
+								for b in self.textsfornewanim:
+									um.elements[b]["text"] = ""
 
 
-						if "n:" in self.snts:
-							self.snts = self.snts.replace("n:","")
-							self.snts = self.snts.rstrip()
-							self.namefornewanim = self.snts
+								self.textsforanim = []
+								a = -1.1
+								for g in sorted(self.newanim.keys()):
+									a += 0.2
+									um.addtext(g + "newframepoint",g + "\n" + str(self.newanim[g]),univars.defont,[a,-0.5],univars.theme["bright"],30,["newanim"])
+									self.textsfornewanim.append(g + "newframepoint")
 
-						if self.snts.rstrip() == "/s":
-							object_manager.saveanim(self.animobj["name"],self.namefornewanim,self.newanim)
-							print("saving")
+							if "v:" in self.snts:
+								self.snts = self.snts.replace("v:","")
+								self.snts = self.snts.strip()
+								object_manager.objects[self.animstr]["sn"] = int(self.snts)
 
-						if self.snts.rstrip() == "/x":
-							um.state = "anim"
 
-						# except:
-						# 	pass
+							if "n:" in self.snts:
+								self.snts = self.snts.replace("n:","")
+								self.snts = self.snts.rstrip()
+								self.namefornewanim = self.snts
+								self.curanim = self.snts
+
+							if self.snts.rstrip() == "/s":
+								object_manager.saveanim(self.animobj["name"],self.namefornewanim,self.newanim)
+
+							if self.snts.rstrip() == "/x":
+								self.savemode = "Objanim"
+
+						except:
+							pass
 						
 						self.snts = ""
 
