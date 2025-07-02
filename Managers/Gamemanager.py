@@ -227,13 +227,9 @@ class GameManager():
         om.instables = univars.instables
         cm.setcam("def")
         self.debug = True
+        self.loadanims()
 
-        for filename in os.listdir("Saved/animations"):
-            if  not filename ==  "None":
-                objfile = "Saved/animations" + "/" + filename
-                for anim in os.listdir(objfile):
-                    anim = anim.replace(".json","")
-                    om.loadanim(filename,anim)
+        
 
 
     def start(self):
@@ -255,6 +251,15 @@ class GameManager():
         self.updatetime()
         univars.update()
         cam.update()
+
+
+    def loadanims(self):
+        for filename in os.listdir("Saved/animations"):
+            if  not filename ==  "None":
+                objfile = "Saved/animations" + "/" + filename
+                for anim in os.listdir(objfile):
+                    anim = anim.replace(".json","")
+                    om.loadanim(filename,anim)
 
     def update(self):			
         pass

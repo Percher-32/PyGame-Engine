@@ -605,13 +605,14 @@ class TiledSoftwre:
 				um.addrect([64 * 2,64 * 2],["anim","animplaying","newanim"],[2,0.7],"animspriteui",surf = self.animobj["name"],sn = self.animobj["sn"])
 				self.curanim = None
 				a = -1.1
-				for i in object_manager.animations[self.animobj["name"]].keys():
-					a += 0.3
-					um.addbutton(univars.sizes["smallbutton"],["anim","animplaying"],[a,0],i + "button",color=univars.theme["mid"])
-					um.addtext(i + "text",i,univars.defont,[a,0],univars.theme["bright"],30,["anim","animplaying"])
-					um.bindtobutton(i + "text",i + "button")
-					um.addglide(i + "button",univars.sizes["mediumbutton"],univars.sizes["semilargebutton"])
-					self.buttonsforanim.append(i + "button")
+				if self.animobj["name"] in object_manager.animations.keys():
+					for i in object_manager.animations[self.animobj["name"]].keys():
+						a += 0.3
+						um.addbutton(univars.sizes["smallbutton"],["anim","animplaying"],[a,0],i + "button",color=univars.theme["mid"])
+						um.addtext(i + "text",i,univars.defont,[a,0],univars.theme["bright"],30,["anim","animplaying"])
+						um.bindtobutton(i + "text",i + "button")
+						um.addglide(i + "button",univars.sizes["mediumbutton"],univars.sizes["semilargebutton"])
+						self.buttonsforanim.append(i + "button")
 				a += 0.3
 
 
@@ -640,6 +641,11 @@ class TiledSoftwre:
 				um.elements["spritenames"]["text"] = f"sprite-num:{self.animobj['sn']} \ncurrent anim:{self.curanim}"
 				um.elements["frame bar"]["dimensions"][0] = univars.screen_w
 
+	
+				if GameManager.key["x"] != 0:
+					um.elements["plusbutton"]["pos"][0] = um.elements["plusbutton"]["pos"][0] - GameManager.key["x"]/10
+
+
 				if not um.state == "newanim":
 					for i in self.buttonsforanim:
 
@@ -655,7 +661,9 @@ class TiledSoftwre:
 								um.elements[b]["text"] = ""
 							self.textsforanim = []
 							thinglist = object_manager.animations[self.animobj["name"]][self.curanim]
-							for g in thinglist.keys():
+							intl = sorted([int(i) for i in thinglist])
+							for g in intl:
+								g = str(g)
 								a += 0.2
 								um.addtext(g + "framepoint",g + "\n" + str(thinglist[g]),univars.defont,[a,-0.5],univars.theme["bright"],30,["animplaying"])
 								self.textsforanim.append(g + "framepoint")
@@ -706,7 +714,8 @@ class TiledSoftwre:
 
 								self.textsforanim = []
 								a = -1.1
-								for g in sorted(self.newanim.keys()):
+								for g in sorted([int(brent) for brent in self.newanim.keys()]):
+									g = str(g)
 									a += 0.2
 									um.addtext(g + "newframepoint",g + "\n" + str(self.newanim[g]),univars.defont,[a,-0.5],univars.theme["bright"],30,["newanim"])
 									self.textsfornewanim.append(g + "newframepoint")
@@ -727,6 +736,7 @@ class TiledSoftwre:
 								object_manager.saveanim(self.animobj["name"],self.namefornewanim,self.newanim)
 
 							if self.snts.rstrip() == "/x":
+								GameManager.loadanims()
 								self.savemode = "Objanim"
 
 						except:

@@ -27,10 +27,9 @@ class Runchinld(Gamemananager.GameManager):
 		self.a = 0
 		
 		
-		om.saveanim("bob","bob1",{"0":0,"10":1,"19":0})
 		if "test" in self.states:
 			cm.addcam("playercam",[0,0],0.4)
-			cm.setcam("playercam")
+			cm.setcam("playercam")  
 			om.adds("player",[0,0],"enemy","player",0,[1,1],400,5)
 			self.sp("velx",0)
 			self.sp("vely",0)
