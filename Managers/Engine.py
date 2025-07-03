@@ -1,6 +1,6 @@
 import Gamemanager as Gamemananager
 import univars as univars
-
+import cProfile
 
 
 
@@ -52,22 +52,7 @@ class Runchinld(Gamemananager.GameManager):
 
 	def update(self):
 		om.speed = 1
-		# fm.showfps = 0
-		# self.maxbg = [univars.realscreeen.get_width(),univars.realscreeen.get_height()]
-		# if um == "default" or "test2":
-		# 	um.elements["bg2"]["dimension"] = univars.func.lerp(um.elements["bg2"]["dimensions"],self.maxbg,1)
-
-		# if self.ondone("intro"):
-		# 	um.state = "test2"
-		# if um.state == "test2":
-		# 	um.elements["playbutton"]["pos"] = univars.func.lerp(um.elements["playbutton"]["pos"],self.enppos,4)
-		# 	um.elements["bg"]["dimension"] = univars.func.lerp(um.elements["bg"]["dimensions"],[univars.realscreeen.get_width() - 200,univars.realscreeen.get_height() - 200],4)
-		# if um.elements["playbutton"]["click"]:
-		# 	um.state = "gameplay"
-		# if  um.state == "gameplay":
-		# 	um.elements["playbutton"]["pos"] = univars.func.lerp(um.elements["playbutton"]["pos"],[0,-2],4)
-		# 	um.elements["bg"]["dimension"] = univars.func.lerp(um.elements["bg"]["dimensions"],[univars.realscreeen.get_width() - 200,0],2)
-		# 	um.elements["bg2"]["dimension"] = univars.func.lerp(um.elements["bg2"]["dimensions"],[0,0],1)
+		fm.showfps = 1
 		
 
 		if "test" in self.states:
@@ -175,7 +160,13 @@ class Runchinld(Gamemananager.GameManager):
 			pass
 
 
+if univars.mode == 0:
+	def main():
+		rm = Runchinld(univars.screencol,fm)
+		rm.Run()
 
-
-rm = Runchinld((univars.screencol),fm)
-rm.Run()
+	if __name__ == "__main__":
+		cProfile.run('main()', sort='tottime')
+else:
+	rm = Runchinld(univars.screencol,fm)
+	rm.Run()

@@ -621,6 +621,11 @@ class TiledSoftwre:
 				um.bindtobutton("plustext","plusbutton")
 				um.addglide("plusbutton",univars.sizes["mediumbutton"],univars.sizes["semilargebutton"])
 
+				um.addbutton([32,32],["anim"],[0.95,0.9],"exitbutton",color=univars.theme["accent"])
+				um.addtext("exittext","x",univars.defont,[a,0],univars.theme["bright"],60,["anim"])
+				um.bindtobutton("exittext","exitbutton")
+				um.addglide("exitbutton",[64,64],[64*1.2,64*1.2])
+
 
 				um.addrect([2000,60],["animplaying","newanim"],[0,-0.5],"frame bar",univars.theme["accent"],alpha = 150)
 				um.addtext("spritenames","None",univars.defont,[2,0.7],univars.theme["bright"],60,["anim","animplaying","newanim"])
@@ -658,7 +663,7 @@ class TiledSoftwre:
 							self.curanim = i.replace("button","")
 							a = -1.1
 							for b in self.textsforanim:
-								um.elements[b]["text"] = ""
+								um.deleleelem(b)
 							self.textsforanim = []
 							thinglist = object_manager.animations[self.animobj["name"]][self.curanim]
 							intl = sorted([int(i) for i in thinglist])
@@ -694,6 +699,13 @@ class TiledSoftwre:
 					self.newanim = {}
 					um.state = "newanim"
 					self.curanim = None
+
+				if um.elements["exitbutton"]["click"]:
+					um.deleleelem(self.buttonsforanim)
+					self.curanim = None
+					um.state = "def"
+					self.savemode = 0
+					self.showdata = 1
 				
 
 				if um.state == "newanim":
@@ -709,7 +721,7 @@ class TiledSoftwre:
 								self.newanim[str(a[0])] = int(a[1])
 
 								for b in self.textsfornewanim:
-									um.elements[b]["text"] = ""
+									um.deleleelem(b)
 
 
 								self.textsforanim = []

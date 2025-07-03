@@ -5,6 +5,7 @@ class camera:
 		self.y = pos[1]
 		self.a = pos[0]
 		self.b = pos[1]
+		self.lsize = 0
 		self.size = size
 		self.screenshakevalue = 1000
 		self.end = [(0,0),1]

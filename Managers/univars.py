@@ -9,6 +9,7 @@ screen_w = 1500
 
 screen_h = 1000
 
+camchange = False
 
 pixelscale = 10
 
@@ -18,7 +19,7 @@ grandim = 32
 
 name = "Project ender"
 
-
+maxfps = 40
 
 
 (40, 41, 83)
@@ -55,6 +56,8 @@ hideentypes = ["camz"]
 aplhatypes = {}
 
 map = "null"
+
+mode = 0
 
 startuistate = "def"
 

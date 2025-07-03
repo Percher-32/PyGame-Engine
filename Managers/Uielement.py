@@ -118,8 +118,8 @@ class Ui(pygame.sprite.Sprite):
         self.cando = cando
 
     def update(self,state,elements,em):
-        if state in self.states:
-            if self.name in elements.keys():
+        if self.name in elements.keys():
+            if state in self.states:
                 if self.cando:
                     self.baseimg.fill(elements[self.name]["color"])
                 else:
@@ -129,15 +129,18 @@ class Ui(pygame.sprite.Sprite):
                 baseimg1 = pygame.transform.scale(self.baseimg,elements[self.name]["dimensions"])
                 self.baseimg = baseimg1
                 self.pos = elements[self.name]["pos"]
-            self.image = self.baseimg
-            pos = self.pos
-            self.rect = self.baseimg.get_rect(center = (pos[0] * univars.realscreeen.get_width()//2  + univars.realscreeen.get_width()//2 ,-1 * pos[1] * univars.realscreeen.get_height()//2  + univars.realscreeen.get_height()//2 ))
-            self.extra(em,elements,state)
+                self.image = self.baseimg
+                pos = self.pos
+                self.rect = self.baseimg.get_rect(center = (pos[0] * univars.realscreeen.get_width()//2  + univars.realscreeen.get_width()//2 ,-1 * pos[1] * univars.realscreeen.get_height()//2  + univars.realscreeen.get_height()//2 ))
+                self.extra(em,elements,state)
+            else:
+                self.image = pygame.Surface((0,0))
+                self.hover = 0
+                self.click = 0
         else:
-            self.image = pygame.Surface((0,0))
-            self.hover = 0
-            self.click = 0
-    
+            self.kill()
+
+
     def extra(self,em,element,state):
         pass
 
@@ -190,18 +193,21 @@ class Uitext(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
     def update(self,state,element,em):
-        if state in self.states:
-            self.col = element[self.name]["color"]
-            self.pos = element[self.name]["pos"]
-            self.states = element[self.name]["states"]
-            pos = self.pos
-            self.text = element[self.name]["text"]
-            self.bart = self.realfont.render(self.text, 1, self.col)
-            self.image = pygame.transform.scale_by(self.bart,[element[self.name]["size"]/100,element[self.name]["size"]/100])
-            self.rect = self.image.get_rect(center = (pos[0] * univars.realscreeen.get_width()//2 + univars.realscreeen.get_width()//2 ,-1 * pos[1] * univars.realscreeen.get_height()//2   + univars.realscreeen.get_height()//2 ))
+        if self.name in element:
+            if state in self.states:
+                self.col = element[self.name]["color"]
+                self.pos = element[self.name]["pos"]
+                self.states = element[self.name]["states"]
+                pos = self.pos
+                self.text = element[self.name]["text"]
+                self.bart = self.realfont.render(self.text, 1, self.col)
+                self.image = pygame.transform.scale_by(self.bart,[element[self.name]["size"]/100,element[self.name]["size"]/100])
+                self.rect = self.image.get_rect(center = (pos[0] * univars.realscreeen.get_width()//2 + univars.realscreeen.get_width()//2 ,-1 * pos[1] * univars.realscreeen.get_height()//2   + univars.realscreeen.get_height()//2 ))
+            else:
+                self.image = pygame.Surface((0, 0))
+                self.rect = pygame.Rect(0, 0, 0, 0)
         else:
-            self.image = pygame.Surface((0, 0))
-            self.rect = pygame.Rect(0, 0, 0, 0)
+            self.kill()
 
     
 

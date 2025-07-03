@@ -37,6 +37,19 @@ class Uimanager:
 		self.elements[name] = {"name":name,"text":text,"color":col,"size":size,"command":[],"pos":pos,"states":states}
 		self.sprites.add(ui)
 
+	
+	def deleleelem(self,name):
+		"""name -> str or list"""
+		if type(name) == str:
+			if name in self.elements.keys():
+				self.elements.pop(name)
+
+		else:
+			for i in name:
+				if i in self.elements.keys():
+					self.elements.pop(i)
+
+
 
 
 
@@ -70,23 +83,24 @@ class Uimanager:
 		self.sprites.update(self.state, self.elements,em)
 		self.sprites.draw(univars.realscreeen)
 		for a in self.sprites:
-			if a.__class__.__name__ == "Uibutton":
-				self.elements[a.name]["click"] = a.click
-				self.elements[a.name]["hover"] = a.hover
-				if "glide" in self.elements[a.name]["command"]:
-					if self.elements[a.name]["hover"]:
-						self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["glidehov"],4)
-					else:
-						self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["glidenorm"],4)
-			if a.__class__.__name__ == "Uitext":
-				if "button" in self.elements[a.name].keys():
+			if a.name in self.elements.keys():
+				if a.__class__.__name__ == "Uibutton":
+					self.elements[a.name]["click"] = a.click
+					self.elements[a.name]["hover"] = a.hover
 					if "glide" in self.elements[a.name]["command"]:
-						if self.elements[self.elements[a.name]["button"]]["hover"]:
-							self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidehov"],4)
+						if self.elements[a.name]["hover"]:
+							self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["glidehov"],4)
 						else:
-							self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidenorm"],4)
-					self.elements[a.name]["pos"] = self.elements[self.elements[a.name]["button"]]["pos"]
-					self.elements[a.name]["states"] = self.elements[self.elements[a.name]["button"]]["states"]
+							self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["glidenorm"],4)
+				if a.__class__.__name__ == "Uitext":
+					if "button" in self.elements[a.name].keys():
+						if "glide" in self.elements[a.name]["command"]:
+							if self.elements[self.elements[a.name]["button"]]["hover"]:
+								self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidehov"],4)
+							else:
+								self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidenorm"],4)
+						self.elements[a.name]["pos"] = self.elements[self.elements[a.name]["button"]]["pos"]
+						self.elements[a.name]["states"] = self.elements[self.elements[a.name]["button"]]["states"]
 
 
 			

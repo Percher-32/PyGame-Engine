@@ -1,5 +1,6 @@
 #Cammanager
 import random
+import univars
 import Cameramod
 class Cammanager:
 	def __init__(self,cam):
@@ -15,9 +16,15 @@ class Cammanager:
 		"""set the in-use camera to a different one"""
 		self.cam.x = self.cameras[name][0][0]
 		self.cam.y = self.cameras[name][0][1]
+		if self.cam.size != self.cameras[name][1]:
+			univars.camchange = True
+		else:
+			univars.camchange = False
+
 		self.cam.size = self.cameras[name][1]
 		self.cam.screenshakevalue = self.cameras[name][2]
 		self.currentcam = name
+
 	
 	def getcam(self,cam,item):
 		"""to get the conditions for a camera , cam : camera-name  ,  item : [ pos ,size or shake ] """

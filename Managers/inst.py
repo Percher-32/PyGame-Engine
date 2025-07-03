@@ -24,6 +24,7 @@ class inst(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect(center = (x + cam.x,y + cam.y))
 		self.fakerect = pygame.Rect(x - self.size[0]//2,y - self.size[1]//2,self.size[0],self.size[1])
 		self.alpha = alpha
+		self.lastframe = self.bart
 
 	def inchunk(self,cam,object,dim):
 		dist = 1/cam.size * 9
@@ -41,19 +42,19 @@ class inst(pygame.sprite.Sprite):
 			return False
 
 	def update(self, camera,dim:int,showall):
-		if self.inchunk(camera,self.realpos,dim):
 			
-			ext =  int(abs(dim * math.sin(self.rot/28.6 )))
-			self.image =  pygame.transform.rotate(pygame.transform.scale(self.bart,  [self.size[0] * abs(camera.size)+ ext,self.size[1] * abs(camera.size) +ext] ) ,self.rot)
-			alpha = self.alpha
-			if showall:
-				if self.alpha == 0:
-					alpha = 170
-			self.image.set_alpha(alpha)
-			self.rect = self.image.get_rect(topleft = ( (int(round(self.realpos[0] - camera.x) * round(camera.size,2) + univars.screen.get_width()//2 - self.image.get_width()/2)),int(round((self.realpos[1] - camera.y) * round(camera.size,2) + univars.screen.get_height()//2 - self.image.get_height()/2))))
+		ext =  int(abs(dim * math.sin(self.rot/28.6 )))
+		if univars.camchange:
+			self.image =  pygame.transform.scale(self.bart,  [self.size[0] * abs(camera.size)+ ext,self.size[1] * abs(camera.size) +ext] )
 		else:
-			self.image = pygame.Surface((0,0))
-		# self.func.ssblitrect(self.fakerect,(225,222,222),camera,40)
+			self.image = self.lastframe
+		alpha = self.alpha
+		if showall:
+			if self.alpha == 0:
+				alpha = 170
+		self.image.set_alpha(alpha)
+		self.rect = self.image.get_rect(topleft = ( (int(round(self.realpos[0] - camera.x) * camera.size + univars.screen.get_width()//2 - self.image.get_width()/2)),int(round((self.realpos[1] - camera.y) * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2))))
+		self.lastframe = self.image
 
 class obj(pygame.sprite.Sprite):
 	def __init__(self,name:str,info:dict):
@@ -82,9 +83,9 @@ class obj(pygame.sprite.Sprite):
 		self.info["pos"] = pos
 		self.fakerect = pygame.Rect(self.info["pos"][0] - self.info["size"][0]//2,self.info["pos"][1] - self.info["size"][1]//2,self.info["size"][0],self.info["size"][1])
 		if self.info["rendercond"]:
-			g = [round(self.info["pos"][0]/(dim * om.renderdist)),round(self.info["pos"][1]/(dim * om.renderdist))]
-			h = [round(camera.x/(dim * om.renderdist)),round(camera.y/(dim * om.renderdist))]
-			if self.supvar(g,h):
+			g = [round(self.info["pos"][0]),round(self.info["pos"][1])]
+			h = [round(camera.x),round(camera.y)]
+			if univars.func.dist(g,h) < 2000:
 				b = sprite
 				b = pygame.transform.rotate(b,self.info["rot"])
 

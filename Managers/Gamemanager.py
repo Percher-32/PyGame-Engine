@@ -36,7 +36,7 @@ class GameManager():
         self.states = []
         self.key = {}
         self.dim = univars.grandim
-        self.fpsmax = 60
+        self.fpsmax = univars.maxfps
         self.work = True
         self.leveledit = True
         Tiled.extra(univars.extras)
@@ -160,7 +160,7 @@ class GameManager():
     def inum(self,campos,camsize:float):
         for obj in om.objects.keys():
             range =  2000
-            if funcs.func.dist(om.objects[obj]["pos"],campos) < range:
+            if univars.func.dist(om.objects[obj]["pos"],campos) < range:
                 self.cond(obj,om.objects[obj])
 
     def cond(self,obj,info):
@@ -245,7 +245,8 @@ class GameManager():
         om.render(cam,self,self.dim)
         um.update(em)
         self.inum([cam.x,cam.y],cam.size)
-        Tiled.Run(self.work,univars.camspeeed,self,cam,self.dim,self.leveledit,cm,sm.state)
+        if self.work:
+            Tiled.Run(self.work,univars.camspeeed,self,cam,self.dim,self.leveledit,cm,sm.state)
         self.keybind()
         cm.update()
         self.updatetime()
