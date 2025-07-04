@@ -428,6 +428,12 @@ class object_manager:
 
 	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int):
 		"adds an object to the manager  , gives an id of type str"
+		pos = list(pos)
+		if sprites in univars.offsets.keys():
+			pos[0] += univars.offsets[sprites][0]
+			pos[1] -= univars.offsets[sprites][1]
+		pos = tuple(pos)
+
 		if not sprites in self.instables:
 			layer = 0
 			self.remove(pos)
