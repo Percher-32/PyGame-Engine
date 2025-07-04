@@ -111,8 +111,7 @@ class object_manager:
 		
 
 	def getcull(self,pos,grid_size,dim) -> list:
-		patch = [i for i in list(self.objects.keys()) if (pos[0]) - (grid_size * dim) <= self.objects[i]["pos"][0] <= (pos[0]) + (grid_size * dim)    and (pos[1]) - (grid_size * dim) <= self.objects[i]["pos"][1] <= (pos[1]) + (grid_size * dim)]                                                  
-		return patch
+		return [i for i in list(self.objects.keys()) if pos[0] - grid_size * dim <= self.objects[i]["pos"][0] <= pos[0] + grid_size * dim  and pos[1] - grid_size * dim <= self.objects[i]["pos"][1] <= (pos[1]) + grid_size * dim]                                                  
 
 
 
@@ -332,8 +331,7 @@ class object_manager:
 		#coll for non-inst
 		dim = univars.grandim
 		typel = self.getcull(pos,1,dim)
-		noninst = []
-		[noninst.append(self.objfromid(i)) for i in typel if self.objfromid(i).fakerect.collidepoint(pos)  and not self.objfromid(i).name == ignore_id ]
+		noninst = [self.objfromid(i) for i in typel if self.objfromid(i).fakerect.collidepoint(pos)  and not self.objfromid(i).name == ignore_id ]
 
 		#coll for inst
 		camchunk = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
@@ -342,11 +340,7 @@ class object_manager:
 			inst = [ i for i in self.instances[camchunk] if i.fakerect.collidepoint(pos)]
 
 		#render the collpoint
-		num = (1/camera.size)
-		bar = 0.6
-		if num < bar:
-			num = bar
-		r1 = pygame.Rect(pos[0],pos[1],num * pointsize,num * pointsize)
+		num = max(0.6,1/camera.size)
 		if show:
 			if len(inst) > 0:
 				col = instcol
@@ -354,7 +348,7 @@ class object_manager:
 				col = noninstcol
 			else:
 				col = (225,0,0)
-			self.func.ssblitrect(r1,col,camera,0)
+			self.func.ssblitrect(pygame.Rect(pos[0],pos[1],num * pointsize,num * pointsize),col,camera,0)
 
 
 		

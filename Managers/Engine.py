@@ -1,6 +1,7 @@
 import Gamemanager as Gamemananager
 import univars as univars
 import cProfile
+import pstats
 
 
 
@@ -166,7 +167,7 @@ if univars.mode == 0:
 		rm.Run()
 
 	if __name__ == "__main__":
-		cProfile.run('main()', sort='tottime')
+		cProfile.run('main()', sort='ncalls')
 else:
 	rm = Runchinld(univars.screencol,fm)
 	rm.Run()

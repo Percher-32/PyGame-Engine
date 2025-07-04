@@ -9,21 +9,15 @@ class func:
         sprites = []
         folder_dir = f"Graphics/sprites/{name}"
         for images in os.listdir(folder_dir):
-            try:
-                frame = pygame.transform.scale_by(pygame.image.load(f"Graphics/sprites/{name}/" + images).convert_alpha(),[(self.grandim/32) +0.1,(self.grandim/32) +0.1])
-                sprites.append(frame)
-            except:
-                pass
+            frame = pygame.transform.scale_by(pygame.image.load(f"Graphics/sprites/{name}/" + images).convert_alpha(),[(self.grandim/32) +0.1,(self.grandim/32) +0.1])
+            sprites.append(frame)
         return sprites
     def getspritesscale(self,name:str,scale):
         sprites = []
         folder_dir = f"Graphics/sprites/{name}"
         for images in os.listdir(folder_dir):
-            try:
-                frame = pygame.transform.scale_by(pygame.transform.scale(pygame.image.load(f"Graphics/sprites/{name}/" + images).convert_alpha(), [scale[0],scale[1]]),[1,1])
-                sprites.append(frame)
-            except:
-                print("duygfre")
+            frame = pygame.transform.scale_by(pygame.transform.scale(pygame.image.load(f"Graphics/sprites/{name}/" + images).convert_alpha(), [scale[0],scale[1]]),[1,1])
+            sprites.append(frame)
         return sprites
     def allsprites(self):
         return os.listdir("Graphics/sprites")

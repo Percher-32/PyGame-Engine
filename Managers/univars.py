@@ -19,7 +19,7 @@ grandim = 32
 
 name = "Project ender"
 
-maxfps = 40
+maxfps = 1000
 
 
 (40, 41, 83)
@@ -55,9 +55,9 @@ hideentypes = ["camz"]
 
 aplhatypes = {}
 
-map = "null"
+map = "level1"
 
-mode = 0
+mode = 1
 
 startuistate = "def"
 

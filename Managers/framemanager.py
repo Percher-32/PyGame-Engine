@@ -16,8 +16,7 @@ class frame_manager:
 	def next(self,fps):
 		self.fps = fps
 		self.event_manager.next()
-		self.dt = time.time() - self.lasttime
-		self.dt *= 60
+		self.dt = (time.time() - self.lasttime) * 60
 		self.lasttime = time.time()
 		clock = pygame.time.Clock()
 		self.frame += 1
