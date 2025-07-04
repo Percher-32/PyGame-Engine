@@ -166,7 +166,7 @@ if univars.mode == 0:
 		rm.Run()
 
 	if __name__ == "__main__":
-		cProfile.run('main()', sort='ncalls')
+		cProfile.run('main()', sort='cumtime')
 else:
 	rm = Runchinld(univars.screencol,fm)
 	rm.Run()

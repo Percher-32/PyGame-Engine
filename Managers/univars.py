@@ -55,7 +55,7 @@ hideentypes = ["camz"]
 
 aplhatypes = {}
 
-map = "level1"
+map = "null"
 
 mode = 1
 
@@ -77,6 +77,7 @@ sizes = {
 
 defont = "pixel2.ttf"
 
+renderdist = 45
 
 def update():
     global screen_w

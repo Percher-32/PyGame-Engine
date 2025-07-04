@@ -634,10 +634,22 @@ class TiledSoftwre:
 				self.textsfornewanim = []
 
 
-
-
-
 			elif self.savemode == "animate":
+
+
+				def showanim(anim,states):
+					for b in self.textsforanim:
+						um.deleleelem(b)
+					self.textsforanim = []
+					a = -1.1
+					for g in sorted([int(brent) for brent in anim.keys()]):
+						g = str(g)
+						a += 0.2
+						um.addtext(g + "framepoint",g + "\n" + str(anim[g]),univars.defont,[a,-0.5],univars.theme["bright"],30,states)
+						self.textsforanim.append(g + "framepoint")
+
+
+
 				self.animobj = object_manager.objects[self.animstr]
 				um.lerpval("animspriteuibox","pos",[-0.8,0.7],4)
 				um.lerpval("animspriteui","pos",[-0.8,0.7],6)
@@ -646,9 +658,9 @@ class TiledSoftwre:
 				um.elements["spritenames"]["text"] = f"sprite-num:{self.animobj['sn']} \ncurrent anim:{self.curanim}"
 				um.elements["frame bar"]["dimensions"][0] = univars.screen_w
 
+
+
 	
-				if GameManager.key["x"] != 0:
-					um.elements["plusbutton"]["pos"][0] = um.elements["plusbutton"]["pos"][0] - GameManager.key["x"]/10
 
 
 				if not um.state == "newanim":
@@ -661,24 +673,15 @@ class TiledSoftwre:
 						if um.elements[i]["click"]:
 							object_manager.speed = 1
 							self.curanim = i.replace("button","")
-							a = -1.1
-							for b in self.textsforanim:
-								um.deleleelem(b)
-							self.textsforanim = []
-							thinglist = object_manager.animations[self.animobj["name"]][self.curanim]
-							intl = sorted([int(i) for i in thinglist])
-							for g in intl:
-								g = str(g)
-								a += 0.2
-								um.addtext(g + "framepoint",g + "\n" + str(thinglist[g]),univars.defont,[a,-0.5],univars.theme["bright"],30,["animplaying"])
-								self.textsforanim.append(g + "framepoint")
-
+							self.newanim = object_manager.animations[self.animobj["name"]][self.curanim]
+							showanim(object_manager.animations[self.animobj["name"]][self.curanim],["animplaying"])
 
 
 						if self.curanim == i.replace("button",""):
 							um.elements[i]["color"] = univars.theme["accent"]
 						else:
 							um.elements[i]["color"] = univars.theme["mid"]
+
 
 					for i in self.textsforanim:
 						if GameManager.key["x"] != 0:
@@ -695,6 +698,8 @@ class TiledSoftwre:
 					um.state = "animplaying"
 
 
+
+
 				if um.elements["plusbutton"]["click"]:
 					self.newanim = {}
 					um.state = "newanim"
@@ -708,6 +713,8 @@ class TiledSoftwre:
 					self.showdata = 1
 				
 
+
+
 				if um.state == "newanim":
 					if not self.textline(GameManager,self.snts,f"input the command:")== self.secretword:
 						self.snts = self.textline(GameManager,self.snts,f"input the command:",col = univars.theme["accent"])
@@ -719,19 +726,8 @@ class TiledSoftwre:
 								self.snts = self.snts.replace("="," ")
 								a = self.snts.split()
 								self.newanim[str(a[0])] = int(a[1])
-
-								for b in self.textsfornewanim:
-									um.deleleelem(b)
-
-
-								self.textsforanim = []
-								a = -1.1
-								for g in sorted([int(brent) for brent in self.newanim.keys()]):
-									g = str(g)
-									a += 0.2
-									um.addtext(g + "newframepoint",g + "\n" + str(self.newanim[g]),univars.defont,[a,-0.5],univars.theme["bright"],30,["newanim"])
-									self.textsfornewanim.append(g + "newframepoint")
-
+								showanim(self.newanim,["newanim"])
+								
 							if "v:" in self.snts:
 								self.snts = self.snts.replace("v:","")
 								self.snts = self.snts.strip()
@@ -746,8 +742,22 @@ class TiledSoftwre:
 
 							if self.snts.rstrip() == "/s":
 								object_manager.saveanim(self.animobj["name"],self.namefornewanim,self.newanim)
+								GameManager.loadanims()
 
 							if self.snts.rstrip() == "/x":
+								GameManager.loadanims()
+								self.savemode = "Objanim"
+
+							if "delfr:" in self.snts.rstrip():
+								self.snts = self.snts.rstrip()
+								self.snts = self.snts.replace("delfr:","")
+								self.snts = self.snts.strip()
+								self.newanim.pop(self.snts)
+								showanim(self.newanim,["newanim"])
+
+							if self.snts == "delanim":
+								object_manager.deleteanim(self.animobj["name"],self.curanim)
+								object_manager.animations[self.animobj["name"]].pop(self.curanim)
 								GameManager.loadanims()
 								self.savemode = "Objanim"
 
@@ -756,15 +766,72 @@ class TiledSoftwre:
 						
 						self.snts = ""
 
-				for i in self.textsfornewanim:
+				if um.state == "animplaying":					
+					if not self.textline(GameManager,self.snts,f"input the command:")== self.secretword:
+						self.snts = self.textline(GameManager,self.snts,f"input the command:",col = univars.theme["accent"])
+					else:
+						try:
+							if "fr:" in self.snts:
+								self.snts = self.snts.replace("fr:","")
+								self.snts = self.snts.strip()
+								self.snts = self.snts.replace("="," ")
+								a = self.snts.split()
+								self.newanim[str(a[0])] = int(a[1])
+								showanim(self.newanim,["animplaying"])
+
+							if "v:" in self.snts:
+								self.snts = self.snts.replace("v:","")
+								self.snts = self.snts.strip()
+								object_manager.objects[self.animstr]["sn"] = int(self.snts)
+
+
+							if "n:" in self.snts:
+								self.snts = self.snts.replace("n:","")
+								self.snts = self.snts.rstrip()
+								self.namefornewanim = self.snts
+								self.curanim = self.snts
+
+							if self.snts.rstrip() == "/s":
+								object_manager.saveanim(self.animobj["name"],self.curanim,self.newanim)
+								GameManager.loadanims()
+
+
+							if self.snts.rstrip() == "/x":
+								GameManager.loadanims()
+								self.savemode = "Objanim"
+
+							if "del:" in self.snts.rstrip():
+								self.snts = self.snts.rstrip()
+								self.snts = self.snts.replace("del:","")
+								self.snts = self.snts.strip()
+								self.newanim.pop(self.snts)
+								showanim(self.newanim,["animplaying"])
+
+							if self.snts.rstrip() == "delanim":
+								object_manager.deleteanim(self.animobj["name"],self.curanim)
+								object_manager.animations[self.animobj["name"]].pop(self.curanim)
+								GameManager.loadanims()
+								self.savemode = "Objanim"
+
+
+							
+							self.snts = ""
+						except:
+							pass
+
+
+
+
+				for i in self.textsforanim:
 					if GameManager.key["x"] != 0:
 						um.elements[i]["pos"][0] = um.elements[i]["pos"][0] - GameManager.key["x"]/40
-					# if str(int(round(object_manager.objects[self.animstr]["gothru"]))) == i.replace("newframepoint",""):
-					# 	um.elements[i]["color"] = univars.theme["bright"]
-					# else:
-					# 	um.elements[i]["color"] = univars.theme["mid"]
+						if str(int(round(object_manager.objects[self.animstr]["gothru"]))) == i.replace("framepoint",""):
+							um.elements[i]["color"] = univars.theme["bright"]
+						else:
+							um.elements[i]["color"] = univars.theme["mid"]
 
-						
+				if GameManager.key["x"] != 0 and not um.state in ["animplaying","newanim"]:
+					um.elements["plusbutton"]["pos"][0] = um.elements["plusbutton"]["pos"][0] - GameManager.key["x"]/10
 
 
 

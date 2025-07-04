@@ -23,7 +23,7 @@ class object_manager:
 		self.func = funcs.func(screen,grandim)
 		self.screen = screen
 		self.realscreen = realscreeen
-		self.grandim = grandim
+		self.grandim = univars.grandim
 		self.tm = Textmanager.Textmanager(realscreeen)
 		self.loadingmap = False
 		#chunk id stored in a tuple "(x,y)"
@@ -31,7 +31,7 @@ class object_manager:
 		self.instables = []
 		self.toreinst = []
 		self.loadedmap = "Null"
-		self.renderdist = 32
+		self.renderdist = univars.renderdist
 		self.dodist = 128
 		self.tracker = 0
 		self.tileup = 1
@@ -65,7 +65,7 @@ class object_manager:
 		self.instables = []
 		self.toreinst = []
 		self.loadedmap = "Null"
-		self.renderdist = 32
+		self.renderdist = univars.renderdist
 		self.dodist = 128
 		self.tracker = 0
 		self.tileup = 1
@@ -163,6 +163,10 @@ class object_manager:
 
 
 
+	def deleteanim(self,obj,animname):
+		anim = f"Saved/animations/{obj}/{animname}.json"
+		if os.path.exists(anim):
+			os.remove(anim)
 
 
 
@@ -403,7 +407,6 @@ class object_manager:
 			for b in layer:
 				if b.name == postodel:
 					self.layers[a].remove(b)
-
 
 
 	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen):
