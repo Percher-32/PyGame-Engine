@@ -53,7 +53,6 @@ class Runchinld(Gamemananager.GameManager):
 
 	def update(self):
 		om.speed = 1
-		fm.showfps = 1
 		
 
 		if "test" in self.states:

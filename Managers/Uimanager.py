@@ -13,28 +13,28 @@ class Uimanager:
 		self.sprites = pygame.sprite.Group()
 		self.state = "default"
 
-	def addelement(self,surf,states,pos,name):
+	def addelement(self,surf,states,pos,name,type=None):
 		ui = self.Uielement.Ui(surf,states,pos,name)
-		self.elements[name] = {"name":name,"pos":pos}
+		self.elements[name] = {"name":name,"pos":pos,"type":type}
 		self.sprites.add(ui)
 		
 	def addrect(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = 0):
 		if not surf == None:
 			surf = univars.func.getsprites(surf)[sn]
 		ui = Uielement.Uirect(dimensions,states,pos,name,surf = surf)
-		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"pos":pos,"states":states,"surf":surf}
+		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"pos":pos,"states":states,"surf":surf,"type":"rect"}
 		self.sprites.add(ui)
 
 	def addbutton(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = 0):
 		if not surf == None:
 			surf = univars.func.getsprites(surf)[sn]
 		ui = Uielement.Uibutton(dimensions,states,pos,name,surf = surf)
-		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"click":0,"hover":0,"command":[],"pos":pos,"states":states,"surf":surf}
+		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"click":0,"hover":0,"command":[],"pos":pos,"states":states,"surf":surf,"type":"button"}
 		self.sprites.add(ui)
 
 	def addtext(self,name, text, font, pos, col, size,states):
 		ui = Uielement.Uitext(name,text,font,pos,col,size,states)
-		self.elements[name] = {"name":name,"text":text,"color":col,"size":size,"command":[],"pos":pos,"states":states}
+		self.elements[name] = {"name":name,"text":text,"color":col,"size":size,"command":[],"pos":pos,"states":states,"type":"text"}
 		self.sprites.add(ui)
 
 	
@@ -42,11 +42,21 @@ class Uimanager:
 		"""name -> str or list"""
 		if type(name) == str:
 			if name in self.elements.keys():
+				if "text" in self.elements[name] and not self.elements[name]["type"] == "text":
+					self.elements.pop(self.elements[name]["text"])
+				if "button" in self.elements[name]:
+					self.elements.pop(self.elements[name]["button"])
+					self.elements.pop()
 				self.elements.pop(name)
 
 		else:
 			for i in name:
 				if i in self.elements.keys():
+					if "text" in self.elements[i] and not self.elements[i]["type"] == "text":
+						self.elements.pop(self.elements[i]["text"])
+					if "button" in self.elements[i]:
+						self.elements.pop(self.elements[i]["button"])
+						self.elements.pop()
 					self.elements.pop(i)
 
 
