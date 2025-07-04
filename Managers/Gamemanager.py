@@ -11,6 +11,7 @@ import univars as univars
 import statemanager as statemanager
 import Uimanager
 import copy
+import backgroundmanager
 import os
 pygame.init()
 pygame.joystick.init()
@@ -24,6 +25,7 @@ cam = Cameramod.cam
 cm = Cammanager.camager
 sm = statemanager.sm(univars.startstate)
 um = Uimanager.ingame
+bg = backgroundmanager.bg
 
 class GameManager():
     def __init__(self,screen_colour,frame_manager):
@@ -242,6 +244,7 @@ class GameManager():
         renderwid = max([univars.screen_w,univars.screen_h])
         univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid,renderwid)),(0,-1 * renderwid//4))
         univars.screen.fill((self.screen_colour))
+        bg.update()
         om.render(cam,self,self.dim)
         um.update(em)
         self.inum([cam.x,cam.y],cam.size)

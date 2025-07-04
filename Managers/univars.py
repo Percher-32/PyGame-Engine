@@ -19,7 +19,7 @@ grandim = 32
 
 name = "Project ender"
 
-maxfps = 1000
+maxfps = 10000
 
 
 (40, 41, 83)
@@ -51,7 +51,7 @@ instables = ["dirt","grass","def"]
 
 extras = [["def","camz",[20,20]]]
 
-offsets = {"tree":[0,-16]}
+offsets = {"tree":[0,-13]}
 
 hideentypes = ["camz"]
 

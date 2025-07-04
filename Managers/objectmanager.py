@@ -330,7 +330,7 @@ class object_manager:
 
 		return {"noninst":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
 
-	def collidep(self,pos,show,camera,dim,pointsize=5,instcol = (0,225,0),noninstcol=(0,225,150),ignore_id = None) -> dict: 
+	def collidep(self,pos,show,dim,pointsize=5,instcol = (0,225,0),noninstcol=(0,225,150),ignore_id = None,camera = None) -> dict: 
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		#coll for non-inst
 		dim = univars.grandim
@@ -344,8 +344,8 @@ class object_manager:
 			inst = [ i for i in self.instances[camchunk] if i.fakerect.collidepoint(pos)]
 
 		#render the collpoint
-		num = max(0.6,1/camera.size)
 		if show:
+			num = max(0.6,1/camera.size)
 			if len(inst) > 0:
 				col = instcol
 			elif len(noninst) > 0:
@@ -366,21 +366,22 @@ class object_manager:
 			w = self.objects[id]["size"][0]/2
 			h = self.objects[id]["size"][1]/2
 			
-			topleft  = self.collidep((x - w +  offsets["topleft"][0]  ,  y - h +  offsets["topleft"][1]),show,camera,dim,pointsize,ignore_id=id)
-			topmid   = self.collidep((x     +   offsets["topmid"][0]  ,  y - h +   offsets["topmid"][1]),show,camera,dim,pointsize,ignore_id=id)
-			topright = self.collidep((x + w + offsets["topright"][0]  ,  y - h + offsets["topright"][1]),show,camera,dim,pointsize,ignore_id=id)
-			midleft  = self.collidep((x - w +  offsets["midleft"][0]  ,    y   +  offsets["midleft"][1]),show,camera,dim,pointsize,ignore_id=id)
-			midmid   = self.collidep((x     +   offsets["midmid"][0]  ,    y   +   offsets["midmid"][1]),show,camera,dim,pointsize,ignore_id=id)
-			midright = self.collidep((x + w + offsets["midright"][0]  ,    y   + offsets["midright"][1]),show,camera,dim,pointsize,ignore_id=id)
-			botleft  = self.collidep((x - w +  offsets["botleft"][0]  ,  y + h +  offsets["botleft"][1]),show,camera,dim,pointsize,ignore_id=id)
-			botmid   = self.collidep((x     +   offsets["botmid"][0]  ,  y + h +   offsets["botmid"][1]),show,camera,dim,pointsize,ignore_id=id)
-			botright = self.collidep((x + w + offsets["botright"][0]  ,  y + h + offsets["botright"][1]),show,camera,dim,pointsize,ignore_id=id)
+			topleft  = self.collidep((x - w +  offsets["topleft"][0]  ,  y - h +  offsets["topleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera)
+			topmid   = self.collidep((x     +   offsets["topmid"][0]  ,  y - h +   offsets["topmid"][1]),show,dim,pointsize,ignore_id=id,camera=camera)
+			topright = self.collidep((x + w + offsets["topright"][0]  ,  y - h + offsets["topright"][1]),show,dim,pointsize,ignore_id=id,camera=camera)
+			midleft  = self.collidep((x - w +  offsets["midleft"][0]  ,    y   +  offsets["midleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera)
+			midmid   = self.collidep((x     +   offsets["midmid"][0]  ,    y   +   offsets["midmid"][1]),show,dim,pointsize,ignore_id=id,camera=camera)
+			midright = self.collidep((x + w + offsets["midright"][0]  ,    y   + offsets["midright"][1]),show,dim,pointsize,ignore_id=id,camera=camera)
+			botleft  = self.collidep((x - w +  offsets["botleft"][0]  ,  y + h +  offsets["botleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera)
+			botmid   = self.collidep((x     +   offsets["botmid"][0]  ,  y + h +   offsets["botmid"][1]),show,dim,pointsize,ignore_id=id,camera=camera)
+			botright = self.collidep((x + w + offsets["botright"][0]  ,  y + h + offsets["botright"][1]),show,dim,pointsize,ignore_id=id,camera=camera)
 			ans = { "topleft":topleft,"topmid":topmid,"topright":topright,"midleft":midleft,"midmid":midmid,"midright":midright,"botleft":botleft,"botmid":botmid,"botright":botright}
 			return ans
 
 	def remove(self,pos):
-		postodel = self.func.get(dict(zip(self.objects.keys(),(self.objects[i]["pos"] for i in self.objects.keys()))),[pos[0],pos[1]])
-
+		# postodel = self.func.get(dict(zip(self.objects.keys(),(self.objects[i]["pos"] for i in self.objects.keys()))),[pos[0],pos[1]])
+		poscol = self.collidep(pos,0,univars.grandim)
+		postodel = [i.name for i in poscol["obj"]]
 
 		#deleting non-instances
 		if not postodel == []:
@@ -490,12 +491,17 @@ class object_manager:
 		self.speed = speed
 
 	def render(self,camera,GameManager,dim:int):
+
 		#camera-chunk
 		camposdim = [int(round(camera.x/(dim * self.renderdist))),int(round(camera.y/(dim * self.renderdist)))]
 		#availabe chunks
 		ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
 		#the instanciate chunks to be rendered
 		lof = [  b   for b in self.instances.keys() for i in ranges   if b == ( i[0]  + camposdim[0],i[1] + camposdim[1]   )]
+
+		
+
+
 
 		#rendering the instanciates
 		if len(lof) > 0:

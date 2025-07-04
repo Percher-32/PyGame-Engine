@@ -14,6 +14,7 @@ cam =Gamemananager.cam
 cm = Gamemananager.cm
 sm = Gamemananager.sm
 um = Gamemananager.um
+bg = Gamemananager.bg
 
 
 
@@ -53,7 +54,11 @@ class Runchinld(Gamemananager.GameManager):
 
 	def update(self):
 		om.speed = 1
-		
+		bg.addbackground("test1")
+		bg.addbackgrounditem("test1",[0,0],color=(0,100,100),dimensions=[500,500],layer = 6)
+		bg.addbackgrounditem("test1",[0,0],color=(0,0,100),dimensions=[300,300],layer = 4)
+		bg.addbackgrounditem("test1",[0,0],color=(0,0,200),dimensions=[100,100],layer = 2)
+		bg.background = "test1"
 
 		if "test" in self.states:
 			c = om.collide9("player",0,cam,self.dim)
