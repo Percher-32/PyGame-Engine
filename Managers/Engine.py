@@ -28,7 +28,7 @@ class Runchinld(Gamemananager.GameManager):
 		self.a = 0
 		# bg.background = "test1"
 		bg.addbackground("test2")
-		bg.addbackgrounditem("black","test2",[0,-1000],surf = "mount",dimensions=[500*2.3,250*2.3],layer = 20)
+		bg.addbackgrounditem("black","test2",[0,100],surf = "mount",dimensions=[500*2.3,250*2.3],layer = 20)
 		# bg.addbackgrounditem("black2","test2",[250*15,0],surf = "mount",dimensions=[500*1.5,250*1.5],layer = 20)
 		
 		

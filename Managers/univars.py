@@ -11,7 +11,7 @@ screen_h = 1000
 
 camchange = False
 
-pixelscale = 10
+pixelscale = 3
 
 
 grandim = 32
@@ -76,6 +76,7 @@ sizes = {
     "largebutton": (300,150),
 }
 
+poschange = 0
 
 defont = "pixel2.ttf"
 
