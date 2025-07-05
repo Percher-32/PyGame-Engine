@@ -18,7 +18,8 @@ class Item(pygame.sprite.Sprite):
             surf.fill(color)
             surf.set_alpha(alpha)
         else:
-            surf = pygame.image.load(f"Graphics/backgrounds/{surf}").convert_alpha()
+            surf = pygame.image.load(f"Graphics/background/{surf}.png").convert_alpha()
+            surf = pygame.transform.scale(surf,dimensions)
         
         self.image = surf
         self.pos = pos

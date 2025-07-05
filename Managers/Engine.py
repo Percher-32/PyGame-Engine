@@ -26,7 +26,10 @@ class Runchinld(Gamemananager.GameManager):
 
 	def onreload(self):
 		self.a = 0
-		bg.background = "test1"
+		# bg.background = "test1"
+		bg.addbackground("test2")
+		bg.addbackgrounditem("black","test2",[0,-1000],surf = "mount",dimensions=[500*2.3,250*2.3],layer = 20)
+		# bg.addbackgrounditem("black2","test2",[250*15,0],surf = "mount",dimensions=[500*1.5,250*1.5],layer = 20)
 		
 		
 		if "test" in self.states:
@@ -53,6 +56,7 @@ class Runchinld(Gamemananager.GameManager):
 
 	def update(self):
 		om.speed = 1
+		bg.background = "test2"
 
 		if "test" in self.states:
 			c = om.collide9("player",0,cam,self.dim)
