@@ -2,8 +2,8 @@
 ## What is it?
  A game engine the runs mainly on pygame to render objects
 
- ## files:
- ### Engine.py
+ ## files in /managers:
+ ### Engine.py - this is what you run
 contains the games code
 
 ### Gamemanager.py
