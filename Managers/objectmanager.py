@@ -382,6 +382,7 @@ class object_manager:
 		# postodel = self.func.get(dict(zip(self.objects.keys(),(self.objects[i]["pos"] for i in self.objects.keys()))),[pos[0],pos[1]])
 		poscol = self.collidep(pos,0,univars.grandim)
 		postodel = [i.name for i in poscol["obj"]]
+		instpostodel = poscol["inst"]
 
 		#deleting non-instances
 		if not postodel == []:
@@ -396,7 +397,7 @@ class object_manager:
 		#deleting instances
 		for a in self.instances.keys():
 			for inst in self.instances[a]:
-				if int(round(inst.realpos[0])) == int(pos[0]) and int(round(inst.realpos[1])) == int(pos[1]):
+				if inst in instpostodel:
 					self.instances[a].remove(inst)
 
 	def removeid(self,id):

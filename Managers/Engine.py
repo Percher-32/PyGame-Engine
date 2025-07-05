@@ -24,9 +24,9 @@ class Runchinld(Gamemananager.GameManager):
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
 
-	def initial(self):
-		self.defs()
+	def onreload(self):
 		self.a = 0
+		bg.background = "test1"
 		
 		
 		if "test" in self.states:
@@ -51,14 +51,8 @@ class Runchinld(Gamemananager.GameManager):
 		# self.enppos = [0,-0.5]
 		pass
 
-
 	def update(self):
 		om.speed = 1
-		bg.addbackground("test1")
-		# bg.addbackgrounditem("test1",[0,0],color=(0,100,100),dimensions=[1000,1000],layer = 20)
-		# bg.addbackgrounditem("test1",[0,0],color=(0,0,100),dimensions=[300,300],layer = 10)
-		# bg.addbackgrounditem("test1",[0,0],color=(0,0,200),dimensions=[100,100],layer = 8)
-		bg.background = "test1"
 
 		if "test" in self.states:
 			c = om.collide9("player",0,cam,self.dim)
@@ -160,9 +154,8 @@ class Runchinld(Gamemananager.GameManager):
 	def cond(self,obj,info):
 		"""obj -> the id   info -> the info for the id"""
 		if info["name"] == "bird":
-			# om.playanim(fm.dt,obj,"fly2")
-			# om.translate(self,obj,[4,4])
-			pass
+			om.playanim(fm.dt,obj,"fly")
+			om.translate(self,obj,[4,4])
 
 
 if univars.mode == 0:

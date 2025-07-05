@@ -4,13 +4,14 @@ import Cammanager
 import Textmanager
 import funcs
 import univars
+import backgroundmanager
 import Uimanager
 import Cammanager
 import objectmanager
 um = Uimanager.ingame
 cam = Cameramod.cam
 cam = Cammanager.camager.cameras["def"]
-
+bg = backgroundmanager.bg
 object_manager = objectmanager.om
 
 class TiledSoftwre:
@@ -910,6 +911,13 @@ class TiledSoftwre:
 
 			else:
 				if not self.commmandtring.rstrip() in ["Com","Obj"]:
+					if "addbg:" in self.commmandtring.rstrip():
+						bg.addbackground(self.commmandtring.rstrip().replace("addbg:", ""))
+						self.comm = True
+						self.savemode = 0
+					if "setbg:" in self.commmandtring.rstrip():
+						print(self.commmandtring.rstrip().replace("setbg:", ""))
+						bg.background = self.commmandtring.rstrip().replace("setbg:", "")
 					if "state:" in self.commmandtring.rstrip():
 						self.cht = self.commmandtring.rstrip().replace("state:", "")
 						self.comm = True

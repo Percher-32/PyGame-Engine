@@ -44,10 +44,9 @@ class inst(pygame.sprite.Sprite):
 	def update(self, camera,dim:int,showall):
 			
 		ext =  int(abs(dim * math.sin(self.rot/28.6 )))
+		ext = 0
 		# if univars.camchange:
-		self.image =  pygame.transform.scale(self.bart,  [self.size[0] * abs(camera.size)+ ext,self.size[1] * abs(camera.size) +ext] )
-		# else:
-		# 	self.image = self.lastframe
+		self.image =  pygame.transform.rotate(pygame.transform.scale(self.bart,  [self.size[0] * abs(camera.size)+ ext,self.size[1] * abs(camera.size) +ext] ),self.rot)
 		alpha = self.alpha
 		if showall:
 			if self.alpha == 0:

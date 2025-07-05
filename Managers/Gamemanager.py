@@ -226,6 +226,7 @@ class GameManager():
     def defs(self):
         sm.update()
         self.bosh()
+        bg.loadbg()
         om.instables = univars.instables
         cm.setcam("def")
         self.debug = True
@@ -272,5 +273,10 @@ class GameManager():
         self.frame_manager.next(self.fpsmax)
 
     def initial(self):
+        self.defs()
+        self.onreload()
+
+
+    def onreload(self):
         pass
 
