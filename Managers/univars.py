@@ -59,7 +59,7 @@ aplhatypes = {}
 
 map = "green"
 
-mode = 1
+mode = 0
 
 startuistate = "def"
 

@@ -33,15 +33,13 @@ class Runchinld(Gamemananager.GameManager):
 			cm.addcam("playercam",[0,0],0.4)
 			cm.setcam("playercam")  
 
-			#create player
-			om.adds("player",[0,-200],"enemy","player",0,[1,1],400,5)
+			#initialise player and all its variables
+			self.initialiseplayer()
+
+			
 
 
-			#desired velocity
-			self.sp("des_vel",[0,0])
-
-			#actual velocity
-			self.sp("act_vel",[0,0])
+			
 
 	def commence(self):
 		# self.wait("intro",1)
@@ -66,38 +64,89 @@ class Runchinld(Gamemananager.GameManager):
 
 
 
+	def initialiseplayer(self):
+		#create player
+		om.adds("player",[0,-400],"enemy","player",0,[1,1],400,5)
 
+		#desired velocity
+		self.sp("des_vel",[0,0])
+
+		#actual velocity
+		self.sp("act_vel",[0,0])
+
+		#smoothing
+		self.sp("smoothing",2)
+
+		#modes
+		self.sp("mode","grounded")
 
 			
-def playercode(self):
-	if "player" in om.objects.keys():
-		collision = om.collide9("player",1,cam,self.dim)
-		self.camfoc()
-		self.moveplayer(collision)
+	def playercode(self):
+		"""
+			contins all the code that the player needs to function
+		"""
+		if "player" in om.objects.keys():
+			collision = om.collide9("player",1,cam,self.dim)
+			cm.cam_focus_size("playercam",om.objects["player"]["pos"],4,0.4)
+			self.moveplayer(collision)
 
 
-			
+	def moveplayer(self,collision):
+		ground1 = len(collision["botmid"]["inst"]) > 0
+		ground2 = len(collision["botleft"]["inst"]) > 0 and not len(collision["midleft"]["inst"]) > 0
+		ground3 = len(collision["botright"]["inst"]) > 0 and not len(collision["midright"]["inst"]) > 0
+		ground = ground1 or ground2 or ground3
+		instlist = collision["botmid"]["inst"] + collision["botleft"]["inst"] + collision["botright"]["inst"] 
 
-def camfoc(self):
-	cm.cam_focus_size("playercam",om.objects["player"]["pos"],4,0.4)
+		#show the mode
+		um.showvar("mode",self.gp("mode"),[-0.7,-0.7])
+
+		#show the desvel
+		um.showvar("desvel",self.gp("des_vel"),[-0.4,-0.7])
+
+
+		if abs(self.key["x"]) > 0:
+			self.sp("des_vel",[  self.key["x"] * 100    ,    self.gp("des_vel")[1]   ])
+		else:
+			self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
+
+		
+		if "x" in self.lastkey.keys():
+			if abs(self.key["x"]-self.lastkey["x"]) > 0.1:
+				print("sskidd")
+
+
+
+
 		
 
-def moveplayer(self,collision):
-	ground1 = len(collision["botmid"]["inst"]) > 0
-	ground2 = len(collision["botleft"]["inst"]) > 0 and not len(collision["midleft"]["inst"]) > 0
-	ground3 = len(collision["botright"]["inst"]) > 0 and not len(collision["midright"]["inst"]) > 0
-	ground = ground1 or ground2 or ground3
+		
+		if ground:
+			self.sp("mode","grounded")
+			if self.key["action"]:
+				# om.objects["player"]["pos"][1] -= 32
+				self.sp("des_vel",[  self.gp("des_vel")[0] , 200     ])
+				self.sp("mode","in-air")
+		else:
+			if not self.gp("mode") == "jumping":
+				self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    univars.func.lerp(self.gp("des_vel")[1],-30,10,roundto = 0)   ]     )
+				self.sp("mode","in-air")
 
 
-	#show the variable
-	um.showvar("grounded",ground,[-0.7,-0.7])
-
-	#move
-	univars.func.lerp(self.gp("act_vel"),self.gp("des_vel"),8)
-	om.translate(self,"player",self.gp("act_vel"))
 
 
-	self.sp("des_vel",    [   self.key["x"] * 50    ,   self.key["y"] * 50   ]     )
+
+		#move
+		univars.func.lerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 0)
+		om.translate(self,"player",self.gp("act_vel"))
+
+		if self.gp("mode") == "grounded":
+			om.objects["player"]["pos"][1] = instlist[0].realpos[1] - 32
+
+
+
+		
+
 
 
 
@@ -232,6 +281,6 @@ if univars.mode == 0:
 		rm.Run()
 
 	if __name__ == "__main__":
-		cProfile.run('main()', sort='totime')
+		cProfile.run('main()', sort='cumtime')
 else:
 	rm.Run()

@@ -557,10 +557,10 @@ class TiledSoftwre:
 				self.savemode = "alterobj"
 				self.dostring2 = ""
 		
-			elif "Objmove:" in self.savemode:
+			elif "Objpos:" in self.savemode:
 				st = self.savemode.rstrip()
 				st = st.strip()
-				st = st.replace("Objmove:[", "")
+				st = st.replace("Objpos:[", "")
 				st = st.replace("]", "")
 				st = st.strip()
 				varname = st

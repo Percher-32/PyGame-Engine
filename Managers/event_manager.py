@@ -19,6 +19,7 @@ class event_manager:
 		self.Mouser = False
 		self.x = False
 		self.sq = False
+		self.running = True
 		self.tri = False
 		self.cir = False
 		self.xb = False
@@ -55,6 +56,7 @@ class event_manager:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				pygame.quit()
+				self.running = False
 				exit()
 
 
