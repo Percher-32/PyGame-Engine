@@ -11,7 +11,7 @@ screen_h = 1000
 
 camchange = False
 
-pixelscale = 3
+pixelscale = 7
 
 
 grandim = 32
