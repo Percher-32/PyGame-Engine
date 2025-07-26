@@ -14,6 +14,7 @@ import copy
 import backgroundmanager
 import os
 import threading
+import time
 pygame.init()
 pygame.joystick.init()
 
@@ -34,6 +35,7 @@ class GameManager():
         self.frame_manager = frame_manager
         self.event_manager = self.frame_manager.event_manager
         self.timers = {}
+        self.running = True
         self.dons = []
         self.ids = []
         self.states = []
@@ -161,11 +163,14 @@ class GameManager():
             return False
 
     def inum(self):
-        while (1):
-            for obj in om.objects.keys():
-                range =  2000
-                if univars.func.dist(om.objects[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
-                    self.cond(obj,om.objects[obj])
+        while self.running:
+            if len(om.objects.keys()) > 0:
+                stabledict = om.objects
+                for obj in stabledict.keys():
+                    range =  2000
+                    if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
+                        self.cond(obj,stabledict[obj])
+            time.sleep(0.01)
 
     def cond(self,obj,info):
         pass
@@ -191,9 +196,6 @@ class GameManager():
             return True
         else:
             return False
-        
-    def commence(self):
-        pass
 
     def defs(self):
         sm.update()
@@ -217,6 +219,8 @@ class GameManager():
         return om.get_value("player",val)
 
     def Run(self):
+        inumthread = threading.Thread(target=self.inum)
+        inumthread.start()
         self.commence()
         self.initial()
         while(1): 
@@ -224,6 +228,8 @@ class GameManager():
             if not Tiled.loadingmap:
                 self.update()
             self.end()
+        self.running = False
+
 
     def defs(self):
         sm.update()
@@ -248,6 +254,7 @@ class GameManager():
         univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid ,renderwid )),(0,-1 * renderwid//4))
         univars.screen.fill((self.screen_colour))
         bg.update()
+        self.dt = fm.dt
         om.render(cam,self,self.dim)
         um.update(em)
         # self.inum([cam.x,cam.y],cam.size)
@@ -277,8 +284,7 @@ class GameManager():
     def initial(self):
         self.defs()
         self.onreload()
-        inumthread = threading.Thread(target=self.inum)
-        inumthread.start()
+        
 
 
     def onreload(self):

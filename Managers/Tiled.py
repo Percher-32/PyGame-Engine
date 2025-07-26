@@ -211,7 +211,7 @@ class TiledSoftwre:
 											x += self.dim
 										else:
 											x -= self.dim
-										self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim)
+										self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL])
 							if GameManager.event_manager.key[pygame.K_v]:
 								self.pos2 = gridpos
 								self.grip = 0
@@ -269,7 +269,7 @@ class TiledSoftwre:
 					#to place
 					if GameManager.event_manager.mouse[0]:
 						if self.placable < 1:
-							object_manager.add(gridpos,self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim)
+							object_manager.add(gridpos,self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL])
 							self.placable = 1
 
 					#to remove

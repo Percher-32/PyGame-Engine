@@ -411,8 +411,9 @@ class object_manager:
 					self.layers[a].remove(b)
 
 
-	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen):
-		self.remove(list(pos))
+	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen , keepprev = False):
+		if not keepprev:
+			self.remove(list(pos))
 		if not type in self.renderinst:
 			if not type in self.aplhainst.keys():
 				alp = 400
@@ -428,7 +429,7 @@ class object_manager:
 			self.instances[name] = pygame.sprite.Group()
 			self.instances[name].add(newt)
 
-	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int):
+	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int , keepprev = False):
 		"adds an object to the manager  , gives an id of type str"
 		pos = list(pos)
 		if sprites in univars.offsets.keys():
@@ -438,7 +439,8 @@ class object_manager:
 
 		if not sprites in self.instables:
 			layer = 0
-			self.remove(pos)
+			if not keepprev:
+				self.remove(pos)
 			self.tracker += 1
 			dummy  = self.func.getsprites(sprites)[0]
 			size = [dummy.get_width() * sizen[0],dummy.get_height() * sizen[1]]

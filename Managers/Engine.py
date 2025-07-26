@@ -1,9 +1,7 @@
 import Gamemanager as Gamemananager
 import univars as univars
 import cProfile
-import pstats
-import threading
-
+import sys
 
 
 em = Gamemananager.em
@@ -16,9 +14,6 @@ cm = Gamemananager.cm
 sm = Gamemananager.sm
 um = Gamemananager.um
 bg = Gamemananager.bg
-
-
-
 
 
 class Runchinld(Gamemananager.GameManager):	
@@ -59,7 +54,7 @@ class Runchinld(Gamemananager.GameManager):
 		bg.background = "test2"
 
 		if "test" in self.states:
-			c = om.collide9("player",0,cam,self.dim)
+			c = om.collide9("player",1,cam,self.dim)
 			self.camfoc()
 			self.gravity(c)
 			self.playermovex(c)
@@ -158,9 +153,12 @@ class Runchinld(Gamemananager.GameManager):
 	def cond(self,obj,info):
 		"""obj -> the id   info -> the info for the id"""
 		if info["name"] == "bird":
-			om.playanim(fm.dt,obj,"fly")
-			om.translate(self,obj,[4,4])
+			om.translate(self,obj,[5,5])
+			om.playanim(self.dt,obj,"fly")
 
+
+
+rm = Runchinld(univars.screencol,fm)
 
 if univars.mode == 0:
 	def main():
@@ -170,5 +168,4 @@ if univars.mode == 0:
 	if __name__ == "__main__":
 		cProfile.run('main()', sort='cumtime')
 else:
-	rm = Runchinld(univars.screencol,fm)
 	rm.Run()
