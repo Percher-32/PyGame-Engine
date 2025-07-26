@@ -507,12 +507,13 @@ class object_manager:
 
 		
 
-
+		
 
 		#rendering the instanciates
 		if len(lof) > 0:
 			for i in lof:
 				self.instances[i].update(camera,GameManager.dim,self.showall)
+				print(self.instances[i])
 				self.instances[i].draw(self.screen)
 
 		#rendering the non-instanciates

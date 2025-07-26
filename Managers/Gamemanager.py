@@ -165,14 +165,16 @@ class GameManager():
 			return False
 
 	def inum(self):
-		if len(om.objects.keys()) > 0:
-			stabledict = om.objects
-			for obj in stabledict.keys():
-				range =  2000
-				if not em.running:
-					break
-				if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
-					self.cond(obj,stabledict[obj])
+		while em.running:
+			if len(om.objects.keys()) > 0:
+				stabledict = om.objects
+				for obj in stabledict.keys():
+					range =  2000
+					if not em.running:
+						break
+					if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
+						self.cond(obj,stabledict[obj])
+			time.sleep(0.001)
 
 	def cond(self,obj,info):
 		pass
@@ -223,8 +225,8 @@ class GameManager():
 	def Run(self):
 		self.commence()
 		self.initial()
-		# inumthread = threading.Thread(target=self.inum)
-		# inumthread.start()
+		inumthread = threading.Thread(target=self.inum)
+		inumthread.start()
 		while(1): 
 			self.start()   
 			if not Tiled.loadingmap:
