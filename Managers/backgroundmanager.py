@@ -33,7 +33,7 @@ class Item(pygame.sprite.Sprite):
 
     def update(self):
         camera = Cameramod.cam
-        self.renderedpos =  (            ( (self.pos[0]) * camera.size) + univars.screen.get_width()//2    ,      (self.pos[1]) * camera.size + univars.screen.get_height()//2               )
+        self.renderedpos =  (            ( (self.pos[0])) + univars.screen.get_width()//2  ,      (self.pos[1]) + univars.screen.get_height()//2             )
         # self.image = pygame.transform.scale(self.baseimg,[self.dimensions[0] * camera.size/self.layer,self.dimensions[1] * camera.size/self.layer])
         # self.image = pygame.transform.scale_by(self.baseimg,camera.size/self.layer)
         # self.image = self.baseimg
@@ -41,8 +41,8 @@ class Item(pygame.sprite.Sprite):
             self.bcs += (Cameramod.cam.size - self.pastbcs)/self.layer
             self.pastbcs = Cameramod.cam.size
         if univars.poschange:
-            self.pos[0] -= (camera.x - self.prevcampos[0])/self.layer
-            self.pos[1] -= (camera.y - self.prevcampos[1])/self.layer
+            self.pos[0] -= (camera.x - self.prevcampos[0])/self.layer * camera.size
+            self.pos[1] -= (camera.y - self.prevcampos[1])/self.layer * camera.size
             self.prevcampos = [Cameramod.cam.x,Cameramod.cam.y]
 
         self.image = pygame.transform.scale_by(self.baseimg,self.bcs)
