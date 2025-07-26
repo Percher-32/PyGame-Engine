@@ -59,22 +59,45 @@ class Runchinld(Gamemananager.GameManager):
 		bg.background = "test2"
 
 		if "test" in self.states:
-			collision = om.collide9("player",1,cam,self.dim)
-			self.camfoc()
-			self.moveplayer(collision)
 			om.speed = 1
+			self.playercode()
 
-	def camfoc(self):
-		cm.cam_focus_size("playercam",om.objects["player"]["pos"],4,0.4)
+
+
+
+
+
+
 			
-	def moveplayer(self,collision):
-		ground1 = len(collision["botmid"]["inst"]) > 0
-		ground2 = len(collision["botleft"]["inst"]) > 0 and not len(collision["midleft"]["inst"]) > 0
-		ground3 = len(collision["botright"]["inst"]) > 0 and not len(collision["midright"]["inst"]) > 0
-		ground = ground1 or ground2 or ground3
+def playercode(self):
+	if "player" in om.objects.keys():
+		collision = om.collide9("player",1,cam,self.dim)
+		self.camfoc()
+		self.moveplayer(collision)
 
-		univars.func.lerp(self.gp("act_vel"),self.gp("des_vel"),4)
-		om.translate(self,"player",self.gp("act_vel"))
+
+			
+
+def camfoc(self):
+	cm.cam_focus_size("playercam",om.objects["player"]["pos"],4,0.4)
+		
+
+def moveplayer(self,collision):
+	ground1 = len(collision["botmid"]["inst"]) > 0
+	ground2 = len(collision["botleft"]["inst"]) > 0 and not len(collision["midleft"]["inst"]) > 0
+	ground3 = len(collision["botright"]["inst"]) > 0 and not len(collision["midright"]["inst"]) > 0
+	ground = ground1 or ground2 or ground3
+
+
+	#show the variable
+	um.showvar("grounded",ground,[-0.7,-0.7])
+
+	#move
+	univars.func.lerp(self.gp("act_vel"),self.gp("des_vel"),8)
+	om.translate(self,"player",self.gp("act_vel"))
+
+
+	self.sp("des_vel",    [   self.key["x"] * 50    ,   self.key["y"] * 50   ]     )
 
 
 
@@ -167,6 +190,21 @@ class Runchinld(Gamemananager.GameManager):
 	# 			self.sp("jump",0)
 	# 			self.sp("mode","falling or stat")
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	def cond(self,obj,info):
 		"""obj -> the id   info -> the info for the id"""
 		if info["name"] == "bird":
@@ -175,8 +213,19 @@ class Runchinld(Gamemananager.GameManager):
 
 
 
-rm = Runchinld(univars.screencol,fm)
 
+
+
+
+
+
+
+
+
+
+
+
+rm = Runchinld(univars.screencol,fm)
 if univars.mode == 0:
 	def main():
 		rm = Runchinld(univars.screencol,fm)

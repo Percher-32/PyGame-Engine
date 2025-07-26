@@ -503,7 +503,7 @@ class TiledSoftwre:
 				object_manager.tile()
 				self.savemode = 0
 
-			#savemode for object veiw
+								
 			elif self.savemode == "alterobj":
 				GameManager.uibox((400,self.realscreeen.get_height() - 200),(-0.75,0.15),self.theme["dark"] ,400)
 				b = self.dostring
@@ -541,7 +541,7 @@ class TiledSoftwre:
 						gate = 1
 					
 				varname = str(varname)
-				varlue = str(varlue)
+				varlue = eval(str(varlue))
 				object_manager.set_value(self.dostring.name,varname,varlue)
 				self.savemode = "alterobj"
 				self.dostring2 = ""

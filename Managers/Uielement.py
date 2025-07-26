@@ -119,7 +119,7 @@ class Ui(pygame.sprite.Sprite):
 
     def update(self,state,elements,em):
         if self.name in elements.keys():
-            if state in self.states:
+            if state in self.states or "all" in self.states:
                 if self.cando:
                     self.baseimg.fill(elements[self.name]["color"])
                 else:
@@ -194,7 +194,7 @@ class Uitext(pygame.sprite.Sprite):
 
     def update(self,state,element,em):
         if self.name in element:
-            if state in self.states:
+            if state in self.states or "all" in self.states:
                 self.col = element[self.name]["color"]
                 self.pos = element[self.name]["pos"]
                 self.states = element[self.name]["states"]

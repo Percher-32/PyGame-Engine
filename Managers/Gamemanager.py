@@ -35,6 +35,7 @@ class GameManager():
         self.frame_manager = frame_manager
         self.event_manager = self.frame_manager.event_manager
         self.timers = {}
+        self.dt = 0
         self.running = True
         self.dons = []
         self.ids = []
@@ -171,6 +172,7 @@ class GameManager():
                     if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
                         self.cond(obj,stabledict[obj])
             time.sleep(0.01)
+        print("done")
 
     def cond(self,obj,info):
         pass
@@ -219,10 +221,10 @@ class GameManager():
         return om.get_value("player",val)
 
     def Run(self):
-        inumthread = threading.Thread(target=self.inum)
-        inumthread.start()
         self.commence()
         self.initial()
+        inumthread = threading.Thread(target=self.inum)
+        inumthread.start()
         while(1): 
             self.start()   
             if not Tiled.loadingmap:
