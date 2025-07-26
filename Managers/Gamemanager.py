@@ -13,6 +13,7 @@ import Uimanager
 import copy
 import backgroundmanager
 import os
+import threading
 pygame.init()
 pygame.joystick.init()
 
@@ -159,11 +160,12 @@ class GameManager():
         else:
             return False
 
-    def inum(self,campos,camsize:float):
-        for obj in om.objects.keys():
-            range =  2000
-            if univars.func.dist(om.objects[obj]["pos"],campos) < range:
-                self.cond(obj,om.objects[obj])
+    def inum(self):
+        while (1):
+            for obj in om.objects.keys():
+                range =  2000
+                if univars.func.dist(om.objects[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
+                    self.cond(obj,om.objects[obj])
 
     def cond(self,obj,info):
         pass
@@ -248,7 +250,7 @@ class GameManager():
         bg.update()
         om.render(cam,self,self.dim)
         um.update(em)
-        self.inum([cam.x,cam.y],cam.size)
+        # self.inum([cam.x,cam.y],cam.size)
         if self.work:
             Tiled.Run(self.work,univars.camspeeed,self,cam,self.dim,self.leveledit,cm,sm.state)
         self.keybind()
@@ -275,6 +277,8 @@ class GameManager():
     def initial(self):
         self.defs()
         self.onreload()
+        inumthread = threading.Thread(target=self.inum)
+        inumthread.start()
 
 
     def onreload(self):
