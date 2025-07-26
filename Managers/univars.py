@@ -57,7 +57,7 @@ hideentypes = ["camz"]
 
 aplhatypes = {}
 
-map = "null"
+map = "green"
 
 mode = 1
 
@@ -65,7 +65,7 @@ startuistate = "def"
 
 screencol = (110,189,234)
 
-startstate = "edit"
+startstate = "editgame"
 
 camspeeed = 45
 

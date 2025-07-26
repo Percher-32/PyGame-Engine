@@ -257,7 +257,10 @@ class object_manager:
 		self.sprites[id] = self.func.getspritesscale(self.objects[id][1],scale)
 
 	def get_value(self,info,name):
-		return self.values[info][name]
+		if name in self.values[info].keys():
+			return self.values[info].get(name)
+		else:
+			return 0
 		
 	def set_value(self,id,name,value):
 		try:
