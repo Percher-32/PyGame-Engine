@@ -19,7 +19,7 @@ grandim = 32
 
 name = "Project ender"
 
-maxfps = 1000000
+maxfps = 60
 
 
 (40, 41, 83)
@@ -57,7 +57,7 @@ hideentypes = ["camz"]
 
 aplhatypes = {}
 
-map = "flat"
+map = "green"
 
 startstate = "editgame"
 

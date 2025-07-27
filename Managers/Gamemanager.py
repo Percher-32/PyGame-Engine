@@ -35,7 +35,7 @@ class GameManager():
 		self.frame_manager = frame_manager
 		self.event_manager = self.frame_manager.event_manager
 		self.timers = {}
-		self.dt = 0
+		self.dt = 1
 		self.running = True
 		self.lastkey = {}
 		self.dons = []
@@ -215,9 +215,15 @@ class GameManager():
 		om.showall = sm.showall
 
 	def sp(self,val:str,to):
+		"""
+		changes the value a players variable
+		"""
 		om.set_value("player",val,to)
 
 	def gp(self,val:str):
+		"""
+		gets the value a players variable
+		"""
 		return om.get_value("player",val)
 
 	def Run(self):
