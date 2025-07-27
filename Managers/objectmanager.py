@@ -242,10 +242,13 @@ class object_manager:
 			elif u and not d and not l and not r:
 				self.objects[i][4] = ldr
 
-	def translate(self,GameManager,id:str,sv:list):
+	def translate(self,GameManager,id:str,vector:list):
+		"""
+		y-axis is fixed to be + up , - down
+		"""
 		if not GameManager == "none":
-			self.objects[id]["pos"][0] += int(round((sv[0] * GameManager.frame_manager.dt * self.speed) * self.screen.get_width()/self.realscreen.get_width()))
-			self.objects[id]["pos"][1] -= int(round((sv[1] * GameManager.frame_manager.dt * self.speed) * self.screen.get_width()/self.realscreen.get_width()))
+			self.objects[id]["pos"][0] += int(round((vector[0] * 0.3)))
+			self.objects[id]["pos"][1] -= int(round((vector[1] * 0.3)))
 
 	def rotate(self,GameManager,id,ang):
 		if not GameManager == "none":

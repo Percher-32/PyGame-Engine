@@ -61,6 +61,7 @@ class Runchinld(Gamemananager.GameManager):
 
 
 
+
 			
 	def playercode(self):
 		"""
@@ -68,7 +69,7 @@ class Runchinld(Gamemananager.GameManager):
 		"""
 		if "player" in om.objects.keys():
 			
-			cm.cam_focus_size("playercam",om.objects["player"]["pos"],4,0.4)
+			cm.cam_focus_size("playercam",om.objects["player"]["pos"],4,0.6)
 			self.moveplayer()
 
 
@@ -81,7 +82,7 @@ class Runchinld(Gamemananager.GameManager):
 		om.speed = 1
 
 		#create player
-		om.adds("player",[0,-400],"enemy","player",0,[1,1],400,5)
+		om.adds("player",[0,-400],"player","player",0,[1,1],400,5)
 
 		#desired velocity
 		self.sp("des_vel",[0,0])
@@ -98,31 +99,36 @@ class Runchinld(Gamemananager.GameManager):
 		#able to jump?
 		self.sp("jumpamble",False)
 
+		#fall speed smoothing
+		self.sp("fss",8)
+
 
 		#shidding?
 		self.sp("skidding",False)
 
 
 	def moveplayer(self):
-		collision = om.collide9("player",1,cam,self.dim)
+		collision = om.collide9("player",0,cam,self.dim)
 		ground1 = len(collision["botmid"]["inst"]) > 0
 		ground2 = len(collision["botleft"]["inst"]) > 0 and not (len(collision["midleft"]["inst"]) > 0)
 		ground3 = len(collision["botright"]["inst"]) > 0 and not (len(collision["midright"]["inst"]) > 0)
 		ground = ground1 or ground2 or ground3
 		instlist = collision["botmid"]["inst"] + collision["botleft"]["inst"] + collision["botright"]["inst"] 
 
-		#show the mode
-		# um.showvar("mode",self.gp("mode"),[-0.8,-0.7])
+		# show the mode
+		um.showvar("mode",self.gp("mode"),[-0.8,-0.7])
 
-		# #show the desvel
-		# um.showvar("desvel",self.gp("des_vel"),[-0.4,-0.7])
+		#show the desvel
+		um.showvar("desvel",self.gp("des_vel"),[-0.4,-0.7])
 
-		# #show the ground cond
-		# um.showvar("1,2,3",str(ground1) +  " " + str(ground2) + " " +  str(ground3) ,[0,-0.7])
+		#show the ground cond
+		um.showvar("1,2,3",str(ground1) +  " " + str(ground2) + " " +  str(ground3) ,[0,-0.7])
 
 
-		# #show the ground conditions
-		# um.showvar("array", [self.key["x"] , self.key["y"]] ,[0.4,-0.7])
+		#show the ground conditions
+		um.showvar("array", [self.key["x"] , self.key["y"]] ,[0.4,-0.7])
+
+
 
 
 
@@ -158,39 +164,43 @@ class Runchinld(Gamemananager.GameManager):
 		else:
 			self.sp("skidding",False)
 
-		#ground detection
+		#ground detection + falling
 		if ground:
 			self.sp("mode","grounded")
 			self.sp("jumpable",True)	
 		else:
-			self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    univars.func.lerp(self.gp("des_vel")[1],-70,10,roundto = 0)   ]     )
+			self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    univars.func.lerp(self.gp("des_vel")[1],-130,(self.gp("fss")/om.speed),roundto = 0)   ]     )
 			self.sp("mode","in-air")
 
 
 		#jumping
-		if self.gp("jumpable") and self.key["action"]:
-			#normal
-			self.sp("jumpable",False)
-			self.sp("des_vel",[  self.gp("des_vel")[0] , 200     ])
-			self.sp("mode","in-air")
-
-
-
-			#Wall jumping
-			if len(collision["midleft"]["inst"]) > 0 :
-				self.sp("jumpable",True)
-				self.sp("des_vel",[  self.gp("des_vel")[0] , 300     ])
-				self.sp("act_vel",[  100 , self.gp("act_vel")[1]     ])
+		if self.key["action"]:
+			self.sp("fss",16)
+			if self.gp("jumpable"):
+				#normal
+				self.sp("jumpable",False)
+				self.sp("des_vel",[  self.gp("des_vel")[0] , 200     ])
 				self.sp("mode","in-air")
-			if len(collision["midright"]["inst"]) > 0 :
-				self.sp("jumpable",True)
-				self.sp("des_vel",[  self.gp("des_vel")[0] , 300     ])
-				self.sp("act_vel",[  -100 , self.gp("act_vel")[1]     ])
-				self.sp("mode","in-air")
-				
+
+
+
+				#Wall jumping
+				if len(collision["midleft"]["inst"]) > 0 :
+					self.sp("jumpable",True)
+					self.sp("des_vel",[  self.gp("des_vel")[0] , 300     ])
+					self.sp("act_vel",[  100 , self.gp("act_vel")[1]     ])
+					self.sp("mode","in-air")
+				if len(collision["midright"]["inst"]) > 0 :
+					self.sp("jumpable",True)
+					self.sp("des_vel",[  self.gp("des_vel")[0] , 300     ])
+					self.sp("act_vel",[  -100 , self.gp("act_vel")[1]     ])
+					self.sp("mode","in-air")
+		else:
+			self.sp("fss",8)
+					
 
 		#move
-		univars.func.lerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
+		univars.func.lerp(self.gp("act_vel"),self.gp("des_vel"),(8/om.speed),roundto = 2)
 		om.translate(self,"player",self.gp("act_vel"))
 
 
@@ -198,7 +208,7 @@ class Runchinld(Gamemananager.GameManager):
 		if self.gp("mode") == "grounded":
 			self.sp("des_vel",[  self.gp("des_vel")[0]    ,    0   ])
 			self.sp("act_vel",[  self.gp("act_vel")[0]    ,    0   ])
-			if om.collide9("player",0,cam,self.dim)["midmid"]["inst"]:
+			while om.collide9("player",0,cam,self.dim)["midmid"]["inst"]:
 				om.objects["player"]["pos"][1] -= 64
 
 			om.objects["player"]["pos"][1] = instlist[0].realpos[1] - 32

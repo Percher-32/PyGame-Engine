@@ -19,7 +19,7 @@ grandim = 32
 
 name = "Project ender"
 
-maxfps = 60
+maxfps = 100
 
 
 (40, 41, 83)
