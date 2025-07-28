@@ -83,7 +83,7 @@ class Uimanager:
 
 
 	def lerpval(self,elem,val,max,sm):
-		self.elements[elem][val] =   univars.func.lerp(self.elements[elem][val],max,sm)
+		self.elements[elem][val] =   univars.func.lerp(self.elements[elem][val],max,sm,roundto=4)
  
 	
 

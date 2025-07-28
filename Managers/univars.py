@@ -11,7 +11,7 @@ screen_h = 1000
 
 camchange = False
 
-pixelscale = 12
+pixelscale = 15
 
 
 grandim = 32
@@ -51,13 +51,13 @@ instables = ["dirt","grass","def"]
 
 extras = [["def","camz",[20,20]]]
 
-offsets = {"tree":[0,-13],"skateboard":[0,13]}
+offsets = {"tree":[0,-13],"skateboard":[0,20]}
 
 hideentypes = ["camz"]
 
 aplhatypes = {}
 
-map = "green"
+map = "flat"
 
 startstate = "editgame"
 

@@ -70,7 +70,7 @@ class Runchinld(Gamemananager.GameManager):
 		"""
 		if "player" in om.objects.keys():
 			
-			cm.cam_focus_size("playercam",om.objects["player"]["pos"],4,0.6)
+			cm.cam_focus_size("playercam",om.objects["player"]["pos"],4,univars.pixelscale/7 * 0.4)
 			self.moveplayer()
 
 
