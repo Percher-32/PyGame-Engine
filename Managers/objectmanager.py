@@ -1,12 +1,12 @@
 import pickle as pk
 import json
-import funcs
+import Managers.funcs as funcs
 import pygame
-import Textmanager
+import Managers.Textmanager as Textmanager
 import itertools
-import inst
+import Managers.inst as inst
 import time
-import univars
+import Managers.univars as univars
 import os
 import math
 # from render import render

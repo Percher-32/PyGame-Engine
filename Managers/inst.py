@@ -1,7 +1,7 @@
 import pygame
-import funcs
-import Cameramod
-import univars
+import Managers.funcs as funcs
+import Managers.Cameramod as Cameramod
+import Managers.univars as univars
 import numpy as np
 import math
 cam = Cameramod.cam

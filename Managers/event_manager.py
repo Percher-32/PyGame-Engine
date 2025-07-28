@@ -6,7 +6,7 @@ pygame.joystick.init()
 joysticks = [pygame.joystick.Joystick(i) for i in range (pygame.joystick.get_count())] 
 for joystick in joysticks:
     joystick.init()
-with open(os.path.join("ps4_keys.json"), "r+") as file:
+with open(os.path.join("Saved/ps4_keys.json"), "r+") as file:
     button_keys = json.load(file)
 analog_keys =  {0:0,1:0,2:0,3:0,4:0,5:0}
 class event_manager:

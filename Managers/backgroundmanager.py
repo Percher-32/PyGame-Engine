@@ -1,7 +1,7 @@
 import pygame
-import univars
+import Managers.univars as univars
 import json
-import Cameramod
+import Managers.Cameramod as Cameramod
 import os
 
 

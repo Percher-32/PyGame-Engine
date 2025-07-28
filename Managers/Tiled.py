@@ -1,13 +1,13 @@
 import pygame
-import Cameramod
-import Cammanager
-import Textmanager
-import funcs
-import univars
-import backgroundmanager
-import Uimanager
-import Cammanager
-import objectmanager
+import Managers.Cameramod as Cameramod
+import Managers.Cammanager as Cammanager
+import Managers.Textmanager as Textmanager
+import Managers.funcs as funcs
+import Managers.univars as univars
+import Managers.backgroundmanager as backgroundmanager
+import Managers.Uimanager as Uimanager
+import Managers.Cammanager as Cammanager
+import Managers.objectmanager as objectmanager
 um = Uimanager.ingame
 cam = Cameramod.cam
 cam = Cammanager.camager.cameras["def"]

@@ -1,5 +1,5 @@
-import Gamemanager as Gamemananager
-import univars as univars
+import Managers.Gamemanager as Gamemananager
+import Managers.univars as univars
 import cProfile
 import sys
 
@@ -36,10 +36,8 @@ class Runchinld(Gamemananager.GameManager):
 			#initialise player and all its variables
 			self.initialiseplayer()
 
-			
 
 
-			
 
 
 	def commence(self):

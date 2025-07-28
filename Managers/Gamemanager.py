@@ -1,17 +1,17 @@
 import pygame
-import Cameramod as Cameramod
-import Textmanager as Textmanager
-import Cammanager as Cammanager
-import event_manager as event_manager
-import funcs as funcs
-import framemanager as framemanager
-import objectmanager as objectmanager
-import Tiled as Tiled
-import univars as univars
-import statemanager as statemanager
-import Uimanager
+import Managers.Cameramod as Cameramod
+import Managers.Textmanager as Textmanager
+import Managers.Cammanager as Cammanager
+import Managers.event_manager as event_manager
+import Managers.funcs as funcs
+import Managers.framemanager as framemanager
+import Managers.objectmanager as objectmanager
+import Managers.Tiled as Tiled
+import Managers.univars as univars
+import Managers.statemanager as statemanager
+import Managers.Uimanager as Uimanager
 import copy
-import backgroundmanager
+import Managers.backgroundmanager as backgroundmanager
 import os
 import threading
 import time

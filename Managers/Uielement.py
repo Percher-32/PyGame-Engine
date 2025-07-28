@@ -1,7 +1,7 @@
 import pygame
-import event_manager
-import Textmanager
-import univars
+import Managers.event_manager as event_manager
+import Managers.Textmanager as Textmanager
+import Managers.univars as univars
 tm = Textmanager.Textmanager(univars.realscreeen)
 
 # class Button(pygame.sprite.Sprite):

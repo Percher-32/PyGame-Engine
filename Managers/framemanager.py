@@ -1,7 +1,7 @@
 #framemanager
 import time
 import pygame
-import univars
+import Managers.univars as univars
 class frame_manager:
 	def __init__(self,event_manager,tm):
 		self.frame = 0

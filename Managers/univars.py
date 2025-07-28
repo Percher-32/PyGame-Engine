@@ -1,6 +1,6 @@
 import pygame
-import funcs
-import statemanager as sm
+import Managers.funcs as funcs
+import Managers.statemanager as sm
 
 
 

@@ -1,8 +1,8 @@
 import pygame
-import event_manager
-import Textmanager
-import Uielement
-import univars
+import Managers.event_manager as event_manager
+import Managers.Textmanager as Textmanager
+import Managers.Uielement as Uielement
+import Managers.univars as univars
 tm = Textmanager.Textmanager(univars.realscreeen)
 em = event_manager.event_manager()
 
