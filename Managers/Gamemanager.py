@@ -34,6 +34,7 @@ class GameManager():
 		self.screen_colour = screen_colour
 		self.frame_manager = frame_manager
 		self.event_manager = self.frame_manager.event_manager
+		self.publicvariabes = {}
 		self.timers = {}
 		self.dt = 1
 		self.running = True

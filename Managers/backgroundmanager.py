@@ -75,11 +75,14 @@ class Backgroundmanager:
 
 
     def savebg(self):
+        """
+            saves all backgrounds and 
+        """
         for item in self.items.keys():
-            if not os.path.exists(f"Saved/backgrounds/{item}.json"):
-                todump = [  [i.name,i.pos,i.alpha,i.surf,i.color,i.dimensions,i.layer]  for i in self.items[item]]
-                with open (f"Saved/backgrounds/{item}.json","x") as file:
-                    json.dump(todump,file)
+            todump = [  [i.name,i.pos,i.alpha,i.surf,i.color,i.dimensions,i.layer]  for i in self.items[item]]
+            with open (f"Saved/backgrounds/{item}.json","x") as file:
+                json.dump(todump,file)
+            
 
     def loadbg(self):
         self.items = {}
@@ -90,7 +93,6 @@ class Backgroundmanager:
                 things = json.load(thing)
                 for elem in things:
                     self.addbackgrounditem(elem[0],item.replace(".json",""),elem[1],alpha= elem[2],surf=elem[3],color = elem[4],dimensions=elem[5],layer = elem[6])
-        print(ground)
 
 bg = Backgroundmanager()
       
