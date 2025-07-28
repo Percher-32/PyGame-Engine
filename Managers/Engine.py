@@ -118,11 +118,11 @@ class Runchinld(Gamemananager.GameManager):
 		instlist = collision["botmid"]["inst"] + collision["botleft"]["inst"] + collision["botright"]["inst"] 
 
 		# show the mode
-		# um.showvar("run",fm.lastdts[0],[-0.8,-0.7])
-
+		# um.showvar("",collision,[0,-0.7])
+		
 		#get out of being stuck
-		if not  om.collide9("player",0,cam,self.dim)["midmid"]["inst"] or self.gp("mode") == "grounded":
-			
+		if not  om.collide9("player",0,cam,self.dim)["midmid"]["inst"]:
+			#IN HERE IS EITHER NO MIDMID OR MIDMID AND GROUND
 
 
 
@@ -138,16 +138,16 @@ class Runchinld(Gamemananager.GameManager):
 			
 
 			#Wall clinging
-			if len(collision["midleft"]["inst"]) > 0 :
+			if len(collision["topleft"]["inst"]) > 0 :
 				self.sp("jumpable",True)	
-				om.objects["player"]["pos"][0] = collision["midleft"]["inst"][0].realpos[0] + 32
+				om.objects["player"]["pos"][0] = collision["topleft"]["inst"][0].realpos[0] + 32
 				if self.gp("des_vel")[0] < 0:
 					self.sp("des_vel",[0,0])
 				if self.gp("act_vel")[0] < 0:
 					self.sp("act_vel",[0,0])
-			if len(collision["midright"]["inst"]) > 0 :
+			if len(collision["topright"]["inst"]) > 0 :
 				self.sp("jumpable",True)	
-				om.objects["player"]["pos"][0] = collision["midright"]["inst"][0].realpos[0] - 32
+				om.objects["player"]["pos"][0] = collision["topright"]["inst"][0].realpos[0] - 32
 				if self.gp("des_vel")[0] > 0:
 					self.sp("des_vel",[0,0])
 				if self.gp("act_vel")[0] > 0:
@@ -221,7 +221,10 @@ class Runchinld(Gamemananager.GameManager):
 
 			collision = om.collide9("player",0,cam,self.dim)["midmid"]["inst"]
 		else:
-			self.sp("act_vel",[   self.gp("prev_act_vel")[0] * -1  ,  self.gp("prev_act_vel")[1] * -1 ])
+			if len(collision["topleft"]["inst"]) > 0 or len(collision["topright"]["inst"]) > 0:
+				self.sp("act_vel",[   self.gp("prev_act_vel")[0] * -1  ,  self.gp("prev_act_vel")[1] * -1 ])
+			else:
+				self.sp("act_vel",[   self.gp("prev_act_vel")[0] * 1  ,  self.gp("prev_act_vel")[1] * -1 ])
 			# self.sp("des_vel",[   self.gp("prev_des_vel")[0] * -1  ,  self.gp("prev_des_vel")[1] * -1 ])
 			#move
 			univars.func.lerp(self.gp("act_vel"),self.gp("des_vel"),(8/om.speed),roundto = 2)

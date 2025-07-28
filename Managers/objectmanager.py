@@ -338,7 +338,7 @@ class object_manager:
 	def collidep(self,pos,show,dim,pointsize=5,instcol = (0,225,0),noninstcol=(0,225,150),ignore_id = None,camera = None) -> dict: 
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 
-		r1 = pygame.Rect(pos[0],pos[1],2,2)
+		r1 = pygame.Rect(pos[0],pos[1],10,10)
 
 		#coll for non-inst
 		dim = univars.grandim
@@ -360,7 +360,8 @@ class object_manager:
 				col = noninstcol
 			else:
 				col = (225,0,0)
-			self.func.ssblitrect(pygame.Rect(pos[0],pos[1],num * pointsize,num * pointsize),col,camera,0)
+			# self.func.ssblitrect(pygame.Rect(pos[0],pos[1],num * pointsize,num * pointsize),col,camera,0)
+			self.func.ssblitrect(r1,col,camera,5)
 
 
 		
