@@ -472,7 +472,7 @@ class TiledSoftwre:
 				if not a == self.secretword:
 					self.dostring2 = a
 				else:
-					Cammanager.camager.setcond("def","posy",-1 * float(self.dostring2.rstrip()))
+					Cammanager.camager.setcond(Cammanager.camager.currentcam,"posy",-1 * float(self.dostring2.rstrip()))
 					self.savemode = 0
 
 			elif self.savemode == "Comspeed":

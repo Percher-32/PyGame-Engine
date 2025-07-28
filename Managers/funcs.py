@@ -1,6 +1,5 @@
 import pygame
 import os
-import numpy as np
 class func:
     def __init__(self,screen,granddim):
         self.screen = screen

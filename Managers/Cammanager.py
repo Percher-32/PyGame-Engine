@@ -14,6 +14,7 @@ class Cammanager:
 
 	def setcam(self,name):
 		"""set the in-use camera to a different one"""
+	
 		if self.cam.size != self.cameras[name][1]:
 			univars.camchange = True
 		else:

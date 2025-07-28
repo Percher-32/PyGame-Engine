@@ -443,7 +443,6 @@ class object_manager:
 				self.objfromid(id).flip()
 				self.set_value(id,"#flipped",dir)
 
-
 	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen , keepprev = False):
 		if not keepprev:
 			self.remove(list(pos))

@@ -233,6 +233,7 @@ class GameManager():
 		self.initial()
 		inumthread = threading.Thread(target=self.inum)
 		inumthread.start()
+		self.dt = 1
 		while(1): 
 			self.start()   
 			if not Tiled.loadingmap:
@@ -264,7 +265,6 @@ class GameManager():
 		univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid ,renderwid )),(0,-1 * renderwid//4))
 		univars.screen.fill((self.screen_colour))
 		bg.update()
-		self.dt = fm.dt
 		om.render(cam,self,self.dim)
 		um.update(em)
 		# self.inum()
@@ -289,6 +289,7 @@ class GameManager():
 		pass
 				
 	def end(self):
+		self.dt = fm.dt
 		self.lastkey = self.key
 		self.frame_manager.next(self.fpsmax)
 

@@ -70,7 +70,6 @@ class Runchinld(Gamemananager.GameManager):
 			#move camera
 			cm.cam_focus_size("playercam",om.objects["player"]["pos"],4,univars.pixelscale/7 * ((-0.001 * abs(self.gp("act_vel")[0])) + 0.5) )
 
-			um.showvar("av0",self.gp("act_vel")[0],[0,-0.7])
 
 
 			#move player
@@ -157,7 +156,7 @@ class Runchinld(Gamemananager.GameManager):
 		instlist = collision["botmid"]["inst"] + collision["botleft"]["inst"] + collision["botright"]["inst"] 
 
 		# show the mode
-		# um.showvar("des_vel",self.gp("des_vel"),[0,-0.7])
+		um.showvar("des_vel",self.gp("des_vel"),[0,-0.7])
 		
 		#get out of being stuck
 		if not  om.collide9("player",0,cam,self.dim)["midmid"]["inst"]:
@@ -171,7 +170,7 @@ class Runchinld(Gamemananager.GameManager):
 				if self.gp("xinit"):
 					self.sp("xinit",False)
 					self.sp("des_vel",[self.key["x"] * 100,self.gp("des_vel")[1]])
-				self.sp("des_vel",[  univars.func.lerp(self.gp("des_vel")[0],self.key["x"] * 150,(30/om.speed))    ,    self.gp("des_vel")[1]   ])
+				self.sp("des_vel",[  univars.func.lerp(self.gp("des_vel")[0],self.key["x"] * 150,(30/om.speed) * self.dt  )    ,    self.gp("des_vel")[1]   ])
 			else:
 				self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
 				self.sp("xinit",True)
@@ -214,10 +213,10 @@ class Runchinld(Gamemananager.GameManager):
 				self.sp("jumpable",True)	
 			else:
 				if not len(collision["midright"]["inst"]) > 0  or len(collision["midleft"]["inst"]) > 0:
-					self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    univars.func.lerp(self.gp("des_vel")[1],-130,(self.gp("fss")/om.speed),roundto = 0)   ]     )
+					self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    univars.func.lerp(self.gp("des_vel")[1],-130,(self.gp("fss")/om.speed) * self.dt,roundto = 0)   ]     )
 					self.sp("mode","in-air")
 				else:
-					self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    univars.func.lerp(self.gp("des_vel")[1],-60,(self.gp("fss")/om.speed),roundto = 0)   ]     )
+					self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    univars.func.lerp(self.gp("des_vel")[1],-60,(self.gp("fss")/om.speed) * self.dt,roundto = 0)   ]     )
 					self.sp("mode","in-air")
 
 
@@ -253,7 +252,7 @@ class Runchinld(Gamemananager.GameManager):
 					
 
 			#move
-			univars.func.lerp(self.gp("act_vel"),self.gp("des_vel"),(8/om.speed),roundto = 2)
+			univars.func.lerp(self.gp("act_vel"),self.gp("des_vel"),(8/om.speed) * self.dt,roundto = 2)
 			om.translate(self,"player",self.gp("act_vel"))
 			self.sp("prev_act_vel",self.gp("act_vel"))
 			self.sp("prev_des_vel",self.gp("des_vel"))
