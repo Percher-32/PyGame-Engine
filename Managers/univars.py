@@ -51,7 +51,7 @@ instables = ["dirt","grass","def"]
 
 extras = [["def","camz",[20,20]]]
 
-offsets = {"tree":[0,-13],"skateboard":[0,20]}
+offsets = {"tree":[0,-13]}
 
 hideentypes = ["camz"]
 
