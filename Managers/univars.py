@@ -19,7 +19,7 @@ grandim = 32
 
 name = "Project ender"
 
-maxfps = 100
+maxfps = 300
 
 
 (40, 41, 83)
@@ -83,8 +83,13 @@ defont = "pixel2.ttf"
 
 renderdist = 45
 
+
+maxfpsbuffersize = 5
+
 def update():
     global screen_w
     global screen_h 
     screen_w = realscreeen.get_width()
     screen_h = realscreeen.get_height()
+
+

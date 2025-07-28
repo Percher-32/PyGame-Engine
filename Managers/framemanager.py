@@ -9,14 +9,21 @@ class frame_manager:
 		self.tm = tm
 		self.lasttime = time.time()
 		self.dt = 0
+		self.lastdt = 1
 		self.open = True
 		self.showfps = True
 		self.theme = univars.theme["semibright"]
+		self.lastdts = []
 
 	def next(self,fps):
 		self.fps = fps
 		self.event_manager.next()
-		self.dt = (time.time() - self.lasttime) * 60
+		
+		self.lastdts.append((time.time() - self.lasttime) * 60)
+		self.dt = sum(self.lastdts)/len(self.lastdts)
+		if len(self.lastdts) > univars.maxfpsbuffersize:
+			self.lastdts.pop(0)
+
 		self.lasttime = time.time()
 		clock = pygame.time.Clock()
 		self.frame += 1

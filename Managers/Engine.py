@@ -41,6 +41,7 @@ class Runchinld(Gamemananager.GameManager):
 
 			
 
+
 	def commence(self):
 		# self.wait("intro",1)
 		# self.maxbg = [univars.realscreeen.get_width(),univars.realscreeen.get_height()]
@@ -69,7 +70,7 @@ class Runchinld(Gamemananager.GameManager):
 		"""
 		if "player" in om.objects.keys():
 			
-			cm.cam_focus_size("playercam",om.objects["player"]["pos"],4,0.2)
+			cm.cam_focus_size("playercam",om.objects["player"]["pos"],4,0.6)
 			self.moveplayer()
 
 
@@ -102,6 +103,7 @@ class Runchinld(Gamemananager.GameManager):
 		#fall speed smoothing
 		self.sp("fss",8)
 
+		self.sp("prev_act_vel",[0,0])
 
 		#shidding?
 		self.sp("skidding",False)
@@ -116,25 +118,26 @@ class Runchinld(Gamemananager.GameManager):
 		instlist = collision["botmid"]["inst"] + collision["botleft"]["inst"] + collision["botright"]["inst"] 
 
 		# show the mode
-		um.showvar("velocity",self.gp("act_vel"),[-0.8,-0.7])
+		# um.showvar("run",fm.lastdts[0],[-0.8,-0.7])
+
+		#get out of being stuck
+		if not  om.collide9("player",0,cam,self.dim)["midmid"]["inst"] or self.gp("mode") == "grounded":
+			
 
 
 
 
-
-
-		#x dir movement
-		if abs(self.key["x"]) > 0:
-			self.sp("des_vel",[  self.key["x"] * 100    ,    self.gp("des_vel")[1]   ])
-		else:
-			self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
+			#x dir movement
+			if abs(self.key["x"]) > 0:
+				self.sp("des_vel",[  self.key["x"] * 100    ,    self.gp("des_vel")[1]   ])
+			else:
+				self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
 
 
 
-		
+			
 
-		#Wall clinging
-		if not (ground and collision["midmid"]["inst"]):
+			#Wall clinging
 			if len(collision["midleft"]["inst"]) > 0 :
 				self.sp("jumpable",True)	
 				om.objects["player"]["pos"][0] = collision["midleft"]["inst"][0].realpos[0] + 32
@@ -151,45 +154,49 @@ class Runchinld(Gamemananager.GameManager):
 					self.sp("act_vel",[0,0])
 				
 
-		#Skid detection
-		if abs(self.gp("act_vel")[0]  - self.gp("des_vel")[0]) > 50:
-			self.sp("skidding",True)
-		else:
-			self.sp("skidding",False)
+			#Skid detection
+			if abs(self.gp("act_vel")[0]  - self.gp("des_vel")[0]) > 50:
+				self.sp("skidding",True)
+			else:
+				self.sp("skidding",False)
 
-		#ground detection + falling
-		if ground:
-			self.sp("mode","grounded")
-			self.sp("jumpable",True)	
-		else:
-			self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    univars.func.lerp(self.gp("des_vel")[1],-130,(self.gp("fss")/om.speed),roundto = 0)   ]     )
-			self.sp("mode","in-air")
-
-
-		#jumping
-		if self.key["action"]:
-			self.sp("fss",16)
-			if self.gp("jumpable"):
-				#normal
-				self.sp("jumpable",False)
-				self.sp("des_vel",[  self.gp("des_vel")[0] , 200     ])
-				self.sp("mode","in-air")
-
-
-
-				#Wall jumping
-				if len(collision["midleft"]["inst"]) > 0 :
-					self.sp("jumpable",True)
-					self.sp("des_vel",[  self.gp("des_vel")[0] , 300     ])
-					self.sp("act_vel",[  100 , self.gp("act_vel")[1]     ])
+			#ground detection + falling
+			if ground:
+				self.sp("mode","grounded")
+				self.sp("jumpable",True)	
+			else:
+				if not len(collision["midright"]["inst"]) > 0  or len(collision["midleft"]["inst"]) > 0:
+					self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    univars.func.lerp(self.gp("des_vel")[1],-130,(self.gp("fss")/om.speed),roundto = 0)   ]     )
 					self.sp("mode","in-air")
-				if len(collision["midright"]["inst"]) > 0 :
-					self.sp("jumpable",True)
-					self.sp("des_vel",[  self.gp("des_vel")[0] , 300     ])
-					self.sp("act_vel",[  -100 , self.gp("act_vel")[1]     ])
+				else:
+					self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    univars.func.lerp(self.gp("des_vel")[1],-60,(self.gp("fss")/om.speed),roundto = 0)   ]     )
 					self.sp("mode","in-air")
-		else:
-			self.sp("fss",8)
+
+
+			#jumping
+			if self.key["action"]:
+				self.sp("fss",16)
+				if self.gp("jumpable"):
+					#normal
+					self.sp("jumpable",False)
+					self.sp("des_vel",[  self.gp("des_vel")[0] , 200     ])
+					self.sp("mode","in-air")
+
+
+
+					#Wall jumping
+					if len(collision["midleft"]["inst"]) > 0 :
+						self.sp("jumpable",True)
+						self.sp("des_vel",[  self.gp("des_vel")[0] , 300     ])
+						self.sp("act_vel",[  100 , self.gp("act_vel")[1]     ])
+						self.sp("mode","in-air")
+					if len(collision["midright"]["inst"]) > 0 :
+						self.sp("jumpable",True)
+						self.sp("des_vel",[  self.gp("des_vel")[0] , 300     ])
+						self.sp("act_vel",[  -100 , self.gp("act_vel")[1]     ])
+						self.sp("mode","in-air")
+			else:
+				self.sp("fss",8)
 
 
 		
@@ -197,22 +204,29 @@ class Runchinld(Gamemananager.GameManager):
 
 					
 
-		#move
-		univars.func.lerp(self.gp("act_vel"),self.gp("des_vel"),(8/om.speed),roundto = 2)
-		om.translate(self,"player",self.gp("act_vel"))
+			#move
+			univars.func.lerp(self.gp("act_vel"),self.gp("des_vel"),(8/om.speed),roundto = 2)
+			om.translate(self,"player",self.gp("act_vel"))
+			self.sp("prev_act_vel",self.gp("act_vel"))
+			self.sp("prev_des_vel",self.gp("des_vel"))
 
 
-		
-		#prevent no-clip
-		if self.gp("mode") == "grounded":
-			self.sp("des_vel",[  self.gp("des_vel")[0]    ,    0   ])
-			self.sp("act_vel",[  self.gp("act_vel")[0]    ,    0   ])
-			while om.collide9("player",0,cam,self.dim)["midmid"]["inst"]:
-				om.objects["player"]["pos"][1] -= 64
+			
+			#prevent no-clip
+			if self.gp("mode") == "grounded":
+				self.sp("des_vel",[  self.gp("des_vel")[0]    ,    0   ])
+				self.sp("act_vel",[  self.gp("act_vel")[0]    ,    0   ])
 
-			om.objects["player"]["pos"][1] = instlist[0].realpos[1] - 32
+				om.objects["player"]["pos"][1] = instlist[0].realpos[1] - 32
 
-		collision = om.collide9("player",0,cam,self.dim)["midmid"]["inst"]
+			collision = om.collide9("player",0,cam,self.dim)["midmid"]["inst"]
+		else:
+			self.sp("act_vel",[   self.gp("prev_act_vel")[0] * -1  ,  self.gp("prev_act_vel")[1] * -1 ])
+			# self.sp("des_vel",[   self.gp("prev_des_vel")[0] * -1  ,  self.gp("prev_des_vel")[1] * -1 ])
+			#move
+			univars.func.lerp(self.gp("act_vel"),self.gp("des_vel"),(8/om.speed),roundto = 2)
+			om.translate(self,"player",self.gp("act_vel"))
+
 
 		
 
