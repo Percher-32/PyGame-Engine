@@ -260,15 +260,22 @@ class object_manager:
 		self.sprites[id] = self.func.getspritesscale(self.objects[id][1],scale)
 
 	def get_value(self,info,name):
+		"""
+			returns value in sprite
+			returns None if not found
+		"""
 		if name in self.values[info].keys():
-			return self.values[info].get(name)
+			return self.values[info].get(name,None)
 		else:
 			return 0
 		
 	def set_value(self,id,name,value):
-		try:
+		"""
+			creates a value in a sprite
+		"""
+		if id in self.values.keys():
 			self.values[id][name] = value
-		except:
+		else:
 			self.values[id] = {}
 			self.values[id][name] = value
 
@@ -418,6 +425,23 @@ class object_manager:
 			for b in layer:
 				if b.name == postodel:
 					self.layers[a].remove(b)
+
+	def includeflipping(self,id):
+		"""
+			allows the sprite to be flipped with the flip command
+		"""
+		self.set_value(id,"#flipped","right")
+
+	def flip(self,id,dir):
+		"""
+			'right' = flip to right
+			'left' = flip to left
+		"""
+
+		if  not self.get_value(id,"#flipped")  == None:
+			if not self.get_value(id,"#flipped") == dir:
+				self.objfromid(id).flip()
+				self.set_value(id,"#flipped",dir)
 
 
 	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen , keepprev = False):

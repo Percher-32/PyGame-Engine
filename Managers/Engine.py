@@ -68,9 +68,12 @@ class Runchinld(Gamemananager.GameManager):
 		"""
 			contins all the code that the player needs to function
 		"""
-		if "player" in om.objects.keys():
+		if "player" in om.objects.keys() and "skateboard" in om.objects.keys() and "playersprite" in om.objects.keys():
 			#move camera
-			cm.cam_focus_size("playercam",om.objects["player"]["pos"],4,univars.pixelscale/7 * 0.4)
+			cm.cam_focus_size("playercam",om.objects["player"]["pos"],4,univars.pixelscale/7 * ((-0.001 * abs(self.gp("act_vel")[0])) + 0.5) )
+
+			um.showvar("av0",self.gp("act_vel")[0],[0,-0.7])
+
 
 			#move player
 			self.moveplayer()
@@ -79,10 +82,20 @@ class Runchinld(Gamemananager.GameManager):
 			if self.gp("onboard"):
 				om.objects["playersprite"]["pos"] = [om.objects["player"]["pos"][0],om.objects["player"]["pos"][1] - 11]
 				om.objects["skateboard"]["pos"] = [om.objects["player"]["pos"][0],om.objects["player"]["pos"][1] - 0]
+
+
+				if self.gp("des_vel")[0] > 0:
+					om.flip("playersprite","right")
+				if self.gp("des_vel")[0] < 0:
+					om.flip("playersprite","left")
+
+
 				if not abs(self.key["x"]) > 0:
 					om.playanim(self.dt,"playersprite","idle",forceplay=True)
-				else:
+				elif not abs(self.gp("des_vel")[0]  - self.key["x"] * 150) < 20:
 					om.playanim(self.dt,"playersprite","moveidle",forceplay=True)
+				else:
+					om.playanim(self.dt,"playersprite","fastidle",forceplay=True)
 
 
 
@@ -101,6 +114,7 @@ class Runchinld(Gamemananager.GameManager):
 		#creates the player sprite you actually see
 		om.adds("playersprite",[0,-400],"player","player",0,[1,1],400,5)
 		om.objects["playersprite"]["rendercond"] = True
+		om.includeflipping("playersprite")
 
 		#creates the skateboard
 		om.adds("skateboard",[0,-400],"skateboard","skateboard",0,[1,1],400,5)
@@ -145,7 +159,7 @@ class Runchinld(Gamemananager.GameManager):
 		instlist = collision["botmid"]["inst"] + collision["botleft"]["inst"] + collision["botright"]["inst"] 
 
 		# show the mode
-		# um.showvar("",collision,[0,-0.7])
+		# um.showvar("des_vel",self.gp("des_vel"),[0,-0.7])
 		
 		#get out of being stuck
 		if not  om.collide9("player",0,cam,self.dim)["midmid"]["inst"]:
@@ -156,13 +170,17 @@ class Runchinld(Gamemananager.GameManager):
 
 			#x dir movement
 			if abs(self.key["x"]) > 0:
-				self.sp("des_vel",[  self.key["x"] * 100    ,    self.gp("des_vel")[1]   ])
+				if self.gp("xinit"):
+					self.sp("xinit",False)
+					self.sp("des_vel",[self.key["x"] * 100,self.gp("des_vel")[1]])
+				self.sp("des_vel",[  univars.func.lerp(self.gp("des_vel")[0],self.key["x"] * 150,(30/om.speed))    ,    self.gp("des_vel")[1]   ])
 			else:
 				self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
+				self.sp("xinit",True)
 
 
 
-			
+		
 
 			#Wall clinging
 			if len(collision["topleft"]["inst"]) > 0 :
@@ -186,6 +204,11 @@ class Runchinld(Gamemananager.GameManager):
 				self.sp("skidding",True)
 			else:
 				self.sp("skidding",False)
+
+
+			#rerout detection
+			if abs(self.key["x"] * 100  - self.gp("des_vel")[0]) > 200:
+				self.sp("xinit",True)
 
 			#ground detection + falling
 			if ground:

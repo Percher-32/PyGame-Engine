@@ -9,7 +9,7 @@ class func:
         sprites = []
         folder_dir = f"Graphics/sprites/{name}"
         for images in os.listdir(folder_dir):
-            frame = pygame.transform.scale_by(pygame.image.load(f"Graphics/sprites/{name}/" + images).convert_alpha(),[(self.grandim/32) +0.1,(self.grandim/32) +0.1])
+            frame = pygame.transform.scale_by(pygame.image.load(f"Graphics/sprites/{name}/" + images).convert_alpha(),[(self.grandim/32) ,(self.grandim/32)])
             sprites.append(frame)
         return sprites
     def getspritesscale(self,name:str,scale):

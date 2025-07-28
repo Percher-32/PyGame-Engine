@@ -106,6 +106,9 @@ class obj(pygame.sprite.Sprite):
 
 	def reinstsprite(self,om):
 		info = om.objects[self.name]
-		self.sprite = self.func.getspritesscale(info["sprite"],info["size"])
+		self.sprites = self.func.getspritesscale(info["sprite"],info["size"])
+
+	def flip(self):
+		self.sprites = [pygame.transform.flip(i,True,False) for i in self.sprites ]
 
 	

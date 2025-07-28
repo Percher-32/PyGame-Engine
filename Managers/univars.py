@@ -11,7 +11,7 @@ screen_h = 1000
 
 camchange = False
 
-pixelscale = 15
+pixelscale = 20
 
 
 grandim = 32
@@ -19,7 +19,7 @@ grandim = 32
 
 name = "Project ender"
 
-maxfps = 300
+maxfps = 400
 
 
 (40, 41, 83)
