@@ -34,7 +34,7 @@ class GameManager():
 		self.screen_colour = screen_colour
 		self.frame_manager = frame_manager
 		self.event_manager = self.frame_manager.event_manager
-		self.publicvariables = {"showinput":False,"leveledit":True}
+		self.publicvariables = {"showinput":1,"leveledit":True}
 		self.timers = {}
 		self.dt = 1
 		self.running = True
@@ -42,7 +42,7 @@ class GameManager():
 		self.dons = []
 		self.ids = []
 		self.states = []
-		self.key = {}
+		self.key = {"x":0,"y":0,"action":0,"secondary":0,"attack":0,"dodge":0}
 		self.dim = univars.grandim
 		self.fpsmax = univars.maxfps
 		self.work = True

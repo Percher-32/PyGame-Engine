@@ -114,11 +114,6 @@ class TiledSoftwre:
 			self.dim = dim
 
 
-			if GameManager.publicvariables["showinput"]:
-				um.showvar("x-axis",GameManager.key["x"],[-0.7,-0.7])
-			else:
-				um.howvar("x-axis",GameManager.key["x"],[-0.7,-0.7])
-
 
 			#savemode for level editing
 			if self.savemode == 0:
@@ -987,6 +982,7 @@ class TiledSoftwre:
 					self.tm.drawtext(f"Object-type : {self.typelist[self.sprite]}",          "pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.8,0.5)
 
 
+				
 
 
 
@@ -994,3 +990,8 @@ class TiledSoftwre:
 			else:
 				object_manager.showmap = False
 				GameManager.frame_manager.showfps = 0
+
+
+			if GameManager.publicvariables["showinput"]:
+				GameManager.uibox((200,200),(-0.7,-0.7),univars.theme["dark"],200)
+				GameManager.uibox((50,50),[-0.7 + GameManager.key["x"]/20,-0.7 + GameManager.key["y"]/13],univars.theme["accent"],200)
