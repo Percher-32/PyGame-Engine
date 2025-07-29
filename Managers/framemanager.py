@@ -11,7 +11,7 @@ class frame_manager:
 		self.dt = 0
 		self.lastdt = 1
 		self.open = True
-		self.showfps = True
+		self.showfps = False
 		self.theme = univars.theme["semibright"]
 		self.lastdts = []
 

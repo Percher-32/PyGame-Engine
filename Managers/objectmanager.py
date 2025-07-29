@@ -556,7 +556,7 @@ class object_manager:
 		self.tileup = 0
 		self.speed = speed
 
-	def render(self,camera,GameManager,dim:int):
+	def render(self,camera,GameManager,dim:int,showall):
 
 		#camera-chunk
 		camposdim = [int(round(camera.x/(dim * self.renderdist))),int(round(camera.y/(dim * self.renderdist)))]
@@ -572,12 +572,12 @@ class object_manager:
 		#rendering the instanciates
 		if len(lof) > 0:
 			for i in lof:
-				self.instances[i].update(camera,GameManager.dim,self.showall)
+				self.instances[i].update(camera,GameManager.dim,showall)
 				self.instances[i].draw(self.screen)
 
 		#rendering the non-instanciates
 		for groupid in sorted(self.layers.keys()):
-			self.layers[groupid].update(camera,self,dim)
+			self.layers[groupid].update(camera,self,dim,showall)
 			self.layers[groupid].draw(self.screen)
 
 

@@ -34,7 +34,7 @@ class GameManager():
 		self.screen_colour = screen_colour
 		self.frame_manager = frame_manager
 		self.event_manager = self.frame_manager.event_manager
-		self.publicvariables = {"showinput":1,"leveledit":True}
+		self.publicvariables = {"showinput":1,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True}
 		self.timers = {}
 		self.dt = 1
 		self.running = True
@@ -45,7 +45,6 @@ class GameManager():
 		self.key = {"x":0,"y":0,"action":0,"secondary":0,"attack":0,"dodge":0}
 		self.dim = univars.grandim
 		self.fpsmax = univars.maxfps
-		self.work = True
 		self.leveledit = True
 		Tiled.extra(univars.extras)
 		om.loadtilemap(univars.map)
@@ -72,17 +71,17 @@ class GameManager():
 
 		if abs(event_manager.analog_keys[0]) > 0.3:
 			self.key["x"] = round(event_manager.analog_keys[0],2)
-		elif self.event_manager.key[pygame.K_RIGHT] or self.event_manager.key[pygame.K_d]:
+		elif self.event_manager.key[pygame.K_RIGHT] or self.event_manager.key[pygame.K_d] or self.event_manager.controller["right_arrow"]:
 			self.key["x"] = 1
-		elif self.event_manager.key[pygame.K_LEFT] or self.event_manager.key[pygame.K_a]:
+		elif self.event_manager.key[pygame.K_LEFT] or self.event_manager.key[pygame.K_a] or self.event_manager.controller["left_arrow"]:
 			self.key["x"] = -1
 		else:
 			self.key["x"] = 0
 		if abs(event_manager.analog_keys[1]) > 0.3:
 			self.key["y"] = -1 * event_manager.analog_keys[1]
-		elif self.event_manager.key[pygame.K_UP] or self.event_manager.key[pygame.K_w]:
+		elif self.event_manager.key[pygame.K_UP] or self.event_manager.key[pygame.K_w] or self.event_manager.controller["up_arrow"]:
 			self.key["y"] = 1
-		elif self.event_manager.key[pygame.K_DOWN] or self.event_manager.key[pygame.K_s]:
+		elif self.event_manager.key[pygame.K_DOWN] or self.event_manager.key[pygame.K_s] or self.event_manager.controller["down_arrow"]:
 			self.key["y"] = -1
 		else:
 			self.key["y"] = 0
@@ -220,12 +219,15 @@ class GameManager():
 		self.debug = True
 
 	def bosh(self):
+		"""
+			update all variables to be intouch with state manager
+		"""
 		self.publicvariables["leveledit"] = sm.leveledit
-		self.work = sm.work
+		self.publicvariables["debug-mode"] = sm.work
 		om.speed = sm.speed
 		self.states = sm.states
 		Tiled.showdata = sm.showui
-		om.showall = sm.showall
+		self.publicvariables["showallhidden"] = sm.showall
 
 	def sp(self,val:str,to):
 		"""
@@ -276,11 +278,10 @@ class GameManager():
 		univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid ,renderwid )),(0,-1 * renderwid//4))
 		univars.screen.fill((self.screen_colour))
 		bg.update()
-		om.render(cam,self,self.dim)
+		om.render(cam,self,self.dim,self.publicvariables["showallhidden"])
 		um.update(em)
 		# self.inum()
-		if self.work:
-			Tiled.Run(self.work,univars.camspeeed,self,cam,self.dim,self.publicvariables["leveledit"],cm,sm.state)
+		Tiled.Run(self.publicvariables["debug-mode"],univars.camspeeed,self,cam,self.dim,self.publicvariables["leveledit"],cm,sm.state)
 		self.keybind()
 		cm.update()
 		self.updatetime()

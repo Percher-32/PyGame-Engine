@@ -11,14 +11,22 @@ class sm:
         self.load = "plach"
 
     def update(self):
-        if self.state == "game":
-            self.states = ["test"]
+        if self.state == "dubugame":
+            self.states = ["game"]
             self.leveledit = False
             self.speed = 1
             self.showui = False
+            self.work = True
+            self.showall = False
+        if self.state == "game":
+            self.states = ["game"]
+            self.leveledit = False
+            self.speed = 1
+            self.showui = False
+            self.work = False
             self.showall = False
         if self.state == "editgame":
-            self.states = ["test"]
+            self.states = ["game"]
             self.leveledit = True
             self.work = True
             self.speed = 1

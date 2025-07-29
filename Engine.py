@@ -27,7 +27,7 @@ class Runchinld(Gamemananager.GameManager):
 		bg.addbackgrounditem("black","test2",[0,-40],surf = "mount",dimensions=[500*2.3,250*2.3],layer = 20)
 		
 		
-		if "test" in self.states:
+		if "game" in self.states:
 
 			#create the cameras
 			cm.addcam("playercam",[0,0],0.4)
@@ -55,7 +55,7 @@ class Runchinld(Gamemananager.GameManager):
 	def update(self):
 		bg.background = "test2"
 
-		if "test" in self.states:
+		if "game" in self.states:
 			self.playercode()
 
 
@@ -107,7 +107,7 @@ class Runchinld(Gamemananager.GameManager):
 		om.speed = 1
 
 		#create player
-		om.adds("player",[0,-400],"player","player",0,[1,1],400,5)
+		om.adds("player",[0,-500],"player","player",0,[1,1],400,5)
 		om.objects["player"]["rendercond"] = False
 
 		#creates the player sprite you actually see

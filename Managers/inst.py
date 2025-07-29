@@ -73,14 +73,14 @@ class obj(pygame.sprite.Sprite):
 				return True
 		return False
 
-	def update(self, camera,om,dim):
+	def update(self, camera,om,dim,showall):
 		self.info = om.objects[self.name]
 		sprite = self.sprites[self.info["sn"]]
 		pos = self.info["pos"]
 		pos = [int(round(pos[0])),int(round(pos[1]))]
 		self.info["pos"] = pos
 		self.fakerect = pygame.Rect(self.info["pos"][0] - self.info["size"][0]//2,self.info["pos"][1] - self.info["size"][1]//2,self.info["size"][0],self.info["size"][1])
-		if self.info["rendercond"]:
+		if self.info["rendercond"] or showall:
 			g = [round(self.info["pos"][0]),round(self.info["pos"][1])]
 			h = [round(camera.x),round(camera.y)]
 			if univars.func.dist(g,h) < 2000:

@@ -344,13 +344,13 @@ class TiledSoftwre:
 					#to hide/show ui
 					if GameManager.event_manager.key[pygame.K_v]:
 						if GameManager.event_manager.key[pygame.K_LCTRL]:
-							if self.showdata == 1:
+							if GameManager.publicvariables["showdata"] == 1:
 								if self.showdatable < 1:
-									self.showdata = 0
+									GameManager.publicvariables["showdata"] = 0
 									self.showdatable = 10
-							if self.showdata == 0:
+							if GameManager.publicvariables["showdata"] == 0:
 								if self.showdatable < 1:
-									self.showdata = 1
+									GameManager.publicvariables["showdata"] = 1
 									self.showdatable = 10
 
 
@@ -911,7 +911,6 @@ class TiledSoftwre:
 						self.comm = True
 						self.savemode = 0
 					if "setbg:" in self.commmandtring.rstrip():
-						print(self.commmandtring.rstrip().replace("setbg:", ""))
 						bg.background = self.commmandtring.rstrip().replace("setbg:", "")
 					if "state:" in self.commmandtring.rstrip():
 						self.cht = self.commmandtring.rstrip().replace("state:", "")
@@ -949,7 +948,7 @@ class TiledSoftwre:
 			self.showdatable -= 1 * GameManager.frame_manager.dt
 			
 
-			if self.showdata and self.savemode == 0 :
+			if GameManager.publicvariables["showdata"] and self.savemode == 0:
 				fulllist = self.spritenames + self.spritenames
 				GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
 				self.tm.drawtext(f"Camera-name : {cm.currentcam}"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.6,-0.9)
@@ -983,24 +982,48 @@ class TiledSoftwre:
 				object_manager.showmap = False
 				GameManager.frame_manager.showfps = 0
 
+			#show input
+			if self.savemode == 0 and not GameManager.publicvariables["showdata"]:
+				if GameManager.publicvariables["showinput"]:
+					GameManager.uibox((190,190),(-0.8,-0.5),univars.theme["dark"],200)
+					GameManager.uibox((50,50),[-0.8 + GameManager.key["x"]/18,-0.5 + GameManager.key["y"]/12],univars.theme["accent"],200)
+					GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
+					if GameManager.key["action"]:
+						self.tm.drawtext(f"ACTION"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.9,-0.9)
+					else:
+						self.tm.drawtext(f"ACTION"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.9,-0.9)
+					if GameManager.key["secondary"]:
+						self.tm.drawtext(f"secondary"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.7,-0.9)
+					else:
+						self.tm.drawtext(f"secondary"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.7,-0.9)
+					if GameManager.key["attack"]:
+						self.tm.drawtext(f"attack"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.5,-0.9)
+					else:
+						self.tm.drawtext(f"attack"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.5,-0.9)
+					if GameManager.key["dodge"]:
+						self.tm.drawtext(f"dodge"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.3,-0.9)
+					else:
+						self.tm.drawtext(f"dodge"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.3,-0.9)
 
-			if GameManager.publicvariables["showinput"]:
-				GameManager.uibox((190,190),(-0.8,-0.5),univars.theme["dark"],200)
-				GameManager.uibox((50,50),[-0.8 + GameManager.key["x"]/18,-0.5 + GameManager.key["y"]/12],univars.theme["accent"],200)
-				GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
-				if GameManager.key["action"]:
-					self.tm.drawtext(f"ACTION"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.9,-0.9)
-				else:
-					self.tm.drawtext(f"ACTION"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.9,-0.9)
-				if GameManager.key["secondary"]:
-					self.tm.drawtext(f"secondary"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.7,-0.9)
-				else:
-					self.tm.drawtext(f"secondary"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.7,-0.9)
-				if GameManager.key["attack"]:
-					self.tm.drawtext(f"attack"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.5,-0.9)
-				else:
-					self.tm.drawtext(f"attack"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.5,-0.9)
-				if GameManager.key["dodge"]:
-					self.tm.drawtext(f"dodge"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.3,-0.9)
-				else:
-					self.tm.drawtext(f"dodge"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.3,-0.9)
+		elif GameManager.publicvariables["showdata"]:
+				if GameManager.publicvariables["showinput"]:
+					GameManager.uibox((190,190),(-0.8,-0.5),univars.theme["dark"],200)
+					GameManager.uibox((50,50),[-0.8 + GameManager.key["x"]/18,-0.5 + GameManager.key["y"]/12],univars.theme["accent"],200)
+					GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
+					if GameManager.key["action"]:
+						self.tm.drawtext(f"ACTION"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.9,-0.9)
+					else:
+						self.tm.drawtext(f"ACTION"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.9,-0.9)
+					if GameManager.key["secondary"]:
+						self.tm.drawtext(f"secondary"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.7,-0.9)
+					else:
+						self.tm.drawtext(f"secondary"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.7,-0.9)
+					if GameManager.key["attack"]:
+						self.tm.drawtext(f"attack"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.5,-0.9)
+					else:
+						self.tm.drawtext(f"attack"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.5,-0.9)
+					if GameManager.key["dodge"]:
+						self.tm.drawtext(f"dodge"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.3,-0.9)
+					else:
+						self.tm.drawtext(f"dodge"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.3,-0.9)
+
