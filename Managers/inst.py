@@ -15,7 +15,7 @@ class inst(pygame.sprite.Sprite):
 		self.sizen = list(sizen)
 		self.name = str(name)
 		self.type = type
-		self.bart = sprites[0]
+		self.bart = pygame.transform.rotate(sprites[0],rot)
 		self.image = sprites[0]
 		self.rot = int(rot)
 		self.realpos = (int(x),int(y))
@@ -44,8 +44,10 @@ class inst(pygame.sprite.Sprite):
 			
 		ext =  int(abs(dim * math.sin(self.rot/28.6 )))
 		ext = 0
-		# if univars.camchange:
-		self.image =  pygame.transform.rotate(pygame.transform.scale(self.bart,  [self.size[0] * abs(camera.size)+ ext,self.size[1] * abs(camera.size) +ext] ),self.rot)
+		if univars.camchange:
+			self.image =  pygame.transform.scale(self.bart,  [int(round(self.size[0] * abs(camera.size)+ ext)),int(round(self.size[1] * abs(camera.size) +ext))] )
+		else:
+			self.image = self.bart
 		alpha = self.alpha
 		if showall:
 			if self.alpha == 0:

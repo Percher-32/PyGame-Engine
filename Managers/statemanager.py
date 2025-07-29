@@ -12,7 +12,7 @@ class sm:
         self.load = "plach"
 
     def update(self):
-        if self.state == "dubugame":
+        if self.state == "debugame":
             self.states = ["game"]
             self.leveledit = False
             self.speed = 1

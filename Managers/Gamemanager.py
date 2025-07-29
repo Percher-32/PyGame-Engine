@@ -29,12 +29,14 @@ sm = statemanager.sm(univars.startstate)
 um = Uimanager.ingame
 bg = backgroundmanager.bg
 
+
+
 class GameManager():
 	def __init__(self,screen_colour,frame_manager):
 		self.screen_colour = screen_colour
 		self.frame_manager = frame_manager
 		self.event_manager = self.frame_manager.event_manager
-		self.publicvariables = {"showinput":1,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True}
+		self.publicvariables = {"showinput":0,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps}
 		self.timers = {}
 		self.dt = 1
 		self.running = True
@@ -266,7 +268,6 @@ class GameManager():
 
 		
 
-
 	def start(self):
 		"""run at the start of every frame"""
 		if Tiled.comm:
@@ -279,7 +280,7 @@ class GameManager():
 		univars.screen.fill((self.screen_colour))
 		bg.update()
 		om.render(cam,self,self.dim,self.publicvariables["showallhidden"])
-		um.update(em)
+		um.update(em,self.publicvariables)
 		# self.inum()
 		Tiled.Run(self.publicvariables["debug-mode"],univars.camspeeed,self,cam,self.dim,self.publicvariables["leveledit"],cm,sm.state)
 		self.keybind()
@@ -303,13 +304,24 @@ class GameManager():
 	def end(self):
 		self.dt = fm.dt
 		self.lastkey = self.key
-		self.frame_manager.next(self.fpsmax)
+		self.frame_manager.next(self.publicvariables["maxfps"])
 
 	def initial(self):
 		self.defs()
 		self.onreload()
 		
+	def isthere(self,name):
+		"""
+			if timer is currently there
+		"""
+		return name in self.timers.keys()
 
+	def deltimer(self,name):
+		"""
+			removes a timer if it exists
+		"""
+		if name in self.timers.keys():
+			self.timers.pop(name)
 
 	def onreload(self):
 		pass

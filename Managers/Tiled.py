@@ -929,7 +929,7 @@ class TiledSoftwre:
 						if not self.dostring == None:
 							object_manager.removeid(self.cht)
 						self.commmandtring = ""
-					elif "debug:" in self.commmandtring.rstrip() or "db:" in self.commmandtring.rstrip():
+					elif ("debug:" in self.commmandtring.rstrip() or "db:" in self.commmandtring.rstrip()) and "=" in self.commmandtring.rstrip() : 
 						self.cht = self.commmandtring.rstrip().split(":")[1]
 						self.cht.replace(" ","")
 						vartochange = self.cht.split("=")[0]
@@ -1005,7 +1005,7 @@ class TiledSoftwre:
 					else:
 						self.tm.drawtext(f"dodge"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.3,-0.9)
 
-		elif GameManager.publicvariables["showdata"]:
+		elif GameManager.publicvariables["showinput"]:
 				if GameManager.publicvariables["showinput"]:
 					GameManager.uibox((190,190),(-0.8,-0.5),univars.theme["dark"],200)
 					GameManager.uibox((50,50),[-0.8 + GameManager.key["x"]/18,-0.5 + GameManager.key["y"]/12],univars.theme["accent"],200)

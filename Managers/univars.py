@@ -82,13 +82,13 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 map = "level1"
 
-startstate = "dubugame"
+startstate = "game"
 
-mode = 1
+mode = 0
 
 startuistate = "def"
 
-screencol = (110,189,234)
+screencol = (110 - 100,189 - 100,234 - 100)
 
 
 camspeeed = 45

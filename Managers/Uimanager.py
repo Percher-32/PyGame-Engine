@@ -13,6 +13,7 @@ class Uimanager:
 		self.addedcounter = 0
 		self.sprites = pygame.sprite.Group()
 		self.state = "default"
+		self.canshowvar = True
 
 	def addelement(self,surf,states,pos,name,type=None):
 		ui = self.Uielement.Ui(surf,states,pos,name)
@@ -67,8 +68,8 @@ class Uimanager:
 					self.elements.pop(i)
 
 
-	def showvar(self,name,var,posl,debugmode,textsize = 25,dimensions = univars.sizes["mediumbutton"]): 
-		if debugmode:
+	def showvar(self,name,var,posl,textsize = 25,dimensions = univars.sizes["mediumbutton"]): 
+		if self.canshowvar:
 			if str(name) + "but" in self.elements.keys():
 				self.elements[str(name) + "tex"]["text"] = str(name) + ":" + str(var)
 			else:
@@ -109,7 +110,8 @@ class Uimanager:
 
 
 
-	def update(self,em):
+	def update(self,em,pubvar):
+		self.canshowvar = pubvar["debug-mode"]
 		self.sprites.update(self.state, self.elements,em)
 		self.sprites.draw(univars.realscreeen)
 		for a in self.sprites:

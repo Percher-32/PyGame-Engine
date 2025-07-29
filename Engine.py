@@ -22,7 +22,6 @@ class Runchinld(Gamemananager.GameManager):
 
 	def onreload(self):
 		self.a = 0
-		# bg.background = "test1"
 		bg.addbackground("test2")
 		bg.addbackgrounditem("black","test2",[0,-40],surf = "mount",dimensions=[500*2.3,250*2.3],layer = 20)
 		
@@ -170,10 +169,9 @@ class Runchinld(Gamemananager.GameManager):
 		if self.dt == 0 or self.dt > 10:
 			self.dt = 1
 
-		um.showvar("axis",self.key["x"],[0,-0.7],self.publicvariables["debug-mode"])
-		
+
 		#get out of being stuck
-		if not  om.collide9("player",0,cam,self.dim)["midmid"]["inst"]:
+		if not  collision["midmid"]["inst"]:
 			#IN HERE IS EITHER [NO MIDMID] OR [Yes MIDMID AND GROUND]
 
 
@@ -181,9 +179,18 @@ class Runchinld(Gamemananager.GameManager):
 
 			#x dir movement
 			if abs(self.key["x"]) > 0:
+				if self.isthere("leftjump"):
+					self.key["x"] = abs(self.key["x"]) * 2
+				if self.isthere("rightjump"):
+					self.key["x"] = -1 * abs(self.key["x"]) * 2
+
 				if self.gp("xinit"):
 					self.sp("xinit",False)
 					self.sp("des_vel",[self.key["x"] * 100,self.gp("des_vel")[1]])
+
+				
+
+
 				self.sp("des_vel",[          self.unilerp(self.gp("des_vel")[0],self.key["x"] * 150,30 )              ,    self.gp("des_vel")[1]   ])
 			else:
 				self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
@@ -247,15 +254,21 @@ class Runchinld(Gamemananager.GameManager):
 
 					#Wall jumping
 					if len(collision["midleft"]["inst"]) > 0 :
+						self.deltimer("rightjump")
+						self.wait("leftjump",0.3)
 						self.sp("jumpable",True)
 						self.sp("des_vel",[  self.gp("des_vel")[0] , 300     ])
 						self.sp("act_vel",[  100 , self.gp("act_vel")[1]     ])
 						self.sp("mode","in-air")
 					if len(collision["midright"]["inst"]) > 0 :
+						self.deltimer("leftjump")
+						self.wait("rightjump",0.3)
 						self.sp("jumpable",True)
 						self.sp("des_vel",[  self.gp("des_vel")[0] , 300     ])
 						self.sp("act_vel",[  -100 , self.gp("act_vel")[1]     ])
 						self.sp("mode","in-air")
+
+
 			else:
 				self.sp("fss",8)
 
@@ -280,7 +293,6 @@ class Runchinld(Gamemananager.GameManager):
 
 				om.objects["player"]["pos"][1] = instlist[0].realpos[1] - 32
 
-			collision = om.collide9("player",0,cam,self.dim)["midmid"]["inst"]
 		else:
 			if len(collision["topleft"]["inst"]) > 0 or len(collision["topright"]["inst"]) > 0:
 				self.sp("act_vel",[   self.gp("prev_act_vel")[0] * -1  ,  self.gp("prev_act_vel")[1] * -1 ])
