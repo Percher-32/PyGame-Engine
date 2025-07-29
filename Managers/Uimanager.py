@@ -75,6 +75,13 @@ class Uimanager:
 			self.addtext(str(name) + "tex",str(name) + ":" + str(var),univars.defont,posl,univars.theme["accent"],25,["all"])
 			self.bindtobutton(str(name) + "tex",str(name) + "but")
 
+	def umshowvar(self,name,var,posl):
+		if str(name) + "but" in self.elements.keys():
+			self.elements[str(name) + "tex"]["text"] = str(name) + ":" + str(var)
+		else:
+			self.addbutton(univars.sizes["mediumbutton"],["all"],posl,str(name) + "but",univars.theme["dark"],alpha = 200)
+			self.addtext(str(name) + "tex",str(name) + ":" + str(var),univars.defont,posl,univars.theme["accent"],25,["all"])
+			self.bindtobutton(str(name) + "tex",str(name) + "but")
 
 
 	def bindtobutton(self,text,button):

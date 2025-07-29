@@ -112,6 +112,14 @@ class TiledSoftwre:
 			self.comm = False
 			self.loadingmap = False
 			self.dim = dim
+
+
+			if GameManager.publicvariables["showinput"]:
+				um.showvar("x-axis",GameManager.key["x"],[-0.7,-0.7])
+			else:
+				um.howvar("x-axis",GameManager.key["x"],[-0.7,-0.7])
+
+
 			#savemode for level editing
 			if self.savemode == 0:
 				if debug:
@@ -934,6 +942,13 @@ class TiledSoftwre:
 						self.dostring = object_manager.objfromid(self.cht)
 						if not self.dostring == None:
 							object_manager.removeid(self.cht)
+						self.commmandtring = ""
+					elif "debug:" in self.commmandtring.rstrip() or "db:" in self.commmandtring.rstrip():
+						self.cht = self.commmandtring.rstrip().split(":")[1]
+						self.cht.replace(" ","")
+						vartochange = self.cht.split("=")[0]
+						valtoreplace = self.cht.split("=")[1]
+						GameManager.publicvariables[vartochange] = eval(valtoreplace)
 						self.commmandtring = ""
 					else:
 						self.savemode = 0

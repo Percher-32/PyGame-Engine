@@ -34,7 +34,7 @@ class GameManager():
 		self.screen_colour = screen_colour
 		self.frame_manager = frame_manager
 		self.event_manager = self.frame_manager.event_manager
-		self.publicvariabes = {}
+		self.publicvariables = {"showinput":False,"leveledit":True}
 		self.timers = {}
 		self.dt = 1
 		self.running = True
@@ -220,7 +220,7 @@ class GameManager():
 		self.debug = True
 
 	def bosh(self):
-		self.leveledit = sm.leveledit
+		self.publicvariables["leveledit"] = sm.leveledit
 		self.work = sm.work
 		om.speed = sm.speed
 		self.states = sm.states
@@ -280,7 +280,7 @@ class GameManager():
 		um.update(em)
 		# self.inum()
 		if self.work:
-			Tiled.Run(self.work,univars.camspeeed,self,cam,self.dim,self.leveledit,cm,sm.state)
+			Tiled.Run(self.work,univars.camspeeed,self,cam,self.dim,self.publicvariables["leveledit"],cm,sm.state)
 		self.keybind()
 		cm.update()
 		self.updatetime()

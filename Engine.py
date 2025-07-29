@@ -330,7 +330,6 @@ class Runchinld(Gamemananager.GameManager):
 
 
 
-
 rm = Runchinld(univars.screencol,fm)
 if univars.mode == 0:
 	def main():
