@@ -129,16 +129,8 @@ class TiledSoftwre:
 						cam[1] += (camera.size)/speed * GameManager.frame_manager.dt 
 					if GameManager.event_manager.key[pygame.K_e]:
 						cam[1] -= (camera.size)/speed * GameManager.frame_manager.dt 
-					if GameManager.event_manager.key[pygame.K_d]:
-						cam[0][0] += speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/self.realscreeen.get_width()
-					if GameManager.event_manager.key[pygame.K_a]:
-						cam[0][0] -= speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/self.realscreeen.get_width()
-					if GameManager.event_manager.key[pygame.K_w]:
-						cam[0][1] -= speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/self.realscreeen.get_width()
-					if GameManager.event_manager.key[pygame.K_s]:
-						cam[0][1] += speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/self.realscreeen.get_width()
-
-
+					cam[0][0] += speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/self.realscreeen.get_width() * GameManager.key["x"]
+					cam[0][1] -= speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/self.realscreeen.get_width()* GameManager.key["y"]
 					#to move spite on the 
 					self.sprite += GameManager.event_manager.scroll
 
@@ -993,5 +985,22 @@ class TiledSoftwre:
 
 
 			if GameManager.publicvariables["showinput"]:
-				GameManager.uibox((200,200),(-0.7,-0.7),univars.theme["dark"],200)
-				GameManager.uibox((50,50),[-0.7 + GameManager.key["x"]/20,-0.7 + GameManager.key["y"]/13],univars.theme["accent"],200)
+				GameManager.uibox((190,190),(-0.8,-0.5),univars.theme["dark"],200)
+				GameManager.uibox((50,50),[-0.8 + GameManager.key["x"]/18,-0.5 + GameManager.key["y"]/12],univars.theme["accent"],200)
+				GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
+				if GameManager.key["action"]:
+					self.tm.drawtext(f"ACTION"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.9,-0.9)
+				else:
+					self.tm.drawtext(f"ACTION"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.9,-0.9)
+				if GameManager.key["secondary"]:
+					self.tm.drawtext(f"secondary"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.7,-0.9)
+				else:
+					self.tm.drawtext(f"secondary"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.7,-0.9)
+				if GameManager.key["attack"]:
+					self.tm.drawtext(f"attack"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.5,-0.9)
+				else:
+					self.tm.drawtext(f"attack"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.5,-0.9)
+				if GameManager.key["dodge"]:
+					self.tm.drawtext(f"dodge"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.3,-0.9)
+				else:
+					self.tm.drawtext(f"dodge"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.3,-0.9)
