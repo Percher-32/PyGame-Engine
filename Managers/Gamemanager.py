@@ -55,23 +55,33 @@ class GameManager():
 			self.key["action"] = True
 		else:
 			self.key["action"] = False
-		if em.tri or self.event_manager.key[pygame.K_z]:
-			self.key["a2"] = True
+		if em.tri or self.event_manager.key[pygame.K_z] or self.event_manager.key[pygame.K_p]:
+			self.key["secondary"] = True
 		else:
-			self.key["a2"] = False
+			self.key["secondary"] = False
+		if em.sq or self.event_manager.key[pygame.K_o] or self.event_manager.key[pygame.K_c]:
+			self.key["attack"] = True
+		else:
+			self.key["attack"] = False
+		if em.cir or self.event_manager.key[pygame.K_i] or self.event_manager.key[pygame.K_x]:
+			self.key["dodge"] = True
+		else:
+			self.key["dodge"] = False
+
+
 		if abs(event_manager.analog_keys[0]) > 0.3:
-			self.key["x"] = event_manager.analog_keys[0]
-		elif self.event_manager.key[pygame.K_RIGHT]:
+			self.key["x"] = round(event_manager.analog_keys[0],2)
+		elif self.event_manager.key[pygame.K_RIGHT] or self.event_manager.key[pygame.K_d]:
 			self.key["x"] = 1
-		elif self.event_manager.key[pygame.K_LEFT]:
+		elif self.event_manager.key[pygame.K_LEFT] or self.event_manager.key[pygame.K_a]:
 			self.key["x"] = -1
 		else:
 			self.key["x"] = 0
 		if abs(event_manager.analog_keys[1]) > 0.3:
 			self.key["y"] = -1 * event_manager.analog_keys[1]
-		elif self.event_manager.key[pygame.K_UP]:
+		elif self.event_manager.key[pygame.K_UP] or self.event_manager.key[pygame.K_w]:
 			self.key["y"] = 1
-		elif self.event_manager.key[pygame.K_DOWN]:
+		elif self.event_manager.key[pygame.K_DOWN] or self.event_manager.key[pygame.K_s]:
 			self.key["y"] = -1
 		else:
 			self.key["y"] = 0
