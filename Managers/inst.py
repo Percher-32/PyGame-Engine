@@ -8,15 +8,15 @@ class inst(pygame.sprite.Sprite):
 	__slots__ = ["screen","grandim","name","x","y","rot","sizen","type","alpha"]
 
 
-	def __init__(self,screen,grandim,name,x,y,rot,sizen,type,alpha):
+	def __init__(self,screen,grandim,name,x,y,rot,sizen,type,alpha,sprites):
 		pygame.sprite.Sprite.__init__(self)
 		self.screen = screen
 		self.func = funcs.func(screen,grandim)
 		self.sizen = list(sizen)
 		self.name = str(name)
 		self.type = type
-		self.bart = self.func.getsprites(name)[0]
-		self.image = self.func.getsprites(name)[0]
+		self.bart = sprites[0]
+		self.image = sprites[0]
 		self.rot = int(rot)
 		self.realpos = (int(x),int(y))
 		self.size = [self.func.getsprites(name)[0].get_width() * sizen[0],self.func.getsprites(name)[0].get_height() * sizen[1]]
@@ -55,13 +55,13 @@ class inst(pygame.sprite.Sprite):
 		self.lastframe = self.image
 
 class obj(pygame.sprite.Sprite):
-	def __init__(self,name:str,info:dict):
+	def __init__(self,name:str,info:dict,sprites):
 		pygame.sprite.Sprite.__init__(self)
 		screen = univars.screen
 		grandim = univars.grandim
 		self.func = funcs.func(screen,grandim)
 		self.info = info
-		self.sprites = self.func.getspritesscale(info["name"],info["size"])
+		self.sprites = sprites
 		self.fakerect = pygame.Rect(info["pos"][0] - info["size"][0]//2,info["pos"][1] - info["size"][1]//2,info["size"][0],info["size"][1])
 		self.name = name
 

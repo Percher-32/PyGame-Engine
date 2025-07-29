@@ -41,6 +41,7 @@ class object_manager:
 		self.showall = False
 		self.aplhainst = alpha
 		self.renderinst = rend
+		self.spritecache = {"hi":"hello"}
 		self.speed = 0
 		self.animations = {}
 
@@ -84,11 +85,12 @@ class object_manager:
 		else:
 			self.default()
 
-	def savetilemap(self,name):
-		if os.path.exists(f"Saved/tilemaps/{name}"):
+	def savetilemap(self,name,check = False):
+		if os.path.exists(f"Saved/tilemaps/{name}") and not check:
 			return "No"
 		else:
-			os.mkdir(f"Saved/tilemaps/{name}")
+			if not check:
+				os.mkdir(f"Saved/tilemaps/{name}")
 			with open(f"Saved/tilemaps/{name}/inst.json","w") as file:
 				todump = self.encodeinst()
 				json.dump(todump,file)
@@ -99,15 +101,7 @@ class object_manager:
 			return "True"
 		
 	def forcesavetilemap(self,name):
-		if os.path.exists(f"Saved/tilemaps/{name}"):
-			with open(f"Saved/tilemaps/{name}/inst.json","w") as file:
-				todump = self.encodeinst()
-				json.dump(todump,file)
-			with open(f"Saved/tilemaps/{name}/non-inst.json","w") as file:
-				todump = self.objects
-				json.dump(todump,file)
-			self.loadtilemap(name)
-			return "True"
+		self.savetilemap(name,check=True)
 		
 
 	def getcull(self,pos,grid_size,dim) -> list:
@@ -453,7 +447,12 @@ class object_manager:
 				alp = self.aplhainst[type]
 		else:
 			alp = 0
-		newt = inst.inst(self.screen,self.grandim,name,pos[0],pos[1],rot,sizen,type,alp)
+		if str([name,sizen]) in list(self.spritecache.keys()):
+			spritelist = self.spritecache[str([name,sizen])]
+		else:
+			spritelist = univars.func.getspritesscale(name,[self.func.getsprites(name)[0].get_width() * sizen[0],self.func.getsprites(name)[0].get_height() * sizen[1]])
+			self.spritecache[str([name,sizen])] = spritelist
+		newt = inst.inst(self.screen,self.grandim,name,pos[0],pos[1],rot,sizen,type,alp,spritelist)
 		name = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
 		if name in self.instances.keys():
 			self.instances[name].add(newt)
@@ -462,7 +461,8 @@ class object_manager:
 			self.instances[name].add(newt)
 
 	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int , keepprev = False):
-		"adds an object to the manager  , gives an id of type str"
+		"""adds an object to the manager  , gives an id of type str"""
+		
 		pos = list(pos)
 		if sprites in univars.offsets.keys():
 			pos[0] += univars.offsets[sprites][0]
@@ -471,14 +471,25 @@ class object_manager:
 
 		if not sprites in self.instables:
 			layer = 0
+
+
+			
+
+
 			if not keepprev:
 				self.remove(pos)
 			self.tracker += 1
-			dummy  = self.func.getsprites(sprites)[0]
-			size = [dummy.get_width() * sizen[0],dummy.get_height() * sizen[1]]
-			add = {"pos":list(pos),"name":sprites,"type":sprites,"rot":rot,"sn":0,"gothru":0,"rendercond":1,"alpha":1000,"layer":layer,"animname":"none","size":size}
+			if str([sprites,sizen]) in list(self.spritecache.keys()):
+				spritelist = self.spritecache[str([sprites,sizen])]
+				size = [self.spritecache[str([sprites,sizen])][0].get_width() * sizen[0],self.spritecache[str([sprites,sizen])][0].get_height() * sizen[1]]
+			else:
+				dummy  = self.func.getsprites(sprites)[0]
+				size = [dummy.get_width() * sizen[0],dummy.get_height() * sizen[1]]
+				spritelist = univars.func.getspritesscale(sprites,size)
+				self.spritecache[str([sprites,sizen])] = spritelist
+			add = {"pos":list(pos),"name":sprites,"type":sprites,"rot":rot,"sn":0,"gothru":0,"rendercond":1,"alpha":1000,"layer":layer,"animname":"none","size":size,"sizen":sizen}
 			self.objects.update({str(self.tracker):add})
-			finalobj = inst.obj(str(self.tracker),add)
+			finalobj = inst.obj(str(self.tracker),add,spritelist)
 			if not layer in self.layers.keys():
 				self.layers[layer] = pygame.sprite.Group()
 			self.layers[layer].add(finalobj)
@@ -488,13 +499,28 @@ class object_manager:
 	def datatoobj(self,id,data):
 		add = data
 		self.objects.update({id:add})
-		finalobj = inst.obj(id,add)
+		name = add["name"]
+		sizen = add["sizen"]
+
+		if str([name,sizen]) in list(self.spritecache.keys()):
+			spritelist = self.spritecache[str([name,sizen])]
+		else:
+			spritelist = univars.func.getspritesscale(name,add["size"])
+			self.spritecache[str([name,sizen])] = spritelist
+		finalobj = inst.obj(id,add,spritelist)
 		if not data["layer"] in self.layers.keys():
 			self.layers[data["layer"]] = pygame.sprite.Group()
 		self.layers[data["layer"]].add(finalobj)
 
 	def datatoinst(self,chunk,data):
-		newt = inst.inst(self.screen,self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],data["type"],data["alpha"])
+		sizen = data["sizen"]
+		name = data["name"]
+		if str([name,sizen]) in list(self.spritecache.keys()):
+			spritelist = self.spritecache[str([name,sizen])]
+		else:
+			spritelist = univars.func.getspritesscale(name,[self.func.getsprites(name)[0].get_width() * sizen[0],self.func.getsprites(name)[0].get_height() * sizen[1]])
+			self.spritecache[str([name,sizen])] = spritelist
+		newt = inst.inst(self.screen,self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],data["type"],data["alpha"],spritelist)
 		name = tuple(chunk)
 		if name in list(self.instances.keys()):
 			self.instances[name].add(newt)
@@ -509,9 +535,14 @@ class object_manager:
 		realsprite = self.func.getspritesscale(sprites,size)
 		rect = pygame.Surface.get_rect(realsprite[0])
 		rect.center = (pos[0],pos[1])
+		if str([sprites,size]) in list(self.spritecache.keys()):
+			spritelist = self.spritecache[str([sprites,size])]
+		else:
+			spritelist = univars.func.getspritesscale(sprites,size)
+			self.spritecache[str([sprites,size])] = spritelist
 		add = {"pos":list(pos),"name":sprites,"type":type,"rot":rot,"sn":0,"gothru":0,"rendercond":1,"alpha":alpha,"layer":layer,"animname":"none","size":size}
 		self.objects.update({str(name):add})
-		finalobj = inst.obj(str(name),add)
+		finalobj = inst.obj(str(name),add,spritelist)
 		if not layer in self.layers.keys():
 			self.layers[layer] = pygame.sprite.Group()
 		self.layers[layer].add(finalobj)
