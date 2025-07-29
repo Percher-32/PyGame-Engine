@@ -1,26 +1,35 @@
 import pygame
 import os
+import json
+
+with open(f"Saved/sizeoffsets.json","r") as file:
+    sizeoffsets = json.load(file)
 class func:
     def __init__(self,screen,granddim):
         self.screen = screen
         self.grandim = granddim
     def getsprites(self,name:str):
         sprites = []
+        offset = [0,0]
+        if name in sizeoffsets:
+            offset = sizeoffsets[name]
         folder_dir = f"Graphics/sprites/{name}"
         for images in os.listdir(folder_dir):
-            frame = pygame.transform.scale_by(pygame.image.load(f"Graphics/sprites/{name}/" + images).convert_alpha(),[(self.grandim/32) ,(self.grandim/32)])
+            frame = pygame.transform.scale_by(pygame.image.load(f"Graphics/sprites/{name}/" + images).convert_alpha(),[(self.grandim/32) + offset[0] ,(self.grandim/32) + offset[1]  ])
             sprites.append(frame)
         return sprites
     def getspritesscale(self,name:str,scale):
         sprites = []
         folder_dir = f"Graphics/sprites/{name}"
+        offset = [0,0]
+        if name in sizeoffsets:
+            offset = sizeoffsets[name]
         for images in os.listdir(folder_dir):
-            frame = pygame.transform.scale_by(pygame.transform.scale(pygame.image.load(f"Graphics/sprites/{name}/" + images).convert_alpha(), [scale[0],scale[1]]),[1,1])
+            frame = pygame.transform.scale_by(pygame.transform.scale(pygame.image.load(f"Graphics/sprites/{name}/" + images).convert_alpha(), [scale[0] + offset[0],scale[1] + offset[1]]),[1,1])
             sprites.append(frame)
         return sprites
     def allsprites(self):
         return os.listdir("Graphics/sprites")
-    
     def dist(self,pos1:list,pos2:list):
         return ((((pos1[0] - pos2[0]) ** 2) + ((pos1[1] - pos2[1]) ** 2)) ** 0.5)
     def rectblit(self,pos,width,col,camera,dim):

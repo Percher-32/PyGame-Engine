@@ -1,4 +1,5 @@
 import pygame
+import json
 import Managers.funcs as funcs
 import Managers.statemanager as sm
 
@@ -38,6 +39,13 @@ theme = {
 }
 
 
+sizes = {
+    "smallbutton": (150,75),
+    "mediumbutton": (200,100),
+    "semilargebutton":(250,250/2),
+    "largebutton": (300,150),
+}
+
 screen = pygame.Surface((64 * pixelscale,64 * pixelscale))
 realscreeen = pygame.display.set_mode((screen_w,screen_h),pygame.RESIZABLE)
 pygame.display.set_caption(name)
@@ -46,6 +54,11 @@ screen_rect = screen.get_rect(center = (0,0))
 
 func = funcs.func(screen,grandim)
 
+
+
+
+
+sizeoffsets = {"grass":[0.1,0.1],"dirt":[0.1,0.1]}
 
 instables = ["dirt","grass","def"]
 
@@ -56,6 +69,16 @@ offsets = {"tree":[0,-13]}
 hideentypes = ["camz"]
 
 aplhatypes = {}
+
+
+with open(f"Saved/sizeoffsets.json","w") as file:
+    json.dump(sizeoffsets,file)
+
+
+
+
+
+
 
 map = "flat"
 
@@ -70,12 +93,6 @@ screencol = (110,189,234)
 
 camspeeed = 45
 
-sizes = {
-    "smallbutton": (150,75),
-    "mediumbutton": (200,100),
-    "semilargebutton":(250,250/2),
-    "largebutton": (300,150),
-}
 
 poschange = 0
 

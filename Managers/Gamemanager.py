@@ -51,22 +51,23 @@ class GameManager():
 		om.loadtilemap(univars.map)
 
 	def keybind(self):
-		if em.x or self.event_manager.key[pygame.K_SPACE]:
+		if em.controller["x"] or self.event_manager.key[pygame.K_SPACE]:
 			self.key["action"] = True
 		else:
 			self.key["action"] = False
-		if em.tri or self.event_manager.key[pygame.K_z] or self.event_manager.key[pygame.K_p]:
+		if em.controller["triangle"] or self.event_manager.key[pygame.K_z] or self.event_manager.key[pygame.K_p]:
 			self.key["secondary"] = True
 		else:
 			self.key["secondary"] = False
-		if em.sq or self.event_manager.key[pygame.K_o] or self.event_manager.key[pygame.K_c]:
+		if em.controller["square"] or self.event_manager.key[pygame.K_o] or self.event_manager.key[pygame.K_c]:
 			self.key["attack"] = True
 		else:
 			self.key["attack"] = False
-		if em.cir or self.event_manager.key[pygame.K_i] or self.event_manager.key[pygame.K_x]:
+		if em.controller["circle"] or self.event_manager.key[pygame.K_i] or self.event_manager.key[pygame.K_x]:
 			self.key["dodge"] = True
 		else:
 			self.key["dodge"] = False
+
 
 
 		if abs(event_manager.analog_keys[0]) > 0.3:

@@ -17,23 +17,70 @@ class event_manager:
 		self.mousepos = pygame.mouse.get_pos()
 		self.Mouseb = False
 		self.Mouser = False
-		self.x = False
-		self.sq = False
 		self.running = True
-		self.tri = False
-		self.cir = False
-		self.xb = False
-		self.sqb = False
-		self.trib = False
-		self.cirb = False
-		self.xr = False
-		self.sqr = False
-		self.trir = False
-		self.cirr = False
 		self.scroll = 0
 		self.open = True
 		self.keyb = False
 		self.keyr = False
+		self.controller = {
+							"x": False,
+							"circle": False,
+							"square": False,
+							"triangle": False,
+							"share": False,
+							"PS": False,
+							"options": False,
+							"left_stick_click": False,
+							"right_stick_click": False,
+							"L1": False,
+							"R1": False,
+							"up_arrow": False,
+							"down_arrow": False,
+							"left_arrow": False,
+							"right_arrow": False,
+							"touchpad": False
+
+							}
+		self.controllerrel = {
+							"x": False,
+							"circle": False,
+							"square": False,
+							"triangle": False,
+							"share": False,
+							"PS": False,
+							"options": False,
+							"left_stick_click": False,
+							"right_stick_click": False,
+							"L1": False,
+							"R1": False,
+							"up_arrow": False,
+							"down_arrow": False,
+							"left_arrow": False,
+							"right_arrow": False,
+							"touchpad": False
+
+							}
+							
+
+		self.controllerjab = {
+							"x": False,
+							"circle": False,
+							"square": False,
+							"triangle": False,
+							"share": False,
+							"PS": False,
+							"options": False,
+							"left_stick_click": False,
+							"right_stick_click": False,
+							"L1": False,
+							"R1": False,
+							"up_arrow": False,
+							"down_arrow": False,
+							"left_arrow": False,
+							"right_arrow": False,
+							"touchpad": False
+
+							}
 
 	def next(self):
 		self.key = pygame.key.get_pressed()
@@ -41,18 +88,18 @@ class event_manager:
 		self.mousepos = pygame.mouse.get_pos()
 		self.Mouseb = False
 		self.Mouser = False
-		self.xb = False
-		self.sqb = False
-		self.trib = False
-		self.cirb = False
-		self.xr = False
-		self.sqr = False
-		self.trir = False
-		self.cirr = False
 		self.scroll = 0
 		self.keyb = False
 		self.keyr = False
 		self.keydown = False
+
+		for i in self.controllerrel.keys():
+			self.controllerrel[i] = False
+
+		for i in self.controllerjab.keys():
+			self.controllerjab[i] = False
+
+
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				pygame.quit()
@@ -65,38 +112,22 @@ class event_manager:
 
 			if event.type == pygame.JOYAXISMOTION:
 				analog_keys[event.axis] = event.value 
+
+
+
+
 			if event.type == pygame.JOYBUTTONDOWN:
-				if event.button == button_keys["x"]:
-					self.x = True
-					self.xb = True
-				if event.button == button_keys["circle"]:
-					self.cir = True
-					self.cirb = True
-				if event.button == button_keys["triangle"]:
-					self.tri = True
-					self.trib = True
-				if event.button == button_keys["square"]:
-					self.sq = True
-					self.sqb = True
-				
+				for i in button_keys.keys():
+					if event.button == button_keys[i]:
+						self.controller[i] = True
+						self.controllerjab[i] = True
 				
 			if event.type == pygame.JOYBUTTONUP:
-				if event.button == button_keys["x"]:
-					self.x = False
-					self.xr = True
-				if event.button == button_keys["circle"]:
-					self.cir = False
-					self.cirr = True 
-				if event.button == button_keys["triangle"]:
-					self.tri = False
-					self.trir = True 
-				if event.button == button_keys["square"]:
-					self.sq = False
-					self.sqr = True
-
-
-
-
+				for i in button_keys.keys():
+					if event.button == button_keys[i]:
+						self.controller[i] = False
+						self.controllerrel[i] = True
+				
 
 			if event.type == pygame.MOUSEBUTTONDOWN:
 				self.Mouseb = True
@@ -120,3 +151,4 @@ class event_manager:
 
 	def close(self):
 		self.open = False
+
