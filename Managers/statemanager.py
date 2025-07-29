@@ -8,6 +8,7 @@ class sm:
         self.leveledit = False
         self.work = True
         self.showui = False
+        self.showall = False  
         self.load = "plach"
 
     def update(self):
@@ -31,7 +32,7 @@ class sm:
             self.work = True
             self.speed = 1
             self.showui = True
-            self.showall = True
+            self.showall = False
         if self.state == "edit":
             self.states = ["Editor"]
             self.leveledit = True

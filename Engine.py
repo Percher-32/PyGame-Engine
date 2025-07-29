@@ -148,7 +148,7 @@ class Runchinld(Gamemananager.GameManager):
 		#on skateboard?
 		self.sp("onboard",True)
 
-
+       
 
 	def unilerp(self,val,max,sm,roundto = None):
 		"""
@@ -170,7 +170,7 @@ class Runchinld(Gamemananager.GameManager):
 		if self.dt == 0 or self.dt > 10:
 			self.dt = 1
 
-		um.showvar("axis",self.key["x"],[0,-0.7])
+		um.showvar("axis",self.key["x"],[0,-0.7],self.publicvariables["debug-mode"])
 		
 		#get out of being stuck
 		if not  om.collide9("player",0,cam,self.dim)["midmid"]["inst"]:

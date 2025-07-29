@@ -8,7 +8,7 @@ class inst(pygame.sprite.Sprite):
 	__slots__ = ["screen","grandim","name","x","y","rot","sizen","type","alpha"]
 
 
-	def __init__(self,screen,grandim,name,x,y,rot,sizen,type,alpha,sprites):
+	def __init__(self,screen,grandim,name,x,y,rot,sizen,type,alpha,sprites,size):
 		pygame.sprite.Sprite.__init__(self)
 		self.screen = screen
 		self.func = funcs.func(screen,grandim)
@@ -19,7 +19,7 @@ class inst(pygame.sprite.Sprite):
 		self.image = sprites[0]
 		self.rot = int(rot)
 		self.realpos = (int(x),int(y))
-		self.size = [self.func.getsprites(name)[0].get_width() * sizen[0],self.func.getsprites(name)[0].get_height() * sizen[1]]
+		self.size = size
 		self.rect = self.image.get_rect(center = (x + cam.x,y + cam.y))
 		self.fakerect = pygame.Rect(x - self.size[0]//2,y - self.size[1]//2,self.size[0],self.size[1])
 		self.alpha = alpha

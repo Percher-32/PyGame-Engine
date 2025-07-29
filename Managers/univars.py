@@ -20,7 +20,7 @@ grandim = 32
 
 name = "Project ender"
 
-maxfps = 2000
+maxfps = 10000
 
 
 (40, 41, 83)
@@ -82,7 +82,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 map = "level1"
 
-startstate = "game"
+startstate = "dubugame"
 
 mode = 1
 

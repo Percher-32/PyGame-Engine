@@ -251,7 +251,7 @@ class object_manager:
 				self.objects[id]["rot"] = self.objects[id]["rot"] - 360
 
 	def scaleto(self,id,scale):
-		self.sprites[id] = self.func.getspritesscale(self.objects[id][1],scale)
+		self.sprites[id] = univars.func.getspritesscale(self.objects[id][1],scale)
 
 	def get_value(self,info,name):
 		"""
@@ -361,8 +361,8 @@ class object_manager:
 				col = noninstcol
 			else:
 				col = (225,0,0)
-			# self.func.ssblitrect(pygame.Rect(pos[0],pos[1],num * pointsize,num * pointsize),col,camera,0)
-			self.func.ssblitrect(r1,col,camera,5)
+			self.func.ssblitrect(pygame.Rect(pos[0],pos[1],num * pointsize,num * pointsize),col,camera,0)
+			# self.func.ssblitrect(r1,col,camera,5)
 
 
 		
@@ -450,9 +450,10 @@ class object_manager:
 		if str([name,sizen]) in list(self.spritecache.keys()):
 			spritelist = self.spritecache[str([name,sizen])]
 		else:
-			spritelist = univars.func.getspritesscale(name,[self.func.getsprites(name)[0].get_width() * sizen[0],self.func.getsprites(name)[0].get_height() * sizen[1]])
+			temp = univars.func.getsprites(name)[0]
+			spritelist = univars.func.getspritesscale(name,[temp.get_width() * sizen[0],temp.get_height() * sizen[1]])
 			self.spritecache[str([name,sizen])] = spritelist
-		newt = inst.inst(self.screen,self.grandim,name,pos[0],pos[1],rot,sizen,type,alp,spritelist)
+		newt = inst.inst(self.screen,self.grandim,name,pos[0],pos[1],rot,sizen,type,alp,spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]])
 		name = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
 		if name in self.instances.keys():
 			self.instances[name].add(newt)
@@ -483,7 +484,7 @@ class object_manager:
 				spritelist = self.spritecache[str([sprites,sizen])]
 				size = [self.spritecache[str([sprites,sizen])][0].get_width() * sizen[0],self.spritecache[str([sprites,sizen])][0].get_height() * sizen[1]]
 			else:
-				dummy  = self.func.getsprites(sprites)[0]
+				dummy  = univars.func.getsprites(sprites)[0]
 				size = [dummy.get_width() * sizen[0],dummy.get_height() * sizen[1]]
 				spritelist = univars.func.getspritesscale(sprites,size)
 				self.spritecache[str([sprites,sizen])] = spritelist
@@ -518,9 +519,10 @@ class object_manager:
 		if str([name,sizen]) in list(self.spritecache.keys()):
 			spritelist = self.spritecache[str([name,sizen])]
 		else:
-			spritelist = univars.func.getspritesscale(name,[self.func.getsprites(name)[0].get_width() * sizen[0],self.func.getsprites(name)[0].get_height() * sizen[1]])
+			temp = univars.func.getsprites(name)[0]
+			spritelist = univars.func.getspritesscale(name,[temp.get_width() * sizen[0],temp.get_height() * sizen[1]])
 			self.spritecache[str([name,sizen])] = spritelist
-		newt = inst.inst(self.screen,self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],data["type"],data["alpha"],spritelist)
+		newt = inst.inst(self.screen,self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],data["type"],data["alpha"],spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]])
 		name = tuple(chunk)
 		if name in list(self.instances.keys()):
 			self.instances[name].add(newt)
@@ -530,9 +532,9 @@ class object_manager:
 
 	def adds(self,name,pos,sprites,type,rot,size,alpha,layer):
 		"""add special for more unique items"""
-		dummy  = self.func.getsprites(sprites)[0]
+		dummy  = univars.func.getsprites(sprites)[0]
 		size = [dummy.get_width() * size[0],dummy.get_height() * size[1]]
-		realsprite = self.func.getspritesscale(sprites,size)
+		realsprite = univars.func.getspritesscale(sprites,size)
 		rect = pygame.Surface.get_rect(realsprite[0])
 		rect.center = (pos[0],pos[1])
 		if str([sprites,size]) in list(self.spritecache.keys()):
@@ -557,7 +559,6 @@ class object_manager:
 		self.speed = speed
 
 	def render(self,camera,GameManager,dim:int,showall):
-
 		#camera-chunk
 		camposdim = [int(round(camera.x/(dim * self.renderdist))),int(round(camera.y/(dim * self.renderdist)))]
 		#availabe chunks

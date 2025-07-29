@@ -226,7 +226,7 @@ class GameManager():
 		self.publicvariables["debug-mode"] = sm.work
 		om.speed = sm.speed
 		self.states = sm.states
-		Tiled.showdata = sm.showui
+		self.publicvariables["showdata"] = sm.showui
 		self.publicvariables["showallhidden"] = sm.showall
 
 	def sp(self,val:str,to):
