@@ -48,7 +48,7 @@ class GameManager():
 		self.states = []
 		self.pausebackground = False
 		self.pauseui = False
-		self.key = {"x":0,"y":0,"action":0,"secondary":0,"attack":0,"dodge":0}
+		self.key = {"x":0,"y":0,"jump":0,"secondary":0,"attack":0,"dodge":0}
 		self.dim = univars.grandim
 		self.fpsmax = univars.maxfps
 		self.leveledit = True
@@ -64,9 +64,9 @@ class GameManager():
 
 	def keybind(self):
 		if em.controller["x"] or em.key[pygame.K_SPACE]:
-			self.key["action"] = True
+			self.key["jump"] = True
 		else:
-			self.key["action"] = False
+			self.key["jump"] = False
 		if em.controller["triangle"] or em.key[pygame.K_z] or em.key[pygame.K_p]:
 			self.key["secondary"] = True
 		else:
@@ -79,6 +79,11 @@ class GameManager():
 			self.key["dodge"] = True
 		else:
 			self.key["dodge"] = False
+
+		if em.controller["options"] or em.key[pygame.K_ESCAPE]:
+			self.key["option"] = True
+		else:
+			self.key["option"] = False
 
 
 

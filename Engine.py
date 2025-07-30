@@ -243,7 +243,7 @@ class Runchinld(Gamemananager.GameManager):
 
 
 			#jumping
-			if self.key["action"]:
+			if self.key["jump"]:
 				self.sp("fss",16)
 				if self.gp("jumpable"):
 					#normal
