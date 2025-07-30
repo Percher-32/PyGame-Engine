@@ -44,11 +44,11 @@ class Item(pygame.sprite.Sprite):
             self.pos[1] -= (camera.y - self.prevcampos[1])/self.layer * camera.size
             self.prevcampos = [Cameramod.cam.x,Cameramod.cam.y]
 
-        if not int(round(self.bcs * (univars.pixelscale/7))) in self.cache.keys():
-            self.image = pygame.transform.scale_by(self.baseimg,int(round(self.bcs * (univars.pixelscale/7))))
+        if not round(self.bcs * (univars.pixelscale/7),7) in self.cache.keys():
+            self.image = pygame.transform.scale_by(self.baseimg,round(self.bcs * (univars.pixelscale/7),7))
             self.cache[  int(round(self.bcs * (univars.pixelscale/7)))  ] = self.image
         else:
-            self.image = self.cache[  int(round(self.bcs * (univars.pixelscale/7)))  ] 
+            self.image = self.cache[  round(self.bcs * (univars.pixelscale/7),7)  ] 
 
         self.rect = self.image.get_rect(center = self.renderedpos )
         self.renderedpos = (self.pos[0] + univars.screen.get_width()//2  ,      self.pos[1]  + univars.screen.get_height()//2             )

@@ -37,7 +37,7 @@ class GameManager():
 		self.screen_colour = screen_colour
 		self.frame_manager = frame_manager
 		self.event_manager = em
-		self.publicvariables = {"showinput":1,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":(0,0,200)       }
+		self.publicvariables = {"showinput":1,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":univars.screencol       }
 		self.timers = {}
 		self.dt = 1
 		self.abttodo = []
@@ -46,10 +46,13 @@ class GameManager():
 		self.dons = []
 		self.ids = []
 		self.states = []
+		self.pausebackground = False
+		self.pauseui = False
 		self.key = {"x":0,"y":0,"action":0,"secondary":0,"attack":0,"dodge":0}
 		self.dim = univars.grandim
 		self.fpsmax = univars.maxfps
 		self.leveledit = True
+		self.previousbacklayer = pygame.Surface((0,0))
 		Tiled.extra(univars.extras)
 		om.loadtilemap(univars.map)
 
@@ -254,9 +257,11 @@ class GameManager():
 		self.commence()
 		self.initial()
 		inumthread = threading.Thread(target=self.inum)
+		# backgroundthread = threading.Thread(target=self.backgroundupdate)
+		uithread = threading.Thread(target=self.uiunpdate)
 		inumthread.start()
-		# inputhreand = threading.Thread(target=self.inputdetect)
-		# inputhreand.start()
+		# backgroundthread.start()
+		uithread.start()
 		self.dt = 1
 		while em.running: 
 			self.start()   
@@ -264,7 +269,7 @@ class GameManager():
 				self.update()
 			self.end()
 		self.running = False
-
+		em.running = False
 
 	def defs(self):
 		sm.update()
@@ -278,7 +283,20 @@ class GameManager():
 	def inputdetect(self):
 		em.next()
 
-		
+	# def backgroundupdate(self):
+	# 	self.canpu = False
+	# 	while em.running:
+	# 		if not self.pausebackground:
+	# 			self.canpb = False
+	# 			bg.update(self.publicvariables["screencol"])
+	# 			self.canpb = True
+	# 			time.sleep(0.1)
+
+	def uiunpdate(self):
+		while em.running:
+			if not self.pauseui:
+				um.update(em,self.publicvariables)
+				time.sleep(0.1)
 
 	def start(self):
 		"""run at the start of every frame"""
@@ -288,21 +306,39 @@ class GameManager():
 		if Tiled.loadingmap:
 			self.initial()
 
+		#render background
 			
 		bg.update(self.publicvariables["screencol"])
 		univars.screen.blit(bg.backlayer,(0,0))
+
+
+
+		#renders objects
 		om.render(cam,self,self.dim,self.publicvariables["showallhidden"])
-		um.update(em,self.publicvariables)
+
+
 		
+		#renders blits
 		camera = Cameramod.cam
-		renderwid = max([univars.screen_w,univars.screen_h])
 		for i in self.abttodo:
 			b = i[0]
 			pos = i[1]
 			univars.screen.blit(b,((pos[0] - camera.x) * round(camera.size,2) + univars.screen.get_width()//2 - b.get_width()/2 ,(pos[1] - camera.y) * round(camera.size,2) + univars.screen.get_height()//2 - b.get_height()/2))
 			self.abttodo.remove(i)
+
+		
+		#render onto screen
+		renderwid = max([univars.screen_w,univars.screen_h])
 		univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid ,renderwid )),(0,-1 * renderwid//4))
+
+
+		#renders ui
+		self.pauseui = True
 		um.sprites.draw(univars.realscreeen)
+		self.pauseui = False
+
+
+		#runs editoe
 		Tiled.Run(self.publicvariables["debug-mode"],univars.camspeeed,self,cam,self.dim,self.publicvariables["leveledit"],cm,sm.state)
 
 		self.keybind()
@@ -310,7 +346,6 @@ class GameManager():
 		univars.update()
 		cm.update()
 		cam.update()
-
 
 	def loadanims(self):
 		for filename in os.listdir("Saved/animations"):
