@@ -14,6 +14,9 @@ class Uimanager:
 		self.sprites = pygame.sprite.Group()
 		self.state = "default"
 		self.canshowvar = True
+		self.realscreeen = pygame.Surface((univars.screen_w,univars.screen_h))
+		self.reset = pygame.Surface((univars.screen_w,univars.screen_h))
+		self.realscreeen = self.reset
 
 	def addelement(self,surf,states,pos,name,type=None):
 		ui = self.Uielement.Ui(surf,states,pos,name)
@@ -113,7 +116,7 @@ class Uimanager:
 	def update(self,em,pubvar):
 		self.canshowvar = pubvar["debug-mode"]
 		self.sprites.update(self.state, self.elements,em)
-		self.sprites.draw(univars.realscreeen)
+		self.sprites.draw(univars.screen)
 		for a in self.sprites:
 			if a.name in self.elements.keys():
 				if a.__class__.__name__ == "Uibutton":
@@ -134,7 +137,7 @@ class Uimanager:
 						self.elements[a.name]["pos"] = self.elements[self.elements[a.name]["button"]]["pos"]
 						self.elements[a.name]["states"] = self.elements[self.elements[a.name]["button"]]["states"]
 
-
+		
 			
 
 ingame = Uimanager()

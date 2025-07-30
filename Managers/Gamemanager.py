@@ -15,6 +15,7 @@ import Managers.backgroundmanager as backgroundmanager
 import os
 import threading
 import time
+import random
 pygame.init()
 pygame.joystick.init()
 
@@ -285,13 +286,21 @@ class GameManager():
 			self.initial()
 		if Tiled.loadingmap:
 			self.initial()
+
+			
 		bg.update(self.publicvariables["screencol"])
 		univars.screen.blit(bg.backlayer,(0,0))
 		om.render(cam,self,self.dim,self.publicvariables["showallhidden"])
-		renderwid = max([univars.screen_w,univars.screen_h])
 		um.update(em,self.publicvariables)
+		a = pygame.Surface((1000,1000))
+		# um.sprites.draw(univars.screen)
+		a.fill((100,100,100))
+		univars.screen.blit(a,[random.randint(-1000,1000),random.randint(-1000,1000)])
+		renderwid = max([univars.screen_w,univars.screen_h]) - 500
+		# renderwid = 40
 		Tiled.Run(self.publicvariables["debug-mode"],univars.camspeeed,self,cam,self.dim,self.publicvariables["leveledit"],cm,sm.state)
 		univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid ,renderwid )),(0,-1 * renderwid//4))
+		# univars.realscreeen.blit(univars.uiscreen,(0,0))
 		self.keybind()
 		self.updatetime()
 		univars.update()

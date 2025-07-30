@@ -47,6 +47,7 @@ sizes = {
 }
 
 screen = pygame.Surface((64 * pixelscale,64 * pixelscale))
+uiscreen = pygame.Surface((screen_w,screen_h))
 realscreeen = pygame.display.set_mode((screen_w,screen_h),pygame.RESIZABLE)
 pygame.display.set_caption(name)
 
@@ -109,7 +110,9 @@ maxfpsbuffersize = 5
 def update():
     global screen_w
     global screen_h 
+    global uiscreen
     screen_w = realscreeen.get_width()
     screen_h = realscreeen.get_height()
+    uiscreen = pygame.transform.scale(uiscreen,[screen_w,screen_h])
 
 
