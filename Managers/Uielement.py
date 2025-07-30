@@ -116,6 +116,7 @@ class Ui(pygame.sprite.Sprite):
         self.rect = self.baseimg.get_rect(center = pos)
         self.states = states
         self.cando = cando
+        self.cache = {}
 
     def update(self,state,elements,em):
         if self.name in elements.keys():
@@ -124,9 +125,23 @@ class Ui(pygame.sprite.Sprite):
                     self.baseimg.fill(elements[self.name]["color"])
                 else:
                     self.baseimg = elements[self.name]["surf"]
+
+
                 self.states = elements[self.name]["states"]
-                self.baseimg.set_alpha(elements[self.name]["alpha"])
-                baseimg1 = pygame.transform.scale(self.baseimg,elements[self.name]["dimensions"])
+
+
+                realscale = int(round(elements[self.name]["dimensions"]))
+                if not str(realscale,elements[self.name]["alpha"]) in self.cache:
+                    self.baseimg.set_alpha(elements[self.name]["alpha"])
+                    baseimg1 = pygame.transform.scale(self.baseimg,   realscale   )
+                    self.cache[str(realscale,elements[self.name]["alpha"])] = baseimg1
+                else:
+                    baseimg1 = self.cache[str(realscale,elements[self.name]["alpha"])]
+
+
+
+
+
                 self.baseimg = baseimg1
                 self.pos = elements[self.name]["pos"]
                 self.image = self.baseimg

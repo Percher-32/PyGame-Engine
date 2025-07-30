@@ -36,7 +36,7 @@ class GameManager():
 		self.screen_colour = screen_colour
 		self.frame_manager = frame_manager
 		self.event_manager = em
-		self.publicvariables = {"showinput":1,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True}
+		self.publicvariables = {"showinput":1,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":(0,0,200)       }
 		self.timers = {}
 		self.dt = 1
 		self.running = True
@@ -285,13 +285,13 @@ class GameManager():
 			self.initial()
 		if Tiled.loadingmap:
 			self.initial()
-		renderwid = max([univars.screen_w,univars.screen_h])
-		univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid ,renderwid )),(0,-1 * renderwid//4))
-		univars.screen.fill((self.screen_colour))
-		bg.update()
+		bg.update(self.publicvariables["screencol"])
+		univars.screen.blit(bg.backlayer,(0,0))
 		om.render(cam,self,self.dim,self.publicvariables["showallhidden"])
+		renderwid = max([univars.screen_w,univars.screen_h])
 		um.update(em,self.publicvariables)
 		Tiled.Run(self.publicvariables["debug-mode"],univars.camspeeed,self,cam,self.dim,self.publicvariables["leveledit"],cm,sm.state)
+		univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid ,renderwid )),(0,-1 * renderwid//4))
 		self.keybind()
 		self.updatetime()
 		univars.update()

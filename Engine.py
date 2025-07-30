@@ -153,7 +153,7 @@ class Runchinld(Gamemananager.GameManager):
 		"""
 			a lerp function that incorperates IN-GAME time and DELTA-TIME into its incorperation.  sm -> float/int
 		"""
-		return univars.func.lerp(val,max,((sm/om.speed) / self.dt)*1.5,roundto = roundto)
+		return univars.func.lerp(val,max,              (  (sm/om.speed) / self.dt)*1.5              ,roundto = roundto)
 
 
 	def moveplayer(self):
@@ -173,8 +173,6 @@ class Runchinld(Gamemananager.GameManager):
 		#get out of being stuck
 		if not  collision["midmid"]["inst"]:
 			#IN HERE IS EITHER [NO MIDMID] OR [Yes MIDMID AND GROUND]
-
-
 
 
 			#x dir movement

@@ -32,6 +32,7 @@ class Item(pygame.sprite.Sprite):
         self.prevcampos = [Cameramod.cam.x,Cameramod.cam.y]
         self.originalpos = self.pos
         self.pastbcs = Cameramod.cam.size
+        self.cache = {}
 
     def update(self):
         camera = Cameramod.cam
@@ -43,8 +44,11 @@ class Item(pygame.sprite.Sprite):
             self.pos[1] -= (camera.y - self.prevcampos[1])/self.layer * camera.size
             self.prevcampos = [Cameramod.cam.x,Cameramod.cam.y]
 
-        
-        self.image = pygame.transform.scale_by(self.baseimg,int(round(self.bcs * (univars.pixelscale/7))))
+        if not int(round(self.bcs * (univars.pixelscale/7))) in self.cache.keys():
+            self.image = pygame.transform.scale_by(self.baseimg,int(round(self.bcs * (univars.pixelscale/7))))
+            self.cache[  int(round(self.bcs * (univars.pixelscale/7)))  ] = self.image
+        else:
+            self.image = self.cache[  int(round(self.bcs * (univars.pixelscale/7)))  ] 
 
         self.rect = self.image.get_rect(center = self.renderedpos )
         self.renderedpos = (self.pos[0] + univars.screen.get_width()//2  ,      self.pos[1]  + univars.screen.get_height()//2             )
@@ -58,6 +62,8 @@ class Backgroundmanager:
     def __init__(self):
         self.items = {}
         self.background = None
+        self.backlayer = pygame.Surface((64 * univars.pixelscale,64 * univars.pixelscale))
+        self.backlayer.fill(univars.screencol)
 
 
     def addbackground(self,name):
@@ -68,10 +74,12 @@ class Backgroundmanager:
         self.items[backgroundname].add(item)
 
 
-    def update(self):
+    def update(self,screencol):
+        self.backlayer = pygame.transform.scale(self.backlayer,[64 * univars.pixelscale,64 * univars.pixelscale])
+        self.backlayer.fill(screencol)
         if self.background in self.items.keys():
             self.items[self.background].update()
-            self.items[self.background].draw(univars.screen)
+            self.items[self.background].draw(self.backlayer)
 
 
     def savebg(self):

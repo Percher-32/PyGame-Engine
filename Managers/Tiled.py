@@ -934,7 +934,10 @@ class TiledSoftwre:
 						self.cht.replace(" ","")
 						vartochange = self.cht.split("=")[0]
 						valtoreplace = self.cht.split("=")[1]
-						GameManager.publicvariables[vartochange] = eval(valtoreplace)
+						try:
+							GameManager.publicvariables[vartochange] = eval(valtoreplace)
+						except:
+							GameManager.publicvariables[vartochange] = valtoreplace
 						self.commmandtring = ""
 					else:
 						self.savemode = 0
