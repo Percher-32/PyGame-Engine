@@ -338,19 +338,17 @@ class object_manager:
 
 	def collidep(self,pos,show,dim,pointsize=5,instcol = (0,225,0),noninstcol=(0,225,150),ignore_id = None,camera = None) -> dict: 
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
-
-		r1 = pygame.Rect(pos[0],pos[1],10,10)
-
 		#coll for non-inst
 		dim = univars.grandim
 		typel = self.getcull(pos,1,dim)
-		noninst = [self.objfromid(i) for i in typel if r1.colliderect(self.objfromid(i).fakerect) ]
+		noninst = [self.objfromid(i) for i in typel if self.objfromid(i).fakerect.collidepoint(pos) ]
 
 		#coll for inst
 		camchunk = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
 		inst = []
+		r1 = pygame.Rect(pos[0],pos[1],1,1)
 		if camchunk in self.instances.keys():
-			inst = [ i for i in self.instances[camchunk] if r1.colliderect(i.fakerect)]
+			inst = [ i for i in self.instances[camchunk] if i.fakerect.collidepoint(pos)]
 
 		#render the collpoint
 		if show:

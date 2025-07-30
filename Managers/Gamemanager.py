@@ -20,7 +20,7 @@ pygame.joystick.init()
 
 em = event_manager.event_manager()
 tm = Textmanager.Textmanager(univars.realscreeen)
-fm = framemanager.frame_manager(em,tm)
+fm = framemanager.frame_manager(tm)
 om = objectmanager.om
 Tiled = Tiled.TiledSoftwre(univars.realscreeen,univars.theme,univars.grandim,univars.screen,om)
 cam = Cameramod.cam
@@ -35,8 +35,8 @@ class GameManager():
 	def __init__(self,screen_colour,frame_manager):
 		self.screen_colour = screen_colour
 		self.frame_manager = frame_manager
-		self.event_manager = self.frame_manager.event_manager
-		self.publicvariables = {"showinput":0,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps}
+		self.event_manager = em
+		self.publicvariables = {"showinput":1,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True}
 		self.timers = {}
 		self.dt = 1
 		self.running = True
@@ -51,39 +51,45 @@ class GameManager():
 		Tiled.extra(univars.extras)
 		om.loadtilemap(univars.map)
 
+	def debug(self,message,sep = 0):
+		if self.publicvariables["printdebug"]:
+			print(message)
+			for i in range(sep):
+				print()
+
 	def keybind(self):
-		if em.controller["x"] or self.event_manager.key[pygame.K_SPACE]:
+		if em.controller["x"] or em.key[pygame.K_SPACE]:
 			self.key["action"] = True
 		else:
 			self.key["action"] = False
-		if em.controller["triangle"] or self.event_manager.key[pygame.K_z] or self.event_manager.key[pygame.K_p]:
+		if em.controller["triangle"] or em.key[pygame.K_z] or em.key[pygame.K_p]:
 			self.key["secondary"] = True
 		else:
 			self.key["secondary"] = False
-		if em.controller["square"] or self.event_manager.key[pygame.K_o] or self.event_manager.key[pygame.K_c]:
+		if em.controller["square"] or em.key[pygame.K_o] or em.key[pygame.K_c]:
 			self.key["attack"] = True
 		else:
 			self.key["attack"] = False
-		if em.controller["circle"] or self.event_manager.key[pygame.K_i] or self.event_manager.key[pygame.K_x]:
+		if em.controller["circle"] or em.key[pygame.K_i] or em.key[pygame.K_x]:
 			self.key["dodge"] = True
 		else:
 			self.key["dodge"] = False
 
 
 
-		if abs(event_manager.analog_keys[0]) > 0.3:
-			self.key["x"] = round(event_manager.analog_keys[0],2)
-		elif self.event_manager.key[pygame.K_RIGHT] or self.event_manager.key[pygame.K_d] or self.event_manager.controller["right_arrow"]:
+		if abs(em.analog_keys[0]) > 0.3:
+			self.key["x"] = round(em.analog_keys[0],2)
+		elif em.key[pygame.K_RIGHT] or em.key[pygame.K_d] or em.controller["right_arrow"]:
 			self.key["x"] = 1
-		elif self.event_manager.key[pygame.K_LEFT] or self.event_manager.key[pygame.K_a] or self.event_manager.controller["left_arrow"]:
+		elif em.key[pygame.K_LEFT] or em.key[pygame.K_a] or em.controller["left_arrow"]:
 			self.key["x"] = -1
 		else:
 			self.key["x"] = 0
-		if abs(event_manager.analog_keys[1]) > 0.3:
-			self.key["y"] = -1 * event_manager.analog_keys[1]
-		elif self.event_manager.key[pygame.K_UP] or self.event_manager.key[pygame.K_w] or self.event_manager.controller["up_arrow"]:
+		if abs(em.analog_keys[1]) > 0.3:
+			self.key["y"] = -1 * em.analog_keys[1]
+		elif em.key[pygame.K_UP] or em.key[pygame.K_w] or em.controller["up_arrow"]:
 			self.key["y"] = 1
-		elif self.event_manager.key[pygame.K_DOWN] or self.event_manager.key[pygame.K_s] or self.event_manager.controller["down_arrow"]:
+		elif em.key[pygame.K_DOWN] or em.key[pygame.K_s] or em.controller["down_arrow"]:
 			self.key["y"] = -1
 		else:
 			self.key["y"] = 0
@@ -146,16 +152,16 @@ class GameManager():
 		a = univars.func.getsprites(surf)[id]
 		a = pygame.transform.scale_by(a,abs(size))
 		a = pygame.transform.rotate(a,rot)
-		univars.screen.blit(a,(self.event_manager.mousepos[0] ,self.event_manager.mousepos[1]))
+		univars.screen.blit(a,(em.mousepos[0] ,em.mousepos[1]))
 	
 	def Gotomousepos2(self,surf):
-		univars.realscreeen.blit(surf,(self.event_manager.mousepos[0] ,self.event_manager.mousepos[1]))
+		univars.realscreeen.blit(surf,(em.mousepos[0] ,em.mousepos[1]))
 
 	def Gotomouseposgrid(self,surface,camera,rot,dim):
 		upscale = univars.realscreeen.get_width() / univars.screen.get_width()
 		translation = univars.realscreeen.get_width()//4
 		newsurface = pygame.transform.scale_by	(surface[0],(upscale,upscale))
-		mousepos = (  (self.event_manager.mousepos[0]  - univars.realscreeen.get_width()//2) / camera.size) + camera.x, (( (self.event_manager.mousepos[1]  - univars.realscreeen.get_height()//2) / camera.size) + camera.y)
+		mousepos = (  (em.mousepos[0]  - univars.realscreeen.get_width()//2) / camera.size) + camera.x, (( (em.mousepos[1]  - univars.realscreeen.get_height()//2) / camera.size) + camera.y)
 		size = camera.size
 		gridpos = (round(mousepos[0]/(dim * upscale)) * dim * upscale , round(mousepos[1]/(dim * upscale)) * dim * upscale )
 		newsurface.set_alpha(100)
@@ -172,7 +178,7 @@ class GameManager():
 			return False
 
 	def click(self,rect):
-		if rect.collidepoint(self.frame_manager.event_manager.mousepos):
+		if rect.collidepoint(self.frame_manager.em.mousepos):
 			return True
 		else:
 			return False
@@ -186,7 +192,6 @@ class GameManager():
 					if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
 						self.cond(obj,stabledict[obj])
 			time.sleep(0.01)
-
 
 	def cond(self,obj,info):
 		pass
@@ -248,8 +253,10 @@ class GameManager():
 		self.initial()
 		inumthread = threading.Thread(target=self.inum)
 		inumthread.start()
+		# inputhreand = threading.Thread(target=self.inputdetect)
+		# inputhreand.start()
 		self.dt = 1
-		while(1): 
+		while em.running: 
 			self.start()   
 			if not Tiled.loadingmap:
 				self.update()
@@ -266,6 +273,9 @@ class GameManager():
 		self.debug = True
 		self.loadanims()
 
+	def inputdetect(self):
+		em.next()
+
 		
 
 	def start(self):
@@ -281,12 +291,11 @@ class GameManager():
 		bg.update()
 		om.render(cam,self,self.dim,self.publicvariables["showallhidden"])
 		um.update(em,self.publicvariables)
-		# self.inum()
 		Tiled.Run(self.publicvariables["debug-mode"],univars.camspeeed,self,cam,self.dim,self.publicvariables["leveledit"],cm,sm.state)
 		self.keybind()
-		cm.update()
 		self.updatetime()
 		univars.update()
+		cm.update()
 		cam.update()
 
 
@@ -304,6 +313,7 @@ class GameManager():
 	def end(self):
 		self.dt = fm.dt
 		self.lastkey = self.key
+		self.inputdetect()
 		self.frame_manager.next(self.publicvariables["maxfps"])
 
 	def initial(self):

@@ -5,6 +5,7 @@ import Managers.Cameramod as Cameramod
 import os
 
 
+
 class Item(pygame.sprite.Sprite):
     def __init__(self,name,pos,alpha = 400,surf=None,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h),layer = 1):
         pygame.sprite.Sprite.__init__(self)
@@ -34,9 +35,6 @@ class Item(pygame.sprite.Sprite):
 
     def update(self):
         camera = Cameramod.cam
-        # self.image = pygame.transform.scale(self.baseimg,[self.dimensions[0] * camera.size/self.layer,self.dimensions[1] * camera.size/self.layer])
-        # self.image = pygame.transform.scale_by(self.baseimg,camera.size/self.layer)
-        # self.image = self.baseimg
         if univars.camchange:
             self.bcs += ((Cameramod.cam.size - self.pastbcs)/self.layer)
             self.pastbcs = Cameramod.cam.size
@@ -45,7 +43,9 @@ class Item(pygame.sprite.Sprite):
             self.pos[1] -= (camera.y - self.prevcampos[1])/self.layer * camera.size
             self.prevcampos = [Cameramod.cam.x,Cameramod.cam.y]
 
-        self.image = pygame.transform.scale_by(self.baseimg,self.bcs * (univars.pixelscale/7))
+        
+        self.image = pygame.transform.scale_by(self.baseimg,int(round(self.bcs * (univars.pixelscale/7))))
+
         self.rect = self.image.get_rect(center = self.renderedpos )
         self.renderedpos = (self.pos[0] + univars.screen.get_width()//2  ,      self.pos[1]  + univars.screen.get_height()//2             )
 

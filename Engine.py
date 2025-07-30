@@ -180,9 +180,9 @@ class Runchinld(Gamemananager.GameManager):
 			#x dir movement
 			if abs(self.key["x"]) > 0:
 				if self.isthere("leftjump"):
-					self.key["x"] = abs(self.key["x"]) * 2
+					self.key["x"] = abs(self.key["x"]) * 1
 				if self.isthere("rightjump"):
-					self.key["x"] = -1 * abs(self.key["x"]) * 2
+					self.key["x"] = -1 * abs(self.key["x"]) * 1
 
 				if self.gp("xinit"):
 					self.sp("xinit",False)
@@ -202,6 +202,7 @@ class Runchinld(Gamemananager.GameManager):
 
 			#Wall clinging
 			if len(collision["topleft"]["inst"]) > 0 :
+				self.wait("leftwall",1)
 				self.sp("jumpable",True)	
 				om.objects["player"]["pos"][0] = collision["topleft"]["inst"][0].realpos[0] + 32
 				if self.gp("des_vel")[0] < 0:
@@ -209,6 +210,7 @@ class Runchinld(Gamemananager.GameManager):
 				if self.gp("act_vel")[0] < 0:
 					self.sp("act_vel",[0,0])
 			if len(collision["topright"]["inst"]) > 0 :
+				self.wait("rightwall",1)
 				self.sp("jumpable",True)	
 				om.objects["player"]["pos"][0] = collision["topright"]["inst"][0].realpos[0] - 32
 				if self.gp("des_vel")[0] > 0:
@@ -225,8 +227,9 @@ class Runchinld(Gamemananager.GameManager):
 
 
 			#rerout detection
-			if abs(self.key["x"] * 100  - self.gp("des_vel")[0]) > 200:
-				self.sp("xinit",True)
+			if not self.isthere("leftjump") or not self.isthere("rightjump"):
+				if abs(self.key["x"] * 100  - self.gp("des_vel")[0]) > 200:
+					self.sp("xinit",True)
 
 			#ground detection + falling
 			if ground:
@@ -253,20 +256,22 @@ class Runchinld(Gamemananager.GameManager):
 
 
 					#Wall jumping
-					if len(collision["midleft"]["inst"]) > 0 :
+					if self.isthere("leftwall") :
+						
 						self.deltimer("rightjump")
 						self.wait("leftjump",0.3)
-						self.sp("jumpable",True)
+						self.sp("jumpable",False)
 						self.sp("des_vel",[  self.gp("des_vel")[0] , 300     ])
 						self.sp("act_vel",[  100 , self.gp("act_vel")[1]     ])
 						self.sp("mode","in-air")
-					if len(collision["midright"]["inst"]) > 0 :
+					if self.isthere("rightwall") :
 						self.deltimer("leftjump")
 						self.wait("rightjump",0.3)
-						self.sp("jumpable",True)
+						self.sp("jumpable",False)
 						self.sp("des_vel",[  self.gp("des_vel")[0] , 300     ])
 						self.sp("act_vel",[  -100 , self.gp("act_vel")[1]     ])
 						self.sp("mode","in-air")
+
 
 
 			else:
@@ -343,7 +348,7 @@ class Runchinld(Gamemananager.GameManager):
 
 
 rm = Runchinld(univars.screencol,fm)
-if univars.mode == 0:
+if univars.mode == "opt":
 	def main():
 		rm = Runchinld(univars.screencol,fm)
 		rm.Run()

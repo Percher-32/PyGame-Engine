@@ -10,7 +10,7 @@ screen_w = 1500
 
 screen_h = 1000
 
-camchange = False
+camchange = True
 
 pixelscale = 15
 
@@ -20,7 +20,7 @@ grandim = 32
 
 name = "Project ender"
 
-maxfps = 10000
+maxfps = 500
 
 
 (40, 41, 83)
@@ -84,7 +84,7 @@ map = "level1"
 
 startstate = "game"
 
-mode = 0
+mode = "opt"
 
 startuistate = "def"
 

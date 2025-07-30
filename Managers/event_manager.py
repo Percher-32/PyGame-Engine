@@ -22,6 +22,7 @@ class event_manager:
 		self.open = True
 		self.keyb = False
 		self.keyr = False
+		self.analog_keys =  {0:0,1:0,2:0,3:0,4:0,5:0}
 		self.controller = {
 							"x": False,
 							"circle": False,
@@ -111,7 +112,7 @@ class event_manager:
 				self.code = event.unicode
 
 			if event.type == pygame.JOYAXISMOTION:
-				analog_keys[event.axis] = event.value 
+				self.analog_keys[event.axis] = event.value 
 
 
 

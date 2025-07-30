@@ -3,9 +3,8 @@ import time
 import pygame
 import Managers.univars as univars
 class frame_manager:
-	def __init__(self,event_manager,tm):
+	def __init__(self,tm):
 		self.frame = 0
-		self.event_manager = event_manager
 		self.tm = tm
 		self.lasttime = time.time()
 		self.dt = 0
@@ -17,8 +16,6 @@ class frame_manager:
 
 	def next(self,fps):
 		self.fps = fps
-		self.event_manager.next()
-		
 		self.lastdts.append((time.time() - self.lasttime) * 60)
 		self.dt = sum(self.lastdts)/len(self.lastdts)
 		if len(self.lastdts) > univars.maxfpsbuffersize:

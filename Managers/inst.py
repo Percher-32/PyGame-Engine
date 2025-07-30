@@ -4,6 +4,16 @@ import Managers.Cameramod as Cameramod
 import Managers.univars as univars
 import math
 cam = Cameramod.cam
+
+
+
+
+spritecache = {}
+
+
+
+
+
 class inst(pygame.sprite.Sprite):
 	__slots__ = ["screen","grandim","name","x","y","rot","sizen","type","alpha"]
 
@@ -41,13 +51,17 @@ class inst(pygame.sprite.Sprite):
 			return False
 
 	def update(self, camera,dim:int,showall):
-			
 		ext =  int(abs(dim * math.sin(self.rot/28.6 )))
 		ext = 0
-		if univars.camchange:
-			self.image =  pygame.transform.scale(self.bart,  [int(round(self.size[0] * abs(camera.size)+ ext)),int(round(self.size[1] * abs(camera.size) +ext))] )
+		if univars.camchange or univars.poschange:
+			realestsize = [int(round(self.size[0] * abs(camera.size)+ ext)),int(round(self.size[1] * abs(camera.size) +ext))]
+			if not str([self.name,realestsize]) in spritecache.keys():
+				self.image =  pygame.transform.scale(self.bart,  realestsize )
+				spritecache[str([self.name,realestsize])] = self.image
+			else:
+				self.image = spritecache[str([self.name,realestsize])]
 		else:
-			self.image = self.bart
+			self.image = self.lastframe
 		alpha = self.alpha
 		if showall:
 			if self.alpha == 0:
