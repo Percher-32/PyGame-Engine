@@ -20,12 +20,13 @@ class inst(pygame.sprite.Sprite):
 
 	def __init__(self,screen,grandim,name,x,y,rot,sizen,type,alpha,sprites,size):
 		pygame.sprite.Sprite.__init__(self)
+		realestsize = [int(round(size[0] * abs(cam.size))),int(round(size[1]* abs(cam.size)))]
 		self.screen = screen
 		self.func = funcs.func(screen,grandim)
 		self.sizen = list(sizen)
 		self.name = str(name)
 		self.type = type
-		self.bart = pygame.transform.rotate(sprites[0],rot)
+		self.bart = pygame.transform.scale(pygame.transform.rotate(sprites[0],rot),realestsize)
 		self.image = sprites[0]
 		self.rot = int(rot)
 		self.realpos = (int(x),int(y))

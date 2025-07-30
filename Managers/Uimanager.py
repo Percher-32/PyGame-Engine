@@ -116,7 +116,7 @@ class Uimanager:
 	def update(self,em,pubvar):
 		self.canshowvar = pubvar["debug-mode"]
 		self.sprites.update(self.state, self.elements,em)
-		self.sprites.draw(univars.screen)
+		# self.sprites.draw(univars.screen)
 		for a in self.sprites:
 			if a.name in self.elements.keys():
 				if a.__class__.__name__ == "Uibutton":

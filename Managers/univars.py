@@ -47,6 +47,7 @@ sizes = {
 }
 
 screen = pygame.Surface((64 * pixelscale,64 * pixelscale))
+fakescreen = pygame.Surface((64 * pixelscale,64 * pixelscale))
 uiscreen = pygame.Surface((screen_w,screen_h))
 realscreeen = pygame.display.set_mode((screen_w,screen_h),pygame.RESIZABLE)
 pygame.display.set_caption(name)
@@ -81,9 +82,9 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "level1"
+map = "null"
 
-startstate = "debugame"
+startstate = "edit"
 
 
 

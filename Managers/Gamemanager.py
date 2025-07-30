@@ -40,6 +40,7 @@ class GameManager():
 		self.publicvariables = {"showinput":1,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":(0,0,200)       }
 		self.timers = {}
 		self.dt = 1
+		self.abttodo = []
 		self.running = True
 		self.lastkey = {}
 		self.dons = []
@@ -105,7 +106,7 @@ class GameManager():
 		a = surf
 		a = pygame.transform.scale_by(a,abs(camera.size))
 		b = pygame.transform.rotate(a,rot)
-		univars.screen.blit(b,((pos[0] - camera.x) * round(camera.size,2) + univars.screen.get_width()//2 - b.get_width()/2 ,(pos[1] - camera.y) * round(camera.size,2) + univars.screen.get_height()//2 - b.get_height()/2))
+		self.abttodo.append([b,pos])
 
 	def blitrect(self,surf,pos,rot,camera):
 		a = surf
@@ -292,15 +293,18 @@ class GameManager():
 		univars.screen.blit(bg.backlayer,(0,0))
 		om.render(cam,self,self.dim,self.publicvariables["showallhidden"])
 		um.update(em,self.publicvariables)
-		a = pygame.Surface((1000,1000))
-		# um.sprites.draw(univars.screen)
-		a.fill((100,100,100))
-		univars.screen.blit(a,[random.randint(-1000,1000),random.randint(-1000,1000)])
-		renderwid = max([univars.screen_w,univars.screen_h]) - 500
-		# renderwid = 40
-		Tiled.Run(self.publicvariables["debug-mode"],univars.camspeeed,self,cam,self.dim,self.publicvariables["leveledit"],cm,sm.state)
+		
+		camera = Cameramod.cam
+		renderwid = max([univars.screen_w,univars.screen_h])
+		for i in self.abttodo:
+			b = i[0]
+			pos = i[1]
+			univars.screen.blit(b,((pos[0] - camera.x) * round(camera.size,2) + univars.screen.get_width()//2 - b.get_width()/2 ,(pos[1] - camera.y) * round(camera.size,2) + univars.screen.get_height()//2 - b.get_height()/2))
+			self.abttodo.remove(i)
 		univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid ,renderwid )),(0,-1 * renderwid//4))
-		# univars.realscreeen.blit(univars.uiscreen,(0,0))
+		um.sprites.draw(univars.realscreeen)
+		Tiled.Run(self.publicvariables["debug-mode"],univars.camspeeed,self,cam,self.dim,self.publicvariables["leveledit"],cm,sm.state)
+
 		self.keybind()
 		self.updatetime()
 		univars.update()
