@@ -35,6 +35,7 @@ class inst(pygame.sprite.Sprite):
 		self.fakerect = pygame.Rect(x - self.size[0]//2,y - self.size[1]//2,self.size[0],self.size[1])
 		self.alpha = alpha
 		self.lastframe = self.bart
+		self.lastrect = self.rect
 
 	def inchunk(self,cam,object,dim):
 		dist = 1/cam.size * 9
@@ -52,24 +53,31 @@ class inst(pygame.sprite.Sprite):
 			return False
 
 	def update(self, camera,dim:int,showall):
-		ext =  int(abs(dim * math.sin(self.rot/28.6 )))
-		ext = 0
 		if univars.camchange or univars.poschange:
-			realestsize = [int(round(self.size[0] * abs(camera.size)+ ext)),int(round(self.size[1] * abs(camera.size) +ext))]
+			realestsize = [int(round(self.size[0] * abs(camera.size))),int(round(self.size[1] * abs(camera.size)))]
 			if not str([self.name,realestsize]) in spritecache.keys():
 				self.image =  pygame.transform.scale(self.bart,  realestsize )
 				spritecache[str([self.name,realestsize])] = self.image
+				print("cache miss")
 			else:
 				self.image = spritecache[str([self.name,realestsize])]
 		else:
 			self.image = self.lastframe
-		alpha = self.alpha
+
+
 		if showall:
 			if self.alpha == 0:
-				alpha = 170
-		self.image.set_alpha(alpha)
-		self.rect = self.image.get_rect(topleft = ( (int(round(self.realpos[0] - camera.x) * camera.size + univars.screen.get_width()//2 - self.image.get_width()/2)),int(round((self.realpos[1] - camera.y) * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2))))
+				self.alpha = 170
+
+
+
+		self.image.set_alpha(self.alpha)
+		if univars.poschange:
+			self.rect = self.image.get_rect(topleft = ( (int(round(self.realpos[0] - camera.x) * camera.size + univars.screen.get_width()//2 - self.image.get_width()/2)),int(round((self.realpos[1] - camera.y) * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2))))
+		else:
+			self.rect = self.lastrect
 		self.lastframe = self.image
+		self.lastrect = self.rect
 
 class obj(pygame.sprite.Sprite):
 	def __init__(self,name:str,info:dict,sprites):

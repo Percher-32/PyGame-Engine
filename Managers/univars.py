@@ -37,13 +37,6 @@ theme = {
 "accent" :     (242, 140, 84)                            ,
 "semibright":  (163, 173, 225)
 }
-"""
-"dark" :       
-"mid" :   
-"bright" :
-"accent" :
-"semibright":  
-"""
 
 
 sizes = {
@@ -52,13 +45,7 @@ sizes = {
     "semilargebutton":(250,250/2),
     "largebutton": (300,150),
 }
-"""
-"smallbutton": (150,75),
-"mediumbutton": (200,100),
-"semilargebutton":(250,250/2),
-"largebutton": (300,150),
 
-"""
 screen = pygame.Surface((64 * pixelscale,64 * pixelscale))
 fakescreen = pygame.Surface((64 * pixelscale,64 * pixelscale))
 uiscreen = pygame.Surface((screen_w,screen_h))
@@ -71,7 +58,7 @@ func = funcs.func(screen,grandim)
 
 
 
-
+ = {"grass":[0.1,0.1],"dirt":[0.1,0.1]}
 
 sizeoffsets = {"grass":[0.1,0.1],"dirt":[0.1,0.1]}
 
@@ -97,15 +84,8 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 map = "null"
 
-startstate = "featest"
-"""
-    "debugame":
-    "game":
-    "editgame":
-    "edit":
-    "uitest":
-    "featest":
-"""
+startstate = "uitest"
+
 
 
 #opt to optimise
@@ -125,7 +105,7 @@ defont = "pixel2.ttf"
 
 renderdist = 45
 
-showinput = 0
+showinput = 1
 
 maxfpsbuffersize = 5
 

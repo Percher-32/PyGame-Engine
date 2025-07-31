@@ -436,6 +436,7 @@ class object_manager:
 				self.set_value(id,"#flipped",dir)
 
 	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen , keepprev = False):
+		type = univars.lumptype.get(name,name)
 		if not keepprev:
 			self.remove(list(pos))
 		if not type in self.renderinst:
