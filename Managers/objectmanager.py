@@ -436,7 +436,6 @@ class object_manager:
 				self.set_value(id,"#flipped",dir)
 
 	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen , keepprev = False):
-		type = univars.lumptype.get(name,name)
 		if not keepprev:
 			self.remove(list(pos))
 		if not type in self.renderinst:
@@ -452,7 +451,7 @@ class object_manager:
 			temp = univars.func.getsprites(name)[0]
 			spritelist = univars.func.getspritesscale(name,[temp.get_width() * sizen[0],temp.get_height() * sizen[1]])
 			self.spritecache[str([name,sizen])] = spritelist
-		newt = inst.inst(self.screen,self.grandim,name,pos[0],pos[1],rot,sizen,type,alp,spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]])
+		newt = inst.inst(self.screen,self.grandim,name,pos[0],pos[1],rot,sizen,univars.lumptype.get(name,name),alp,spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]])
 		name = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
 		if name in self.instances.keys():
 			self.instances[name].add(newt)
@@ -521,7 +520,7 @@ class object_manager:
 			temp = univars.func.getsprites(name)[0]
 			spritelist = univars.func.getspritesscale(name,[temp.get_width() * sizen[0],temp.get_height() * sizen[1]])
 			self.spritecache[str([name,sizen])] = spritelist
-		newt = inst.inst(self.screen,self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],data["type"],data["alpha"],spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]])
+		newt = inst.inst(self.screen,self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],univars.lumptype.get(data["name"],data["name"]),data["alpha"],spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]])
 		name = tuple(chunk)
 		if name in list(self.instances.keys()):
 			self.instances[name].add(newt)

@@ -58,11 +58,11 @@ func = funcs.func(screen,grandim)
 
 
 
- = {"grass":[0.1,0.1],"dirt":[0.1,0.1]}
+lumptype = {"grass":"ground","dirt":"ground","slantl":"slantl","slantr":"slantr"}
 
 sizeoffsets = {"grass":[0.1,0.1],"dirt":[0.1,0.1]}
 
-instables = ["dirt","grass","def"]
+instables = ["dirt","grass","def","slantl","slantr"]
 
 extras = [["def","camz",[20,20]]]
 
@@ -82,9 +82,9 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "null"
+map = "lev5"
 
-startstate = "uitest"
+startstate = "editgame"
 
 
 

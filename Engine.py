@@ -137,7 +137,7 @@ class Runchinld(Gamemananager.GameManager):
 		om.speed = 1
 
 		#create player
-		om.adds("player",[-1200,-800],"player","player",0,[1,1],400,5)
+		om.adds("player",[0,-400],"player","player",0,[1,1],400,5)
 		om.objects["player"]["rendercond"] = False
 
 		#creates the player sprite you actually see
@@ -196,14 +196,15 @@ class Runchinld(Gamemananager.GameManager):
 		ground3 = len(collision["botright"]["inst"]) > 0 and not (len(collision["midright"]["inst"]) > 0)
 		ground = ground1 or ground2 or ground3
 		instlist = collision["botmid"]["inst"] + collision["botleft"]["inst"] + collision["botright"]["inst"] 
-
+		collisionboxtype = [i.type for i in collisionbox["inst"]]
+		collisionboxtype.append(None)
 		# show the mode
 		# um.showvar("des_vel",self.gp("des_vel"),[0,-0.7])
 		if self.dt == 0 or self.dt > 10:
 			self.dt = 1
 
 		#get out of being stuck
-		if not  collision["midmid"]["inst"]:
+		if not  collision["midmid"]["inst"]  or "slantr" in collisionboxtype:
 			#IN HERE IS EITHER [NO MIDMID] OR [Yes MIDMID AND GROUND]
 
 
@@ -232,23 +233,51 @@ class Runchinld(Gamemananager.GameManager):
 
 			#Wall clinging
 			if len(collision["topleft"]["inst"]) > 0 :
-				if collisionbox["inst"][0].type == "ground":
-					self.wait("leftwall",1)
+				if len(collisionbox["inst"]) > 0:
+					if   "ground" in collisionboxtype:
+						self.sp("leftwall",True)
+						self.sp("jumpable",True)	
+						om.objects["player"]["pos"][0] = collision["topleft"]["inst"][0].realpos[0] + 32
+						if self.gp("des_vel")[0] < 0:
+							self.sp("des_vel",[0,0])
+						if self.gp("act_vel")[0] < 0:
+
+							self.sp("act_vel",[0,0])
+				else:
+					self.sp("leftwall",True)
 					self.sp("jumpable",True)	
 					om.objects["player"]["pos"][0] = collision["topleft"]["inst"][0].realpos[0] + 32
 					if self.gp("des_vel")[0] < 0:
 						self.sp("des_vel",[0,0])
 					if self.gp("act_vel")[0] < 0:
+
 						self.sp("act_vel",[0,0])
+
+			else:
+				self.sp("leftwall",False)
 			if len(collision["topright"]["inst"]) > 0 :
-				if collisionbox["inst"][0].type == "ground":
-					self.wait("rightwall",1)
+				if len(collisionbox["inst"]) > 0:
+					if   "ground" in collisionboxtype:
+						self.sp("rightwall",True)
+						self.sp("jumpable",True)	
+						om.objects["player"]["pos"][0] = collision["topright"]["inst"][0].realpos[0] - 32
+						if self.gp("des_vel")[0] > 0:
+							self.sp("des_vel",[0,0])
+						if self.gp("act_vel")[0] > 0:
+
+							self.sp("act_vel",[0,0])
+				else:
+					self.sp("rightwall",True)
 					self.sp("jumpable",True)	
 					om.objects["player"]["pos"][0] = collision["topright"]["inst"][0].realpos[0] - 32
 					if self.gp("des_vel")[0] > 0:
 						self.sp("des_vel",[0,0])
 					if self.gp("act_vel")[0] > 0:
+
 						self.sp("act_vel",[0,0])
+
+			else:
+				self.sp("rightwall",False)
 				
 
 			#Skid detection 
@@ -289,14 +318,14 @@ class Runchinld(Gamemananager.GameManager):
 
 
 					#Wall jumping
-					if len(collision["topleft"]["inst"]) > 0 :
+					if self.gp("leftwall"):
 						self.deltimer("rightjump")
 						self.wait("leftjump",0.1)
 						self.sp("jumpable",False)
 						self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
 						self.sp("act_vel",[  100 , self.gp("act_vel")[1]     ])
 						self.sp("mode","in-air")
-					if len(collision["topright"]["inst"]) > 0 :
+					if self.gp("righwall") :
 						self.deltimer("leftjump")
 						self.wait("rightjump",0.1)
 						self.sp("jumpable",False)
@@ -316,23 +345,27 @@ class Runchinld(Gamemananager.GameManager):
 				self.sp("jumpable",False)
 			else:
 				#move
-				if len(collisionbox["inst"]) > 0:
-					if collisionbox["inst"][0].type == "slantr":
-						self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
-						self.sp("act_vel",[self.gp("act_vel")[0],self.gp("act_vel")[1] + self.gp("act_vel")[0]])
-						om.translate(self,"player",self.gp("act_vel"))
-						self.sp("prev_act_vel",self.gp("act_vel"))
-						self.sp("prev_des_vel",self.gp("des_vel"))
-					else:
-						self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
-						om.translate(self,"player",self.gp("act_vel"))
-						self.sp("prev_act_vel",self.gp("act_vel"))
-						self.sp("prev_des_vel",self.gp("des_vel"))
-				else:
+				if len(collisionboxtype) == 0:
+					print("a")
 					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
 					om.translate(self,"player",self.gp("act_vel"))
 					self.sp("prev_act_vel",self.gp("act_vel"))
 					self.sp("prev_des_vel",self.gp("des_vel"))
+				elif len(collisionboxtype) > 0:
+					print("b")
+					if "ground" in collisionboxtype:
+						self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
+						om.translate(self,"player",self.gp("act_vel"))
+						self.sp("prev_act_vel",self.gp("act_vel"))
+						self.sp("prev_des_vel",self.gp("des_vel"))
+					elif "slantr" in collisionboxtype:
+						print("moldy")
+						print("sdxcvtbinom,")
+						self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
+						self.sp("act_vel",[self.gp("act_vel")[0],self.gp("act_vel")[1] - self.gp("act_vel")[0]])
+						om.translate(self,"player",self.gp("act_vel"))
+						self.sp("prev_act_vel",self.gp("act_vel"))
+						self.sp("prev_des_vel",self.gp("des_vel"))
 
 
 			
@@ -345,14 +378,24 @@ class Runchinld(Gamemananager.GameManager):
 
 
 		else:
-			if len(collision["topleft"]["inst"]) > 0 or len(collision["topright"]["inst"]) > 0:
-				self.sp("act_vel",[   self.gp("prev_act_vel")[0] * -1  ,  self.gp("prev_act_vel")[1] * -1 ])
-			else:
-				self.sp("act_vel",[   self.gp("prev_act_vel")[0] * 1  ,  self.gp("prev_act_vel")[1] * -1 ])
-			# self.sp("des_vel",[   self.gp("prev_des_vel")[0] * -1  ,  self.gp("prev_des_vel")[1] * -1 ])
-			#move
-			self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
-			om.translate(self,"player",self.gp("act_vel"))
+			if not len(collisionboxtype) > 0:
+				if len(collision["topleft"]["inst"]) > 0 or len(collision["topright"]["inst"]) > 0:
+					self.sp("act_vel",[   self.gp("prev_act_vel")[0] * -1  ,  self.gp("prev_act_vel")[1] * -1 ])
+				else:
+					self.sp("act_vel",[   self.gp("prev_act_vel")[0] * 1  ,  self.gp("prev_act_vel")[1] * -1 ])
+				# self.sp("des_vel",[   self.gp("prev_des_vel")[0] * -1  ,  self.gp("prev_des_vel")[1] * -1 ])
+				#move
+				self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
+				om.translate(self,"player",self.gp("act_vel"))
+			elif "ground" in collisionboxtype:
+				if len(collision["topleft"]["inst"]) > 0 or len(collision["topright"]["inst"]) > 0:
+					self.sp("act_vel",[   self.gp("prev_act_vel")[0] * -1  ,  self.gp("prev_act_vel")[1] * -1 ])
+				else:
+					self.sp("act_vel",[   self.gp("prev_act_vel")[0] * 1  ,  self.gp("prev_act_vel")[1] * -1 ])
+				# self.sp("des_vel",[   self.gp("prev_des_vel")[0] * -1  ,  self.gp("prev_des_vel")[1] * -1 ])
+				#move
+				self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
+				om.translate(self,"player",self.gp("act_vel"))
 		
 
 	
