@@ -36,8 +36,10 @@ class Runchinld(Gamemananager.GameManager):
 
 		if "veiw" in self.states:
 			um.changestate("test1","but1")
-			um.addbutton(univars.sizes["mediumbutton"],["test1"],[0,0],"but1",color=univars.theme["dark"])
-			um.addbutton(univars.sizes["mediumbutton"],["test1"],[0.5,0],"but2",color=univars.theme["dark"])
+			um.addbutton(univars.sizes["mediumbutton"],["test1"],[-0.5,0],"but1",color=univars.theme["dark"])
+			um.addbutton(univars.sizes["mediumbutton"],["test1"],[0,0],"but2",color=univars.theme["dark"])
+			um.addbutton(univars.sizes["mediumbutton"],["test1"],[0.5,0],"but3",color=univars.theme["dark"])
+			um.addbutton(univars.sizes["mediumbutton"],["test1"],[0,0.5],"but4",color=univars.theme["dark"])
 
 
 
@@ -73,6 +75,16 @@ class Runchinld(Gamemananager.GameManager):
 				um.elements["but2"]["color"] = univars.theme["bright"]
 			else:
 				um.elements["but2"]["color"] = univars.theme["dark"]
+
+			if um.hover("but3"):
+				um.elements["but3"]["color"] = univars.theme["bright"]
+			else:
+				um.elements["but3"]["color"] = univars.theme["dark"]
+
+			if um.hover("but4"):
+				um.elements["but4"]["color"] = univars.theme["bright"]
+			else:
+				um.elements["but4"]["color"] = univars.theme["dark"]
 
 
 

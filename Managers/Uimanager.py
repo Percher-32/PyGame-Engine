@@ -21,6 +21,7 @@ class Uimanager:
 		self.realscreeen = self.reset
 		self.mode = "arrow"
 		self.toroute = None
+		self.timetillnextswap = 1
 
 	def addelement(self,surf,states,pos,name,type=None):
 		ui = self.Uielement.Ui(surf,states,pos,name)
@@ -124,32 +125,43 @@ class Uimanager:
 		for i in buttonsinstate:
 			val = self.elements[i]
 			if val["pos"][0] < self.elements[button]["pos"][0]:
-				if val["pos"[0]] > leftval or leftval == None:
+				if leftval == None:
+					left = i
+					leftval = val["pos"][0]
+				elif val["pos"][0] > leftval:
 					left = i
 					leftval = val["pos"][0]
 
 			# print(val["pos"][0])
 			# print(self.elements[button]["pos"][0])
 			if val["pos"][0] > self.elements[button]["pos"][0]:
-				if val["pos"[0]] < rightval or rightval == None:
+				if rightval == None:
+					right = i
+					rightval = val["pos"][0]
+				elif val["pos"][0] < rightval :
 					right = i
 					rightval = val["pos"][0]
 
 					
-			if val["pos"][1] < self.elements[button]["pos"][0]:
-				if val["pos"[0]] > upval or upval == None:
+			if val["pos"][1] < self.elements[button]["pos"][1]:
+				if upval == None:
 					up = i
-					upval = val["pos"][0]
+					upval = val["pos"][1]
+				elif val["pos"][1] > upval:
+					up = i
+					upval = val["pos"][1]
 
 					
-			if val["pos"][1] > self.elements[button]["pos"][0]:
-				if val["pos"[0]] > downval or downval == None:
+			if val["pos"][1] > self.elements[button]["pos"][1]:
+				if downval == None:
 					down = i
-					downval = val["pos"][0]
+					downval = val["pos"][1]
+				elif val["pos"][1] < downval:
+					down = i
+					downval = val["pos"][1]
 
 
 
-		print({"up":up,"down":down,"left":left,"right":right})
 		
 		self.elements[button]["dir"] = {"up":up,"down":down,"left":left,"right":right}
 		self.elements[button]["routed"] = True
@@ -189,17 +201,21 @@ class Uimanager:
 		"""
 			returns wether a button has been hovered over
 		"""
-		return  self.selectedbutton == button
+		if self.mode == "arrow":
+			return  self.selectedbutton == button
+		else:
+			return self.elements[button]["hover"]
 
 	def changestate(self,state,startbutton):
 		self.state = state
+		self.mode = "arrow"
 		self.selectedbutton = startbutton
 		if startbutton in self.elements:
 			self.route(startbutton)
 		else:
 			self.toroute = startbutton
 
-	def update(self,em,pubvar,axis):
+	def update(self,em,pubvar,axis,dt):
 		self.canshowvar = pubvar["debug-mode"]
 		self.sprites.update(self.state, self.elements,em)
 
@@ -207,24 +223,32 @@ class Uimanager:
 			self.route(self.toroute)
 			self.toroute = None
 
-		if self.mode == "arrow":
+		if self.timetillnextswap <= 0:
+			self.timetillnextswap = 0
 			if self.selectedbutton in self.elements.keys():
+				self.timetillnextswap = 3
 				old = self.selectedbutton
 				if axis[0] < 0:
+					self.mode = "arrow"
 					self.elements[self.selectedbutton]["hover"] = False
 					self.selectedbutton = self.elements[self.selectedbutton]["dir"]["left"]
 				elif axis[0] > 0:
+					self.mode = "arrow"
 					self.elements[self.selectedbutton]["hover"] = False
 					self.selectedbutton = self.elements[self.selectedbutton]["dir"]["right"]
 				elif axis[1] < 0:
+					self.mode = "arrow"
 					self.elements[self.selectedbutton]["hover"] = False
 					self.selectedbutton = self.elements[self.selectedbutton]["dir"]["up"]
 				elif axis[1] > 0:
+					self.mode = "arrow"
 					self.elements[self.selectedbutton]["hover"] = False
 					self.selectedbutton = self.elements[self.selectedbutton]["dir"]["down"]
 				if not self.selectedbutton in self.elements.keys():
 					self.selectedbutton = old
 				self.route(self.selectedbutton)
+
+		self.timetillnextswap -= dt
 
 
 
@@ -233,6 +257,9 @@ class Uimanager:
 				if a.__class__.__name__ == "Uibutton":
 					self.elements[a.name]["click"] = a.click
 					self.elements[a.name]["hover"] = a.hover
+
+					if a.click or a.hover:
+						self.mode = "mouse"
 
 					if self.mode == "mouse":
 						if self.elements[a.name]["hover"]:

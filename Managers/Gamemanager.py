@@ -315,7 +315,7 @@ class GameManager():
 	def uiunpdate(self):
 		while em.running:
 			if not self.pauseui:
-				um.update(em,self.publicvariables,self.key["axis"])
+				um.update(em,self.publicvariables,self.key["axis"],self.dt)
 				time.sleep(0.05)
 
 	def start(self):
