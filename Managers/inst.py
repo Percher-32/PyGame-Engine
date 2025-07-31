@@ -102,13 +102,13 @@ class obj(pygame.sprite.Sprite):
 			h = [round(camera.x),round(camera.y)]
 			if univars.func.dist(g,h) < 2000:
 				b = sprite
-				b = pygame.transform.rotate(b,self.info["rot"])
 
 				b.set_alpha(self.info["alpha"])
-				ext =  abs(dim * math.sin(self.info["rot"]/28.6 ))/2 * 0
-				b = pygame.transform.scale(b,[self.info["size"][0] * camera.size + (ext * self.info["size"][0]/dim) ,self.info["size"][1] * camera.size + (ext * self.info["size"][1]/dim) ])
+				ext =  abs(dim * math.sin(self.info["rot"]/28.6 ))/2  * 0
+				b = pygame.transform.scale(b,[self.info["size"][0] * camera.size + (ext) ,self.info["size"][1] * camera.size + (ext) ])
+				b = pygame.transform.rotate(b,self.info["rot"])
 				self.image = b
-				self.rect = self.image.get_rect(topleft = ( (pos[0] - camera.x) * round(camera.size,2) + univars.screen.get_width()//2 - b.get_width()/2 ,(pos[1] - camera.y) * round(camera.size,2) + univars.screen.get_height()//2 - b.get_height()/2))
+				self.rect = self.image.get_rect(topleft = ( ((pos[0] - camera.x) * round(camera.size,2)) + univars.screen.get_width()//2 - b.get_width()/2 ,(    ((pos[1] - camera.y) * round(camera.size,2)))        + univars.screen.get_height()//2 - b.get_height()/2))
 			else:
 				self.image = pygame.Surface((0,0))
 				self.rect = pygame.Rect(0,0,0,0)

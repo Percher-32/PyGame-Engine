@@ -13,38 +13,45 @@ class sm:
 
     def update(self):
         if self.state == "debugame":
-            self.states = ["game"]
+            self.states = "game"
             self.leveledit = False
             self.speed = 1
             self.showui = False
             self.work = True
             self.showall = False
         if self.state == "game":
-            self.states = ["game"]
+            self.states = "game"
             self.leveledit = False
             self.speed = 1
             self.showui = False
             self.work = False
             self.showall = False
         if self.state == "editgame":
-            self.states = ["game"]
+            self.states = "game"
             self.leveledit = True
             self.work = True
             self.speed = 1
             self.showui = True
             self.showall = False
         if self.state == "edit":
-            self.states = ["Editor"]
+            self.states = "Editor"
             self.leveledit = True
             self.work = True
             self.speed = 0
             self.showui = True
             self.showall = True
         if self.state == "uitest":
-            self.states = ["veiw"]
+            self.states = "veiw"
             self.leveledit = False
             self.speed = 1
             self.showui = False
             self.work = True
             self.showall = False
-
+        if self.state == "featest":
+            self.states = "test"
+            self.leveledit = True
+            self.speed = 1
+            self.showui = False
+            self.work = True
+            self.showall = False
+        

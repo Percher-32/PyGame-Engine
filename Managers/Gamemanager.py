@@ -231,6 +231,10 @@ class GameManager():
 		pass
 
 	def wait(self,name:str,time:float):
+		"""
+			creates a timer that will elapse in (time) seconds.
+			check if done with ondone
+		"""
 		if not name in self.timers.keys():
 			self.timers[name] = time * 45
 
@@ -247,10 +251,7 @@ class GameManager():
 				self.timers.pop(i)
 
 	def ondone(self,name:str) -> bool:
-		if name in self.dons:
-			return True
-		else:
-			return False
+		return name in self.dons
 
 	def defs(self):
 		sm.update()

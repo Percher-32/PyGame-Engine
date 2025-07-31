@@ -16,6 +16,7 @@ um = Gamemananager.um
 bg = Gamemananager.bg
 
 
+
 class Runchinld(Gamemananager.GameManager):	
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
@@ -25,7 +26,7 @@ class Runchinld(Gamemananager.GameManager):
 		bg.addbackground("test2")
 		bg.addbackgrounditem("black","test2",[0,-40],surf = "mount",dimensions=[500*2.3,250*2.3],layer = 20)
 		
-		if "game" in self.states:
+		if "game" == self.states:
 
 			#create the cameras
 			cm.addcam("playercam",[0,0],0.4)
@@ -34,7 +35,7 @@ class Runchinld(Gamemananager.GameManager):
 			#initialise player and all its variables
 			self.initialiseplayer()
 
-		if "veiw" in self.states:
+		if "veiw" == self.states:
 			um.changestate("test1","but1")
 			um.addbutton(univars.sizes["mediumbutton"],["test1"],[-0.5,0],"but1",color=univars.theme["dark"],surf = "testbutton")
 			um.addglide("but1",univars.sizes["mediumbutton"],univars.sizes["largebutton"])
@@ -42,7 +43,8 @@ class Runchinld(Gamemananager.GameManager):
 			um.addbutton(univars.sizes["mediumbutton"],["test1"],[0.5,0],"but3",color=univars.theme["dark"])
 			um.addbutton(univars.sizes["mediumbutton"],["test1"],[0,0.5],"but4",color=univars.theme["dark"])
 
-
+		if self.states == "test":
+			om.add((0,0),"player",0,"green",[1,1],self.dim)
 
 
 	def commence(self):
@@ -63,10 +65,10 @@ class Runchinld(Gamemananager.GameManager):
 
 
 
-		if "game" in self.states:
+		if "game" == self.states:
 			self.playercode()
 
-		if "veiw" in self.states:
+		if "veiw" == self.states:
 			if um.hover("but1"):
 				um.elements["but1"]["color"] = univars.theme["bright"]
 			else:
@@ -354,12 +356,14 @@ class Runchinld(Gamemananager.GameManager):
 
 
 
-	def cond(self,obj,info):
-		"""obj -> the id   info -> the info for the id"""
-		if info["name"] == "bird":
-			om.translate(self,obj,[5,5])
-			om.playanim(self.dt,obj,"fly")
+	def cond(self,id,info):
+		"""id -> the id   info -> the info for the id"""
+		# if info["name"] == "bird":
+		# 	om.translate(self,id,[5,5])
+		# 	om.playanim(self.dt,id,"fly")
 
+		# if info["name"] == "player":
+		om.rotate(self,id,1)
 
 
 
