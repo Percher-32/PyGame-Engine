@@ -37,7 +37,7 @@ class GameManager():
 		self.screen_colour = screen_colour
 		self.frame_manager = frame_manager
 		self.event_manager = em
-		self.publicvariables = {"showinput":1,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":univars.screencol       }
+		self.publicvariables = {"showinput":univars.showinput,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":univars.screencol       }
 		self.timers = {}
 		self.dt = 1
 		self.abttodo = []
@@ -48,7 +48,7 @@ class GameManager():
 		self.states = []
 		self.pausebackground = False
 		self.pauseui = False
-		self.key = {"x":0,"y":0,"jump":0,"secondary":0,"attack":0,"dodge":0}
+		self.key = {"x":0,"y":0,"jump":0,"secondary":0,"attack":0,"dodge":0,"axis":[0,0],"option":0}
 		self.dim = univars.grandim
 		self.fpsmax = univars.maxfps
 		self.leveledit = True
@@ -63,6 +63,7 @@ class GameManager():
 				print()
 
 	def keybind(self):
+		#main 5 inputs
 		if em.controller["x"] or em.key[pygame.K_SPACE]:
 			self.key["jump"] = True
 		else:
@@ -79,14 +80,13 @@ class GameManager():
 			self.key["dodge"] = True
 		else:
 			self.key["dodge"] = False
-
 		if em.controller["options"] or em.key[pygame.K_ESCAPE]:
 			self.key["option"] = True
 		else:
 			self.key["option"] = False
 
 
-
+		#joyaxis
 		if abs(em.analog_keys[0]) > 0.3:
 			self.key["x"] = round(em.analog_keys[0],2)
 		elif em.key[pygame.K_RIGHT] or em.key[pygame.K_d] or em.controller["right_arrow"]:
@@ -103,6 +103,30 @@ class GameManager():
 			self.key["y"] = -1
 		else:
 			self.key["y"] = 0
+
+
+
+
+		#ui axis
+		if abs(em.analog_keys[0]) > 0.3:
+			self.key["axis"][0] = round(em.analog_keys[0])
+		elif em.key[pygame.K_RIGHT] or em.key[pygame.K_d] or em.controller["right_arrow"]:
+			self.key["axis"][0] = 1
+		elif em.key[pygame.K_LEFT] or em.key[pygame.K_a] or em.controller["left_arrow"]:
+			self.key["axis"][0] = -1
+		else:
+			self.key["axis"][0] = 0
+		if abs(em.analog_keys[1]) > 0.3:
+			self.key["axis"][1] = round(-1 * em.analog_keys[1])
+		elif em.key[pygame.K_UP] or em.key[pygame.K_w] or em.controller["up_arrow"]:
+			self.key["axis"][1] = 1
+		elif em.key[pygame.K_DOWN] or em.key[pygame.K_s] or em.controller["down_arrow"]:
+			self.key["axis"][1] = -1
+		else:
+			self.key["axis"][1] = 0
+
+
+
 
 	def blit(self,surf,rect,rot,camera):
 		a = surf
@@ -288,20 +312,11 @@ class GameManager():
 	def inputdetect(self):
 		em.next()
 
-	# def backgroundupdate(self):
-	# 	self.canpu = False
-	# 	while em.running:
-	# 		if not self.pausebackground:
-	# 			self.canpb = False
-	# 			bg.update(self.publicvariables["screencol"])
-	# 			self.canpb = True
-	# 			time.sleep(0.1)
-
 	def uiunpdate(self):
 		while em.running:
 			if not self.pauseui:
-				um.update(em,self.publicvariables)
-				time.sleep(0.1)
+				um.update(em,self.publicvariables,self.key["axis"])
+				time.sleep(0.05)
 
 	def start(self):
 		"""run at the start of every frame"""

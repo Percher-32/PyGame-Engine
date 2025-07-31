@@ -40,5 +40,11 @@ class sm:
             self.speed = 0
             self.showui = True
             self.showall = True
-
+        if self.state == "uitest":
+            self.states = ["veiw"]
+            self.leveledit = False
+            self.speed = 1
+            self.showui = False
+            self.work = True
+            self.showall = False
 

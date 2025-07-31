@@ -84,7 +84,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 map = "null"
 
-startstate = "edit"
+startstate = "uitest"
 
 
 
@@ -105,6 +105,7 @@ defont = "pixel2.ttf"
 
 renderdist = 45
 
+showinput = 0
 
 maxfpsbuffersize = 5
 

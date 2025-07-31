@@ -25,7 +25,6 @@ class Runchinld(Gamemananager.GameManager):
 		bg.addbackground("test2")
 		bg.addbackgrounditem("black","test2",[0,-40],surf = "mount",dimensions=[500*2.3,250*2.3],layer = 20)
 		
-		
 		if "game" in self.states:
 
 			#create the cameras
@@ -35,6 +34,10 @@ class Runchinld(Gamemananager.GameManager):
 			#initialise player and all its variables
 			self.initialiseplayer()
 
+		if "veiw" in self.states:
+			um.changestate("test1","but1")
+			um.addbutton(univars.sizes["mediumbutton"],["test1"],[0,0],"but1",color=univars.theme["dark"])
+			um.addbutton(univars.sizes["mediumbutton"],["test1"],[0.5,0],"but2",color=univars.theme["dark"])
 
 
 
@@ -53,10 +56,23 @@ class Runchinld(Gamemananager.GameManager):
 
 	def update(self):
 		bg.background = "test2"
+		um.state = "test1"
+
+
 
 		if "game" in self.states:
 			self.playercode()
 
+		if "veiw" in self.states:
+			if um.hover("but1"):
+				um.elements["but1"]["color"] = univars.theme["bright"]
+			else:
+				um.elements["but1"]["color"] = univars.theme["dark"]
+
+			if um.hover("but2"):
+				um.elements["but2"]["color"] = univars.theme["bright"]
+			else:
+				um.elements["but2"]["color"] = univars.theme["dark"]
 
 
 
@@ -255,7 +271,6 @@ class Runchinld(Gamemananager.GameManager):
 
 					#Wall jumping
 					if self.isthere("leftwall") :
-						
 						self.deltimer("rightjump")
 						self.wait("leftjump",0.3)
 						self.sp("jumpable",False)

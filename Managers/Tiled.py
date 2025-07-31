@@ -996,6 +996,10 @@ class TiledSoftwre:
 		GameManager.uibox((190,190),(-0.8,-0.5),univars.theme["dark"],200)
 		GameManager.uibox((50,50),[-0.8 + GameManager.key["x"]/18,-0.5 + GameManager.key["y"]/12],univars.theme["accent"],200)
 		GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
+
+		# GameManager.uibox((190,190),(-0.5,-0.5),univars.theme["dark"],200)
+
+
 		if GameManager.key["jump"]:
 			self.tm.drawtext(f"jump"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.9,-0.9)
 		else:

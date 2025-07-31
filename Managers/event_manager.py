@@ -102,7 +102,6 @@ class event_manager:
 
 
 		for event in pygame.event.get():
-			print(event)
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				self.running = False
