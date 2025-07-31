@@ -36,7 +36,8 @@ class Runchinld(Gamemananager.GameManager):
 
 		if "veiw" in self.states:
 			um.changestate("test1","but1")
-			um.addbutton(univars.sizes["mediumbutton"],["test1"],[-0.5,0],"but1",color=univars.theme["dark"])
+			um.addbutton(univars.sizes["mediumbutton"],["test1"],[-0.5,0],"but1",color=univars.theme["dark"],surf = "testbutton")
+			um.addglide("but1",univars.sizes["mediumbutton"],univars.sizes["largebutton"])
 			um.addbutton(univars.sizes["mediumbutton"],["test1"],[0,0],"but2",color=univars.theme["dark"])
 			um.addbutton(univars.sizes["mediumbutton"],["test1"],[0.5,0],"but3",color=univars.theme["dark"])
 			um.addbutton(univars.sizes["mediumbutton"],["test1"],[0,0.5],"but4",color=univars.theme["dark"])

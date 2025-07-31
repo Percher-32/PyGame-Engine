@@ -30,20 +30,14 @@ class Uimanager:
 		
 	def addrect(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = None):
 		if not surf == None:
-			if not sn == None:
-				surf = univars.func.getsprites(surf)[sn]
-			else:
-				surf = pygame.image.load(f"Graphics/ui/{surf}").convert_alpha()
+			surf = pygame.image.load(f"Graphics/ui/{surf}.png").convert_alpha()
 		ui = Uielement.Uirect(dimensions,states,pos,name,surf = surf)
 		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"pos":pos,"states":states,"surf":surf,"type":"rect"}
 		self.sprites.add(ui)
 
 	def addbutton(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = None):
 		if not surf == None:
-			if not sn == None:
-				surf = univars.func.getsprites(surf)[sn]
-			else:
-				surf = pygame.image.load(f"Graphics/ui/{surf}").convert_alpha()
+			surf = pygame.image.load(f"Graphics/ui/{surf}.png").convert_alpha()
 		ui = Uielement.Uibutton(dimensions,states,pos,name,surf = surf)
 		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"click":0,"hover":0,"command":[],"pos":pos,"states":states,"surf":surf,"type":"button","dir":{"up":None,"down":None,"left":None,"right":None}}
 		self.sprites.add(ui)
