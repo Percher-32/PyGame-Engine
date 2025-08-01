@@ -186,6 +186,7 @@ class Runchinld(Gamemananager.GameManager):
 
 
 		self.sp("desrot",0)
+		self.sp("desmooth",5)
 
        
 	def sign(self,value):
@@ -215,6 +216,7 @@ class Runchinld(Gamemananager.GameManager):
 
 		#get out of being stuck
 		if not len(collision["midmid"]["inst"]) > 0:
+			self.sp("desrot",0)
 			#IN HERE IS EITHER [NO MIDMID] OR [Yes MIDMID AND GROUND]
 
 			#x dir movement
@@ -307,9 +309,11 @@ class Runchinld(Gamemananager.GameManager):
 			else:
 				if not self.gp("leftwall") or not self.gp("rightwall"):
 					self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    self.unilerp(self.gp("des_vel")[1],-130,self.gp("fss"),roundto = 0)   ]     )
+					self.sp("desrot",self.key["x"] * 20)
 					self.sp("mode","in-air")
 				else:
 					self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    self.unilerp(self.gp("des_vel")[1],-130,8,roundto = 0)   ]     )
+					self.sp("desrot",self.key["x"] * 20)
 					self.sp("mode","in-air")
 
 
@@ -319,6 +323,7 @@ class Runchinld(Gamemananager.GameManager):
 			#jumping
 			if self.key["jump"]:
 				self.sp("fss",16)
+				self.sp("desmooth",5)
 				if self.gp("jumpable"):
 					#normal
 					self.sp("jumpable",False)
@@ -350,17 +355,15 @@ class Runchinld(Gamemananager.GameManager):
 					self.sp("des_vel",[self.gp("des_vel")[0],self.key["y"] * 100])
 
 				if self.gp("leftwall"):
-					om.objects["playersprite"]["rot"] = -90
-					self.sp("")
+					self.sp("desrot",-90)
+					self.sp("desmooth",3)
 
 				elif self.gp("rightwall"):
-					om.objects["playersprite"]["rot"] = 90
-					self.sp("")
-				else:
-					om.objects["playersprite"]["rot"] = 0
-					self.sp("")
+					self.sp("desrot",90)
+					self.sp("desmooth",3)
 
-				om.rotate(self,"playersprite",2)
+
+			
 
 
 		
@@ -371,6 +374,8 @@ class Runchinld(Gamemananager.GameManager):
 				self.sp("jumpable",False)
 			else:
 				#move
+				
+				om.objects["playersprite"]["rot"]  =  self.unilerp(om.objects["playersprite"]["rot"],self.gp("desrot"),5,roundto=2) 
 				if not ground:
 					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
 					om.translate(self,"player",self.gp("act_vel"))
@@ -391,6 +396,8 @@ class Runchinld(Gamemananager.GameManager):
 						self.sp("des_vel",[  self.gp("des_vel")[0]    ,    0   ])
 						self.sp("act_vel",[  self.gp("act_vel")[0]    ,    0   ])
 						om.objects["player"]["pos"][1] = instlist[0].realpos[1] - 32
+
+
 
 
 		else:
