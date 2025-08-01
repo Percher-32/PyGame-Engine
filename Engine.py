@@ -2,6 +2,7 @@ import Managers.Gamemanager as Gamemananager
 import Managers.univars as univars
 import cProfile
 import sys
+import math
 
 
 em = Gamemananager.em
@@ -109,8 +110,13 @@ class Runchinld(Gamemananager.GameManager):
 
 			#update player sprite ansd skateboards position
 			if self.gp("onboard"):
-				om.objects["playersprite"]["pos"] = [om.objects["player"]["pos"][0],om.objects["player"]["pos"][1] - 11]
+				rot = om.objects["playersprite"]["rot"]
+				om.objects["playersprite"]["pos"][0] = om.objects["player"]["pos"][0] - math.sin((rot/180) * math.pi) * 11
+				om.objects["playersprite"]["pos"][1] = om.objects["player"]["pos"][1] - math.cos((rot/180) * math.pi) * 11
+
+
 				om.objects["skateboard"]["pos"] = [om.objects["player"]["pos"][0],om.objects["player"]["pos"][1] - 0]
+				om.objects["skateboard"]["rot"] = rot
 
 
 				if self.gp("des_vel")[0] > 0:
@@ -179,7 +185,7 @@ class Runchinld(Gamemananager.GameManager):
 		self.sp("onboard",True)
 
 
-		self.sp("ontouch",0)
+		self.sp("desrot",0)
 
        
 	def sign(self,value):
@@ -340,16 +346,21 @@ class Runchinld(Gamemananager.GameManager):
 			else:
 				self.sp("fss",8)
 
-			if self.gp("leftwall") or self.gp("rightwall"):
-				self.sp("des_vel",[self.gp("des_vel")[0],self.key["y"] * 100])
+				if self.gp("leftwall") or self.gp("rightwall"):
+					self.sp("des_vel",[self.gp("des_vel")[0],self.key["y"] * 100])
 
-			if self.gp("leftwall"):
-				om.objects["playersprite"]["rot"] = -90
+				if self.gp("leftwall"):
+					om.objects["playersprite"]["rot"] = -90
+					self.sp("")
 
-			elif self.gp("rightwall"):
-				om.objects["playersprite"]["rot"] = 90
-			else:
-				om.objects["playersprite"]["rot"] = 0
+				elif self.gp("rightwall"):
+					om.objects["playersprite"]["rot"] = 90
+					self.sp("")
+				else:
+					om.objects["playersprite"]["rot"] = 0
+					self.sp("")
+
+				om.rotate(self,"playersprite",2)
 
 
 		
