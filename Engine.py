@@ -137,7 +137,7 @@ class Runchinld(Gamemananager.GameManager):
 		om.speed = 1
 
 		#create player
-		om.adds("player",[0,-400],"player","player",0,[1,1],400,5)
+		om.adds("player",[0,-800],"player","player",0,[1,1],400,5)
 		om.objects["player"]["rendercond"] = False
 
 		#creates the player sprite you actually see
@@ -206,196 +206,190 @@ class Runchinld(Gamemananager.GameManager):
 		if self.dt == 0 or self.dt > 10:
 			self.dt = 1
 
-		om.translate(self,"player",[20,0])
 
-		# #get out of being stuck
-		# if not len(collision["midmid"]["inst"]) > 0 or not "slantr" in collisionlisttype:
-		# 	#IN HERE IS EITHER [NO MIDMID] OR [Yes MIDMID AND GROUND]
+		#get out of being stuck
+		if not len(collision["midmid"]["inst"]) > 0:
+			#IN HERE IS EITHER [NO MIDMID] OR [Yes MIDMID AND GROUND]
 
-		# 	#x dir movement
-		# 	if abs(self.key["x"]) > 0:
-		# 		if self.isthere("leftjump"):
-		# 			self.key["x"] = 1
-		# 		if self.isthere("rightjump"):
-		# 			self.key["x"] = -1 * 1
+			#x dir movement
+			if abs(self.key["x"]) > 0:
+				if self.isthere("leftjump"):
+					self.key["x"] = 1
+				if self.isthere("rightjump"):
+					self.key["x"] = -1 * 1
 
-		# 		if self.gp("xinit"):
-		# 			self.sp("xinit",False)
-		# 			self.sp("des_vel",[self.key["x"] * 100,self.gp("des_vel")[1]])
+				if self.gp("xinit"):
+					self.sp("xinit",False)
+					self.sp("des_vel",[self.key["x"] * 100,self.gp("des_vel")[1]])
 
 				
 
 
-		# 		self.sp("des_vel",[          self.unilerp(self.gp("des_vel")[0],self.key["x"] * 150,30 )              ,    self.gp("des_vel")[1]   ])
-		# 	else:
-		# 		self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
-		# 		self.sp("xinit",True)
+				self.sp("des_vel",[          self.unilerp(self.gp("des_vel")[0],self.key["x"] * 150,30 )              ,    self.gp("des_vel")[1]   ])
+			else:
+				self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
+				self.sp("xinit",True)
 
 
 
 		
 
-		# 	#Wall clinging
-		# 	if len(collision["topleft"]["inst"]) > 0 :
-		# 		if  collision["topleft"]["inst"][0].type == "ground":
-		# 			self.sp("leftwall",True)
-					
-		# 			print("CLankers")
-		# 			self.sp("jumpable",True)	
-		# 			om.objects["player"]["pos"][0] = collision["topleft"]["inst"][0].realpos[0] + 32
-		# 			if self.gp("des_vel")[0] < 0:
-		# 				self.sp("des_vel",[0,0])
-		# 			if self.gp("act_vel")[0] < 0:
-		# 				self.sp("act_vel",[0,0])
-		# 			else:
-		# 				self.sp("leftwall",False)
-		# 	else:
-		# 		self.sp("leftwall",False)
+			#Wall clinging
+			if len(collision["topleft"]["inst"]) > 0 :
+				if  collision["topleft"]["inst"][0].type == "ground":
+					self.sp("leftwall",True)
+					self.sp("jumpable",True)	
+					om.objects["player"]["pos"][0] = collision["topleft"]["inst"][0].realpos[0] + 32
+					if not collision["botmid"]["inst"]:
+						self.sp("des_vel",[0,self.gp("des_vel")[1]])
+						self.sp("act_vel",[0,self.gp("act_vel")[1]])
+					else:
+						if self.gp("des_vel")[0] < 0:
+							self.sp("des_vel",[0,0])
+						if self.gp("act_vel")[0] < 0:
+							self.sp("act_vel",[0,0])
+
+				else:
+					self.sp("leftwall",False)
+			else:
+				self.sp("leftwall",False)
+
+
+			if len(collision["topright"]["inst"]) > 0 :
+				if  collision["topright"]["inst"][0].type == "ground":
+					self.sp("rightwall",True)
+					self.sp("jumpable",True)	
+					om.objects["player"]["pos"][0] = collision["topright"]["inst"][0].realpos[0] -32
+					if not collision["botmid"]["inst"]:
+						self.sp("des_vel",[0,self.gp("des_vel")[1]])
+						self.sp("act_vel",[0,self.gp("act_vel")[1]])
+					else:
+						if self.gp("des_vel")[0] > 0:
+							self.sp("des_vel",[0,0])
+						if self.gp("act_vel")[0] > 0:
+							self.sp("act_vel",[0,0])
+
+				else:
+					self.sp("rightwall",False)
+			else:
+				self.sp("rightwall",False)
 
 
 
-		# 	if len(collision["topright"]["inst"]) > 0 :
-		# 		if collision["topright"]["inst"][0].type == "ground":
-		# 			print("CLankers")
-		# 			self.sp("rightwall",True)
-		# 			self.sp("jumpable",True)	
-		# 			om.objects["player"]["pos"][0] = collision["topright"]["inst"][0].realpos[0] - 32
-		# 			if self.gp("des_vel")[0] > 0:
-		# 				self.sp("des_vel",[0,0])
-		# 			if self.gp("act_vel")[0] > 0:
-		# 				self.sp("act_vel",[0,0])
-		# 			else:
-		# 				self.sp("rightwall",False)
-		# 	else:
-		# 		self.sp("rightwall",False)
-
+			
 
 
 				
 
-		# 	#Skid detection 
-		# 	if abs(self.gp("act_vel")[0]  - self.gp("des_vel")[0]) > 50:
-		# 		self.sp("skidding",True)
-		# 	else:
-		# 		self.sp("skidding",False)
+			#Skid detection 
+			if abs(self.gp("act_vel")[0]  - self.gp("des_vel")[0]) > 50:
+				self.sp("skidding",True)
+			else:
+				self.sp("skidding",False)
 
 
-		# 	#rerout detection
-		# 	if not self.isthere("leftjump") or not self.isthere("rightjump"):
-		# 		if not self.sign(self.key["x"]) == self.sign(self.gp("lastx")):
-		# 			self.sp("xinit",True)
-		# 		self.sp("lastx",self.key["x"])
+			#rerout detection
+			if not self.isthere("leftjump") or not self.isthere("rightjump"):
+				if not self.sign(self.key["x"]) == self.sign(self.gp("lastx")):
+					self.sp("xinit",True)
+				self.sp("lastx",self.key["x"])
 
-		# 	#ground detection + falling
-		# 	if ground:
-		# 		self.sp("mode","grounded")
-		# 		self.sp("jumpable",True)	
-		# 	else:
-		# 		if not len(collision["midright"]["inst"]) > 0  or len(collision["midleft"]["inst"]) > 0:
-		# 			self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    self.unilerp(self.gp("des_vel")[1],-130,self.gp("fss"),roundto = 0)   ]     )
-		# 			self.sp("mode","in-air")
-		# 		else:
-		# 			self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    self.unilerp(self.gp("des_vel")[1],-60,self.gp("fss"),roundto = 0)   ]     )
-		# 			self.sp("mode","in-air")
-
-
-		# 	#jumping
-		# 	if self.key["jump"]:
-		# 		self.sp("fss",16)
-		# 		if self.gp("jumpable"):
-		# 			#normal
-		# 			self.sp("jumpable",False)
-		# 			self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
-		# 			self.sp("mode","in-air")
+			#ground detection + falling
+			if ground:
+				self.sp("mode","grounded")
+				self.sp("jumpable",True)	
+			else:
+				if not self.gp("leftwall") or not self.gp("rightwall"):
+					self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    self.unilerp(self.gp("des_vel")[1],-130,self.gp("fss"),roundto = 0)   ]     )
+					self.sp("mode","in-air")
+				else:
+					self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    self.unilerp(self.gp("des_vel")[1],-130,8,roundto = 0)   ]     )
+					self.sp("mode","in-air")
 
 
 
-		# 			#Wall jumping
-		# 			if self.gp("leftwall"):
-		# 				self.deltimer("rightjump")
-		# 				self.wait("leftjump",0.1)
-		# 				self.sp("jumpable",False)
-		# 				self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
-		# 				self.sp("act_vel",[  100 , self.gp("act_vel")[1]     ])
-		# 				self.sp("mode","in-air")
-		# 			if self.gp("righwall") :
-		# 				self.deltimer("leftjump")
-		# 				self.wait("rightjump",0.1)
-		# 				self.sp("jumpable",False)
-		# 				self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
-		# 				self.sp("act_vel",[  -100 , self.gp("act_vel")[1]     ])
-		# 				self.sp("mode","in-air")
 
-		# 	else:
-		# 		self.sp("fss",8)
+
+			#jumping
+			if self.key["jump"]:
+				self.sp("fss",16)
+				if self.gp("jumpable"):
+					#normal
+					self.sp("jumpable",False)
+					self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
+					self.sp("mode","in-air")
+
+
+
+					#Wall jumping
+					if self.gp("leftwall"):
+						self.deltimer("rightjump")
+						self.wait("leftjump",0.1)
+						self.sp("jumpable",False)
+						self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
+						self.sp("act_vel",[  100 , self.gp("act_vel")[1]     ])
+						self.sp("mode","in-air")
+					if self.gp("rightwall"):
+						self.deltimer("leftjump")
+						self.wait("rightjump",0.1)
+						self.sp("jumpable",False)
+						self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
+						self.sp("act_vel",[  -100 , self.gp("act_vel")[1]     ])
+						self.sp("mode","in-air")
+
+			else:
+				self.sp("fss",8)
+
+			if self.gp("leftwall") or self.gp("rightwall"):
+				self.sp("des_vel",[self.gp("des_vel")[0],self.key["y"] * 100])
+
+			if self.gp("leftwall"):
+				om.objects["playersprite"]["rot"] = -90
+
+			elif self.gp("rightwall"):
+				om.objects["playersprite"]["rot"] = 90
+			else:
+				om.objects["playersprite"]["rot"] = 0
 
 
 		
 			
-		# 	if collision["topmid"]["inst"]:
-		# 		om.objects["player"]["pos"][1] += 20 + abs(self.gp("act_vel")[1])
-		# 		self.sp("des_vel",[self.gp("des_vel")[0],20 + abs(self.gp("act_vel")[1])])
-		# 		self.sp("jumpable",False)
-		# 	else:
-		# 		#move
-		# 		if not ground:
-		# 			self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
-		# 			om.translate(self,"player",self.gp("act_vel"))
-		# 			self.sp("prev_act_vel",self.gp("act_vel"))
-		# 			self.sp("prev_des_vel",self.gp("des_vel"))
-		# 		elif "ground" in collisionlisttype:
-		# 			self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
-		# 			om.translate(self,"player",self.gp("act_vel"))
-		# 			self.sp("prev_act_vel",self.gp("act_vel"))
-		# 			self.sp("prev_des_vel",self.gp("des_vel"))
-		# 		elif "slantr" in collisionlisttype:
-		# 			pass
-		# 		# 	# print("branks")
-		# 		# 	# self.unilerp(self.gp("act_vel"),self.gp("des_vel"),2,roundto = 2)
-		# 		# 	# if self.sign(self.gp("act_vel")[0]) == "+":
-		# 		# 	# 	actvel = [self.gp("act_vel")[0],abs(self.gp("act_vel")[1]) + self.gp("act_vel")[0]/2]
-		# 		# 	# else:
-		# 		# 	# 	actvel = [self.gp("act_vel")[0],(-1 * abs(self.gp("act_vel")[1])) + self.gp("act_vel")[0]/2]
-		# 		# 	actvel = [0,0]
-		# 		# 	print(actvel)
-		# 		# 	om.translate(self,"player",actvel)
-		# 		# 	self.sp("prev_act_vel",self.gp("act_vel"))
-		# 		# 	self.sp("prev_des_vel",self.gp("des_vel"))
-		# 		# om.objects["playersprite"]["rot"] = 0
+			if collision["topmid"]["inst"]:
+				om.objects["player"]["pos"][1] += 20 + abs(self.gp("act_vel")[1])
+				self.sp("des_vel",[self.gp("des_vel")[0],20 + abs(self.gp("act_vel")[1])])
+				self.sp("jumpable",False)
+			else:
+				#move
+				if not ground:
+					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
+					om.translate(self,"player",self.gp("act_vel"))
+					self.sp("prev_act_vel",self.gp("act_vel"))
+					self.sp("prev_des_vel",self.gp("des_vel"))
+				elif "ground" in collisionlisttype:
+					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
+					om.translate(self,"player",self.gp("act_vel"))
+					self.sp("prev_act_vel",self.gp("act_vel"))
+					self.sp("prev_des_vel",self.gp("des_vel"))
 			
 
 
 			
-		# 		#prevent no-clip
-		# 		if self.gp("mode") == "grounded":
-		# 			if self.gp("ontouch") == 0:
-		# 				self.sp("ontouch",1)
-		# 			if "ground" in collisionlisttype:
-							
-		# 					self.sp("des_vel",[  self.gp("des_vel")[0]    ,    0   ])
-		# 					self.sp("act_vel",[  self.gp("act_vel")[0]    ,    0   ])
+				#prevent no-clip
+				if self.gp("mode") == "grounded":
+					if "ground" in collisionlisttype:
+						self.sp("des_vel",[  self.gp("des_vel")[0]    ,    0   ])
+						self.sp("act_vel",[  self.gp("act_vel")[0]    ,    0   ])
+						om.objects["player"]["pos"][1] = instlist[0].realpos[1] - 32
 
-		# 					om.objects["player"]["pos"][1] = instlist[0].realpos[1] - 32
-		# 			elif "slantr" in collisionlisttype:
-		# 				om.objects["playersprite"]["rot"] = 45
-		# 				om.objects["skateboard"]["rot"] = 45
-		# 				if self.gp("ontouch") == 1:
-		# 					om.objects["player"]["pos"][0] = instlist[0].realpos[0] - 18
-		# 					om.objects["player"]["pos"][1] = instlist[0].realpos[1] - 18
-		# 					print("lock")
-		# 					self.sp("ontouch",2)
-		# 				om.translate(self,"player",[self.key["x"] * 60,self.key["x"] * 60])
-		# 				print(om.objects["player"]["pos"])
-		# 		else:
-		# 			self.sp("ontouch",0)
-		# else:
-		# 	if len(collision["midmid"]["inst"]) > 0:
-		# 		if len(collision["topleft"]["inst"]) > 0 or len(collision["topright"]["inst"]) > 0:
-		# 			self.sp("act_vel",[   self.gp("prev_act_vel")[0] * -1  ,  self.gp("prev_act_vel")[1] * -1 ])
-		# 		else:
-		# 			self.sp("act_vel",[   self.gp("prev_act_vel")[0] * 1  ,  self.gp("prev_act_vel")[1] * -1 ])
-		# 		self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
-		# 		om.translate(self,"player",self.gp("act_vel"))
+
+		else:
+			if len(collision["midmid"]["inst"]) > 0:
+				if len(collision["topleft"]["inst"]) > 0 or len(collision["topright"]["inst"]) > 0:
+					self.sp("act_vel",[   self.gp("prev_act_vel")[0] * -1  ,  self.gp("prev_act_vel")[1] * -1 ])
+				else:
+					self.sp("act_vel",[   self.gp("prev_act_vel")[0] * 1  ,  self.gp("prev_act_vel")[1] * -1 ])
+				self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
+				om.translate(self,"player",self.gp("act_vel"))
 		
 
 	

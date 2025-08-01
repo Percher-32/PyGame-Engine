@@ -20,7 +20,7 @@ grandim = 32
 
 name = "Project ender"
 
-maxfps = 500
+maxfps = 2000
 
 
 (40, 41, 83)
@@ -105,7 +105,7 @@ defont = "pixel2.ttf"
 
 renderdist = 45
 
-showinput = 1
+showinput = 0
 
 maxfpsbuffersize = 5
 
