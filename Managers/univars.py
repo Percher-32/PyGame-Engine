@@ -82,7 +82,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "lev5"
+map = "level3"
 
 startstate = "editgame"
 

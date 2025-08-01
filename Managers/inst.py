@@ -59,7 +59,6 @@ class inst(pygame.sprite.Sprite):
 			if not str([self.name,realestsize]) in spritecache.keys():
 				self.image =  pygame.transform.scale(self.bart,  realestsize )
 				spritecache[str([self.name,realestsize])] = self.image
-				print("cache miss")
 			else:
 				self.image = spritecache[str([self.name,realestsize])]
 		else:

@@ -236,13 +236,18 @@ class object_manager:
 			elif u and not d and not l and not r:
 				self.objects[i][4] = ldr
 
-	def translate(self,GameManager,id:str,vector:list):
+	def translate(self,GameManager,id:str,vector:list,usedt = False):
 		"""
 		y-axis is fixed to be + up , - down
 		"""
 		if not GameManager == "none":
-			self.objects[id]["pos"][0] += int(round((vector[0] * 0.3)))
-			self.objects[id]["pos"][1] -= int(round((vector[1] * 0.3)))
+			if usedt:
+				self.objects[id]["pos"][0] += int(round((vector[0] * 0.2 * GameManager.dt * self.speed)))
+				self.objects[id]["pos"][1] -= int(round((vector[1] * 0.2 * GameManager.dt * self.speed)))
+			else:
+				self.objects[id]["pos"][0] += int(round((vector[0] * 0.3)))
+				self.objects[id]["pos"][1] -= int(round((vector[1] * 0.3)))
+
 
 	def rotate(self,GameManager,id,ang):
 		if not GameManager == "none":
