@@ -526,7 +526,7 @@ class object_manager:
 			spritelist = univars.func.getspritesscale(name,[temp.get_width() * sizen[0],temp.get_height() * sizen[1]])
 			self.spritecache[str([name,sizen])] = spritelist
 		newt = inst.inst(self.screen,self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],univars.lumptype.get(data["name"],data["name"]),data["alpha"],spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]])
-		name = tuple(chunk)
+		name = (int(round(data["pos"][0]/(univars.grandim * self.renderdist))),int(round(data["pos"][1]/(univars.grandim * self.renderdist))))
 		if name in list(self.instances.keys()):
 			self.instances[name].add(newt)
 		else:

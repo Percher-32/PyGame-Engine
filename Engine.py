@@ -64,7 +64,6 @@ class Runchinld(Gamemananager.GameManager):
 	def update(self):
 		bg.background = "test2"
 		um.state = "test1"
-		pm.particlespawn("circle",[0,0],[[-10,10],[0,0]],(100,200,100),[0,6],[0,0],40,1,alpha=70)
 
 
 

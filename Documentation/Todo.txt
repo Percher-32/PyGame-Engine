@@ -1,5 +1,5 @@
 IN-ENGINE:
-    [] - Particle-system
+    [X] - Particle-system
     [] - Sound system
 
 
@@ -12,7 +12,7 @@ IN-GAME:
             * ducking      []
             * in-air       []
     [] - add particles to moves:
-            *skidding  []
+            *skidding  [-]
             *impact    []
 
     [] - Combat:

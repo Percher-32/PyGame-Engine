@@ -61,23 +61,33 @@ class Particlemanager:
 		self.particlelist.append(particle)
 
 
+	
+
 
 	def updateparticles(self,dt):
 		"""
 			updates all particles based on forces
 		"""
 		campos =  [Cameramod.cam.x,Cameramod.cam.y]
+		def circlesurf(col,rad):
+			surf = pygame.Surface((rad * 2,rad * 2))
+			pygame.draw.circle(surf,col,(rad,rad),rad)
+			surf.set_colorkey((0,0,0))
+			return surf
+
 		for particle in self.particlelist:
-			particle["vel"][0] += particle["force"][0] * dt 
-			particle["vel"][1] += particle["force"][1] * dt
-			particle["pos"][0] += particle["vel"][0] * dt
-			particle["pos"][1] -= particle["vel"][1] * dt
-			particle["size"] -= particle["sizedec"] * dt
-			particle["alpha"] -= particle["alphadec"] * dt
+			particle["vel"][0] += particle["force"][0] * dt /2
+			particle["vel"][1] += particle["force"][1] * dt/2
+			particle["pos"][0] += particle["vel"][0] * dt/2
+			particle["pos"][1] -= particle["vel"][1] * dt/2
+			particle["size"] -= particle["sizedec"] * dt/2
+			particle["alpha"] -= particle["alphadec"] * dt/2
 			postodraw = [int(round(particle["pos"][0] - Cameramod.cam.x) * Cameramod.cam.size + univars.screen.get_width()//2),int(round((particle["pos"][1] - Cameramod.cam.y) * Cameramod.cam.size + univars.screen.get_height()//2 ))]
 			if not particle["size"] <= 0:
 				if particle["type"] == "circle":
-					pygame.draw.circle(univars.screen,particle["color"],postodraw,particle["size"] * Cameramod.cam.size)
+					surf = circlesurf(particle["color"],particle["size"] * Cameramod.cam.size)
+					surf.set_alpha(particle["alpha"])
+					univars.screen.blit(surf,postodraw)
 				if particle["type"] == "rect":
 					if particle.get("rect",None) == None:
 						size = [ particle["dim"][0] * particle["size"] ,  particle["dim"][1] * particle["size"] ]

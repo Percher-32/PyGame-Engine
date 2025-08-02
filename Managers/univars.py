@@ -82,9 +82,9 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "null"
+map = "level2"
 
-startstate = "featest"
+startstate = "debugame"
 
 
 
@@ -103,7 +103,7 @@ poschange = 0
 
 defont = "pixel2.ttf"
 
-renderdist = 45
+renderdist = 100
 
 showinput = 0
 
