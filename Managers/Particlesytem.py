@@ -1,79 +1,93 @@
 import pygame
-import Cameramod
-import univars
+import Managers.Cameramod as Cameramod
+import  Managers.univars as univars
 import random
 
 spritecache = {}
 
 class Particlemanager:
 	def __init__(self):
-		self.flamelist = []
+		self.particlelist = []
+		self.screen = pygame.Surface((univars.screen_w,univars.screen_h))
 		"""
-			list of particleobjects
+			list ot particles\n:
+				particle  = {pos:list,"vel":list,"force":tuple   ...}
+
 
 		"""
 
 
-	def flame(self,nitems,force,pos,type,dim):
+	def particlespawn(self,type,pos,divergence,color,initvel,force,size,sizedec,dim = None,alpha=1000,alphadec=0,colordec = 0):
 		"""
-			a particle effect that draws the type and moves it based on force\n
-			nitems = number of particles to spawn\n
-			force = force it's under\n
-			pos = where to spawn  [x,y]\n
+			spawns particles\n
+
 			type:\n 
-				"rect"   : dim = [width,height]
-				"circle" : dim = radius
-		"""
-		id = str((nitems,force,pos,type,dim))
-		campos =  [Cameramod.cam.x,Cameramod.cam.y]
-		if not id in self.flamedict.keys():
-			self.flamedict[id] = []
-			for i in range
+				"rect" or "circle"\n
 
-
-
-
-class Particle(pygame.sprite.Sprite):
-	def __init__(self,surf,type,pos,force,initvel,dim,time,diversion):
-		self.type = type
-		self.image = surf
-		self.rect((0,0,0,0))
-		self.pos = pos
-		self.dim = dim
-		self.startpos = pos
-		self.force = force
-		self.initvel = initvel
-		self.vel = initvel
-		self.tottime = time
-		self.time = time
-
-	
-	def update(self,campos):
-		self.vel[0] += self.force[0] 
-		self.vel[1] += self.force[1]
-		self.pos[0] += self.vel[0]
-		self.pos[1] -= self.vel[1]
-
-		if univars.camchange or univars.poschange:
-			realestsize = [int(round(self.size[0] * abs(camera.size))),int(round(self.size[1] * abs(camera.size)))]
-			if not str([type,dim]) in spritecache.keys():
-				self.image =  pygame.transform.scale(self.bart,  realestsize )
-				spritecache[str([self.name,realestsize])] = self.image
-			else:
-				self.image = spritecache[str([self.name,realestsize])]
-		else:
-			self.image = self.lastframe
-
-
-
-		self.rect = 
-		
-
+			if using type == "rect":
+				dim = dimensions
 
 			
-		
-		
-		
+
+			divergence = range for randomness in initialvelocity:\n
+				[ 
+				  [ minx,maxx ] ,
+				  [ miny,maxy ]
+				]\n
+
+			Particles are killed once size = 0\n
+			
+			nitems = number of particles to spawn\n
+			force = force it's under\n
+			initvel = initialvelocity\n
+			pos = where to spawn  [x,y]\n
+			
+		"""
+		initvel[0] += random.randint(divergence[0][0],divergence[0][1])
+		initvel[1] += random.randint(divergence[1][0],divergence[1][1])
+		particle = {
+					"pos":pos,
+					"vel":initvel,
+					"force":force,
+					"size":size,
+					"initsize":size,
+					"type":type,
+					"sizedec":sizedec,
+					"alpha":alpha,
+					"alphadec":alphadec,
+					"color":color,
+					"dim":dim
+					}
+		self.particlelist.append(particle)
 
 
 
+	def updateparticles(self,dt):
+		"""
+			updates all particles based on forces
+		"""
+		campos =  [Cameramod.cam.x,Cameramod.cam.y]
+		for particle in self.particlelist:
+			particle["vel"][0] += particle["force"][0] * dt 
+			particle["vel"][1] += particle["force"][1] * dt
+			particle["pos"][0] += particle["vel"][0] * dt
+			particle["pos"][1] -= particle["vel"][1] * dt
+			particle["size"] -= particle["sizedec"] * dt
+			particle["alpha"] -= particle["alphadec"] * dt
+			postodraw = [int(round(particle["pos"][0] - Cameramod.cam.x) * Cameramod.cam.size + univars.screen.get_width()//2),int(round((particle["pos"][1] - Cameramod.cam.y) * Cameramod.cam.size + univars.screen.get_height()//2 ))]
+			if not particle["size"] <= 0:
+				if particle["type"] == "circle":
+					pygame.draw.circle(univars.screen,particle["color"],postodraw,particle["size"] * Cameramod.cam.size)
+				if particle["type"] == "rect":
+					if particle.get("rect",None) == None:
+						size = [ particle["dim"][0] * particle["size"] ,  particle["dim"][1] * particle["size"] ]
+						rect = pygame.Rect((postodraw[0],postodraw[1],size))
+						particle["rect"] = rect
+					else:
+						rect = particle["rect"].move(postodraw)
+					pygame.draw.rect(univars.screen,particle["color"],rect)
+			else:
+				self.particlelist.remove(particle)
+
+
+pm = Particlemanager()

@@ -15,6 +15,7 @@ cm = Gamemananager.cm
 sm = Gamemananager.sm
 um = Gamemananager.um
 bg = Gamemananager.bg
+pm = Gamemananager.pm
 
 
 
@@ -63,6 +64,7 @@ class Runchinld(Gamemananager.GameManager):
 	def update(self):
 		bg.background = "test2"
 		um.state = "test1"
+		pm.particlespawn("circle",[0,0],[[-10,10],[0,0]],(100,200,100),[0,6],[0,0],40,1,alpha=70)
 
 
 
@@ -103,8 +105,7 @@ class Runchinld(Gamemananager.GameManager):
 			#move camera
 			cm.cam_focus_size("playercam",om.objects["player"]["pos"],4,univars.pixelscale/7 * ((-0.001 *      univars.func.dist([0,0],self.gp("act_vel"))                 ) + 0.5) )
 
-
-
+			
 			#move player
 			self.moveplayer()
 

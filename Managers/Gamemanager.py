@@ -16,6 +16,7 @@ import os
 import threading
 import time
 import random
+import Managers.Particlesytem
 pygame.init()
 pygame.joystick.init()
 
@@ -29,7 +30,7 @@ cm = Cammanager.camager
 sm = statemanager.sm(univars.startstate)
 um = Uimanager.ingame
 bg = backgroundmanager.bg
-
+pm = Managers.Particlesytem.pm
 
 
 class GameManager():
@@ -350,7 +351,11 @@ class GameManager():
 		
 		#render onto screen
 		renderwid = max([univars.screen_w,univars.screen_h])
+		
+		# univars.screen.blit(pm.screen,(univars.screen_w/2,univars.screen_h/2))
+		pm.updateparticles(self.dt)
 		univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid ,renderwid )),(0,-1 * renderwid//4))
+		
 
 
 		#renders ui
