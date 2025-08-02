@@ -1,0 +1,22 @@
+IN-ENGINE:
+    [] - Particle-system
+    [] - Sound system
+
+
+IN-GAME:
+    [] - Dash
+    [] - Tilt on ledges
+    [] - Animations:
+            * falling      []
+            * walljumping  []
+            * ducking      []
+            * in-air       []
+    [] - add particles to moves:
+            *skidding  []
+            *impact    []
+
+    [] - Combat:
+            * normal hit    []
+            * dash hit      []
+            * homing attack []
+
