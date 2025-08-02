@@ -109,20 +109,28 @@ class Runchinld(Gamemananager.GameManager):
 			self.moveplayer()
 
 			#update player sprite ansd skateboards position
+			rot = om.objects["playersprite"]["rot"]
 			if self.gp("onboard"):
-				rot = om.objects["playersprite"]["rot"]
 				om.objects["playersprite"]["pos"][0] = om.objects["player"]["pos"][0] - math.sin((rot/180) * math.pi) * 11
 				om.objects["playersprite"]["pos"][1] = om.objects["player"]["pos"][1] - math.cos((rot/180) * math.pi) * 11
-
-
-				om.objects["skateboard"]["pos"] = [om.objects["player"]["pos"][0],om.objects["player"]["pos"][1] - 0]
-				om.objects["skateboard"]["rot"] = rot
-
-
 				if self.gp("des_vel")[0] > 0:
 					om.flip("playersprite","right")
 				if self.gp("des_vel")[0] < 0:
 					om.flip("playersprite","left")
+
+
+
+				om.objects["skateboard"]["pos"] = [om.objects["player"]["pos"][0],om.objects["player"]["pos"][1] - 0]
+				om.objects["skateboard"]["rot"] = rot
+			else:
+				om.objects["playersprite"]["pos"][0] = om.objects["player"]["pos"][0] - math.sin((rot/180) * math.pi) * 0
+				om.objects["playersprite"]["pos"][1] = om.objects["player"]["pos"][1] - math.cos((rot/180) * math.pi) * 0
+				if self.gp("des_vel")[0] > 0:
+					om.flip("playersprite","right")
+				if self.gp("des_vel")[0] < 0:
+					om.flip("playersprite","left")
+
+
 
 
 				if not abs(self.key["x"]) > 0:
@@ -188,6 +196,10 @@ class Runchinld(Gamemananager.GameManager):
 		self.sp("desrot",0)
 		self.sp("desmooth",5)
 
+
+		
+		om.set_value("skateboard","fallvalue",5)
+
        
 	def sign(self,value):
 		"""
@@ -216,7 +228,6 @@ class Runchinld(Gamemananager.GameManager):
 
 		#get out of being stuck
 		if not len(collision["midmid"]["inst"]) > 0:
-			self.sp("desrot",0)
 			#IN HERE IS EITHER [NO MIDMID] OR [Yes MIDMID AND GROUND]
 
 			#x dir movement
@@ -304,17 +315,25 @@ class Runchinld(Gamemananager.GameManager):
 
 			#ground detection + falling
 			if ground:
+				
+				self.sp("desrot",0)
 				self.sp("mode","grounded")
-				self.sp("jumpable",True)	
+				self.sp("jumpable",True)
+				self.sp("onboard",True)
 			else:
+				if self.key["jump"]:
+					self.sp("onboard",True)
 				if not self.gp("leftwall") or not self.gp("rightwall"):
 					self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    self.unilerp(self.gp("des_vel")[1],-130,self.gp("fss"),roundto = 0)   ]     )
-					self.sp("desrot",self.key["x"] * 20)
 					self.sp("mode","in-air")
 				else:
 					self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    self.unilerp(self.gp("des_vel")[1],-130,8,roundto = 0)   ]     )
-					self.sp("desrot",self.key["x"] * 20)
 					self.sp("mode","in-air")
+
+				if  self.gp("leftwall") or  self.gp("rightwall"):
+					self.sp("onboard",True)
+				else:
+					self.sp("desrot",self.key["x"] * 20)
 
 
 
@@ -324,6 +343,7 @@ class Runchinld(Gamemananager.GameManager):
 			if self.key["jump"]:
 				self.sp("fss",16)
 				self.sp("desmooth",5)
+				
 				if self.gp("jumpable"):
 					#normal
 					self.sp("jumpable",False)
@@ -362,6 +382,10 @@ class Runchinld(Gamemananager.GameManager):
 					self.sp("desrot",90)
 					self.sp("desmooth",3)
 
+				# else:
+				# 	if not ground:
+				# 		self.sp("desrot",self.gp("desrot") - self.gp("act_vel")[1]/20 )
+
 
 			
 
@@ -369,23 +393,25 @@ class Runchinld(Gamemananager.GameManager):
 		
 			
 			if collision["topmid"]["inst"]:
-				om.objects["player"]["pos"][1] += 20 + abs(self.gp("act_vel")[1])
+				om.objects["player"]["pos"][1] += 35 + abs(self.gp("act_vel")[1])
 				self.sp("des_vel",[self.gp("des_vel")[0],20 + abs(self.gp("act_vel")[1])])
 				self.sp("jumpable",False)
 			else:
 				#move
 				
 				om.objects["playersprite"]["rot"]  =  self.unilerp(om.objects["playersprite"]["rot"],self.gp("desrot"),5,roundto=2) 
-				if not ground:
-					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
-					om.translate(self,"player",self.gp("act_vel"))
-					self.sp("prev_act_vel",self.gp("act_vel"))
-					self.sp("prev_des_vel",self.gp("des_vel"))
-				elif "ground" in collisionlisttype:
-					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
-					om.translate(self,"player",self.gp("act_vel"))
-					self.sp("prev_act_vel",self.gp("act_vel"))
-					self.sp("prev_des_vel",self.gp("des_vel"))
+				self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
+				om.translate(self,"player",self.gp("act_vel"))
+				self.sp("prev_act_vel",self.gp("act_vel"))
+				self.sp("prev_des_vel",self.gp("des_vel"))
+				if not self.gp("onboard"):
+					if om.get_value("skateboard","fallvalue")< 20:
+						om.set_value("skateboard","fallvalue",om.get_value("skateboard","fallvalue") - 2* self.dt)
+					om.objects["skateboard"]["pos"] = [om.objects["player"]["pos"][0],om.objects["player"]["pos"][1] - 0]
+					om.translate(self,"skateboard",[0,om.get_value("skateboard","fallvalue")])
+				else:
+					om.set_value("skateboard","fallvalue",5)
+
 			
 
 
