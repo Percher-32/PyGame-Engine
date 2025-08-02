@@ -346,6 +346,7 @@ class Runchinld(Gamemananager.GameManager):
 				
 				if self.gp("jumpable"):
 					#normal
+					
 					self.sp("jumpable",False)
 					self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
 					self.sp("mode","in-air")
@@ -353,19 +354,25 @@ class Runchinld(Gamemananager.GameManager):
 
 
 					#Wall jumping
+					if self.key["y"] > 0.4:
+						a = 200
+					elif self.key["y"] < -0.2:
+						a = -150
+					else:
+						a = 150
 					if self.gp("leftwall"):
 						self.deltimer("rightjump")
 						self.wait("leftjump",0.1)
 						self.sp("jumpable",False)
-						self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
-						self.sp("act_vel",[  100 , self.gp("act_vel")[1]     ])
+						self.sp("des_vel",[  self.gp("des_vel")[0] , a     ])
+						self.sp("act_vel",[  120 , self.gp("act_vel")[1]     ])
 						self.sp("mode","in-air")
 					if self.gp("rightwall"):
 						self.deltimer("leftjump")
 						self.wait("rightjump",0.1)
 						self.sp("jumpable",False)
-						self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
-						self.sp("act_vel",[  -100 , self.gp("act_vel")[1]     ])
+						self.sp("des_vel",[  self.gp("des_vel")[0] , a     ])
+						self.sp("act_vel",[  -120 , self.gp("act_vel")[1]     ])
 						self.sp("mode","in-air")
 
 			else:
@@ -374,13 +381,14 @@ class Runchinld(Gamemananager.GameManager):
 				if self.gp("leftwall") or self.gp("rightwall"):
 					self.sp("des_vel",[self.gp("des_vel")[0],self.key["y"] * 100])
 
-				if self.gp("leftwall"):
-					self.sp("desrot",-90)
-					self.sp("desmooth",3)
+				if not ground:
+					if self.gp("leftwall"):
+						self.sp("desrot",-90)
+						self.sp("desmooth",3)
 
-				elif self.gp("rightwall"):
-					self.sp("desrot",90)
-					self.sp("desmooth",3)
+					elif self.gp("rightwall"):
+						self.sp("desrot",90)
+						self.sp("desmooth",3)
 
 				# else:
 				# 	if not ground:
@@ -393,9 +401,16 @@ class Runchinld(Gamemananager.GameManager):
 		
 			
 			if collision["topmid"]["inst"]:
-				om.objects["player"]["pos"][1] += 35 + abs(self.gp("act_vel")[1])
-				self.sp("des_vel",[self.gp("des_vel")[0],20 + abs(self.gp("act_vel")[1])])
-				self.sp("jumpable",False)
+				if self.gp("leftwall"):
+					om.objects["player"]["pos"][0] += 30
+					om.objects["player"]["pos"][1] += abs(self.gp("act_vel")[1])
+				elif self.gp("rightwall"):
+					om.objects["player"]["pos"][0] -= 35
+					om.objects["player"]["pos"][1] += abs(self.gp("act_vel")[1])
+				else:
+					om.objects["player"]["pos"][1] += 35 + abs(self.gp("act_vel")[1])
+					self.sp("des_vel",[self.gp("des_vel")[0],20 + abs(self.gp("act_vel")[1])])
+					self.sp("jumpable",False)
 			else:
 				#move
 				

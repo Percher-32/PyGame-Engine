@@ -504,7 +504,7 @@ class object_manager:
 		add = data
 		self.objects.update({id:add})
 		name = add["name"]
-		sizen = add["sizen"]
+		sizen = add.get("sizen",[  data["size"][0] /univars.grandim ,  data["size"][1] /univars.grandim ])
 
 		if str([name,sizen]) in list(self.spritecache.keys()):
 			spritelist = self.spritecache[str([name,sizen])]
@@ -517,7 +517,7 @@ class object_manager:
 		self.layers[data["layer"]].add(finalobj)
 
 	def datatoinst(self,chunk,data):
-		sizen = data["sizen"]
+		sizen = data.get("sizen",[1,1])
 		name = data["name"]
 		if str([name,sizen]) in list(self.spritecache.keys()):
 			spritelist = self.spritecache[str([name,sizen])]
