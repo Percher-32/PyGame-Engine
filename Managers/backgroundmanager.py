@@ -7,8 +7,9 @@ import os
 
 
 class Item(pygame.sprite.Sprite):
-    def __init__(self,name,pos,alpha = 400,surf=None,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h),layer = 1):
+    def __init__(self,name,pos,alpha = 400,surf=None,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h),layer = 1,paralax = 0):
         pygame.sprite.Sprite.__init__(self)
+        self.paralax = paralax
         self.surf = surf
         self.name = name
         self.color = color
@@ -21,15 +22,22 @@ class Item(pygame.sprite.Sprite):
         else:
             surf = pygame.image.load(f"Graphics/background/{surf}.png").convert_alpha()
             surf = pygame.transform.scale(surf,dimensions)
+            if dimensions == (univars.screen_w,univars.screen_h):
+                self.dimensions =  surf.get_size()
         
-        self.image = surf
+        self.image = pygame.Surface((dimensions[0] * 3,dimensions[1]))
         self.pos = pos
-        self.bcs = 1
-        self.baseimg = surf
+        self.startpos = pos
+        temporary = pygame.Surface((dimensions[0] * 3,dimensions[1]))
+        temporary.set_colorkey((0,0,0))
+        temporary.blit(surf,(        ))
+        self.baseimg = temporary
+
+
+
+
         self.rect = self.baseimg.get_rect(center = pos)
         self.layer = layer
-        self.renderedpos = pos
-        self.originalpos = self.pos
         self.pastbcs = Cameramod.cam.size
         self.lastframe = self.baseimg
         self.cache = {}
@@ -37,7 +45,6 @@ class Item(pygame.sprite.Sprite):
         self.size = camera.size
         self.lastcampos = [camera.x,camera.y]
         self.lastcamsize = camera.size
-
     def update(self):
         
         camera = Cameramod.cam
@@ -64,6 +71,9 @@ class Item(pygame.sprite.Sprite):
 
 
 
+        if abs((self.pos[0] * realestsize)) > self.image.get_width()/2:
+            self.pos[0] = 0
+                
 
 
         # self.image.set_alpha(self.alpha)
@@ -86,14 +96,18 @@ class Backgroundmanager:
         self.background = None
         self.backlayer = pygame.Surface((64 * univars.pixelscale,64 * univars.pixelscale))
         self.backlayer.fill(univars.screencol)
+        self.paralaxers = []
 
 
     def addbackground(self,name):
         self.items[name] = pygame.sprite.Group()
 
-    def addbackgrounditem(self,name,backgroundname,pos,alpha = 400,surf=None,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h),layer = 1):
-        item = Item(name,pos,alpha=alpha,surf=surf,color=color,dimensions=dimensions,layer=layer)
-        self.items[backgroundname].add(item)
+    def addbackgrounditem(self,name,backgroundname,pos,alpha = 400,layer = 1,surf=None,paralax = False,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h)):
+        if not paralax:
+            item = Item(name,pos,alpha=alpha,surf=surf,color=color,dimensions=dimensions,layer=layer)
+            self.items[backgroundname].add(item)
+        else:
+            item = Item(name,[pos[0] - dimensions[0],pos[1]],alpha=alpha,surf=surf,color=color,dimensions=dimensions,layer=layer,paralax = paralax)
 
 
     def update(self,screencol):
@@ -109,7 +123,7 @@ class Backgroundmanager:
             saves all backgrounds and 
         """
         for item in self.items.keys():
-            todump = [  [i.name,i.pos,i.alpha,i.surf,i.color,i.dimensions,i.layer]  for i in self.items[item]]
+            todump = [  [i.name,i.pos,i.alpha,i.surf,i.color,i.dimensions,i.layer,i.paralax]  for i in self.items[item]]
             with open (f"Saved/backgrounds/{item}.json","x") as file:
                 json.dump(todump,file)
             
@@ -122,7 +136,7 @@ class Backgroundmanager:
             with open ("Saved/backgrounds" + "/" + item,"r") as thing:
                 things = json.load(thing)
                 for elem in things:
-                    self.addbackgrounditem(elem[0],item.replace(".json",""),elem[1],alpha= elem[2],surf=elem[3],color = elem[4],dimensions=elem[5],layer = elem[6])
+                    self.addbackgrounditem(elem[0],item.replace(".json",""),elem[1],alpha= elem[2],surf=elem[3],color = elem[4],dimensions=elem[5],layer = elem[6],paralax=elem[7])
 
 bg = Backgroundmanager()
       

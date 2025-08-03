@@ -19,15 +19,19 @@ pm = Gamemananager.pm
 
 
 
-class Runchinld(Gamemananager.GameManager):	
+class Game(Gamemananager.GameManager):	
+	"""
+		this class handles the actual game code and not the game engine code.\n
+		it inherits the in-engine properties
+	"""
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
 
 	def onreload(self):
 		self.a = 0
 		bg.addbackground("test2")
-		bg.addbackgrounditem("black","test2",[0,-40]                ,surf = "mount",dimensions=[500*3,250*3],layer = 0.01)
-		bg.addbackgrounditem("black","test2",[(-500 * 3) + 20,-40],surf = "mount",dimensions=[500*3,250*3],layer = 0.01)
+		bg.addbackgrounditem("black","test2",[0,-40]                ,surf = "mount",dimensions=[500*3,250*3],layer = 1)
+		# bg.addbackgrounditem("black","test2",[(-500 * 3) + 20,-40],surf = "mount",dimensions=[500*3,250*3],layer = 0.01)
 		
 		if "game" == self.states:
 
@@ -497,7 +501,7 @@ class Runchinld(Gamemananager.GameManager):
 
 
 
-rm = Runchinld(univars.screencol,fm)
+rm = Game(univars.screencol,fm)
 if univars.mode == "opt":
 	def main():
 		rm = Runchinld(univars.screencol,fm)
