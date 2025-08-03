@@ -56,34 +56,34 @@ class object_manager:
 			y = False
 		return (x,y)
 
-	def default(self):
-		self.objects = {}
-		self.values = {}
-		self.layers = {}
-		self.loadingmap = False
-		#chunk id stored in a tuple "(x,y)"
-		self.instances = {}
-		self.instables = []
-		self.toreinst = []
-		self.loadedmap = "Null"
-		self.renderdist = univars.renderdist
-		self.dodist = 128
-		self.tracker = 0
-		self.tileup = 1
-		self.showmap = 0
-		self.loadedchunk = 0
-		self.showcolist = []
-		self.showall = False
-		self.speed = 0
+	# def default(self):
+	# 	self.objects = {}
+	# 	self.values = {}
+	# 	self.layers = {}
+	# 	self.loadingmap = False
+	# 	#chunk id stored in a tuple "(x,y)"
+	# 	self.instances = {}
+	# 	self.instables = []
+	# 	self.toreinst = []
+	# 	self.loadedmap = "Null"
+	# 	self.renderdist = univars.renderdist
+	# 	self.dodist = 128
+	# 	self.tracker = 0
+	# 	self.tileup = 1
+	# 	self.showmap = 0
+	# 	self.loadedchunk = 0
+	# 	self.showcolist = []
+	# 	self.showall = False
+	# 	self.speed = 0
 
 	def loadtilemap(self,name):
 		if not name == "null" and os.path.exists(f"Saved/tilemaps/{name}"):
-			self.default()
+			self.__init__(self.realscreen,self.screen,univars.grandim,self.aplhainst,self.renderinst)
 			self.loadedmap = name
 			self.decodeinst()
 			self.decodeobj()
 		else:
-			self.default()
+			self.__init__(self.realscreen,self.screen,univars.grandim,self.aplhainst,self.renderinst)
 
 	def savetilemap(self,name,check = False):
 		if os.path.exists(f"Saved/tilemaps/{name}") and not check:

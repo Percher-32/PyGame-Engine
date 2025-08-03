@@ -82,7 +82,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "null"
+map = "none"
 
 startstate = "edit"
 
