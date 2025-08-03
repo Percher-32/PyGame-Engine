@@ -345,7 +345,7 @@ class GameManager():
 		for i in self.abttodo:
 			b = i[0]
 			pos = i[1]
-			univars.screen.blit(b,((pos[0] - camera.x) * round(camera.size,2) + univars.screen.get_width()//2 - b.get_width()/2 ,(pos[1] - camera.y) * round(camera.size,2) + univars.screen.get_height()//2 - b.get_height()/2))
+			univars.screen.blit(b,(            (             ( (int(round(pos[0] - camera.x) * camera.size + univars.screen.get_width()//2 - b.get_width()/2)),int(round((pos[1] - camera.y) * camera.size + univars.screen.get_height()//2 - b.get_height()/2)))            )         )                  )
 			self.abttodo.remove(i)
 
 		

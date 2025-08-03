@@ -33,25 +33,27 @@ class Item(pygame.sprite.Sprite):
         self.pastbcs = Cameramod.cam.size
         self.lastframe = self.baseimg
         self.cache = {}
-        self.size = 1
         camera = Cameramod.cam
+        self.size = camera.size
         self.lastcampos = [camera.x,camera.y]
         self.lastcamsize = camera.size
 
     def update(self):
+        
         camera = Cameramod.cam
+        realestsize = round(self.size,4)
         if univars.camchange or univars.poschange:
             if univars.poschange:
                 self.pos[0] -= (camera.x - self.lastcampos[0])*self.layer
                 self.pos[1] -= (camera.y - self.lastcampos[1])*self.layer
                 
             if univars.camchange:
-                self.size += (camera.x - self.lastcampos[0])
+                self.size += (camera.size - self.lastcamsize)*self.layer
+                # pass
 
 
 
 
-            realestsize = round(self.size * abs(camera.size),2)
             if not str(realestsize) in self.cache.keys():
                 self.image =  pygame.transform.scale_by(self.baseimg,  realestsize )
                 self.cache[str(realestsize)] = self.image
@@ -65,7 +67,7 @@ class Item(pygame.sprite.Sprite):
 
 
         # self.image.set_alpha(self.alpha)
-        self.rect = self.image.get_rect(center = ( (int(round(self.pos[0]) * camera.size + univars.screen.get_width()//2)),int(round((self.pos[1]) * camera.size + univars.screen.get_height()//2   ))   ))
+        self.rect = self.image.get_rect(center = (             (round(self.pos[0]) * realestsize + univars.screen.get_width()//2   )     ,      round((self.pos[1]) * realestsize + univars.screen.get_height()//2   )                     ))
         
         self.lastframe = self.image
         self.lastrect = self.rect

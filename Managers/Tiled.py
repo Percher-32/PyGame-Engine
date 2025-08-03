@@ -143,7 +143,9 @@ class TiledSoftwre:
 
 					#some math
 					upscale = self.realscreeen.get_width() / self.screen.get_width()
+					upscaley = self.realscreeen.get_height() / self.screen.get_height()
 					translation = self.realscreeen.get_width()//4
+					# translation = 0
 					a1 = (((   (GameManager.event_manager.mousepos[0])/upscale  - self.screen.get_width()//2) / camera.size) + camera.x)
 					a2 = (((   (GameManager.event_manager.mousepos[1] + translation)/upscale  - self.screen.get_height()//2) / camera.size) + camera.y)
 					mousepos = (a1,a2)
