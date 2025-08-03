@@ -29,30 +29,50 @@ class Item(pygame.sprite.Sprite):
         self.rect = self.baseimg.get_rect(center = pos)
         self.layer = layer
         self.renderedpos = pos
-        self.prevcampos = [Cameramod.cam.x,Cameramod.cam.y]
         self.originalpos = self.pos
         self.pastbcs = Cameramod.cam.size
+        self.lastframe = self.baseimg
         self.cache = {}
+        self.size = 1
+        camera = Cameramod.cam
+        self.lastcampos = [camera.x,camera.y]
+        self.lastcamsize = camera.size
 
     def update(self):
         camera = Cameramod.cam
-        if univars.camchange:
-            self.bcs += ((Cameramod.cam.size - self.pastbcs)/self.layer)
-            self.pastbcs = Cameramod.cam.size
-        if univars.poschange:
-            self.pos[0] -= (camera.x - self.prevcampos[0])/self.layer * camera.size
-            self.pos[1] -= (camera.y - self.prevcampos[1])/self.layer * camera.size
-            self.prevcampos = [Cameramod.cam.x,Cameramod.cam.y]
+        if univars.camchange or univars.poschange:
+            if univars.poschange:
+                self.pos[0] -= (camera.x - self.lastcampos[0])*self.layer
+                self.pos[1] -= (camera.y - self.lastcampos[1])*self.layer
+                
+            if univars.camchange:
+                self.size += (camera.x - self.lastcampos[0])
 
-        if not round(self.bcs * (univars.pixelscale/7),7) in self.cache.keys():
-            self.image = pygame.transform.scale_by(self.baseimg,round(self.bcs * (univars.pixelscale/7),7))
-            self.cache[  int(round(self.bcs * (univars.pixelscale/7)))  ] = self.image
+
+
+
+            realestsize = round(self.size * abs(camera.size),2)
+            if not str(realestsize) in self.cache.keys():
+                self.image =  pygame.transform.scale_by(self.baseimg,  realestsize )
+                self.cache[str(realestsize)] = self.image
+            else:
+                self.image = self.cache[str(realestsize)]
         else:
-            self.image = self.cache[  round(self.bcs * (univars.pixelscale/7),7)  ] 
+            self.image = self.lastframe
 
-        self.rect = self.image.get_rect(center = self.renderedpos )
-        self.renderedpos = (self.pos[0] + univars.screen.get_width()//2  ,      self.pos[1]  + univars.screen.get_height()//2             )
 
+
+
+
+        # self.image.set_alpha(self.alpha)
+        self.rect = self.image.get_rect(center = ( (int(round(self.pos[0]) * camera.size + univars.screen.get_width()//2)),int(round((self.pos[1]) * camera.size + univars.screen.get_height()//2   ))   ))
+        
+        self.lastframe = self.image
+        self.lastrect = self.rect
+
+
+        self.lastcampos = [camera.x,camera.y]
+        self.lastcamsize = camera.size
 
 
 

@@ -26,7 +26,8 @@ class Runchinld(Gamemananager.GameManager):
 	def onreload(self):
 		self.a = 0
 		bg.addbackground("test2")
-		bg.addbackgrounditem("black","test2",[0,-40],surf = "mount",dimensions=[500*2.3,250*2.3],layer = 20)
+		bg.addbackgrounditem("black","test2",[0,-40]                ,surf = "mount",dimensions=[500*2.3,250*2.3],layer = 1)
+		bg.addbackgrounditem("black","test2",[(-500 * 2.3) + 20,-40],surf = "mount",dimensions=[500*2.3,250*2.3],layer = 1)
 		
 		if "game" == self.states:
 
