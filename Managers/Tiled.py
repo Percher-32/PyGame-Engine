@@ -166,7 +166,8 @@ class TiledSoftwre:
 
 					#to show the about to be gridded object
 					if self.grip == 1:
-						GameManager.blit(self.func.getsprites(self.spritenames[self.sprite])[0],self.func.getsprites(self.spritenames[self.sprite])[0].get_rect(center = (self.pos1)),self.rot,camera)
+						GameManager.blitsurf(thingtogo,self.pos1,self.rot,camera)
+						# GameManager.blit(self.func.getsprites(self.spritenames[self.sprite])[0],self.func.getsprites(self.spritenames[self.sprite])[0].get_rect(center = (self.pos1)),self.rot,camera)
 
 					#multi place/delete
 					if self.gridable < 1:
@@ -836,6 +837,43 @@ class TiledSoftwre:
 
 
 
+			# if "addbg:" in self.commmandtring.rstrip():
+			# 	bg.addbackground(self.commmandtring.rstrip().replace("addbg:", ""))
+			# 	self.comm = True
+			# 	self.savemode = 0
+			elif "setbg:" in self.commmandtring.rstrip():
+				bg.background = self.commmandtring.rstrip().replace("setbg:", "")
+			elif "savebg" in self.commmandtring.rstrip():
+				bg.savebg()
+				self.comm = True
+				self.savemode = 0
+			elif "state:" in self.commmandtring.rstrip():
+				self.cht = self.commmandtring.rstrip().replace("state:", "")
+				self.comm = True
+				self.savemode = 0
+			elif "find:" in self.commmandtring.rstrip():
+				self.cht = self.commmandtring.rstrip().replace("find:", "")
+				self.dostring = object_manager.objfromid(self.cht)
+				if not self.dostring == None:
+					self.dostring2 = ""
+					self.savemode = "alterobj"
+				self.commmandtring = ""
+			elif "delete:" in self.commmandtring.rstrip():
+				self.cht = self.commmandtring.rstrip().replace("delete:", "")
+				self.dostring = object_manager.objfromid(self.cht)
+				if not self.dostring == None:
+					object_manager.removeid(self.cht)
+				self.commmandtring = ""
+			elif ("debug:" in self.commmandtring.rstrip() or "db:" in self.commmandtring.rstrip()) and "=" in self.commmandtring.rstrip() : 
+				self.cht = self.commmandtring.rstrip().split(":")[1]
+				self.cht.replace(" ","")
+				vartochange = self.cht.split("=")[0]
+				valtoreplace = self.cht.split("=")[1]
+				try:
+					GameManager.publicvariables[vartochange] = eval(valtoreplace)
+				except:
+					GameManager.publicvariables[vartochange] = valtoreplace
+				self.commmandtring = ""
 					
 
 
@@ -908,41 +946,7 @@ class TiledSoftwre:
 
 			else:
 				if not self.commmandtring.rstrip() in ["Com","Obj"]:
-					if "addbg:" in self.commmandtring.rstrip():
-						bg.addbackground(self.commmandtring.rstrip().replace("addbg:", ""))
-						self.comm = True
-						self.savemode = 0
-					if "setbg:" in self.commmandtring.rstrip():
-						bg.background = self.commmandtring.rstrip().replace("setbg:", "")
-					if "state:" in self.commmandtring.rstrip():
-						self.cht = self.commmandtring.rstrip().replace("state:", "")
-						self.comm = True
-						self.savemode = 0
-					elif "find:" in self.commmandtring.rstrip():
-						self.cht = self.commmandtring.rstrip().replace("find:", "")
-						self.dostring = object_manager.objfromid(self.cht)
-						if not self.dostring == None:
-							self.dostring2 = ""
-							self.savemode = "alterobj"
-						self.commmandtring = ""
-					elif "delete:" in self.commmandtring.rstrip():
-						self.cht = self.commmandtring.rstrip().replace("delete:", "")
-						self.dostring = object_manager.objfromid(self.cht)
-						if not self.dostring == None:
-							object_manager.removeid(self.cht)
-						self.commmandtring = ""
-					elif ("debug:" in self.commmandtring.rstrip() or "db:" in self.commmandtring.rstrip()) and "=" in self.commmandtring.rstrip() : 
-						self.cht = self.commmandtring.rstrip().split(":")[1]
-						self.cht.replace(" ","")
-						vartochange = self.cht.split("=")[0]
-						valtoreplace = self.cht.split("=")[1]
-						try:
-							GameManager.publicvariables[vartochange] = eval(valtoreplace)
-						except:
-							GameManager.publicvariables[vartochange] = valtoreplace
-						self.commmandtring = ""
-					else:
-						self.savemode = 0
+					self.savemode = 0
 
 
 			self.placable -= 1 * GameManager.frame_manager.dt

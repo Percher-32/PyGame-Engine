@@ -17,7 +17,7 @@ class Particlemanager:
 		"""
 
 
-	def particlespawn(self,type,pos,divergence,color,initvel,force,size,sizedec,dim = None,alpha=1000,alphadec=0,colordec = 0):
+	def particlespawn(self,type,pos,divergence,color,initvel,force,size,sizedec,dim = None,alpha=1000,alphadec=0,colordec = 0,quality = 1,divergenceforce = [[0,0],[0,0]],divergencepos = [[0,0],[0,0]]):
 		"""
 			spawns particles\n
 
@@ -34,7 +34,7 @@ class Particlemanager:
 				  [ minx,maxx ] ,
 				  [ miny,maxy ]
 				]\n
-
+			
 			Particles are killed once size = 0\n
 			
 			nitems = number of particles to spawn\n
@@ -43,22 +43,31 @@ class Particlemanager:
 			pos = where to spawn  [x,y]\n
 			
 		"""
-		initvel[0] += random.randint(divergence[0][0],divergence[0][1])
-		initvel[1] += random.randint(divergence[1][0],divergence[1][1])
-		particle = {
-					"pos":pos,
-					"vel":initvel,
-					"force":force,
-					"size":size,
-					"initsize":size,
-					"type":type,
-					"sizedec":sizedec,
-					"alpha":alpha,
-					"alphadec":alphadec,
-					"color":color,
-					"dim":dim
-					}
-		self.particlelist.append(particle)
+		for i in range(10):
+			newinitvel = initvel
+			newforce = force
+			newpos = pos
+			newinitvel[0] += random.randint(divergence[0][0],divergence[0][1])
+			newinitvel[1] += random.randint(divergence[1][0],divergence[1][1])
+			newforce[0] += random.randint(divergenceforce[0][0],divergenceforce[0][1])
+			newforce[1] += random.randint(divergenceforce[1][0],divergenceforce[1][1])
+			newpos[0] += random.randint(divergencepos[0][0],divergencepos[0][1])
+			newpos[1] += random.randint(divergencepos[1][0],divergencepos[1][1])
+			particle = {
+						"pos":newpos,
+						"vel":newinitvel,
+						"force":newforce,
+						"size":size,
+						"initsize":size,
+						"type":type,
+						"sizedec":sizedec,
+						"alpha":alpha,
+						"alphadec":alphadec,
+						"color":color,
+						"dim":dim,
+						"quality":quality
+						}
+			self.particlelist.append(particle)
 
 
 	
@@ -69,9 +78,11 @@ class Particlemanager:
 			updates all particles based on forces
 		"""
 		campos =  [Cameramod.cam.x,Cameramod.cam.y]
-		def circlesurf(col,rad):
+		def circlesurf(col,rad,qual):
 			surf = pygame.Surface((rad * 2,rad * 2))
 			pygame.draw.circle(surf,col,(rad,rad),rad)
+			surf = pygame.transform.scale_by(surf,qual)
+			surf = pygame.transform.scale(surf,(rad * 2,rad * 2))
 			surf.set_colorkey((0,0,0))
 			return surf
 
@@ -85,7 +96,7 @@ class Particlemanager:
 			postodraw = [int(round(particle["pos"][0] - Cameramod.cam.x) * Cameramod.cam.size + univars.screen.get_width()//2),int(round((particle["pos"][1] - Cameramod.cam.y) * Cameramod.cam.size + univars.screen.get_height()//2 ))]
 			if not particle["size"] <= 0:
 				if particle["type"] == "circle":
-					surf = circlesurf(particle["color"],particle["size"] * Cameramod.cam.size)
+					surf = circlesurf(particle["color"],particle["size"] * Cameramod.cam.size,particle["quality"])
 					surf.set_alpha(particle["alpha"])
 					univars.screen.blit(surf,postodraw)
 				if particle["type"] == "rect":

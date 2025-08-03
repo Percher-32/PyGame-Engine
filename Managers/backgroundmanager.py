@@ -7,9 +7,9 @@ import os
 
 
 class Item(pygame.sprite.Sprite):
-    def __init__(self,name,pos,alpha = 400,surf=None,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h),layer = 1,paralax = 0):
+    def __init__(self,name,pos,alpha = 400,surf=None,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h),layer = 1,infiniscroll = 0):
         pygame.sprite.Sprite.__init__(self)
-        self.paralax = paralax
+        self.infiniscroll = infiniscroll
         self.surf = surf
         self.name = name
         self.color = color
@@ -25,15 +25,18 @@ class Item(pygame.sprite.Sprite):
         
         self.pos = pos
         self.startpos = pos
-        temporary = pygame.Surface((self.dimensions[0] * 3,self.dimensions[1]))
-        temporary.set_colorkey((0,0,0))
-        temporary.blit(surf , (  self.dimensions[0] ,0     )    )
-        temporary.blit(surf , (  self.dimensions[0] * 2,0     )    )
-        temporary.blit(surf , (  0,0     )    )
-        print(self.dimensions)
-        # temporary.blit(surf , (  0   ,self.dimensions[1]      )    )
-        # temporary.blit(surf , (  self.dimensions[1] * 2   ,self.dimensions[1]      )    )
-        self.baseimg = temporary
+        if infiniscroll:
+            temporary = pygame.Surface((self.dimensions[0] * 3,self.dimensions[1]))
+            temporary.set_colorkey((0,0,0))
+            temporary.blit(surf , (  self.dimensions[0] ,0     )    )
+            temporary.blit(surf , (  self.dimensions[0] * 2,0     )    )
+            temporary.blit(surf , (  0,0     )    )
+            print(self.dimensions)
+            # temporary.blit(surf , (  0   ,self.dimensions[1]      )    )
+            # temporary.blit(surf , (  self.dimensions[1] * 2   ,self.dimensions[1]      )    )
+            self.baseimg = temporary
+        else:
+            self.baseimg = surf
 
         
         self.image = self.baseimg
@@ -74,7 +77,7 @@ class Item(pygame.sprite.Sprite):
 
 
 
-        if abs((self.pos[0])) > self.dimensions[0]:
+        if abs((self.pos[0])) > self.dimensions[0] and self.infiniscroll:
             self.pos[0] = 0
                 
 
@@ -99,22 +102,22 @@ class Backgroundmanager:
         self.background = None
         self.backlayer = pygame.Surface((64 * univars.pixelscale,64 * univars.pixelscale))
         self.backlayer.fill(univars.screencol)
-        self.paralaxers = []
+        self.infiniscrollers = []
 
 
     def addbackground(self,name):
         self.items[name] = pygame.sprite.Group()
 
-    def addbackgrounditem(self,name,backgroundname,pos,alpha = 400,layer = 1,surf=None,paralax = False,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h)):
-        if not paralax:
+    def addbackgrounditem(self,name,backgroundname,pos,alpha = 400,layer = 1,surf=None,infiniscroll = False,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h)):
+        if not infiniscroll:
             item = Item(name,pos,alpha=alpha,surf=surf,color=color,dimensions=dimensions,layer=layer)
             self.items[backgroundname].add(item)
         else:
-            item = Item(name,[pos[0] - dimensions[0],pos[1]],alpha=alpha,surf=surf,color=color,dimensions=dimensions,layer=layer,paralax = paralax)
+            item = Item(name,[pos[0] - dimensions[0],pos[1]],alpha=alpha,surf=surf,color=color,dimensions=dimensions,layer=layer,infiniscroll = infiniscroll)
 
 
     def update(self,screencol):
-        self.backlayer = pygame.transform.scale(self.backlayer,[64 * univars.pixelscale,64 * univars.pixelscale])
+        # self.backlayer = pygame.transform.scale(self.backlayer,[64 * univars.pixelscale,64 * univars.pixelscale])
         self.backlayer.fill(screencol)
         if self.background in self.items.keys():
             self.items[self.background].update()
@@ -123,10 +126,10 @@ class Backgroundmanager:
 
     def savebg(self):
         """
-            saves all backgrounds and 
+            saves all backgrounds and items within
         """
         for item in self.items.keys():
-            todump = [  [i.name,i.pos,i.alpha,i.surf,i.color,i.dimensions,i.layer,i.paralax]  for i in self.items[item]]
+            todump = [  [i.name,i.pos,i.alpha,i.surf,i.color,i.dimensions,i.layer,i.infiniscroll]  for i in self.items[item]]
             with open (f"Saved/backgrounds/{item}.json","x") as file:
                 json.dump(todump,file)
             
@@ -139,7 +142,7 @@ class Backgroundmanager:
             with open ("Saved/backgrounds" + "/" + item,"r") as thing:
                 things = json.load(thing)
                 for elem in things:
-                    self.addbackgrounditem(elem[0],item.replace(".json",""),elem[1],alpha= elem[2],surf=elem[3],color = elem[4],dimensions=elem[5],layer = elem[6],paralax=elem[7])
+                    self.addbackgrounditem(elem[0],item.replace(".json",""),elem[1],alpha= elem[2],surf=elem[3],color = elem[4],dimensions=elem[5],layer = elem[6],infiniscroll=elem[7])
 
 bg = Backgroundmanager()
       

@@ -31,7 +31,6 @@ class Game(Gamemananager.GameManager):
 		self.a = 0
 		bg.addbackground("test2")
 		bg.addbackgrounditem("black","test2",[0,-40]                ,surf = "mount",dimensions=[500*3,250*3],layer = 0.01)
-		# bg.addbackgrounditem("black","test2",[(-500 * 3) + 20,-40],surf = "mount",dimensions=[500*3,250*3],layer = 0.01)
 		
 		if "game" == self.states:
 
@@ -68,8 +67,8 @@ class Game(Gamemananager.GameManager):
 
 	def update(self):
 		bg.background = "test2"
-		# um.state = "test1"
-
+		pm.particlespawn("circle",[0,0],[[-5,5],[-5,5]],(0,100,255),[0,0],[-1,-1],5,0.1,alpha=300,alphadec=10,divergencepos=[[-1000,1000],[0,0]])
+		
 
 
 		if "game" == self.states:
