@@ -22,18 +22,21 @@ class Item(pygame.sprite.Sprite):
         else:
             surf = pygame.image.load(f"Graphics/background/{surf}.png").convert_alpha()
             surf = pygame.transform.scale(surf,dimensions)
-            if dimensions == (univars.screen_w,univars.screen_h):
-                self.dimensions =  surf.get_size()
         
-        self.image = pygame.Surface((dimensions[0] * 3,dimensions[1]))
         self.pos = pos
         self.startpos = pos
-        temporary = pygame.Surface((dimensions[0] * 3,dimensions[1]))
+        temporary = pygame.Surface((self.dimensions[0] * 3,self.dimensions[1]))
         temporary.set_colorkey((0,0,0))
-        temporary.blit(surf,(        ))
+        temporary.blit(surf , (  self.dimensions[0] ,0     )    )
+        temporary.blit(surf , (  self.dimensions[0] * 2,0     )    )
+        temporary.blit(surf , (  0,0     )    )
+        print(self.dimensions)
+        # temporary.blit(surf , (  0   ,self.dimensions[1]      )    )
+        # temporary.blit(surf , (  self.dimensions[1] * 2   ,self.dimensions[1]      )    )
         self.baseimg = temporary
 
-
+        
+        self.image = self.baseimg
 
 
         self.rect = self.baseimg.get_rect(center = pos)
@@ -71,7 +74,7 @@ class Item(pygame.sprite.Sprite):
 
 
 
-        if abs((self.pos[0] * realestsize)) > self.image.get_width()/2:
+        if abs((self.pos[0])) > self.dimensions[0]:
             self.pos[0] = 0
                 
 

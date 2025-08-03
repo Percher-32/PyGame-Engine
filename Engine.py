@@ -30,7 +30,7 @@ class Game(Gamemananager.GameManager):
 	def onreload(self):
 		self.a = 0
 		bg.addbackground("test2")
-		bg.addbackgrounditem("black","test2",[0,-40]                ,surf = "mount",dimensions=[500*3,250*3],layer = 1)
+		bg.addbackgrounditem("black","test2",[0,-40]                ,surf = "mount",dimensions=[500*3,250*3],layer = 0.01)
 		# bg.addbackgrounditem("black","test2",[(-500 * 3) + 20,-40],surf = "mount",dimensions=[500*3,250*3],layer = 0.01)
 		
 		if "game" == self.states:
