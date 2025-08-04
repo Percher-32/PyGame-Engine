@@ -54,6 +54,7 @@ class GameManager():
 		self.fpsmax = univars.maxfps
 		self.leveledit = True
 		self.previousbacklayer = pygame.Surface((0,0))
+		self.boxes = []
 		Tiled.extra(univars.extras)
 		om.loadtilemap(univars.map)
 

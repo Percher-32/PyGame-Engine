@@ -58,7 +58,8 @@ class Game(Gamemananager.GameManager):
 		# self.maxbg = [univars.realscreeen.get_width(),univars.realscreeen.get_height()]
 		# um.addrect(self.maxbg,["default","test2","gameplay"],(0,0),"bg2",univars.theme["dark"],255)
 		# um.addrect([univars.realscreeen.get_width() - 200,0],["default","test2","gameplay"],(0,0),"bg",univars.theme["mid"],100)
-		# um.addbutton((100,50),["default","test2","gameplay"],(0,-2),"playbutton",univars.theme["dark"],255)
+		# um.addbutton((100,50),["default","test2","gameplay"],(0,-2),
+		# "playbutton",univars.theme["dark"],255)
 		# um.addtext("playtext","play",univars.defont,(0,-1),univars.theme["semibright"],40,["default"])
 		# um.bindtobutton("playtext","playbutton")
 		# um.addglide("playbutton",univars.sizes["mediumbutton"],univars.sizes["largebutton"])

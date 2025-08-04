@@ -194,12 +194,13 @@ class Uibutton(Uirect):
 
 
 class Uitext(pygame.sprite.Sprite):
-    def __init__(self, name, text, font, pos, col, size,states):
+    def __init__(self, name, text, font, pos, col, size,states,center = True):
         self.name = name
         self.text = text
         self.font = font
         self.pos = pos
         self.col = col
+        self.center = center
         self.states = states
         self.realfont = pygame.font.Font(f"Graphics/Fonts/{font}",100)
         self.bart = self.realfont.render(text,1,col)
@@ -217,7 +218,10 @@ class Uitext(pygame.sprite.Sprite):
                 self.text = element[self.name]["text"]
                 self.bart = self.realfont.render(self.text, 1, self.col)
                 self.image = pygame.transform.scale_by(self.bart,[element[self.name]["size"]/100,element[self.name]["size"]/100])
-                self.rect = self.image.get_rect(center = (pos[0] * univars.realscreeen.get_width()//2 + univars.realscreeen.get_width()//2 ,-1 * pos[1] * univars.realscreeen.get_height()//2   + univars.realscreeen.get_height()//2 ))
+                if self.center:
+                    self.rect = self.image.get_rect(center = (pos[0] * univars.realscreeen.get_width()//2 + univars.realscreeen.get_width()//2 ,-1 * pos[1] * univars.realscreeen.get_height()//2   + univars.realscreeen.get_height()//2 ))
+                else:
+                    self.rect = self.image.get_rect(center = (pos[0] * univars.realscreeen.get_width()//2 + univars.realscreeen.get_width()//2 + self.image.get_size()[0]//2,-1 * pos[1] * univars.realscreeen.get_height()//2   + univars.realscreeen.get_height()//2 + self.image.get_size()[1]//2))
             else:
                 self.image = pygame.Surface((0, 0))
                 self.rect = pygame.Rect(0, 0, 0, 0)

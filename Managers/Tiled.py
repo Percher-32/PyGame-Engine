@@ -43,6 +43,7 @@ class TiledSoftwre:
 		self.showdatable = 0
 		self.commmandtring = ""
 		self.comm = False
+		self.keydelay = 0
 		self.cht = univars.startstate
 		self.loadingmap = False
 		self.spritenames = univars.func.allsprites()
@@ -105,6 +106,26 @@ class TiledSoftwre:
 			else:
 				return dostring
 
+
+	def uitext(self,name,GameManager):
+		
+		if self.keydelay <= 0:
+			self.keydelay = 1
+			if not GameManager.event_manager.key[pygame.K_RETURN]:
+				if GameManager.event_manager.key[pygame.K_BACKSPACE]:
+							um.elements[name]["text"] = um.elements[name]["text"][:-1]
+				else:
+					if GameManager.event_manager.keyb:
+						um.elements[name]["text"] += GameManager.event_manager.code
+			else:
+				if um.elements[name]["text"] == "":
+					return self.secretword
+				else:
+					um.elements[name]["text"] = ""
+					return um.elements[name]["text"]
+			
+		else:
+			self.keydelay -= 1
 
 
 	def Run(self,work,speed,GameManager,camera,dim,debug,cm,smate):
@@ -503,21 +524,22 @@ class TiledSoftwre:
 			elif self.mode == "alterobj":
 				GameManager.uibox((400,self.realscreeen.get_height() - 200),(-0.75,0.15),self.theme["dark"] ,400)
 				b = self.dostring
-				Cammanager.camager.setcond("def","pos",   univars.func.lerp(Cammanager.camager.getcam("def","pos")   ,b.info["pos"],4)    )
-				Cammanager.camager.setcond("def","size",   univars.func.lerp(Cammanager.camager.getcam("def","size"),((max(b.info["size"])/dim)),4)    )
-				GameManager.blituis(b.image,(-0.8,0.7),(3 * 64,3 * 64),self.rot,1000)
+				Cammanager.camager.setcond("def","pos",   univars.func.lerp(Cammanager.camager.getcam("def","pos")   ,b.info["pos"],4,roundto=8)    )
+				Cammanager.camager.setcond("def","size",   univars.func.lerp(Cammanager.camager.getcam("def","size"),1/b.info["sizen"][0],4,roundto=8)    )
+				# GameManager.blituis(b.image,(-0.8,0.7),(3 * 64,3 * 64),self.rot,1000)
 				strbuf = ""
 				for i in b.info.keys():
 					strbuf += f"{i} = {b.info[i]}\n"
-				self.tm.drawtext2(strbuf,"pixel2.ttf",40,0,0,0,self.theme["bright"],-0.9,0.2)
+				self.tm.drawtext2(strbuf,"pixel2.ttf",40,0,0,0,self.theme["bright"],-0.9,0.2 + 0.25)
 				if b.name in object_manager.values.keys():
 					off = 0
 					for i in object_manager.values[b.name].keys():
-						self.tm.drawtext2(f"{i} : {object_manager.values[b.name][i]}"                                                                                                                             ,"pixel2.ttf",40,0,0,0,self.theme["bright"],-0.9,(-1 * 0.08 * off) - 0.3)
+						self.tm.drawtext2(f"{i} : {object_manager.values[b.name][i]}"                                                                                                                             ,"pixel2.ttf",40,0,0,0,self.theme["bright"],-0.9,(-1 * 0.08 * off) - 0.3 + 0.25)
 						off += 1
 				else:
-					self.tm.drawtext2(f"no variables"                                                                                                                                                              ,"pixel2.ttf",40,0,0,0,self.theme["bright"],-0.9,                   -0.3)
+					self.tm.drawtext2(f"no variables"                                                                                                                                                              ,"pixel2.ttf",40,0,0,0,self.theme["bright"],-0.9,                   -0.3 + 0.25)
 					
+				
 
 				if not self.textline(GameManager,self.dostring2,f"what command for object {b.name}:")== self.secretword:
 					self.dostring2 = self.textline(GameManager,self.dostring2,f"what command for object {b.name}:")
@@ -613,6 +635,9 @@ class TiledSoftwre:
 				um.addtext("spritenames","None",univars.defont,[2,0.7],univars.theme["bright"],60,["anim","animplaying","newanim"])
 				self.snts = ""
 
+
+				um.addtext("commandtext","","pixel2.ttf",(-0.95,-0.9),univars.theme["bright"],40,["newanim","animplaying"],center = False)
+
 				self.textsfornewanim = []
 
 
@@ -698,8 +723,8 @@ class TiledSoftwre:
 
 
 				if um.state == "newanim":
-					if not self.textline(GameManager,self.snts,f"input the command:")== self.secretword:
-						self.snts = self.textline(GameManager,self.snts,f"input the command:",col = univars.theme["accent"])
+					if not self.uitext("commandtext",GameManager) == self.secretword:
+						self.snts = self.uitext("commandtext",GameManager)
 					else:
 						try:
 							if "fr:" in self.snts:
@@ -749,8 +774,8 @@ class TiledSoftwre:
 						self.snts = ""
 
 				if um.state == "animplaying":					
-					if not self.textline(GameManager,self.snts,f"input the command:")== self.secretword:
-						self.snts = self.textline(GameManager,self.snts,f"input the command:",col = univars.theme["accent"])
+					if not  self.uitext("commandtext",GameManager)== self.secretword:
+						self.snts = self.uitext("commandtext",GameManager)
 					else:
 						try:
 							if "fr:" in self.snts:
@@ -995,6 +1020,11 @@ class TiledSoftwre:
 					
 		elif GameManager.publicvariables["showinput"]:
 			self.showinput(GameManager)
+
+
+
+
+
 
 	def showinput(self,GameManager):
 		GameManager.uibox((190,190),(-0.8,-0.5),univars.theme["dark"],200)

@@ -29,30 +29,33 @@ class Uimanager:
 		self.sprites.add(ui)
 		
 	def addrect(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = None,usesprite = False):
-		if not surf == None:
-			if not usesprite:
-				surf = pygame.image.load(f"Graphics/ui/{surf}.png").convert_alpha()
-			else:
-				surf = univars.func.getsprites(surf)[0]
-		ui = Uielement.Uirect(dimensions,states,pos,name,surf = surf)
-		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"pos":pos,"states":states,"surf":surf,"type":"rect"}
-		self.sprites.add(ui)
+		if not name in self.elements.keys():
+			if not surf == None:
+				if not usesprite:
+					surf = pygame.image.load(f"Graphics/ui/{surf}.png").convert_alpha()
+				else:
+					surf = univars.func.getsprites(surf)[0]
+			ui = Uielement.Uirect(dimensions,states,pos,name,surf = surf)
+			self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"pos":pos,"states":states,"surf":surf,"type":"rect"}
+			self.sprites.add(ui)
 
 	def addbutton(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = None,usesprite = False):
-		if not surf == None:
-			if not usesprite:
-				surf = pygame.image.load(f"Graphics/ui/{surf}.png").convert_alpha()
-			else:
-				surf = univars.func.getsprites(surf)[0]
-				print(surf)
-		ui = Uielement.Uibutton(dimensions,states,pos,name,surf = surf)
-		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"click":0,"hover":0,"command":[],"pos":pos,"states":states,"surf":surf,"type":"button","dir":{"up":None,"down":None,"left":None,"right":None}}
-		self.sprites.add(ui)
+		if not name in self.elements.keys():
+			if not surf == None:
+				if not usesprite:
+					surf = pygame.image.load(f"Graphics/ui/{surf}.png").convert_alpha()
+				else:
+					surf = univars.func.getsprites(surf)[0]
+					print(surf)
+			ui = Uielement.Uibutton(dimensions,states,pos,name,surf = surf)
+			self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"click":0,"hover":0,"command":[],"pos":pos,"states":states,"surf":surf,"type":"button","dir":{"up":None,"down":None,"left":None,"right":None}}
+			self.sprites.add(ui)
 
-	def addtext(self,name, text, font, pos, col, size,states):
-		ui = Uielement.Uitext(name,text,font,pos,col,size,states)
-		self.elements[name] = {"name":name,"text":text,"color":col,"size":size,"command":[],"pos":pos,"states":states,"type":"text"}
-		self.sprites.add(ui)
+	def addtext(self,name, text, font, pos, col, size,states,center = True):
+		if not name in self.elements.keys():
+			ui = Uielement.Uitext(name,text,font,pos,col,size,states,center=center)
+			self.elements[name] = {"name":name,"text":text,"color":col,"size":size,"command":[],"pos":pos,"states":states,"type":"text"}
+			self.sprites.add(ui)
 
 	
 	def deleleelem(self,name):
