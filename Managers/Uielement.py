@@ -184,7 +184,7 @@ class Uibutton(Uirect):
         if em.controller["x"] or em.mouse:
             if self.rect.collidepoint(pygame.mouse.get_pos()):
                 self.hover = True
-                if em.mouse[0]:
+                if em.mouse[0] or em.controller["x"]:
                     self.click = True
                 else:
                     self.click = False

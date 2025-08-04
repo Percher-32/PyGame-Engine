@@ -38,6 +38,7 @@ class GameManager():
 		self.screen_colour = screen_colour
 		self.frame_manager = frame_manager
 		self.event_manager = em
+		self.em = em
 		self.publicvariables = {"showinput":univars.showinput,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":univars.screencol       }
 		self.timers = {}
 		self.dt = 1
@@ -49,7 +50,7 @@ class GameManager():
 		self.states = []
 		self.pausebackground = False
 		self.pauseui = False
-		self.key = {"x":0,"y":0,"jump":0,"secondary":0,"attack":0,"dodge":0,"axis":[0,0],"option":0}
+		self.key = {"x":0,"y":0,"jump":0,"secondary":0,"attack":0,"dodge":0,"axis":[0,0],"option":0,"alt-x":0}
 		self.dim = univars.grandim
 		self.fpsmax = univars.maxfps
 		self.leveledit = True
@@ -106,7 +107,10 @@ class GameManager():
 		else:
 			self.key["y"] = 0
 
-
+		if em.key[pygame.K_RIGHT] or em.controller["right_arrow"]:
+			self.key["alt - x"] = 1
+		if em.key[pygame.K_LEFT] or em.controller["left_arrow"]:
+			self.key["alt - x"] = -1
 
 
 		#ui axis

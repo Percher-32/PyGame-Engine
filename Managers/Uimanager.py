@@ -46,7 +46,6 @@ class Uimanager:
 					surf = pygame.image.load(f"Graphics/ui/{surf}.png").convert_alpha()
 				else:
 					surf = univars.func.getsprites(surf)[0]
-					print(surf)
 			ui = Uielement.Uibutton(dimensions,states,pos,name,surf = surf)
 			self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"click":0,"hover":0,"command":[],"pos":pos,"states":states,"surf":surf,"type":"button","dir":{"up":None,"down":None,"left":None,"right":None}}
 			self.sprites.add(ui)
@@ -195,11 +194,14 @@ class Uimanager:
 	# 	for i in buttonsinstate:
 	# 		self.route(i)
 
-	def clicked(self,button):
+	def clicked(self,em,button):
 		"""
 			returns wether a button has been clicked
 		"""
-		return self.selectedbutton == button and self.elements[button]["click"]
+		if self.mode == "arrow":
+			return (self.selectedbutton == button) and (em.mouse[0] or em.controller["x"])
+		else:
+			return self.elements[button]["click"]
 			
 	def hover(self,button):
 		"""

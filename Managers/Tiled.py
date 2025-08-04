@@ -108,24 +108,20 @@ class TiledSoftwre:
 
 
 	def uitext(self,name,GameManager):
-		
-		if self.keydelay <= 0:
-			self.keydelay = 1
-			if not GameManager.event_manager.key[pygame.K_RETURN]:
+		if not GameManager.event_manager.key[pygame.K_RETURN]:
+			
+			if self.keydelay <= 0:
+				
+				self.keydelay = 1
 				if GameManager.event_manager.key[pygame.K_BACKSPACE]:
-							um.elements[name]["text"] = um.elements[name]["text"][:-1]
+					um.elements[name]["text"] = um.elements[name]["text"][:-1]
 				else:
 					if GameManager.event_manager.keyb:
 						um.elements[name]["text"] += GameManager.event_manager.code
 			else:
-				if um.elements[name]["text"] == "":
-					return self.secretword
-				else:
-					um.elements[name]["text"] = ""
-					return um.elements[name]["text"]
+				self.keydelay -= 1
 			
-		else:
-			self.keydelay -= 1
+				
 
 
 	def Run(self,work,speed,GameManager,camera,dim,debug,cm,smate):
@@ -636,6 +632,7 @@ class TiledSoftwre:
 				self.snts = ""
 
 
+				um.addrect((self.realscreeen.get_width() + 1000,200),["newanim","animplaying"],(0,-1),"commandtextbox",color=univars.theme["accent"])
 				um.addtext("commandtext","","pixel2.ttf",(-0.95,-0.9),univars.theme["bright"],40,["newanim","animplaying"],center = False)
 
 				self.textsfornewanim = []
@@ -674,10 +671,10 @@ class TiledSoftwre:
 					for i in self.buttonsforanim:
 
 						if um.state == "anim":
-							if GameManager.key["x"] != 0:
-								um.elements[i]["pos"][0] = um.elements[i]["pos"][0] - GameManager.key["x"]/10
+							if GameManager.key["alt-x"] != 0:
+								um.elements[i]["pos"][0] = um.elements[i]["pos"][0] - GameManager.key["alt-x"]/10
 								
-						if um.elements[i]["click"]:
+						if um.clicked(GameManager.em,i):
 							object_manager.speed = 1
 							self.curanim = i.replace("button","")
 							self.newanim = object_manager.animations[self.animobj["name"]][self.curanim]
@@ -691,8 +688,8 @@ class TiledSoftwre:
 
 
 					for i in self.textsforanim:
-						if GameManager.key["x"] != 0:
-							um.elements[i]["pos"][0] = um.elements[i]["pos"][0] - GameManager.key["x"]/40
+						if GameManager.key["alt-x"] != 0:
+							um.elements[i]["pos"][0] = um.elements[i]["pos"][0] - GameManager.key["alt-x"]/40
 						if str(int(round(object_manager.objects[self.animstr]["gothru"]))) == i.replace("framepoint",""):
 							um.elements[i]["color"] = univars.theme["bright"]
 						else:
@@ -707,12 +704,12 @@ class TiledSoftwre:
 
 
 
-				if um.elements["plusbutton"]["click"]:
+				if um.clicked(GameManager.em,"plusbutton"):
 					self.newanim = {}
 					um.state = "newanim"
 					self.curanim = None
 
-				if um.elements["exitbutton"]["click"]:
+				if um.clicked(GameManager.em,"exitbutton"):
 					um.deleleelem(self.buttonsforanim)
 					self.curanim = None
 					um.state = "def"
@@ -723,122 +720,116 @@ class TiledSoftwre:
 
 
 				if um.state == "newanim":
-					if not self.uitext("commandtext",GameManager) == self.secretword:
-						self.snts = self.uitext("commandtext",GameManager)
-					else:
-						try:
-							if "fr:" in self.snts:
-								self.snts = self.snts.replace("fr:","")
-								self.snts = self.snts.strip()
-								self.snts = self.snts.replace("="," ")
-								a = self.snts.split()
-								self.newanim[str(a[0])] = int(a[1])
-								showanim(self.newanim,["newanim"])
-								
-							if "v:" in self.snts:
-								self.snts = self.snts.replace("v:","")
-								self.snts = self.snts.strip()
-								object_manager.objects[self.animstr]["sn"] = int(self.snts)
-
-
-							if "n:" in self.snts:
-								self.snts = self.snts.replace("n:","")
-								self.snts = self.snts.rstrip()
-								self.namefornewanim = self.snts
-								self.curanim = self.snts
-
-							if self.snts.rstrip() == "/s":
-								object_manager.saveanim(self.animobj["name"],self.namefornewanim,self.newanim)
-								GameManager.loadanims()
-
-							if self.snts.rstrip() == "/x":
-								GameManager.loadanims()
-								self.mode = "Objanim"
-
-							if "delfr:" in self.snts.rstrip():
-								self.snts = self.snts.rstrip()
-								self.snts = self.snts.replace("delfr:","")
-								self.snts = self.snts.strip()
-								self.newanim.pop(self.snts)
-								showanim(self.newanim,["newanim"])
-
-							if self.snts == "delanim":
-								object_manager.deleteanim(self.animobj["name"],self.curanim)
-								object_manager.animations[self.animobj["name"]].pop(self.curanim)
-								GameManager.loadanims()
-								self.mode = "Objanim"
-
-						except:
-							pass
-						
-						self.snts = ""
-
-				if um.state == "animplaying":					
-					if not  self.uitext("commandtext",GameManager)== self.secretword:
-						self.snts = self.uitext("commandtext",GameManager)
-					else:
-						try:
-							if "fr:" in self.snts:
-								self.snts = self.snts.replace("fr:","")
-								self.snts = self.snts.strip()
-								self.snts = self.snts.replace("="," ")
-								a = self.snts.split()
-								self.newanim[str(a[0])] = int(a[1])
-								showanim(self.newanim,["animplaying"])
-
-							if "v:" in self.snts:
-								self.snts = self.snts.replace("v:","")
-								self.snts = self.snts.strip()
-								object_manager.objects[self.animstr]["sn"] = int(self.snts)
-
-
-							if "n:" in self.snts:
-								self.snts = self.snts.replace("n:","")
-								self.snts = self.snts.rstrip()
-								self.namefornewanim = self.snts
-								self.curanim = self.snts
-
-							if self.snts.rstrip() == "/s":
-								object_manager.saveanim(self.animobj["name"],self.curanim,self.newanim)
-								GameManager.loadanims()
-
-
-							if self.snts.rstrip() == "/x":
-								GameManager.loadanims()
-								self.mode = "Objanim"
-
-							if "del:" in self.snts.rstrip():
-								self.snts = self.snts.rstrip()
-								self.snts = self.snts.replace("del:","")
-								self.snts = self.snts.strip()
-								self.newanim.pop(self.snts)
-								showanim(self.newanim,["animplaying"])
-
-							if self.snts.rstrip() == "delanim":
-								object_manager.deleteanim(self.animobj["name"],self.curanim)
-								object_manager.animations[self.animobj["name"]].pop(self.curanim)
-								GameManager.loadanims()
-								self.mode = "Objanim"
-
-
+					self.uitext("commandtext",GameManager)				
+					if not  self.uitext("commandtext",GameManager) == self.secretword:
+						self.snts = um.elements["commandtext"]["text"]
+					if GameManager.event_manager.key[pygame.K_RETURN]:
+						if "fr:" in self.snts:
+							self.snts = self.snts.replace("fr:","")
+							self.snts = self.snts.strip()
+							self.snts = self.snts.replace("="," ")
+							a = self.snts.split()
+							self.newanim[str(a[0])] = int(a[1])
+							showanim(self.newanim,["newanim"])
 							
-							self.snts = ""
-						except:
-							pass
+						if "v:" in self.snts:
+							self.snts = self.snts.replace("v:","")
+							self.snts = self.snts.strip()
+							object_manager.objects[self.animstr]["sn"] = int(self.snts)
 
+
+						if "n:" in self.snts:
+							self.snts = self.snts.replace("n:","")
+							self.snts = self.snts.rstrip()
+							self.namefornewanim = self.snts
+							self.curanim = self.snts
+
+						if self.snts.rstrip() == "/s":
+							object_manager.saveanim(self.animobj["name"],self.namefornewanim,self.newanim)
+							GameManager.loadanims()
+
+						if self.snts.rstrip() == "/x":
+							GameManager.loadanims()
+							self.mode = "Objanim"
+
+						if "del:" in self.snts.rstrip():
+							self.snts = self.snts.rstrip()
+							self.snts = self.snts.replace("del:","")
+							self.snts = self.snts.strip()
+							self.newanim.pop(self.snts)
+							showanim(self.newanim,["newanim"])
+
+						if self.snts == "delanim":
+							object_manager.deleteanim(self.animobj["name"],self.curanim)
+							object_manager.animations[self.animobj["name"]].pop(self.curanim)
+							GameManager.loadanims()
+							self.mode = "Objanim"
+
+					
+						um.elements["commandtext"]["text"] = ""
+
+				if um.state == "animplaying":	
+					self.uitext("commandtext",GameManager)				
+					if not  self.uitext("commandtext",GameManager) == self.secretword:
+						self.snts = um.elements["commandtext"]["text"]
+					if GameManager.event_manager.key[pygame.K_RETURN]:
+						if "fr:" in self.snts:
+							self.snts = self.snts.replace("fr:","")
+							self.snts = self.snts.strip()
+							self.snts = self.snts.replace("="," ")
+							a = self.snts.split()
+							self.newanim[str(a[0])] = int(a[1])
+							showanim(self.newanim,["animplaying"])
+
+						if "v:" in self.snts:
+							self.snts = self.snts.replace("v:","")
+							self.snts = self.snts.strip()
+							object_manager.objects[self.animstr]["sn"] = int(self.snts)
+
+
+						if "n:" in self.snts:
+							self.snts = self.snts.replace("n:","")
+							self.snts = self.snts.rstrip()
+							self.namefornewanim = self.snts
+							self.curanim = self.snts
+
+						if self.snts.rstrip() == "/s":
+							object_manager.saveanim(self.animobj["name"],self.curanim,self.newanim)
+							GameManager.loadanims()
+
+
+						if self.snts.rstrip() == "/x":
+							GameManager.loadanims()
+							self.mode = "Objanim"
+
+						if "del:" in self.snts.rstrip():
+							self.snts = self.snts.rstrip()
+							self.snts = self.snts.replace("del:","")
+							self.snts = self.snts.strip()
+							self.newanim.pop(self.snts)
+							showanim(self.newanim,["animplaying"])
+
+						if self.snts.rstrip() == "delanim":
+							object_manager.deleteanim(self.animobj["name"],self.curanim)
+							object_manager.animations[self.animobj["name"]].pop(self.curanim)
+							GameManager.loadanims()
+							self.mode = "Objanim"
+
+						
+						um.elements["commandtext"]["text"] = ""
 
 
 
 				for i in self.textsforanim:
-					if GameManager.key["x"] != 0:
-						um.elements[i]["pos"][0] = um.elements[i]["pos"][0] - GameManager.key["x"]/40
+					if GameManager.key["alt-x"] != 0:
+						um.elements[i]["pos"][0] = um.elements[i]["pos"][0] - GameManager.key["alt-x"]/40
 						if str(int(round(object_manager.objects[self.animstr]["gothru"]))) == i.replace("framepoint",""):
 							um.elements[i]["color"] = univars.theme["bright"]
 						else:
 							um.elements[i]["color"] = univars.theme["mid"]
 
-				if GameManager.key["x"] != 0 and not um.state in ["animplaying","newanim"]:
-					um.elements["plusbutton"]["pos"][0] = um.elements["plusbutton"]["pos"][0] - GameManager.key["x"]/10
+				if GameManager.key["alt-x"] != 0 and not um.state in ["animplaying","newanim"]:
+					um.elements["plusbutton"]["pos"][0] = um.elements["plusbutton"]["pos"][0] - GameManager.key["alt-x"]/10
 
 
 
@@ -893,64 +884,64 @@ class TiledSoftwre:
 				self.dostring = 0
 				self.mode = 0
 
-			elif self.mode in ["Objretype","Objtype","Objre-type","Objre type"]:
-				self.altmode(GameManager,object_manager)
-				if not GameManager.event_manager.key[pygame.K_RETURN]:
-					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
-						self.dostring3 = self.dostring3[:-1]
-					else:
-						if GameManager.event_manager.keyb:
-							self.dostring3 += GameManager.event_manager.code
-					self.tm.drawtext2(f"What type do you want to set it's type to?","pixel2.ttf",60,0,0,0,self.theme["semibright"],-0.4,0.9)
-					GameManager.uibox((1170,80),(0.2,-0.6),self.theme[2],400)
-					self.tm.drawtext2(f"{self.dostring3}","pixel2.ttf",60,0,0,0,self.theme["semibright"],-0.4,-0.6)
-					GameManager.blituis(object_manager.sprites[self.dostring][0],(0.2,0.1),(7 * 64,7 * 64),self.rot,1000)
-				else:
-					if not self.dostring3 == "":
-						object_manager.objects[self.dostring][9] = self.dostring3.rstrip()
-						self.mode = 0
+			# elif self.mode in ["Objretype","Objtype","Objre-type","Objre type"]:
+			# 	self.altmode(GameManager,object_manager)
+			# 	if not GameManager.event_manager.key[pygame.K_RETURN]:
+			# 		if GameManager.event_manager.key[pygame.K_BACKSPACE]:
+			# 			self.dostring3 = self.dostring3[:-1]
+			# 		else:
+			# 			if GameManager.event_manager.keyb:
+			# 				self.dostring3 += GameManager.event_manager.code
+			# 		self.tm.drawtext2(f"What type do you want to set it's type to?","pixel2.ttf",60,0,0,0,self.theme["semibright"],-0.4,0.9)
+			# 		GameManager.uibox((1170,80),(0.2,-0.6),self.theme[2],400)
+			# 		self.tm.drawtext2(f"{self.dostring3}","pixel2.ttf",60,0,0,0,self.theme["semibright"],-0.4,-0.6)
+			# 		GameManager.blituis(object_manager.sprites[self.dostring][0],(0.2,0.1),(7 * 64,7 * 64),self.rot,1000)
+			# 	else:
+			# 		if not self.dostring3 == "":
+			# 			object_manager.objects[self.dostring][9] = self.dostring3.rstrip()
+			# 			self.mode = 0
 
-			elif self.mode in ["Objrescale","Objscale","Objre-scale","Objre scale"]:
-				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
-				if not GameManager.event_manager.key[pygame.K_RETURN]:
-					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
-						self.dostring3 = self.dostring3[:-1]
-					else:
-						if GameManager.event_manager.keyb:
-							self.dostring3 += GameManager.event_manager.code
-					GameManager.blituis(object_manager.sprites[self.dostring][0],(0,0.5),(4 * self.dim,4 * self.dim),self.rot,1000)
-					self.tm.drawtext(f"name = {self.dostring}","pixel2.ttf",70,0,0,0,(0,0,0),0,-0.1)
-					self.tm.drawtext2(f"width: {self.dostring3}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,-0.5)
-				else:
-					if not self.dostring3 == "":
-						self.dostring4 = ""
-						self.mode = "Rescaley"
+			# elif self.mode in ["Objrescale","Objscale","Objre-scale","Objre scale"]:
+			# 	GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
+			# 	if not GameManager.event_manager.key[pygame.K_RETURN]:
+			# 		if GameManager.event_manager.key[pygame.K_BACKSPACE]:
+			# 			self.dostring3 = self.dostring3[:-1]
+			# 		else:
+			# 			if GameManager.event_manager.keyb:
+			# 				self.dostring3 += GameManager.event_manager.code
+			# 		GameManager.blituis(object_manager.sprites[self.dostring][0],(0,0.5),(4 * self.dim,4 * self.dim),self.rot,1000)
+			# 		self.tm.drawtext(f"name = {self.dostring}","pixel2.ttf",70,0,0,0,(0,0,0),0,-0.1)
+			# 		self.tm.drawtext2(f"width: {self.dostring3}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,-0.5)
+			# 	else:
+			# 		if not self.dostring3 == "":
+			# 			self.dostring4 = ""
+			# 			self.mode = "Rescaley"
 
-			elif self.mode == "Rescaley":
-				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
-				if not GameManager.event_manager.key[pygame.K_RETURN]:
-					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
-						self.dostring4 = self.dostring4[:-1]
-					else:
-						if GameManager.event_manager.keyb:
-							self.dostring4 += GameManager.event_manager.code
-					GameManager.blituis(object_manager.sprites[self.dostring][0],(0,0.5),(4 * self.dim,4 * self.dim),self.rot,1000)
-					self.tm.drawtext(f"name = {self.dostring}","pixel2.ttf",70,0,0,0,(0,0,0),0,-0.1)
-					self.tm.drawtext2(f"Height: {self.dostring4}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,-0.5)
-				else:
-					if not self.dostring4 == "":
-						object_manager.scaleto(self.dostring,[int(self.dostring3.rstrip()) * self.dim, int(self.dostring4.rstrip()) * self.dim])
-						self.mode = 0
+			# elif self.mode == "Rescaley":
+			# 	GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
+			# 	if not GameManager.event_manager.key[pygame.K_RETURN]:
+			# 		if GameManager.event_manager.key[pygame.K_BACKSPACE]:
+			# 			self.dostring4 = self.dostring4[:-1]
+			# 		else:
+			# 			if GameManager.event_manager.keyb:
+			# 				self.dostring4 += GameManager.event_manager.code
+			# 		GameManager.blituis(object_manager.sprites[self.dostring][0],(0,0.5),(4 * self.dim,4 * self.dim),self.rot,1000)
+			# 		self.tm.drawtext(f"name = {self.dostring}","pixel2.ttf",70,0,0,0,(0,0,0),0,-0.1)
+			# 		self.tm.drawtext2(f"Height: {self.dostring4}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,-0.5)
+			# 	else:
+			# 		if not self.dostring4 == "":
+			# 			object_manager.scaleto(self.dostring,[int(self.dostring3.rstrip()) * self.dim, int(self.dostring4.rstrip()) * self.dim])
+			# 			self.mode = 0
 
-			elif "rend" in self.mode and "true" in self.mode and "Obj" in self.mode:
-				object_manager.objects[self.dostring][6] = 1
-				self.dotring = ""
-				self.mode = "alterobj"
+			# elif "rend" in self.mode and "true" in self.mode and "Obj" in self.mode:
+			# 	object_manager.objects[self.dostring][6] = 1
+			# 	self.dotring = ""
+			# 	self.mode = "alterobj"
 
-			elif "rend" in self.mode and "false" in self.mode and "Obj" in self.mode:
-				object_manager.objects[self.dostring][6] = 0
-				self.dotring = ""
-				self.mode = "alterobj"
+			# elif "rend" in self.mode and "false" in self.mode and "Obj" in self.mode:
+			# 	object_manager.objects[self.dostring][6] = 0
+			# 	self.dotring = ""
+			# 	self.mode = "alterobj"
 
 			else:
 				if not self.commmandtring.rstrip() in ["Com","Obj"]:
@@ -1028,7 +1019,7 @@ class TiledSoftwre:
 
 	def showinput(self,GameManager):
 		GameManager.uibox((190,190),(-0.8,-0.5),univars.theme["dark"],200)
-		GameManager.uibox((50,50),[-0.8 + GameManager.key["x"]/18,-0.5 + GameManager.key["y"]/12],univars.theme["accent"],200)
+		GameManager.uibox((50,50),[-0.8 + GameManager.key["alt-x"]/18,-0.5 + GameManager.key["y"]/12],univars.theme["accent"],200)
 		GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
 
 		# GameManager.uibox((190,190),(-0.5,-0.5),univars.theme["dark"],200)

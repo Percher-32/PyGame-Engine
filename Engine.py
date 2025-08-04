@@ -56,7 +56,8 @@ class Game(Gamemananager.GameManager):
 	def commence(self):
 		# self.wait("intro",1)
 		# self.maxbg = [univars.realscreeen.get_width(),univars.realscreeen.get_height()]
-		# um.addrect(self.maxbg,["default","test2","gameplay"],(0,0),"bg2",univars.theme["dark"],255)
+		# um.addrect(self.maxbg,["default","test2","gameplay"],
+		# (0,0),"bg2",univars.theme["dark"],255)
 		# um.addrect([univars.realscreeen.get_width() - 200,0],["default","test2","gameplay"],(0,0),"bg",univars.theme["mid"],100)
 		# um.addbutton((100,50),["default","test2","gameplay"],(0,-2),
 		# "playbutton",univars.theme["dark"],255)
