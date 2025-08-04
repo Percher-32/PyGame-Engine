@@ -423,8 +423,6 @@ class TiledSoftwre:
 				else:
 					object_manager.loadtilemap(self.savestring.rstrip())
 					self.loadingmap = True
-					camera.x = 0
-					camera.y = 0
 					self.mode = 0
 
 			elif self.mode == 4:
@@ -586,7 +584,7 @@ class TiledSoftwre:
 				self.animobj = object_manager.objects[self.animstr]
 				um.addrect([2000,2000],["anim","animplaying","newanim"],[0,0],"animbg",color = univars.theme["dark"])
 				um.addrect([64 * 2.4,64 * 2.4],["anim","animplaying","newanim"],[2,0.7],"animspriteuibox",color=univars.theme["semibright"])
-				um.addrect([64 * 2,64 * 2],["anim","animplaying","newanim"],[2,0.7],"animspriteui",surf = self.animobj["name"],sn = self.animobj["sn"])
+				um.addrect([64 * 2,64 * 2],["anim","animplaying","newanim"],[2,0.7],"animspriteui",surf = self.animobj["name"],sn = self.animobj["sn"],usesprite=True)
 				self.curanim = None
 				a = -1.1
 				if self.animobj["name"] in object_manager.animations.keys():
@@ -942,6 +940,11 @@ class TiledSoftwre:
 			self.showdatable -= 1 * GameManager.frame_manager.dt
 			
 
+
+
+
+
+
 			if GameManager.publicvariables["showdata"] and self.mode == 0:
 				fulllist = self.spritenames + self.spritenames
 				GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
@@ -980,6 +983,16 @@ class TiledSoftwre:
 			if self.mode == 0 and not GameManager.publicvariables["showdata"]:
 				if GameManager.publicvariables["showinput"]:
 					self.showinput(GameManager)
+
+
+
+
+
+
+
+
+
+					
 		elif GameManager.publicvariables["showinput"]:
 			self.showinput(GameManager)
 

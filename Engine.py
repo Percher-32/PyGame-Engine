@@ -30,7 +30,12 @@ class Game(Gamemananager.GameManager):
 	def onreload(self):
 		self.a = 0
 		bg.addbackground("test2")
-		bg.addbackgrounditem("black","test2",[0,-40]                ,surf = "mount",dimensions=[500*3,250*3],layer = 0.01)
+		# bg.addbackgrounditem("black","test2",[0,-40]                ,surf = "mount",dimensions=[500*3,250*3],layer = 0.1,infiniscroll=True)
+		# bg.addbackgrounditem("black","test2",[0,-40]                ,surf = "mount",dimensions=[500*2.5,250*2.5],layer = 0.2,infiniscroll=True)
+		bg.addbackgrounditem("blacker","test2",[0,1500-500],color=(0,100,200),dimensions=[2000,2000],infiniscroll=1,layer=0.01)
+		bg.addbackgrounditem("blacker","test2",[0,1500-300],color=(0,100,200),dimensions=[2000,2000],infiniscroll=1,layer=0.1)
+		bg.addbackgrounditem("black","test2",[0,-40]                ,surf = "mount",dimensions=[500*2,250*2],layer = 0.1,infiniscroll=True)
+		bg.addbackgrounditem("black","test2",[0,-40]                ,surf = "mount",dimensions=[500*4,250*4],layer = 0.2,infiniscroll=True)
 		
 		if "game" == self.states:
 
@@ -503,7 +508,7 @@ class Game(Gamemananager.GameManager):
 rm = Game(univars.screencol,fm)
 if univars.mode == "opt":
 	def main():
-		rm = Runchinld(univars.screencol,fm)
+		rm = Game(univars.screencol,fm)
 		rm.Run()
 
 	if __name__ == "__main__":

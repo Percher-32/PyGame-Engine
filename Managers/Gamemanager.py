@@ -254,12 +254,6 @@ class GameManager():
 	def ondone(self,name:str) -> bool:
 		return name in self.dons
 
-	def defs(self):
-		sm.update()
-		self.bosh()
-		om.instables = univars.instables
-		cm.setcam("def")
-		self.debug = True
 
 	def bosh(self):
 		"""
@@ -309,6 +303,7 @@ class GameManager():
 		om.instables = univars.instables
 		cm.setcam("def")
 		self.debug = True
+		cm.setcond(cm.currentcam,"size",1)
 		self.loadanims()
 
 	def inputdetect(self):
@@ -369,9 +364,9 @@ class GameManager():
 
 		self.keybind()
 		self.updatetime()
-		univars.update()
 		cm.update()
 		cam.update()
+		univars.update()
 
 	def loadanims(self):
 		for filename in os.listdir("Saved/animations"):

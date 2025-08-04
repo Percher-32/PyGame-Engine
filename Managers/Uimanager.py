@@ -28,16 +28,23 @@ class Uimanager:
 		self.elements[name] = {"name":name,"pos":pos,"type":type}
 		self.sprites.add(ui)
 		
-	def addrect(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = None):
+	def addrect(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = None,usesprite = False):
 		if not surf == None:
-			surf = pygame.image.load(f"Graphics/ui/{surf}.png").convert_alpha()
+			if not usesprite:
+				surf = pygame.image.load(f"Graphics/ui/{surf}.png").convert_alpha()
+			else:
+				surf = univars.func.getsprites(surf)[0]
 		ui = Uielement.Uirect(dimensions,states,pos,name,surf = surf)
 		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"pos":pos,"states":states,"surf":surf,"type":"rect"}
 		self.sprites.add(ui)
 
-	def addbutton(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = None):
+	def addbutton(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = None,usesprite = False):
 		if not surf == None:
-			surf = pygame.image.load(f"Graphics/ui/{surf}.png").convert_alpha()
+			if not usesprite:
+				surf = pygame.image.load(f"Graphics/ui/{surf}.png").convert_alpha()
+			else:
+				surf = univars.func.getsprites(surf)[0]
+				print(surf)
 		ui = Uielement.Uibutton(dimensions,states,pos,name,surf = surf)
 		self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"click":0,"hover":0,"command":[],"pos":pos,"states":states,"surf":surf,"type":"button","dir":{"up":None,"down":None,"left":None,"right":None}}
 		self.sprites.add(ui)

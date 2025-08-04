@@ -26,50 +26,58 @@ class Item(pygame.sprite.Sprite):
         self.pos = pos
         self.startpos = pos
         if infiniscroll:
-            temporary = pygame.Surface((self.dimensions[0] * 3,self.dimensions[1]))
+            temporary = pygame.Surface((self.dimensions[0] * 5,self.dimensions[1]))
             temporary.set_colorkey((0,0,0))
             temporary.blit(surf , (  self.dimensions[0] ,0     )    )
             temporary.blit(surf , (  self.dimensions[0] * 2,0     )    )
             temporary.blit(surf , (  0,0     )    )
-            print(self.dimensions)
-            # temporary.blit(surf , (  0   ,self.dimensions[1]      )    )
-            # temporary.blit(surf , (  self.dimensions[1] * 2   ,self.dimensions[1]      )    )
+            temporary.blit(surf , (  self.dimensions[0] * 4,0     )    )
+            temporary.blit(surf , (  self.dimensions[0] * 3,0     )    )
+            temporary.blit(surf , (  self.dimensions[0] * 5,0     )    )
             self.baseimg = temporary
         else:
             self.baseimg = surf
 
-        
         self.image = self.baseimg
 
-
-        self.rect = self.baseimg.get_rect(center = pos)
+        self.rect = self.image.get_rect(center = pos)
         self.layer = layer
-        self.pastbcs = Cameramod.cam.size
-        self.lastframe = self.baseimg
+        self.lastframe = self.image
         self.cache = {}
         camera = Cameramod.cam
-        self.size = camera.size
-        self.lastcampos = [camera.x,camera.y]
-        self.lastcamsize = camera.size
+        self.size = 1
+        self.lastcampos = [0,0]
+        self.lastcamsize = 1
+        
+
+
+
+
     def update(self):
         
         camera = Cameramod.cam
-        realestsize = round(self.size,4)
+        realestsize = round(self.size,2)
         if univars.camchange or univars.poschange:
             if univars.poschange:
-                self.pos[0] -= (camera.x - self.lastcampos[0])*self.layer
-                self.pos[1] -= (camera.y - self.lastcampos[1])*self.layer
+                if not self.layer == 1:
+                    self.pos[0] -= (camera.x - self.lastcampos[0])*(self.layer)  *  camera.size
+                    self.pos[1] -= (camera.y - self.lastcampos[1])*(self.layer)  *  camera.size
+                else:
+                    self.pos[0] -= (camera.x - self.lastcampos[0])*(self.layer)
+                    self.pos[1] -= (camera.y - self.lastcampos[1])*(self.layer)
                 
             if univars.camchange:
                 self.size += (camera.size - self.lastcamsize)*self.layer
                 # pass
 
-
+            self.lastcampos = [camera.x,camera.y]
+            self.lastcamsize = camera.size
 
 
             if not str(realestsize) in self.cache.keys():
                 self.image =  pygame.transform.scale_by(self.baseimg,  realestsize )
                 self.cache[str(realestsize)] = self.image
+                print("miss")
             else:
                 self.image = self.cache[str(realestsize)]
         else:
@@ -89,8 +97,7 @@ class Item(pygame.sprite.Sprite):
         self.lastrect = self.rect
 
 
-        self.lastcampos = [camera.x,camera.y]
-        self.lastcamsize = camera.size
+       
 
 
 
@@ -109,11 +116,8 @@ class Backgroundmanager:
         self.items[name] = pygame.sprite.Group()
 
     def addbackgrounditem(self,name,backgroundname,pos,alpha = 400,layer = 1,surf=None,infiniscroll = False,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h)):
-        if not infiniscroll:
-            item = Item(name,pos,alpha=alpha,surf=surf,color=color,dimensions=dimensions,layer=layer)
-            self.items[backgroundname].add(item)
-        else:
-            item = Item(name,[pos[0] - dimensions[0],pos[1]],alpha=alpha,surf=surf,color=color,dimensions=dimensions,layer=layer,infiniscroll = infiniscroll)
+        item = Item(name,pos,alpha=alpha,surf=surf,color=color,dimensions=dimensions,layer=layer,infiniscroll=infiniscroll)
+        self.items[backgroundname].add(item)
 
 
     def update(self,screencol):
