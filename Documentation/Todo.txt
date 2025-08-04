@@ -1,25 +1,44 @@
+Key:
+	[X] = DONE
+	[-] = IN-PROGRESS
+
+
+
 IN-ENGINE:
-    [X] - Particle-system
-    [] - Sound system
-    [X] - Fix Animations
-    [] - Particle-editor
-    [] - ui-editor
+	[X] - Particle-system
+	[] - Sound system
+	[X] - Fix Animations
+	[] - Particle-editor:
+		* can save particle presets
+	[] - ui-editor
 
 
 IN-GAME:
-    [] - Dash
-    [] - Tilt on ledges
-    [] - Animations:
-            * falling      []
-            * walljumping  []
-            * ducking      []
-            * in-air       []
-    [] - add particles to moves:
-            *skidding  [-]
-            *impact    []
+	PLAYER:
+		[] - Slopes:
+				* removal of slope no-clip []
+				* preserve momentum        []
 
-    [] - Combat:
-            * normal hit    []
-            * dash hit      []
-            * homing attack []
+		[] - Dash:
+			* dashbaar         []
+			*  ways to fill up []
 
+		[] - Tilt on ledges
+
+		[] - Animations:
+				* falling      []
+				* walljumping  []
+				* ducking      []
+				* in-air       []
+		[-] - add particles to moves:
+				* skidding  [-]
+				* impact    []
+
+		[] - Combat:
+				* normal hit    []
+				* dash hit      []
+				* homing attack []
+
+		[] - Rail-grinding:
+				* fills bar  []
+				* particles  []
