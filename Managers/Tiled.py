@@ -25,7 +25,7 @@ class TiledSoftwre:
 		self.secretword = "404 error"
 		self.screen = screen
 		self.savestring = ""
-		self.savemode = 0
+		self.mode = 0
 		self.sprite = 0
 		self.placable = 0
 		self.rot = 0
@@ -115,8 +115,8 @@ class TiledSoftwre:
 
 
 
-			#savemode for level editing
-			if self.savemode == 0:
+			#mode for level editing
+			if self.mode == 0:
 				if debug:
 					#random
 					if len(self.typelist) < len(self.spritenames):
@@ -305,7 +305,7 @@ class TiledSoftwre:
 							if GameManager.event_manager.key[pygame.K_LCTRL]:
 								self.dostring2 = ""
 								self.dostring = mousecol["obj"][0]
-								self.savemode = "alterobj"
+								self.mode = "alterobj"
 
 						if len(mousecol["inst"]) > 0:
 							a = mousecol["inst"][0]
@@ -318,7 +318,7 @@ class TiledSoftwre:
 							if GameManager.event_manager.key[pygame.K_LCTRL]:
 								self.dostring2 = ""
 								self.dostring = mousecol["inst"][0]
-								self.savemode = "alterinst"
+								self.mode = "alterinst"
 
 
 
@@ -326,7 +326,7 @@ class TiledSoftwre:
 					if GameManager.event_manager.key[pygame.K_l]:
 						if GameManager.event_manager.key[pygame.K_LCTRL]:
 							if self.saveable < 1:
-								self.savemode = 3
+								self.mode = 3
 								self.savestring = ""
 								self.saveable = 10
 
@@ -336,10 +336,10 @@ class TiledSoftwre:
 						if GameManager.event_manager.key[pygame.K_LCTRL]:
 							if self.saveable < 1:
 								if not object_manager.loadedmap == "Null":
-									self.savemode = 2
+									self.mode = 2
 									self.savestring = object_manager.loadedmap
 								else:
-									self.savemode = 1
+									self.mode = 1
 									self.savestring = ""
 								self.saveable = 10
 
@@ -361,7 +361,7 @@ class TiledSoftwre:
 					if GameManager.event_manager.key[pygame.K_b]:
 						if GameManager.event_manager.key[pygame.K_LCTRL]:
 							self.commmandtring = ""
-							self.savemode = "command"
+							self.mode = "command"
 
 
 
@@ -370,7 +370,7 @@ class TiledSoftwre:
 					if GameManager.event_manager.key[pygame.K_b]:
 						if GameManager.event_manager.key[pygame.K_LCTRL]:
 							self.commmandtring = ""
-							self.savemode = "command"
+							self.mode = "command"
 							
 					if GameManager.event_manager.key[pygame.K_v]:
 						if GameManager.event_manager.key[pygame.K_LCTRL]:
@@ -383,8 +383,8 @@ class TiledSoftwre:
 									self.showdata = 1
 									self.showdatable = 10
 
-			#savemode to name save-file
-			elif self.savemode == 1:
+			#mode to name save-file
+			elif self.mode == 1:
 				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
 				if not GameManager.event_manager.key[pygame.K_RETURN]:
 					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
@@ -396,22 +396,22 @@ class TiledSoftwre:
 				else:
 					if not self.savestring == "":
 						if object_manager.savetilemap(self.savestring.rstrip()) == "No":
-							self.savemode = 2
+							self.mode = 2
 						else:
-							self.savemode = 0
+							self.mode = 0
 			
-			#savemode to force-save
-			elif self.savemode == 2:
+			#mode to force-save
+			elif self.mode == 2:
 				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
 				self.tm.drawtext2(f"{self.savestring.rstrip()} already exists do you want to replace it Y/N","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
 				if GameManager.event_manager.keyb:
 					if GameManager.event_manager.code == "y":
 						object_manager.forcesavetilemap(self.savestring.rstrip())
-						self.savemode = 0
+						self.mode = 0
 					else:
-						self.savemode = 0
+						self.mode = 0
 
-			elif self.savemode == 3:
+			elif self.mode == 3:
 				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
 				if not GameManager.event_manager.key[pygame.K_RETURN]:
 					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
@@ -425,9 +425,9 @@ class TiledSoftwre:
 					self.loadingmap = True
 					camera.x = 0
 					camera.y = 0
-					self.savemode = 0
+					self.mode = 0
 
-			elif self.savemode == 4:
+			elif self.mode == 4:
 					GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
 					if not GameManager.event_manager.key[pygame.K_RETURN]:
 						if GameManager.event_manager.key[pygame.K_BACKSPACE]:
@@ -439,11 +439,11 @@ class TiledSoftwre:
 					else:
 						if not self.chunksave == "":
 							if object_manager.savetilemap(self.savestring.rstrip(),self.chunksave.rstrip()) == "No":
-								self.savemode = 2
+								self.mode = 2
 							else:
-								self.savemode = 0
+								self.mode = 0
 
-			elif self.savemode == "command":
+			elif self.mode == "command":
 				GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
 				if not GameManager.event_manager.key[pygame.K_RETURN]:
 					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
@@ -454,77 +454,80 @@ class TiledSoftwre:
 					self.tm.drawtext2(f"Input a command: {self.commmandtring}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.95,-0.9)
 				else:
 					self.dostring = ""
-					self.savemode = "Com" + self.commmandtring.rstrip()
+					self.mode = "Com" + self.commmandtring.rstrip()
 
-			elif self.savemode == "Comcamera" or self.savemode == "Comcam":
+			elif self.mode == "Comcamera" or self.mode == "Comcam":
 				a = self.commandline(GameManager,self.dostring,"What Camera X:")
 				if not a == self.secretword:
 					self.dostring = a
 				else:
 					self.dostring2 = ""
 					Cammanager.camager.setcond("def","posx",float(self.dostring.rstrip()))
-					self.savemode = "camy"
+					self.mode = "camy"
 
-			elif self.savemode == "camy":
+			elif self.mode == "camy":
 				a = self.commandline(GameManager,self.dostring2,"What Camera Y:")
 				if not a == self.secretword:
 					self.dostring2 = a
 				else:
 					Cammanager.camager.setcond(Cammanager.camager.currentcam,"posy",-1 * float(self.dostring2.rstrip()))
-					self.savemode = 0
+					self.mode = 0
 
-			elif self.savemode == "Comspeed":
+			elif self.mode == "Comspeed":
 				a = self.commandline(GameManager,self.dostring,"What Speed ?:")
 				if not a == self.secretword:
 					self.dostring = a
 				else:
 					object_manager.speed = float(self.dostring.rstrip())
-					self.savemode = 0
+					self.mode = 0
 
-			elif "show" in self.savemode and "all" in self.savemode and "col" in self.savemode and "Com" in self.savemode:
+			elif "show" in self.mode and "all" in self.mode and "col" in self.mode and "Com" in self.mode:
 				object_manager.showcolist = "all"
-				self.savemode = 0
+				self.mode = 0
 
-			elif "all" in self.savemode and "hide" in self.savemode and "col" in self.savemode and "Com" in self.savemode:
+			elif "all" in self.mode and "hide" in self.mode and "col" in self.mode and "Com" in self.mode:
 				object_manager.showcolist = []
-				self.savemode = 0
+				self.mode = 0
 
-			elif "all" in self.savemode and "hide" in self.savemode and "rend" in self.savemode and "Com" in self.savemode:
+			elif "all" in self.mode and "hide" in self.mode and "rend" in self.mode and "Com" in self.mode:
 				object_manager.showall = False
-				self.savemode = 0
+				self.mode = 0
 
-			elif "all" in self.savemode and "show" in self.savemode and "rend" in self.savemode and "Com" in self.savemode:
+			elif "all" in self.mode and "show" in self.mode and "rend" in self.mode and "Com" in self.mode:
 				object_manager.showall = True
-				self.savemode = 0
+				self.mode = 0
 
-			elif "tile" in self.savemode and "Com" in self.savemode:
+			elif "tile" in self.mode and "Com" in self.mode:
 				object_manager.tile()
-				self.savemode = 0
+				self.mode = 0
 
 								
-			elif self.savemode == "alterobj":
+			elif self.mode == "alterobj":
 				GameManager.uibox((400,self.realscreeen.get_height() - 200),(-0.75,0.15),self.theme["dark"] ,400)
 				b = self.dostring
 				Cammanager.camager.setcond("def","pos",   univars.func.lerp(Cammanager.camager.getcam("def","pos")   ,b.info["pos"],4)    )
 				Cammanager.camager.setcond("def","size",   univars.func.lerp(Cammanager.camager.getcam("def","size"),((max(b.info["size"])/dim)),4)    )
 				GameManager.blituis(b.image,(-0.8,0.7),(3 * 64,3 * 64),self.rot,1000)
-				self.tm.drawtext2(f"pos = {b.info['pos']}\nId = {b.name}\nName = {b.info['name']}\nSize = {b.info['size']}\nRot = {b.info['rot']}\nType = {b.info['type']}\nRender = {bool(b.info['rendercond'])}","pixel2.ttf",40,0,0,0,self.theme["bright"],-0.9,0.2)
+				strbuf = ""
+				for i in b.info.keys():
+					strbuf += f"{i} = {b.info[i]}\n"
+				self.tm.drawtext2(strbuf,"pixel2.ttf",40,0,0,0,self.theme["bright"],-0.9,0.2)
 				if b.name in object_manager.values.keys():
 					off = 0
 					for i in object_manager.values[b.name].keys():
 						self.tm.drawtext2(f"{i} : {object_manager.values[b.name][i]}"                                                                                                                             ,"pixel2.ttf",40,0,0,0,self.theme["bright"],-0.9,(-1 * 0.08 * off) - 0.3)
 						off += 1
 				else:
-					self.tm.drawtext(f"no variables"                                                                                                                                                              ,"pixel2.ttf",40,0,0,0,self.theme["bright"],-0.8,-0.2)
+					self.tm.drawtext2(f"no variables"                                                                                                                                                              ,"pixel2.ttf",40,0,0,0,self.theme["bright"],-0.9,                   -0.3)
 					
 
 				if not self.textline(GameManager,self.dostring2,f"what command for object {b.name}:")== self.secretword:
 					self.dostring2 = self.textline(GameManager,self.dostring2,f"what command for object {b.name}:")
 				else:
-					self.savemode = "Obj" + self.dostring2.rstrip()
+					self.mode = "Obj" + self.dostring2.rstrip()
 
-			elif "Objvar:" in self.savemode:
-				st = self.savemode.rstrip()
+			elif "Objvar:" in self.mode:
+				st = self.mode.rstrip()
 				st = st.strip()
 				st = st.replace("Objvar:", "")
 				varname = ""
@@ -541,60 +544,42 @@ class TiledSoftwre:
 				varname = str(varname)
 				varlue = eval(str(varlue))
 				object_manager.set_value(self.dostring.name,varname,varlue)
-				self.savemode = "alterobj"
+				self.mode = "alterobj"
 				self.dostring2 = ""
 
-			elif "Objdelvar:" in self.savemode:
-				st = self.savemode.rstrip()
+			elif "Objdelvar:" in self.mode:
+				st = self.mode.rstrip()
 				st = st.strip()
 				st = st.replace("Objdelvar:", "")
 				varname = st
 				if self.dostring.name in object_manager.values.keys():
 					if varname in object_manager.values[self.dostring.name].keys():
 						object_manager.values[self.dostring.name].pop(varname)
-				self.savemode = "alterobj"
+				self.mode = "alterobj"
 				self.dostring2 = ""
 		
-			elif "Objpos:" in self.savemode:
-				st = self.savemode.rstrip()
+			elif "Obj" in self.mode and "=" in self.mode:
+				st = self.mode.rstrip()
+				st = st.replace("Obj","")
 				st = st.strip()
-				st = st.replace("Objpos:[", "")
-				st = st.replace("]", "")
-				st = st.strip()
-				varname = st
-				x = []
-				y = []
-				gate = 0
-				for i in st:
-					if gate:
-						x.append(int(i))
-					if not i == "," and not gate:
-						y.append(int(i))
-					else:
-						gate = 1
-				xnum = int(''.join(str(i) for i in x))
-				ynum = int(''.join(str(i) for i in y))
-				object_manager.objects[self.dostring.name]["pos"] = [xnum,ynum]
-				self.savemode = "alterobj"
-				self.dostring2 = ""
-
-
-			elif "Objrot:" in self.savemode:
-				st = self.savemode.rstrip()
-				st = st.strip()
-				st = st.replace("Objrot:", "")
-				st = st.strip()
-				varname = int(st)
-				object_manager.objects[self.dostring.name]["rot"] = varname
-				self.savemode = "alterobj"
-				self.dostring2 = ""
+				st = st.split("=")
+				try:
+					if st[0] in object_manager.objects[self.dostring.name].keys():
+						object_manager.objects[self.dostring.name][st[0]] = eval(st[1])
+						self.mode = "alterobj"
+						self.dostring2 = ""
+				except:
+					self.mode = "alterobj"
+					self.dostring2 = ""
 
 
 
-			elif self.savemode == "Objanim":
+
+
+			elif self.mode == "Objanim":
 				self.buttonsforanim = []
 				self.textsforanim = []
-				self.savemode = "animate"
+				self.mode = "animate"
 				self.showdata = False
 				um.state = "anim"
 				self.animstr = self.dostring.name
@@ -633,7 +618,7 @@ class TiledSoftwre:
 				self.textsfornewanim = []
 
 
-			elif self.savemode == "animate":
+			elif self.mode == "animate":
 
 
 				def showanim(anim,states):
@@ -708,7 +693,7 @@ class TiledSoftwre:
 					um.deleleelem(self.buttonsforanim)
 					self.curanim = None
 					um.state = "def"
-					self.savemode = 0
+					self.mode = 0
 					self.showdata = 1
 				
 
@@ -745,7 +730,7 @@ class TiledSoftwre:
 
 							if self.snts.rstrip() == "/x":
 								GameManager.loadanims()
-								self.savemode = "Objanim"
+								self.mode = "Objanim"
 
 							if "delfr:" in self.snts.rstrip():
 								self.snts = self.snts.rstrip()
@@ -758,7 +743,7 @@ class TiledSoftwre:
 								object_manager.deleteanim(self.animobj["name"],self.curanim)
 								object_manager.animations[self.animobj["name"]].pop(self.curanim)
 								GameManager.loadanims()
-								self.savemode = "Objanim"
+								self.mode = "Objanim"
 
 						except:
 							pass
@@ -797,7 +782,7 @@ class TiledSoftwre:
 
 							if self.snts.rstrip() == "/x":
 								GameManager.loadanims()
-								self.savemode = "Objanim"
+								self.mode = "Objanim"
 
 							if "del:" in self.snts.rstrip():
 								self.snts = self.snts.rstrip()
@@ -810,7 +795,7 @@ class TiledSoftwre:
 								object_manager.deleteanim(self.animobj["name"],self.curanim)
 								object_manager.animations[self.animobj["name"]].pop(self.curanim)
 								GameManager.loadanims()
-								self.savemode = "Objanim"
+								self.mode = "Objanim"
 
 
 							
@@ -840,23 +825,23 @@ class TiledSoftwre:
 			# if "addbg:" in self.commmandtring.rstrip():
 			# 	bg.addbackground(self.commmandtring.rstrip().replace("addbg:", ""))
 			# 	self.comm = True
-			# 	self.savemode = 0
+			# 	self.mode = 0
 			elif "setbg:" in self.commmandtring.rstrip():
 				bg.background = self.commmandtring.rstrip().replace("setbg:", "")
 			elif "savebg" in self.commmandtring.rstrip():
 				bg.savebg()
 				self.comm = True
-				self.savemode = 0
+				self.mode = 0
 			elif "state:" in self.commmandtring.rstrip():
 				self.cht = self.commmandtring.rstrip().replace("state:", "")
 				self.comm = True
-				self.savemode = 0
+				self.mode = 0
 			elif "find:" in self.commmandtring.rstrip():
 				self.cht = self.commmandtring.rstrip().replace("find:", "")
 				self.dostring = object_manager.objfromid(self.cht)
 				if not self.dostring == None:
 					self.dostring2 = ""
-					self.savemode = "alterobj"
+					self.mode = "alterobj"
 				self.commmandtring = ""
 			elif "delete:" in self.commmandtring.rstrip():
 				self.cht = self.commmandtring.rstrip().replace("delete:", "")
@@ -880,12 +865,12 @@ class TiledSoftwre:
 
 
 
-			elif self.savemode == "Objinst":
+			elif self.mode == "Objinst":
 				self.om.instables.append(self.om.objects[self.dostring.name]["name"])
 				self.dostring = 0
-				self.savemode = 0
+				self.mode = 0
 
-			elif self.savemode in ["Objretype","Objtype","Objre-type","Objre type"]:
+			elif self.mode in ["Objretype","Objtype","Objre-type","Objre type"]:
 				self.altmode(GameManager,object_manager)
 				if not GameManager.event_manager.key[pygame.K_RETURN]:
 					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
@@ -900,9 +885,9 @@ class TiledSoftwre:
 				else:
 					if not self.dostring3 == "":
 						object_manager.objects[self.dostring][9] = self.dostring3.rstrip()
-						self.savemode = 0
+						self.mode = 0
 
-			elif self.savemode in ["Objrescale","Objscale","Objre-scale","Objre scale"]:
+			elif self.mode in ["Objrescale","Objscale","Objre-scale","Objre scale"]:
 				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
 				if not GameManager.event_manager.key[pygame.K_RETURN]:
 					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
@@ -916,9 +901,9 @@ class TiledSoftwre:
 				else:
 					if not self.dostring3 == "":
 						self.dostring4 = ""
-						self.savemode = "Rescaley"
+						self.mode = "Rescaley"
 
-			elif self.savemode == "Rescaley":
+			elif self.mode == "Rescaley":
 				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
 				if not GameManager.event_manager.key[pygame.K_RETURN]:
 					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
@@ -932,21 +917,21 @@ class TiledSoftwre:
 				else:
 					if not self.dostring4 == "":
 						object_manager.scaleto(self.dostring,[int(self.dostring3.rstrip()) * self.dim, int(self.dostring4.rstrip()) * self.dim])
-						self.savemode = 0
+						self.mode = 0
 
-			elif "rend" in self.savemode and "true" in self.savemode and "Obj" in self.savemode:
+			elif "rend" in self.mode and "true" in self.mode and "Obj" in self.mode:
 				object_manager.objects[self.dostring][6] = 1
 				self.dotring = ""
-				self.savemode = "alterobj"
+				self.mode = "alterobj"
 
-			elif "rend" in self.savemode and "false" in self.savemode and "Obj" in self.savemode:
+			elif "rend" in self.mode and "false" in self.mode and "Obj" in self.mode:
 				object_manager.objects[self.dostring][6] = 0
 				self.dotring = ""
-				self.savemode = "alterobj"
+				self.mode = "alterobj"
 
 			else:
 				if not self.commmandtring.rstrip() in ["Com","Obj"]:
-					self.savemode = 0
+					self.mode = 0
 
 
 			self.placable -= 1 * GameManager.frame_manager.dt
@@ -957,7 +942,7 @@ class TiledSoftwre:
 			self.showdatable -= 1 * GameManager.frame_manager.dt
 			
 
-			if GameManager.publicvariables["showdata"] and self.savemode == 0:
+			if GameManager.publicvariables["showdata"] and self.mode == 0:
 				fulllist = self.spritenames + self.spritenames
 				GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
 				self.tm.drawtext(f"Camera-name : {cm.currentcam}"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.6,-0.9)
@@ -992,7 +977,7 @@ class TiledSoftwre:
 				GameManager.frame_manager.showfps = 0
 
 			#show input
-			if self.savemode == 0 and not GameManager.publicvariables["showdata"]:
+			if self.mode == 0 and not GameManager.publicvariables["showdata"]:
 				if GameManager.publicvariables["showinput"]:
 					self.showinput(GameManager)
 		elif GameManager.publicvariables["showinput"]:

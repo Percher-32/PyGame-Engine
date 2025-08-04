@@ -17,7 +17,7 @@ class Particlemanager:
 		"""
 
 
-	def particlespawn(self,type,pos,divergence,color,initvel,force,size,sizedec,dim = None,alpha=1000,alphadec=0,colordec = 0,quality = 1,divergenceforce = [[0,0],[0,0]],divergencepos = [[0,0],[0,0]]):
+	def particlespawn(self,type,pos,divergence,color,initvel,force,size,sizedec,dim = None,alpha=1000,alphadec=0,colordec = 0,quality = 1,divergenceforce = [[0,0],[0,0]],divergencepos = [[0,0],[0,0]],ntimes =1):
 		"""
 			spawns particles\n
 
@@ -43,10 +43,10 @@ class Particlemanager:
 			pos = where to spawn  [x,y]\n
 			
 		"""
-		for i in range(10):
-			newinitvel = initvel
-			newforce = force
-			newpos = pos
+		for _ in range(ntimes):
+			newinitvel = [initvel[0],initvel[1]]
+			newforce = [force[0],force[1]]
+			newpos = [pos[0],pos[1]]
 			newinitvel[0] += random.randint(divergence[0][0],divergence[0][1])
 			newinitvel[1] += random.randint(divergence[1][0],divergence[1][1])
 			newforce[0] += random.randint(divergenceforce[0][0],divergenceforce[0][1])

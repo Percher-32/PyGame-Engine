@@ -67,7 +67,7 @@ class Game(Gamemananager.GameManager):
 
 	def update(self):
 		bg.background = "test2"
-		pm.particlespawn("circle",[0,0],[[-5,5],[-5,5]],(0,100,255),[0,0],[-1,-1],5,0.1,alpha=300,alphadec=10,divergencepos=[[-1000,1000],[0,0]])
+		# pm.particlespawn("circle",[0,0],[[-5,5],[-5,5]],(0,100,255),[0,0],[0,-1],5,0.001,alpha=300,alphadec=4,divergencepos=[[-1000,1000],[0,0]],ntimes=1)
 		
 
 
