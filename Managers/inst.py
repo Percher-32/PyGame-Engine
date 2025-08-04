@@ -78,6 +78,11 @@ class inst(pygame.sprite.Sprite):
 		self.lastframe = self.image
 		self.lastrect = self.rect
 
+
+
+objcache = {}
+
+
 class obj(pygame.sprite.Sprite):
 	def __init__(self,name:str,info:dict,sprites):
 		pygame.sprite.Sprite.__init__(self)
@@ -111,8 +116,19 @@ class obj(pygame.sprite.Sprite):
 				b = sprite
 
 				b.set_alpha(self.info["alpha"])
-				ext =  abs(dim * math.sin(self.info["rot"]/28.6 ))/2  * 0
-				b = pygame.transform.scale(b,[self.info["size"][0] * camera.size + (ext) ,self.info["size"][1] * camera.size + (ext) ])
+
+				scale = [round(camera.size * self.info["sizen"][0] ,1)* self.info["size"][0],round(camera.size * self.info["sizen"][1],1 )* self.info["size"][1]]
+
+				if not str((self.name,scale)) in objcache: 
+					b = pygame.transform.scale(b,scale)
+					objcache[str((self.name,scale))] = b
+
+				else:
+					b = objcache[str((self.name,scale))]
+				
+
+
+
 				b = pygame.transform.rotate(b,self.info["rot"])
 				self.image = b
 				self.rect = self.image.get_rect(topleft = ( ((pos[0] - camera.x) * round(camera.size,2)) + univars.screen.get_width()//2 - b.get_width()/2 ,(    ((pos[1] - camera.y) * round(camera.size,2)))        + univars.screen.get_height()//2 - b.get_height()/2))
