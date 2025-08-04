@@ -112,7 +112,7 @@ class TiledSoftwre:
 			self.comm = False
 			self.loadingmap = False
 			self.dim = dim
-
+			# um.addbutton([300,300],"all",[0,0],"srbiunp",color=(200,200,200))
 
 
 			#mode for level editing

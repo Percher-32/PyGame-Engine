@@ -352,15 +352,19 @@ class GameManager():
 		univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid ,renderwid )),(0,-1 * renderwid//4))
 		
 
+		#runs editor
+		Tiled.Run(self.publicvariables["debug-mode"],univars.camspeeed,self,cam,self.dim,self.publicvariables["leveledit"],cm,sm.state)
 
 		#renders ui
 		self.pauseui = True
+		um.update(em,self.publicvariables,self.key["axis"],self.dt)
 		um.sprites.draw(univars.realscreeen)
 		self.pauseui = False
 
 
-		#runs editoe
-		Tiled.Run(self.publicvariables["debug-mode"],univars.camspeeed,self,cam,self.dim,self.publicvariables["leveledit"],cm,sm.state)
+
+
+
 
 		self.keybind()
 		self.updatetime()
