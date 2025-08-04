@@ -77,7 +77,6 @@ class Item(pygame.sprite.Sprite):
             if not str(realestsize) in self.cache.keys():
                 self.image =  pygame.transform.scale_by(self.baseimg,  realestsize )
                 self.cache[str(realestsize)] = self.image
-                print("miss")
             else:
                 self.image = self.cache[str(realestsize)]
         else:

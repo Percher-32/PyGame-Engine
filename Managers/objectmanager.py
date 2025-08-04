@@ -441,8 +441,6 @@ class object_manager:
 				self.set_value(id,"#flipped",dir)
 
 	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen , keepprev = False):
-		if not keepprev:
-			self.remove(list(pos))
 		if not type in self.renderinst:
 			if not type in self.aplhainst.keys():
 				alp = 400
@@ -454,8 +452,9 @@ class object_manager:
 			spritelist = self.spritecache[str([name,sizen])]
 		else:
 			temp = univars.func.getsprites(name)[0]
-			spritelist = univars.func.getspritesscale(name,[temp.get_width() * sizen[0],temp.get_height() * sizen[1]])
+			spritelist = univars.func.getspritesscale(name,[temp.get_width(),temp.get_height()])
 			self.spritecache[str([name,sizen])] = spritelist
+
 		newt = inst.inst(self.screen,self.grandim,name,pos[0],pos[1],rot,sizen,univars.lumptype.get(name,name),alp,spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]])
 		name = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
 		if name in self.instances.keys():
@@ -472,6 +471,9 @@ class object_manager:
 			pos[0] += univars.offsets[sprites][0]
 			pos[1] -= univars.offsets[sprites][1]
 		pos = tuple(pos)
+		
+		if not keepprev:
+			self.remove(pos)
 
 		if not sprites in self.instables:
 			layer = 0
@@ -480,8 +482,6 @@ class object_manager:
 			
 
 
-			if not keepprev:
-				self.remove(pos)
 			self.tracker += 1
 			if str([sprites,sizen]) in list(self.spritecache.keys()):
 				spritelist = self.spritecache[str([sprites,sizen])]

@@ -54,6 +54,7 @@ class inst(pygame.sprite.Sprite):
 			return False
 
 	def update(self, camera,dim:int,showall):
+		# print(self.size)
 		if univars.camchange or univars.poschange:
 			realestsize = [round(self.size[0] * abs(camera.size),2),round(self.size[1] * abs(camera.size),2)]
 			if not str([self.name,realestsize]) in spritecache.keys():
