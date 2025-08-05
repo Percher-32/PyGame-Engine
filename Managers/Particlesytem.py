@@ -20,7 +20,7 @@ class Particlemanager:
 
 
 
-	def savebluprint(self,name,type,pos,divergence,color,initvel,force,size,sizedec,dim = None,alpha=1000,alphadec=0,colordec = 0,quality = 1,divergenceforce = [[0,0],[0,0]],divergencepos = [[0,0],[0,0]],ntimes =1,speed = 1):
+	def savebluprint(self,name,type,divergence,color,initvel,force,size,sizedec,dim = None,alpha=1000,alphadec=0,colordec = 0,quality = 1,divergenceforce = [[0,0],[0,0]],divergencepos = [[0,0],[0,0]],ntimes =1,speed = 1):
 		"""
 			Save particle bluprint\n
 
@@ -49,7 +49,7 @@ class Particlemanager:
 			pos = where to spawn  [x,y]\n
 			
 		"""
-		tosave = {"type":type,"pos":pos,"divergence":divergence,"color":color,"initvel":initvel,"force":force,"size":size,"sizedec":sizedec,"dim":dim,"alpha":alpha,"alphadec":alphadec,"colordec":colordec,"quality":quality,"divergenceforce":divergenceforce,"divergencepos":divergencepos,"ntimes":ntimes,"speed":speed}
+		tosave = {"type":type,"divergence":divergence,"color":color,"initvel":initvel,"force":force,"size":size,"sizedec":sizedec,"dim":dim,"alpha":alpha,"alphadec":alphadec,"colordec":colordec,"quality":quality,"divergenceforce":divergenceforce,"divergencepos":divergencepos,"ntimes":ntimes,"speed":speed}
 		with open(f"Saved/particles/{name}.json","w") as file:
 			json.dump(tosave,file)
 		self.bluprints[name] = tosave
@@ -64,9 +64,9 @@ class Particlemanager:
 				self.bluprints[i.replace(".json","")] = json.load(file)
 
 
-	def particlespawnbluprint(self,name):
+	def particlespawnbluprint(self,pos,name):
 		use = self.bluprints[name]
-		self.particlespawn(use["type"],use["pos"],use["divergence"],
+		self.particlespawn(use["type"],pos,use["divergence"],
 							use["color"],use["initvel"],use["force"],
 							use["size"],use["sizedec"],dim = use["dim"],
 							alpha = use["alpha"],alphadec=use["alphadec"],

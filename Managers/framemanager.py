@@ -16,10 +16,15 @@ class frame_manager:
 
 	def next(self,fps):
 		self.fps = fps
-		self.lastdts.append((time.time() - self.lasttime) * 60)
-		self.dt = sum(self.lastdts)/len(self.lastdts)
-		if len(self.lastdts) > univars.maxfpsbuffersize:
-			self.lastdts.pop(0)
+		# self.lastdts.append()
+		self.dt = (time.time() - self.lasttime) * 60
+		# if len(self.lastdts) > univars.maxfpsbuffersize:
+		# 	self.lastdts.pop(0)
+
+		if self.dt > 2:
+			self.dt = 2
+		if self.dt < 1:
+			self.dt = 1
 
 		self.lasttime = time.time()
 		clock = pygame.time.Clock()

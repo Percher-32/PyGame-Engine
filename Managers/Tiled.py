@@ -49,6 +49,7 @@ class TiledSoftwre:
 		self.loadedparticle = "testone"
 		self.actuallyload = True
 		self.keydelay = 0
+		self.newparticle = None
 		self.cht = univars.startstate
 		self.loadingmap = False
 		self.spritenames = univars.func.allsprites()
@@ -837,26 +838,63 @@ class TiledSoftwre:
 						um.elements["plusbutton"]["pos"][0] = um.elements["plusbutton"]["pos"][0] - GameManager.key["alt-x"]/10
 
 
+
+
+
+
+
+
+
+
+
+
 			elif self.mode == "Particle-edit":
 				
 				um.state = "particle-edit"
 				self.showdata = False
-				if self.actuallyload:
-					pm.particlespawnbluprint(self.loadedparticle)
-					use = pm.bluprints[self.loadedparticle]
-				else:
-					use = self.parts
-					pm.particlespawn(use["type"],use["pos"],use["divergence"],
-									use["color"],use["initvel"],use["force"],
-									use["size"],use["sizedec"],dim = use["dim"],
-									alpha = use["alpha"],alphadec=use["alphadec"],
-									colordec=use["colordec"],quality=use["quality"],
-									divergenceforce=use["divergenceforce"],
-									divergencepos=use["divergencepos"],
-									ntimes=use["ntimes"],
-									speed=use["speed"])
+				use = self.parts
+				pm.particlespawn(use["type"],cam[0],use["divergence"],
+								use["color"],use["initvel"],use["force"],
+								use["size"],use["sizedec"],dim = use["dim"],
+								alpha = use["alpha"],alphadec=use["alphadec"],
+								colordec=use["colordec"],quality=use["quality"],
+								divergenceforce=use["divergenceforce"],
+								divergencepos=use["divergencepos"],
+								ntimes=use["ntimes"],
+								speed=use["speed"])
 				um.elements["loadedbluprint"]["text"] = "Loaded:" + self.loadedparticle
-				um.elements["particledata"]["text"] = f"type:{use['type']} \npos:{use['pos']} \ndivvel:{use['divergence']} \ncol:{use['color']} \nforce:{use['force']} \nsize:{use['size']} \nsizedec:{use['sizedec']} \ndim:{use['dim']}"
+				um.elements["particledata"]["text"] = f"type:{use['type']} \ndivvel:{use['divergence']} \ncol:{use['color']} \nforce:{use['force']} \nsize:{use['size']} \nsizedec:{use['sizedec']} \ndim:{use['dim']}"
+				self.uitext("particlecommandtext",GameManager)
+				if GameManager.em.key[pygame.K_RETURN]:
+					text = um.elements["particlecommandtext"]["text"].rstrip()
+					if "load:" in text:
+						self.loadedparticle = text.replace("load:","").strip()
+						self.parts = pm.bluprints[self.loadedparticle]
+					if text == "new" :
+						self.loadedparticle = None
+						self.actuallyload = False
+					if "=" in text:
+						text = text.split("=")
+						val = text[0].replace(" ","")
+						if not val == "name":
+							newvalue = text[1].replace(" ","")
+							if val in use.keys():
+								use[val] = newvalue
+						else:
+							self.loadedparticle = newvalue
+							self.newparticle = newvalue
+					if text == "save":
+						pm.savebluprint(use["type"],cam[0],use["divergence"],
+										use["color"],use["initvel"],use["force"],
+										use["size"],use["sizedec"],dim = use["dim"],
+										alpha = use["alpha"],alphadec=use["alphadec"],
+										colordec=use["colordec"],quality=use["quality"],
+										divergenceforce=use["divergenceforce"],
+										divergencepos=use["divergencepos"],
+										ntimes=use["ntimes"],
+										speed=use["speed"])
+						pm.loadallbluprints()
+						self.parts = pm.bluprints[self.loadedparticle]
 
 
 
@@ -896,9 +934,10 @@ class TiledSoftwre:
 			elif "particle" in self.commmandtring.rstrip():
 				self.mode = "Particle-edit"
 				um.addrect((univars.screen_w + 500,200),["particle-edit"],[0,-1],"particle_edit_hud",color = univars.theme["dark"])
-				um.addrect((300,2000),["particle-edit"],[-0.9,0],"particle_edit_side_bar",color = univars.theme["dark"])
+				um.addrect((500,2000),["particle-edit"],[-0.9,0],"particle_edit_side_bar",color = univars.theme["dark"])
 				um.addtext("loadedbluprint","Loaded:None",univars.defont,[-0.97,0.8],univars.theme["semibright"],30,["particle-edit"],center=False)
 				um.addtext("particledata","",univars.defont,[-0.97,0.75],univars.theme["semibright"],30,["particle-edit"],center=False)
+				um.addtext("particlecommandtext","command:",univars.defont,[-0.98,-0.9],univars.theme["bright"],40,["particle-edit"],center = False)
 
 
 
