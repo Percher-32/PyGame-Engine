@@ -1,6 +1,6 @@
 # Pygame Engine
 ## What is it?
- A game engine the runs mainly on pygame to render objects
+ A game engine Framework the runs mainly on pygame to render objects,handle events and sound
 
  ## files in /managers:
  ### Engine.py - this is what you run

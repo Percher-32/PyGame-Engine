@@ -138,6 +138,7 @@ class TiledSoftwre:
 			#mode for level editing
 			if self.mode == 0:
 				if debug:
+					um.state = "def"
 					#random
 					if len(self.typelist) < len(self.spritenames):
 						for i in range(len(self.spritenames) - len(self.typelist)):
@@ -857,6 +858,8 @@ class TiledSoftwre:
 				self.uitext("particlecommandtext",GameManager)
 				if GameManager.em.key[pygame.K_RETURN]:
 					text = um.elements["particlecommandtext"]["text"].rstrip()
+					if text == "/x":
+						self.mode = 0
 					if "load:" in text:
 						self.loadedparticle = text.replace("load:","").strip()
 						self.parts = pm.bluprints[self.loadedparticle]
