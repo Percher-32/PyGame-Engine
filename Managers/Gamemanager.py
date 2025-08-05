@@ -305,6 +305,9 @@ class GameManager():
 		em.running = False
 
 	def defs(self):
+		"""
+			automatically happens on reload
+		"""
 		sm.update()
 		self.bosh()
 		bg.loadbg()
@@ -313,7 +316,7 @@ class GameManager():
 		self.debug = True
 		cm.setcond(cm.currentcam,"size",1)
 		self.loadanims()
-
+		pm.loadallbluprints()
 	def inputdetect(self):
 		em.next()
 

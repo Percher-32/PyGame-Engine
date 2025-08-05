@@ -9,18 +9,18 @@ spritecache = {}
 class Particlemanager:
 	def __init__(self):
 		self.particlelist = []
-		self.screen = pygame.Surface((univars.screen_w,univars.screen_h))
-		self.bluprints = {}
 		"""
 			list ot particles\n:
 				particle  = {pos:list,"vel":list,"force":tuple   ...}
 
 
 		"""
+		self.screen = pygame.Surface((univars.screen_w,univars.screen_h))
+		self.bluprints = {}
 
 
 
-	def savebluprint(self,name,type,pos,divergence,color,initvel,force,size,sizedec,dim = None,alpha=1000,alphadec=0,colordec = 0,quality = 1,divergenceforce = [[0,0],[0,0]],divergencepos = [[0,0],[0,0]],ntimes =1):
+	def savebluprint(self,name,type,pos,divergence,color,initvel,force,size,sizedec,dim = None,alpha=1000,alphadec=0,colordec = 0,quality = 1,divergenceforce = [[0,0],[0,0]],divergencepos = [[0,0],[0,0]],ntimes =1,speed = 1):
 		"""
 			Save particle bluprint\n
 
@@ -49,8 +49,8 @@ class Particlemanager:
 			pos = where to spawn  [x,y]\n
 			
 		"""
-		tosave = {"type":type,"pos":pos,"divergence":divergence,"color":color,"initvel":initvel,"force":force,"size":size,"sizedec":sizedec,"dim":dim,"alpha":alpha,"alphadec":alphadec,"colordec":colordec,"quality":quality,"divergenceforce":divergenceforce,"divergencepos":divergencepos,"ntimes":ntimes}
-		with open(f"Saved/particles/{name}") as file:
+		tosave = {"type":type,"pos":pos,"divergence":divergence,"color":color,"initvel":initvel,"force":force,"size":size,"sizedec":sizedec,"dim":dim,"alpha":alpha,"alphadec":alphadec,"colordec":colordec,"quality":quality,"divergenceforce":divergenceforce,"divergencepos":divergencepos,"ntimes":ntimes,"speed":speed}
+		with open(f"Saved/particles/{name}.json","w") as file:
 			json.dump(tosave,file)
 		self.bluprints[name] = tosave
 
@@ -73,14 +73,15 @@ class Particlemanager:
 							colordec=use["colordec"],quality=use["quality"],
 							divergenceforce=use["divergenceforce"],
 							divergencepos=use["divergencepos"],
-							ntimes=use["ntimes"])
+							ntimes=use["ntimes"],
+       						speed=use["speed"])
 		
 				
 
 
 
 
-	def particlespawn(self,type,pos,divergence,color,initvel,force,size,sizedec,dim = None,alpha=1000,alphadec=0,colordec = 0,quality = 1,divergenceforce = [[0,0],[0,0]],divergencepos = [[0,0],[0,0]],ntimes =1):
+	def particlespawn(self,type,pos,divergence,color,initvel,force,size,sizedec,dim = None,alpha=1000,alphadec=0,colordec = 0,quality = 1,divergenceforce = [[0,0],[0,0]],divergencepos = [[0,0],[0,0]],ntimes =1,speed = 1):
 		"""
 			spawns particles\n
 
@@ -128,38 +129,41 @@ class Particlemanager:
 						"alphadec":alphadec,
 						"color":color,
 						"dim":dim,
-						"quality":quality
+						"quality":quality,
+    					"speed":speed
 						}
 			self.particlelist.append(particle)
 
 
 	
-
+	def circlesurf(self,col,rad,qual):
+		"""
+			allows circles to have alpha
+		"""
+		surf = pygame.Surface((rad * 2,rad * 2))
+		pygame.draw.circle(surf,col,(rad,rad),rad)
+		surf = pygame.transform.scale_by(surf,qual)
+		surf = pygame.transform.scale(surf,(rad * 2,rad * 2))
+		surf.set_colorkey((0,0,0))
+		return surf
 
 	def updateparticles(self,dt):
 		"""
-			updates all particles based on forces
+			updates all particles based on forces and velocities
 		"""
-		campos =  [Cameramod.cam.x,Cameramod.cam.y]
-		def circlesurf(col,rad,qual):
-			surf = pygame.Surface((rad * 2,rad * 2))
-			pygame.draw.circle(surf,col,(rad,rad),rad)
-			surf = pygame.transform.scale_by(surf,qual)
-			surf = pygame.transform.scale(surf,(rad * 2,rad * 2))
-			surf.set_colorkey((0,0,0))
-			return surf
+		
 
 		for particle in self.particlelist:
-			particle["vel"][0] += particle["force"][0] * dt /2
-			particle["vel"][1] += particle["force"][1] * dt/2
-			particle["pos"][0] += particle["vel"][0] * dt/2
-			particle["pos"][1] -= particle["vel"][1] * dt/2
-			particle["size"] -= particle["sizedec"] * dt/2
-			particle["alpha"] -= particle["alphadec"] * dt/2
+			particle["vel"][0] += particle["force"][0] * dt /2 * particle["speed"]
+			particle["vel"][1] += particle["force"][1] * dt/2 * particle["speed"]
+			particle["pos"][0] += particle["vel"][0] * dt/2 * particle["speed"]
+			particle["pos"][1] -= particle["vel"][1] * dt/2 * particle["speed"]
+			particle["size"] -= particle["sizedec"] * dt/2 * particle["speed"]
+			particle["alpha"] -= particle["alphadec"] * dt/2 * particle["speed"]
 			postodraw = [int(round(particle["pos"][0] - Cameramod.cam.x) * Cameramod.cam.size + univars.screen.get_width()//2),int(round((particle["pos"][1] - Cameramod.cam.y) * Cameramod.cam.size + univars.screen.get_height()//2 ))]
 			if not particle["size"] <= 0:
 				if particle["type"] == "circle":
-					surf = circlesurf(particle["color"],particle["size"] * Cameramod.cam.size,particle["quality"])
+					surf = self.circlesurf(particle["color"],particle["size"] * Cameramod.cam.size,particle["quality"])
 					surf.set_alpha(particle["alpha"])
 					univars.screen.blit(surf,postodraw)
 				if particle["type"] == "rect":
