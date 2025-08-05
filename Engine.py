@@ -490,6 +490,8 @@ class Game(Gamemananager.GameManager):
 
 	def cond(self,id,info):
 		"""id -> the id   info -> the info for the id"""
+		if info["name"] == "player":
+			om.playanim(self.dt,id,"fastidle",1)
 
 
 

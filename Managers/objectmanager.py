@@ -111,7 +111,15 @@ class object_manager:
 
 
 
-	def playanim(self,dt,id,name,forceplay = False):
+	def playanim(self,dt,id,name,forceplay = False,speed=1):
+		"""
+			plays an animation in a sprite\n
+			forceplay: \n
+				it interupts ONLY if another animation is playing\n
+			
+			speed:\n
+				playbackspeed for the animation
+		"""
 		a = name
 		if not self.objects[id]["animname"] == name:
 			if forceplay:
@@ -126,7 +134,7 @@ class object_manager:
 		g = self.animations[self.objects[id]['name']][a].keys()
 		g = [int(i) for i in g]
 		if not frame >= max(g):
-			self.objects[id]["gothru"] += dt/10
+			self.objects[id]["gothru"] += (dt * self.speed * speed)/10
 			if frame in g:
 				self.objects[id]["sn"] = self.animations[self.objects[id]['name']][a][str(frame)]
 		else:
@@ -372,7 +380,13 @@ class object_manager:
 		return {"obj":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
 
 	def collide9(self,id,show,camera,dim,pointsize = 5,offsets = { "topleft":[0,0],"topmid":[0,0],"topright":[0,0],"midleft":[0,0],"midmid":[0,0],"midright":[0,0],"botleft":[0,0],"botmid":[0,0],"botright":[0,0]}) -> dict:
-		"""points ->  [topleft , topmid , topright  , midleft  , midmid  ,  midright  ,  botleft  , botmid  , botleft] . for each point ( collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if")   """
+		""" points :\n
+				[topleft , topmid , topright  , midleft  , midmid  ,  midright  ,  botleft  , botmid  , botleft] .\n
+
+			selections:\n
+				( collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if")]\n
+			
+				     """
 		if id in self.objects.keys():
 			x = self.objects[id]["pos"][0]
 			y = self.objects[id]["pos"][1]

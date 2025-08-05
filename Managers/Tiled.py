@@ -522,7 +522,6 @@ class TiledSoftwre:
 				b = self.dostring
 				Cammanager.camager.setcond("def","pos",   univars.func.lerp(Cammanager.camager.getcam("def","pos")   ,b.info["pos"],4,roundto=8)    )
 				Cammanager.camager.setcond("def","size",   univars.func.lerp(Cammanager.camager.getcam("def","size"),1/b.info["sizen"][0],4,roundto=8)    )
-				# GameManager.blituis(b.image,(-0.8,0.7),(3 * 64,3 * 64),self.rot,1000)
 				strbuf = ""
 				for i in b.info.keys():
 					strbuf += f"{i} = {b.info[i]}\n"
@@ -836,10 +835,6 @@ class TiledSoftwre:
 
 
 
-			# if "addbg:" in self.commmandtring.rstrip():
-			# 	bg.addbackground(self.commmandtring.rstrip().replace("addbg:", ""))
-			# 	self.comm = True
-			# 	self.mode = 0
 			elif "setbg:" in self.commmandtring.rstrip():
 				bg.background = self.commmandtring.rstrip().replace("setbg:", "")
 			elif "savebg" in self.commmandtring.rstrip():
@@ -884,64 +879,7 @@ class TiledSoftwre:
 				self.dostring = 0
 				self.mode = 0
 
-			# elif self.mode in ["Objretype","Objtype","Objre-type","Objre type"]:
-			# 	self.altmode(GameManager,object_manager)
-			# 	if not GameManager.event_manager.key[pygame.K_RETURN]:
-			# 		if GameManager.event_manager.key[pygame.K_BACKSPACE]:
-			# 			self.dostring3 = self.dostring3[:-1]
-			# 		else:
-			# 			if GameManager.event_manager.keyb:
-			# 				self.dostring3 += GameManager.event_manager.code
-			# 		self.tm.drawtext2(f"What type do you want to set it's type to?","pixel2.ttf",60,0,0,0,self.theme["semibright"],-0.4,0.9)
-			# 		GameManager.uibox((1170,80),(0.2,-0.6),self.theme[2],400)
-			# 		self.tm.drawtext2(f"{self.dostring3}","pixel2.ttf",60,0,0,0,self.theme["semibright"],-0.4,-0.6)
-			# 		GameManager.blituis(object_manager.sprites[self.dostring][0],(0.2,0.1),(7 * 64,7 * 64),self.rot,1000)
-			# 	else:
-			# 		if not self.dostring3 == "":
-			# 			object_manager.objects[self.dostring][9] = self.dostring3.rstrip()
-			# 			self.mode = 0
 
-			# elif self.mode in ["Objrescale","Objscale","Objre-scale","Objre scale"]:
-			# 	GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
-			# 	if not GameManager.event_manager.key[pygame.K_RETURN]:
-			# 		if GameManager.event_manager.key[pygame.K_BACKSPACE]:
-			# 			self.dostring3 = self.dostring3[:-1]
-			# 		else:
-			# 			if GameManager.event_manager.keyb:
-			# 				self.dostring3 += GameManager.event_manager.code
-			# 		GameManager.blituis(object_manager.sprites[self.dostring][0],(0,0.5),(4 * self.dim,4 * self.dim),self.rot,1000)
-			# 		self.tm.drawtext(f"name = {self.dostring}","pixel2.ttf",70,0,0,0,(0,0,0),0,-0.1)
-			# 		self.tm.drawtext2(f"width: {self.dostring3}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,-0.5)
-			# 	else:
-			# 		if not self.dostring3 == "":
-			# 			self.dostring4 = ""
-			# 			self.mode = "Rescaley"
-
-			# elif self.mode == "Rescaley":
-			# 	GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
-			# 	if not GameManager.event_manager.key[pygame.K_RETURN]:
-			# 		if GameManager.event_manager.key[pygame.K_BACKSPACE]:
-			# 			self.dostring4 = self.dostring4[:-1]
-			# 		else:
-			# 			if GameManager.event_manager.keyb:
-			# 				self.dostring4 += GameManager.event_manager.code
-			# 		GameManager.blituis(object_manager.sprites[self.dostring][0],(0,0.5),(4 * self.dim,4 * self.dim),self.rot,1000)
-			# 		self.tm.drawtext(f"name = {self.dostring}","pixel2.ttf",70,0,0,0,(0,0,0),0,-0.1)
-			# 		self.tm.drawtext2(f"Height: {self.dostring4}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,-0.5)
-			# 	else:
-			# 		if not self.dostring4 == "":
-			# 			object_manager.scaleto(self.dostring,[int(self.dostring3.rstrip()) * self.dim, int(self.dostring4.rstrip()) * self.dim])
-			# 			self.mode = 0
-
-			# elif "rend" in self.mode and "true" in self.mode and "Obj" in self.mode:
-			# 	object_manager.objects[self.dostring][6] = 1
-			# 	self.dotring = ""
-			# 	self.mode = "alterobj"
-
-			# elif "rend" in self.mode and "false" in self.mode and "Obj" in self.mode:
-			# 	object_manager.objects[self.dostring][6] = 0
-			# 	self.dotring = ""
-			# 	self.mode = "alterobj"
 
 			else:
 				if not self.commmandtring.rstrip() in ["Com","Obj"]:

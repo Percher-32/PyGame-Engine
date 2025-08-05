@@ -231,6 +231,9 @@ class GameManager():
 					range =  2000
 					if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
 						self.cond(obj,stabledict[obj])
+			
+
+
 			time.sleep(0.01)
 
 	def cond(self,obj,info):
