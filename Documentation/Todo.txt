@@ -1,6 +1,7 @@
 Key:
 	[X] = DONE
 	[-] = IN-PROGRESS
+	[#] = currently in progress
 
 
 
@@ -8,8 +9,8 @@ IN-ENGINE:
 	[X] - Particle-system
 	[] - Sound system
 	[X] - Fix Animations
-	[] - Particle-editor:
-		* can save particle presets
+	[-] - Particle-editor:  
+		* can save particle presets[#]
 	[] - ui-editor
 
 

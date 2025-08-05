@@ -2,19 +2,82 @@ import pygame
 import Managers.Cameramod as Cameramod
 import  Managers.univars as univars
 import random
-
+import json
+import os
 spritecache = {}
 
 class Particlemanager:
 	def __init__(self):
 		self.particlelist = []
 		self.screen = pygame.Surface((univars.screen_w,univars.screen_h))
+		self.bluprints = {}
 		"""
 			list ot particles\n:
 				particle  = {pos:list,"vel":list,"force":tuple   ...}
 
 
 		"""
+
+
+
+	def savebluprint(self,name,type,pos,divergence,color,initvel,force,size,sizedec,dim = None,alpha=1000,alphadec=0,colordec = 0,quality = 1,divergenceforce = [[0,0],[0,0]],divergencepos = [[0,0],[0,0]],ntimes =1):
+		"""
+			Save particle bluprint\n
+
+			name:\n
+				name for the preset
+
+			type:\n 
+				"rect" or "circle"\n
+
+			if using type == "rect":
+				dim = dimensions
+
+			
+
+			divergence = range for randomness in initialvelocity:\n
+				[ 
+				  [ minx,maxx ] ,
+				  [ miny,maxy ]
+				]\n
+			
+			Particles are killed once size = 0\n
+			
+			nitems = number of particles to spawn\n
+			force = force it's under\n
+			initvel = initialvelocity\n
+			pos = where to spawn  [x,y]\n
+			
+		"""
+		tosave = {"type":type,"pos":pos,"divergence":divergence,"color":color,"initvel":initvel,"force":force,"size":size,"sizedec":sizedec,"dim":dim,"alpha":alpha,"alphadec":alphadec,"colordec":colordec,"quality":quality,"divergenceforce":divergenceforce,"divergencepos":divergencepos,"ntimes":ntimes}
+		with open(f"Saved/particles/{name}") as file:
+			json.dump(tosave,file)
+		self.bluprints[name] = tosave
+
+
+	def loadallbluprints(self):
+		"""
+			loads all saved particle bluprints
+		"""
+		for i in os.listdir("Saved/particles"):
+			with open(f"Saved/particles/{i}") as file:
+				self.bluprints[i.replace(".json","")] = json.load(file)
+
+
+	def particlespawnbluprint(self,name):
+		use = self.bluprints[name]
+		self.particlespawn(use["type"],use["pos"],use["divergence"],
+							use["color"],use["initvel"],use["force"],
+							use["size"],use["sizedec"],dim = use["dim"],
+							alpha = use["alpha"],alphadec=use["alphadec"],
+							colordec=use["colordec"],quality=use["quality"],
+							divergenceforce=use["divergenceforce"],
+							divergencepos=use["divergencepos"],
+							ntimes=use["ntimes"])
+		
+				
+
+
 
 
 	def particlespawn(self,type,pos,divergence,color,initvel,force,size,sizedec,dim = None,alpha=1000,alphadec=0,colordec = 0,quality = 1,divergenceforce = [[0,0],[0,0]],divergencepos = [[0,0],[0,0]],ntimes =1):
