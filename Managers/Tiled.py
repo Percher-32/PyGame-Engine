@@ -8,11 +8,13 @@ import Managers.backgroundmanager as backgroundmanager
 import Managers.Uimanager as Uimanager
 import Managers.Cammanager as Cammanager
 import Managers.objectmanager as objectmanager
+import Managers.Particlesytem as particlesystem
 um = Uimanager.ingame
 cam = Cameramod.cam
 cam = Cammanager.camager.cameras["def"]
 bg = backgroundmanager.bg
 object_manager = objectmanager.om
+pm = particlesystem.pm
 
 class TiledSoftwre:
 	def __init__(self,realscreen,theme,grandim,screen,om):
@@ -42,7 +44,10 @@ class TiledSoftwre:
 		self.showdata = True
 		self.showdatable = 0
 		self.commmandtring = ""
+		self.parts = {"type":"circle","pos":[0,0],"divergence":[[-5,5],[0,0]],"color":(255,255,255),"initvel":[0,10],"force":[0,-1],"size":10,"sizedec":1,"dim":1,"alpha":1000,"alphadec":0,"colordec":(0,0,0),"quality":0.7,"divergenceforce":[[0,0],[0,0]],"divergencepos":[[0,0],[0,0]],"ntimes":1,"speed":1}
 		self.comm = False
+		self.loadedparticle = "testone"
+		self.actuallyload = True
 		self.keydelay = 0
 		self.cht = univars.startstate
 		self.loadingmap = False
@@ -125,6 +130,15 @@ class TiledSoftwre:
 
 
 	def Run(self,work,speed,GameManager,camera,dim,debug,cm,smate):
+		self.showdata = GameManager.publicvariables["showdata"]
+		if GameManager.publicvariables["cammove"]:
+			if GameManager.event_manager.key[pygame.K_q] or GameManager.event_manager.controller["L1"]:
+				cam[1] += (camera.size)/speed * GameManager.frame_manager.dt 
+			if GameManager.event_manager.key[pygame.K_e] or GameManager.event_manager.controller["R1"]:
+				cam[1] -= (camera.size)/speed * GameManager.frame_manager.dt 
+			cam[0][0] += speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/self.realscreeen.get_width() * GameManager.key["x"]
+			cam[0][1] -= speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/self.realscreeen.get_width()* GameManager.key["y"]
+	
 		if work:
 			self.comm = False
 			self.loadingmap = False
@@ -141,13 +155,7 @@ class TiledSoftwre:
 							self.typelist.append("none")
 
 
-					#movement
-					if GameManager.event_manager.key[pygame.K_q] or GameManager.event_manager.controller["L1"]:
-						cam[1] += (camera.size)/speed * GameManager.frame_manager.dt 
-					if GameManager.event_manager.key[pygame.K_e] or GameManager.event_manager.controller["R1"]:
-						cam[1] -= (camera.size)/speed * GameManager.frame_manager.dt 
-					cam[0][0] += speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/self.realscreeen.get_width() * GameManager.key["x"]
-					cam[0][1] -= speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/self.realscreeen.get_width()* GameManager.key["y"]
+					
 					#to move spite on the 
 					self.sprite += GameManager.event_manager.scroll
 
@@ -590,7 +598,6 @@ class TiledSoftwre:
 
 
 
-
 			elif self.mode == "Objanim":
 				self.buttonsforanim = []
 				self.textsforanim = []
@@ -818,21 +825,36 @@ class TiledSoftwre:
 						
 						um.elements["commandtext"]["text"] = ""
 
+					for i in self.textsforanim:
+						if GameManager.key["alt-x"] != 0:
+							um.elements[i]["pos"][0] = um.elements[i]["pos"][0] - GameManager.key["alt-x"]/40
+							if str(int(round(object_manager.objects[self.animstr]["gothru"]))) == i.replace("framepoint",""):
+								um.elements[i]["color"] = univars.theme["bright"]
+							else:
+								um.elements[i]["color"] = univars.theme["mid"]
+
+					if GameManager.key["alt-x"] != 0 and not um.state in ["animplaying","newanim"]:
+						um.elements["plusbutton"]["pos"][0] = um.elements["plusbutton"]["pos"][0] - GameManager.key["alt-x"]/10
 
 
-				for i in self.textsforanim:
-					if GameManager.key["alt-x"] != 0:
-						um.elements[i]["pos"][0] = um.elements[i]["pos"][0] - GameManager.key["alt-x"]/40
-						if str(int(round(object_manager.objects[self.animstr]["gothru"]))) == i.replace("framepoint",""):
-							um.elements[i]["color"] = univars.theme["bright"]
-						else:
-							um.elements[i]["color"] = univars.theme["mid"]
-
-				if GameManager.key["alt-x"] != 0 and not um.state in ["animplaying","newanim"]:
-					um.elements["plusbutton"]["pos"][0] = um.elements["plusbutton"]["pos"][0] - GameManager.key["alt-x"]/10
-
-
-
+			elif self.mode == "Particle-edit":
+				
+				um.state = "particle-edit"
+				self.showdata = False
+				if self.actuallyload:
+					pm.particlespawnbluprint(self.loadedparticle)
+				else:
+					use = self.parts
+					pm.particlespawn(use["type"],use["pos"],use["divergence"],
+									use["color"],use["initvel"],use["force"],
+									use["size"],use["sizedec"],dim = use["dim"],
+									alpha = use["alpha"],alphadec=use["alphadec"],
+									colordec=use["colordec"],quality=use["quality"],
+									divergenceforce=use["divergenceforce"],
+									divergencepos=use["divergencepos"],
+									ntimes=use["ntimes"],
+									speed=use["speed"])
+				um.elements["loadedbluprint"]["text"] = "Loaded:" + self.loadedparticle
 
 
 
@@ -869,7 +891,12 @@ class TiledSoftwre:
 				except:
 					GameManager.publicvariables[vartochange] = valtoreplace
 				self.commmandtring = ""
-					
+			elif "particle" in self.commmandtring.rstrip():
+				self.mode = "Particle-edit"
+				um.addrect((univars.screen_w + 500,200),["particle-edit"],[0,-1],"particle_edit_hud",color = univars.theme["dark"])
+				um.addrect((300,2000),["particle-edit"],[-0.9,0],"particle_edit_side_bar",color = univars.theme["dark"])
+				um.addtext("loadedbluprint","Loaded:None",univars.defont,[-0.9,0.8],univars.theme["semibright"],30,["particle-edit"],center=False)
+
 
 
 
@@ -900,7 +927,7 @@ class TiledSoftwre:
 
 
 
-			if GameManager.publicvariables["showdata"] and self.mode == 0:
+			if self.showdata and self.mode == 0:
 				fulllist = self.spritenames + self.spritenames
 				GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
 				self.tm.drawtext(f"Camera-name : {cm.currentcam}"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.6,-0.9)
@@ -935,7 +962,7 @@ class TiledSoftwre:
 				GameManager.frame_manager.showfps = 0
 
 			#show input
-			if self.mode == 0 and not GameManager.publicvariables["showdata"]:
+			if self.mode == 0 and not self.showdata:
 				if GameManager.publicvariables["showinput"]:
 					self.showinput(GameManager)
 

@@ -39,7 +39,7 @@ class GameManager():
 		self.frame_manager = frame_manager
 		self.event_manager = em
 		self.em = em
-		self.publicvariables = {"showinput":univars.showinput,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":univars.screencol       }
+		self.publicvariables = {"showinput":univars.showinput,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":univars.screencol   ,"cammove":False    }
 		self.timers = {}
 		self.dt = 1
 		self.abttodo = []
@@ -272,6 +272,7 @@ class GameManager():
 		om.speed = sm.speed
 		self.states = sm.states
 		self.publicvariables["showdata"] = sm.showui
+		self.publicvariables["cammove"] = sm.cammove
 		self.publicvariables["showallhidden"] = sm.showall
 
 	def sp(self,val:str,to):

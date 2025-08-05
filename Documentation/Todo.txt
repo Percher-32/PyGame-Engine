@@ -9,9 +9,9 @@ IN-ENGINE:
 	[X] - Particle-system
 	[] - Sound system
 	[X] - Fix Animations
-	[-] - Particle-editor:  
+	[#] - Particle-editor:  
 		* can save particle presets[X]
-		* ui for particle creator
+		* ui for particle creator  [#]
 	[] - ui-editor
 
 
