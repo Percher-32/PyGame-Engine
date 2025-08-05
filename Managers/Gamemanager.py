@@ -292,10 +292,10 @@ class GameManager():
 		self.initial()
 		inumthread = threading.Thread(target=self.inum)
 		# backgroundthread = threading.Thread(target=self.backgroundupdate)
-		uithread = threading.Thread(target=self.uiunpdate)
+		# uithread = threading.Thread(target=self.uiunpdate)
 		inumthread.start()
 		# backgroundthread.start()
-		uithread.start()
+		# uithread.start()
 		self.dt = 1
 		while em.running: 
 			self.start()   

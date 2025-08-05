@@ -843,6 +843,7 @@ class TiledSoftwre:
 				self.showdata = False
 				if self.actuallyload:
 					pm.particlespawnbluprint(self.loadedparticle)
+					use = pm.bluprints[self.loadedparticle]
 				else:
 					use = self.parts
 					pm.particlespawn(use["type"],use["pos"],use["divergence"],
@@ -855,6 +856,7 @@ class TiledSoftwre:
 									ntimes=use["ntimes"],
 									speed=use["speed"])
 				um.elements["loadedbluprint"]["text"] = "Loaded:" + self.loadedparticle
+				um.elements["particledata"]["text"] = f"type:{use['type']} \npos:{use['pos']} \ndivvel:{use['divergence']} \ncol:{use['color']} \nforce:{use['force']} \nsize:{use['size']} \nsizedec:{use['sizedec']} \ndim:{use['dim']}"
 
 
 
@@ -895,7 +897,8 @@ class TiledSoftwre:
 				self.mode = "Particle-edit"
 				um.addrect((univars.screen_w + 500,200),["particle-edit"],[0,-1],"particle_edit_hud",color = univars.theme["dark"])
 				um.addrect((300,2000),["particle-edit"],[-0.9,0],"particle_edit_side_bar",color = univars.theme["dark"])
-				um.addtext("loadedbluprint","Loaded:None",univars.defont,[-0.9,0.8],univars.theme["semibright"],30,["particle-edit"],center=False)
+				um.addtext("loadedbluprint","Loaded:None",univars.defont,[-0.97,0.8],univars.theme["semibright"],30,["particle-edit"],center=False)
+				um.addtext("particledata","",univars.defont,[-0.97,0.75],univars.theme["semibright"],30,["particle-edit"],center=False)
 
 
 
