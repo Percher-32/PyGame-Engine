@@ -115,30 +115,18 @@ class TiledSoftwre:
 
 	def uitext(self,name,GameManager):
 		if not GameManager.event_manager.key[pygame.K_RETURN]:
-			
-			if self.keydelay <= 0:
-				
-				self.keydelay = 1
-				if GameManager.event_manager.key[pygame.K_BACKSPACE]:
-					um.elements[name]["text"] = um.elements[name]["text"][:-1]
-				else:
-					if GameManager.event_manager.keyb:
-						um.elements[name]["text"] += GameManager.event_manager.code
+			if GameManager.event_manager.key[pygame.K_BACKSPACE]:
+				um.elements[name]["text"] = um.elements[name]["text"][:-1]
 			else:
-				self.keydelay -= 1
-			
-				
+				if GameManager.event_manager.keyb:
+					um.elements[name]["text"] += GameManager.event_manager.code
+
 
 
 	def Run(self,work,speed,GameManager,camera,dim,debug,cm,smate):
 		self.showdata = GameManager.publicvariables["showdata"]
-		if GameManager.publicvariables["cammove"]:
-			if GameManager.event_manager.key[pygame.K_q] or GameManager.event_manager.controller["L1"]:
-				cam[1] += (camera.size)/speed * GameManager.frame_manager.dt 
-			if GameManager.event_manager.key[pygame.K_e] or GameManager.event_manager.controller["R1"]:
-				cam[1] -= (camera.size)/speed * GameManager.frame_manager.dt 
-			cam[0][0] += speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/self.realscreeen.get_width() * GameManager.key["x"]
-			cam[0][1] -= speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/self.realscreeen.get_width()* GameManager.key["y"]
+		movecam = GameManager.publicvariables["cammove"]
+		
 	
 		if work:
 			self.comm = False
@@ -411,6 +399,7 @@ class TiledSoftwre:
 
 			#mode to name save-file
 			elif self.mode == 1:
+				movecam = 0
 				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
 				if not GameManager.event_manager.key[pygame.K_RETURN]:
 					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
@@ -428,6 +417,7 @@ class TiledSoftwre:
 			
 			#mode to force-save
 			elif self.mode == 2:
+				movecam = 0
 				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
 				self.tm.drawtext2(f"{self.savestring.rstrip()} already exists do you want to replace it Y/N","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
 				if GameManager.event_manager.keyb:
@@ -468,6 +458,7 @@ class TiledSoftwre:
 								self.mode = 0
 
 			elif self.mode == "command":
+				movecam = 0
 				GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
 				if not GameManager.event_manager.key[pygame.K_RETURN]:
 					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
@@ -527,6 +518,7 @@ class TiledSoftwre:
 
 								
 			elif self.mode == "alterobj":
+				movecam = 0
 				GameManager.uibox((400,self.realscreeen.get_height() - 200),(-0.75,0.15),self.theme["dark"] ,400)
 				b = self.dostring
 				Cammanager.camager.setcond("def","pos",   univars.func.lerp(Cammanager.camager.getcam("def","pos")   ,b.info["pos"],4,roundto=8)    )
@@ -849,7 +841,7 @@ class TiledSoftwre:
 
 
 			elif self.mode == "Particle-edit":
-				
+				movecam = 0
 				um.state = "particle-edit"
 				self.showdata = False
 				use = self.parts
@@ -863,7 +855,7 @@ class TiledSoftwre:
 								ntimes=use["ntimes"],
 								speed=use["speed"])
 				um.elements["loadedbluprint"]["text"] = "Loaded:" + self.loadedparticle
-				um.elements["particledata"]["text"] = f"type:{use['type']} \ndivvel:{use['divergence']} \ncol:{use['color']} \nforce:{use['force']} \nsize:{use['size']} \nsizedec:{use['sizedec']} \ndim:{use['dim']}"
+				um.elements["particledata"]["text"] = f"type:{use['type']} \ndivvel:{use['divergence']} \ncol:{use['color']} \nforce:{use['force']} \nsize:{use['size']} \nsizedec:{use['sizedec']} \ndim:{use['dim']}  "
 				self.uitext("particlecommandtext",GameManager)
 				if GameManager.em.key[pygame.K_RETURN]:
 					text = um.elements["particlecommandtext"]["text"].rstrip()
@@ -876,25 +868,28 @@ class TiledSoftwre:
 					if "=" in text:
 						text = text.split("=")
 						val = text[0].replace(" ","")
+						newvalue = text[1].replace(" ","")
 						if not val == "name":
-							newvalue = text[1].replace(" ","")
 							if val in use.keys():
-								use[val] = newvalue
+								use[val] = eval(newvalue)
 						else:
 							self.loadedparticle = newvalue
-							self.newparticle = newvalue
-					if text == "save":
-						pm.savebluprint(use["type"],cam[0],use["divergence"],
-										use["color"],use["initvel"],use["force"],
-										use["size"],use["sizedec"],dim = use["dim"],
-										alpha = use["alpha"],alphadec=use["alphadec"],
-										colordec=use["colordec"],quality=use["quality"],
-										divergenceforce=use["divergenceforce"],
-										divergencepos=use["divergencepos"],
-										ntimes=use["ntimes"],
-										speed=use["speed"])
-						pm.loadallbluprints()
-						self.parts = pm.bluprints[self.loadedparticle]
+					if not self.loadedparticle == None:
+						if text == "save":
+							pm.savebluprint(self.loadedparticle,use["type"],use["divergence"],
+											use["color"],use["initvel"],use["force"],
+											use["size"],use["sizedec"],dim = use["dim"],
+											alpha = use["alpha"],alphadec=use["alphadec"],
+											colordec=use["colordec"],quality=use["quality"],
+											divergenceforce=use["divergenceforce"],
+											divergencepos=use["divergencepos"],
+											ntimes=use["ntimes"],
+											speed=use["speed"])
+							pm.loadallbluprints()
+							self.parts = pm.bluprints[self.loadedparticle]
+					
+					um.elements["particlecommandtext"]["text"] = ""
+
 
 
 
@@ -962,6 +957,13 @@ class TiledSoftwre:
 			self.saveable -= 1 * GameManager.frame_manager.dt
 			self.rectable -= 1 * GameManager.frame_manager.dt
 			self.showdatable -= 1 * GameManager.frame_manager.dt
+			if movecam:
+				if GameManager.event_manager.key[pygame.K_q] or GameManager.event_manager.controller["L1"]:
+					cam[1] += (camera.size)/speed * GameManager.frame_manager.dt 
+				if GameManager.event_manager.key[pygame.K_e] or GameManager.event_manager.controller["R1"]:
+					cam[1] -= (camera.size)/speed * GameManager.frame_manager.dt 
+				cam[0][0] += speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/self.realscreeen.get_width() * GameManager.key["x"]
+				cam[0][1] -= speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/self.realscreeen.get_width()* GameManager.key["y"]
 			
 
 
