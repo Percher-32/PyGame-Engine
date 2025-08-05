@@ -116,7 +116,8 @@ class Ui(pygame.sprite.Sprite):
         self.rect = self.baseimg.get_rect(center = pos)
         self.states = states
         self.cando = cando
-        self.cache = {}
+
+
 
     def update(self,state,elements,em):
         if self.name in elements.keys():
@@ -131,12 +132,12 @@ class Ui(pygame.sprite.Sprite):
 
 
                 realscale = [int(round(elements[self.name]["dimensions"][0])),int(round(elements[self.name]["dimensions"][1]))]
-                if not str([realscale,elements[self.name]["alpha"]]) in self.cache:
+                if not str([realscale,elements[self.name]["alpha"]]) in elements[self.name]["cache"]:
                     self.baseimg.set_alpha(elements[self.name]["alpha"])
                     baseimg1 = pygame.transform.scale(self.baseimg,   realscale   )
-                    self.cache[str([realscale,elements[self.name]["alpha"]])] = baseimg1
+                    elements[self.name]["cache"][str([realscale,elements[self.name]["alpha"]])] = baseimg1
                 else:
-                    baseimg1 = self.cache[str([realscale,elements[self.name]["alpha"]])]
+                    baseimg1 = elements[self.name]["cache"][str([realscale,elements[self.name]["alpha"]])]
 
 
 

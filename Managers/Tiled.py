@@ -658,6 +658,7 @@ class TiledSoftwre:
 				um.lerpval("animspriteui","pos",[-0.8,0.7],6)
 				um.lerpval("spritenames","pos",[-0.4,0.7],6)
 				um.elements["animspriteui"]["surf"] = univars.func.getsprites(self.animobj["name"])[self.animobj["sn"]]
+				um.elements["animspriteui"]["cache"] = {}
 				um.elements["spritenames"]["text"] = f"sprite-num:{self.animobj['sn']} \ncurrent anim:{self.curanim}"
 				um.elements["frame bar"]["dimensions"][0] = univars.screen_w
 
