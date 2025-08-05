@@ -46,7 +46,7 @@ class TiledSoftwre:
 		self.commmandtring = ""
 		self.parts = {"type":"circle","pos":[0,0],"divergence":[[-5,5],[0,0]],"color":(255,255,255),"initvel":[0,10],"force":[0,-1],"size":10,"sizedec":1,"dim":1,"alpha":1000,"alphadec":0,"colordec":(0,0,0),"quality":0.7,"divergenceforce":[[0,0],[0,0]],"divergencepos":[[0,0],[0,0]],"ntimes":1,"speed":1}
 		self.comm = False
-		self.loadedparticle = "testone"
+		self.loadedparticle = "None"
 		self.actuallyload = True
 		self.keydelay = 0
 		self.newparticle = None
@@ -721,8 +721,7 @@ class TiledSoftwre:
 
 				if um.state == "newanim":
 					self.uitext("commandtext",GameManager)				
-					if not  self.uitext("commandtext",GameManager) == self.secretword:
-						self.snts = um.elements["commandtext"]["text"]
+					self.snts = um.elements["commandtext"]["text"]
 					if GameManager.event_manager.key[pygame.K_RETURN]:
 						if "fr:" in self.snts:
 							self.snts = self.snts.replace("fr:","")
@@ -770,8 +769,7 @@ class TiledSoftwre:
 
 				if um.state == "animplaying":	
 					self.uitext("commandtext",GameManager)				
-					if not  self.uitext("commandtext",GameManager) == self.secretword:
-						self.snts = um.elements["commandtext"]["text"]
+					self.snts = um.elements["commandtext"]["text"]
 					if GameManager.event_manager.key[pygame.K_RETURN]:
 						if "fr:" in self.snts:
 							self.snts = self.snts.replace("fr:","")
@@ -855,7 +853,7 @@ class TiledSoftwre:
 								ntimes=use["ntimes"],
 								speed=use["speed"])
 				um.elements["loadedbluprint"]["text"] = "Loaded:" + self.loadedparticle
-				um.elements["particledata"]["text"] = f"type:{use['type']} \ndivvel:{use['divergence']} \ncol:{use['color']} \nforce:{use['force']} \nsize:{use['size']} \nsizedec:{use['sizedec']} \ndim:{use['dim']}  "
+				um.elements["particledata"]["text"] = f"type:{use['type']} \ndivergence:{use['divergence']} \ncolor:{use['color']} \nforce:{use['force']} \nsize:{use['size']} \nsizedec:{use['sizedec']} \ndim:{use['dim']} \nalpha:{use['alpha']} \nalphadec:{use['alphadec']} \nntimes:{use['ntimes']} \nspeed:{use['speed']} \ncolordec:{use['colordec']} \ndivforce:{use['divergenceforce']} \ndivpos:{use['divergencepos']}"                      
 				self.uitext("particlecommandtext",GameManager)
 				if GameManager.em.key[pygame.K_RETURN]:
 					text = um.elements["particlecommandtext"]["text"].rstrip()
@@ -926,7 +924,7 @@ class TiledSoftwre:
 				except:
 					GameManager.publicvariables[vartochange] = valtoreplace
 				self.commmandtring = ""
-			elif "particle" in self.commmandtring.rstrip():
+			elif self.commmandtring.rstrip() in ["particle","part","particle-edit","particle-editor"]:
 				self.mode = "Particle-edit"
 				um.addrect((univars.screen_w + 500,200),["particle-edit"],[0,-1],"particle_edit_hud",color = univars.theme["dark"])
 				um.addrect((500,2000),["particle-edit"],[-0.9,0],"particle_edit_side_bar",color = univars.theme["dark"])
