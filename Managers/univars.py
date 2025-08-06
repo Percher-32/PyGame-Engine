@@ -60,7 +60,7 @@ func = funcs.func(screen,grandim)
 
 lumptype = {"grass":"ground","dirt":"ground","slantl":"slantl","slantr":"slantr"}
 
-sizeoffsets = {"grass":[0.05,0.05],"dirt":[0.05,0.05]}
+sizeoffsets = {"grass":[0.1,0.1],"dirt":[0.1,0.1]}
 
 instables = ["dirt","grass","def","slantl","slantr"]
 
@@ -82,9 +82,9 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "null"
+map = "slide"
 
-startstate = "edit"
+startstate = "debugame"
 
 
 

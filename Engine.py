@@ -98,12 +98,16 @@ class Game(Gamemananager.GameManager):
 		if "player" in om.objects.keys() and "skateboard" in om.objects.keys() and "playersprite" in om.objects.keys():
 
 
-			#move camera
-			cm.cam_focus_size("playercam",om.objects["player"]["pos"],4,univars.pixelscale/7 * ((-0.001 *      univars.func.dist([0,0],self.gp("act_vel"))                 ) + 0.5) )
 
-			
 			#move player
 			self.moveplayer()
+
+			#move camera
+			cm.cam_focus_size("playercam",om.objects["player"]["pos"],4,univars.pixelscale/7 * ((-0.001 *      univars.func.dist([0,0],self.gp("act_vel"))                 ) + 0.5) )
+			# cm.cam_focus_size("playercam",om.objects["player"]["pos"],3,univars.pixelscale/7 * 0.5 )
+			# cm.setcond("playercam","pos",[cm.getcam("playercam","pos")[0] + (self.key["x"] * 20) , cm.getcam("playercam","pos")[1] ])
+
+			
 
 			#update player sprite ansd skateboards position
 			rot = om.objects["playersprite"]["rot"]
@@ -178,6 +182,8 @@ class Game(Gamemananager.GameManager):
 		#fall speed smoothing
 		self.sp("fss",8)
 
+		self.lastframeslanted = False
+		self.gate = "r"
 
 		#previous frames actual velocity
 		self.sp("prev_act_vel",[0,0])
@@ -208,28 +214,49 @@ class Game(Gamemananager.GameManager):
 			return "-"
 
 	def moveplayer(self):
+		# om.speed = 0.4
 		collision = om.collide9("player",1,cam,self.dim)
-		# collisionbox = om.collide("player",0,cam)
+		collisionbox = om.collide("player",1,cam,extra=10)
 		ground1 = len(collision["botmid"]["inst"]) > 0
 		ground2 = len(collision["botleft"]["inst"]) > 0 and not (len(collision["midleft"]["inst"]) > 0)
 		ground3 = len(collision["botright"]["inst"]) > 0 and not (len(collision["midright"]["inst"]) > 0)
 		ground = ground1 or ground2 or ground3
 		instlist = collision["botmid"]["inst"] + collision["botleft"]["inst"] + collision["botright"]["inst"] 
 		collisionlisttype = [i.type for i in instlist] 
+		collisionboxtype = [i.type for i in collisionbox["inst"]] 
 		# collisionlisttype.append(None)
 		# show the mode
 		# um.showvar("des_vel",self.gp("des_vel"),[0,-0.7])
 		if self.dt == 0 or self.dt > 10:
 			self.dt = 1
 
-
-		if len(collisionlisttype) > 0:
-			if "slantl"  in collisionlisttype or "slantr" in collisionlisttype:
+		# print(collisionboxtype)
+		if len(collisionboxtype) > 0:
+			if "slantl"  in collisionboxtype or "slantr" in collisionboxtype:
 				slanted = True
+				if "slantr" in collisionboxtype:
+					if self.gp("act_vel")[0] < 0:
+						if ground2:
+							slanted = False
+				else:
+					if self.gp("act_vel")[0] > 0:
+						if ground3:
+							slanted = False
+				# if self.gp("act_vel")[0] > 0 :
+				# 	if ground2:
+				# 		slanted = False
+				
 			else:
 				slanted = False
+
+			# if len(instlist) == 0:
+			# 	slanted = True
+			
 		else:
 			slanted = False
+
+
+		
 
 		#get out of being stuck
 		if not slanted:
@@ -245,12 +272,12 @@ class Game(Gamemananager.GameManager):
 
 					if self.gp("xinit"):
 						self.sp("xinit",False)
-						self.sp("des_vel",[self.key["x"] * 100,self.gp("des_vel")[1]])
+						self.sp("des_vel",[self.key["x"] * 70,self.gp("des_vel")[1]])
 
 					
 
 
-					self.sp("des_vel",[          self.unilerp(self.gp("des_vel")[0],self.key["x"] * 150,30 )              ,    self.gp("des_vel")[1]   ])
+					self.sp("des_vel",[          self.unilerp(self.gp("des_vel")[0],self.key["x"] * 120,30 )              ,    self.gp("des_vel")[1]   ])
 				else:
 					self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
 					self.sp("xinit",True)
@@ -365,20 +392,20 @@ class Game(Gamemananager.GameManager):
 						elif self.key["y"] < -0.2:
 							a = -150
 						else:
-							a = 150
+							a = 120
 						if self.gp("leftwall"):
 							self.deltimer("rightjump")
 							self.wait("leftjump",0.1)
 							self.sp("jumpable",False)
 							self.sp("des_vel",[  self.gp("des_vel")[0] , a     ])
-							self.sp("act_vel",[  120 , self.gp("act_vel")[1]     ])
+							self.sp("act_vel",[  100 , self.gp("act_vel")[1]     ])
 							self.sp("mode","in-air")
 						if self.gp("rightwall"):
 							self.deltimer("leftjump")
 							self.wait("rightjump",0.1)
 							self.sp("jumpable",False)
 							self.sp("des_vel",[  self.gp("des_vel")[0] , a     ])
-							self.sp("act_vel",[  -120 , self.gp("act_vel")[1]     ])
+							self.sp("act_vel",[  -100 , self.gp("act_vel")[1]     ])
 							self.sp("mode","in-air")
 
 				else:
@@ -451,8 +478,49 @@ class Game(Gamemananager.GameManager):
 						self.sp("act_vel",[   self.gp("prev_act_vel")[0] * 1  ,  self.gp("prev_act_vel")[1] * -1 ])
 					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
 					om.translate(self,"player",self.gp("act_vel"))
+					om.translate(self,"player",[0,20])
 		else:
-			om.translate(self,"player",[self.key["x"] * 100,self.key["x"] * 100])
+			if "slantr" in collisionboxtype:
+				if not slanted == self.lastframeslanted:
+					# if not ground:
+					index = collisionboxtype.index("slantr")
+					om.objects["player"]["pos"] = [collisionbox["inst"][index].realpos[0] -20,collisionbox["inst"][index].realpos[1] -20]
+						# else:
+						# 	om.objects["player"]["pos"] = [collisionbox["inst"][0].realpos[0] +16,collisionbox["inst"][0].realpos[1] +16]
+				else:
+					if abs(self.key["x"]) > 0:
+						self.sp("des_vel",[         self.key["x"] * 100             ,    self.gp("des_vel")[1]   ])
+					else:
+						self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
+					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
+					actvel = [self.gp("act_vel")[0],self.gp("act_vel")[0]]
+					om.translate(self,"player",actvel,usedt=1)
+					self.sp("desrot",45) 
+			else:
+				if not slanted == self.lastframeslanted:
+					if not ground:
+						om.objects["player"]["pos"] = [collisionbox["inst"][0].realpos[0] -16,collisionbox["inst"][0].realpos[1] -16]
+						# else:
+						# 	om.objects["player"]["pos"] = [collisionbox["inst"][0].realpos[0] +16,collisionbox["inst"][0].realpos[1] +16]
+				else:
+					if abs(self.key["x"]) > 0:
+						self.sp("des_vel",[         self.key["x"] * 100             ,    self.gp("des_vel")[1]   ])
+					else:
+						self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
+					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
+					actvel = [self.gp("act_vel")[0],-1 * self.gp("act_vel")[0]]
+					om.translate(self,"player",actvel,usedt=1)
+					self.sp("desrot",-45)
+			om.objects["playersprite"]["rot"]  =  self.unilerp(om.objects["playersprite"]["rot"],self.gp("desrot"),5,roundto=2) 
+
+
+
+
+		if  -5 > self.gp("desrot") > 5:
+			self.sp("desrot",0)
+
+		self.lastframeslanted = slanted
+
 
 	
 	def unilerp(self,val,max,sm,roundto = None):
@@ -505,3 +573,4 @@ if univars.mode == "opt":
 		cProfile.run('main()', sort='cumtime')
 else:
 	rm.Run()
+ 

@@ -20,8 +20,8 @@ IN-ENGINE:
 IN-GAME:
 	PLAYER:
 		[!] - Slopes:
-				* removal of slope no-clip []
-				* preserve momentum        []
+				* removal of slope no-clip [X]
+				* preserve momentum        [X]
 
 		[] - Dash:
 			* dashbaar         []

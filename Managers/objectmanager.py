@@ -294,14 +294,16 @@ class object_manager:
 				if str(b.name) == str(id):
 					return b
 
-	def collide(self,id,show,camera) -> dict:
+	def collide(self,id,show,camera,extra= 0) -> dict:
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		if not self.objfromid(id) == None:
 			#coll for non-inst
 			dim = univars.grandim
 			id = str(id)
 			r1 = self.objfromid(id).fakerect
-			typel = self.getcull(self.objects[id]["pos"],1,dim)
+			r1.width = r1.width + extra
+			r1.height = r1.height + extra
+			typel = self.getcull(self.objects[id]["pos"],extra + 1,dim)
 			typel.remove(id)
 			noninst = []
 			[noninst.append(self.objfromid(i)) for i in typel if r1.colliderect(self.objfromid(i).fakerect) ]
