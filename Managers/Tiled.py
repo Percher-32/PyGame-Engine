@@ -933,7 +933,7 @@ class TiledSoftwre:
 				um.addrect((500,2000),["particle-edit"],[-0.9,0],"particle_edit_side_bar",color = univars.theme["dark"])
 				um.addtext("loadedbluprint","Loaded:None",univars.defont,[-0.97,0.8],univars.theme["semibright"],30,["particle-edit"],center=False)
 				um.addtext("particledata","",univars.defont,[-0.97,0.75],univars.theme["semibright"],30,["particle-edit"],center=False)
-				um.addtext("particlecommandtext","command:",univars.defont,[-0.98,-0.9],univars.theme["bright"],40,["particle-edit"],center = False)
+				um.addtext("particlecommandtext","",univars.defont,[-0.98,-0.9],univars.theme["bright"],40,["particle-edit"],center = False)
 
 
 

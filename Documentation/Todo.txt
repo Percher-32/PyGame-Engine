@@ -2,6 +2,7 @@ Key:
 	[X] = DONE
 	[-] = IN-PROGRESS
 	[#] = currently in progress
+	[!] = Next-task
 
 
 
@@ -12,7 +13,13 @@ IN-ENGINE:
 	[X] - Particle-editor:  
 		* can save particle presets[X]
 		* ui for particle creator  [X]
-	[] - ui-editor
+	[!] - ui-editor:
+		* load states   []
+		* place rects   []
+		* place buttons []
+		* place text    []
+		* load states   []
+
 
 
 IN-GAME:
@@ -32,7 +39,7 @@ IN-GAME:
 				* walljumping  []
 				* ducking      []
 				* in-air       []
-		[-] - add particles to moves:
+		[-] - add particles to certain actions:
 				* skidding  [-]
 				* impact    []
 
