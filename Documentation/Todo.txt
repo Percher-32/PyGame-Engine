@@ -19,7 +19,7 @@ IN-ENGINE:
 
 IN-GAME:
 	PLAYER:
-		[] - Slopes:
+		[!] - Slopes:
 				* removal of slope no-clip []
 				* preserve momentum        []
 

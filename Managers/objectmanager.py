@@ -537,7 +537,7 @@ class object_manager:
 			spritelist = self.spritecache[str([name,sizen])]
 		else:
 			temp = univars.func.getsprites(name)[0]
-			spritelist = univars.func.getspritesscale(name,[temp.get_width() * sizen[0],temp.get_height() * sizen[1]])
+			spritelist = univars.func.getspritesscale(name,[temp.get_width(),temp.get_height()])
 			self.spritecache[str([name,sizen])] = spritelist
 		newt = inst.inst(self.screen,self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],univars.lumptype.get(data["name"],data["name"]),data["alpha"],spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]])
 		name = (int(round(data["pos"][0]/(univars.grandim * self.renderdist))),int(round(data["pos"][1]/(univars.grandim * self.renderdist))))

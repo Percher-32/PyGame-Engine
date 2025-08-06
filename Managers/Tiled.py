@@ -426,9 +426,11 @@ class TiledSoftwre:
 						object_manager.forcesavetilemap(self.savestring.rstrip())
 						self.mode = 0
 					else:
-						self.mode = 0
+						self.mode = 1
 
+			#save mode for loading
 			elif self.mode == 3:
+				movecam = 0
 				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
 				if not GameManager.event_manager.key[pygame.K_RETURN]:
 					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
@@ -442,21 +444,6 @@ class TiledSoftwre:
 					self.loadingmap = True
 					self.mode = 0
 
-			elif self.mode == 4:
-					GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
-					if not GameManager.event_manager.key[pygame.K_RETURN]:
-						if GameManager.event_manager.key[pygame.K_BACKSPACE]:
-							self.chunksave = self.chunksave[:-1]
-						else:
-							if GameManager.event_manager.keyb:
-								self.chunksave += GameManager.event_manager.code
-						self.tm.drawtext2(f"What chunksize?: {self.chunksave}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
-					else:
-						if not self.chunksave == "":
-							if object_manager.savetilemap(self.savestring.rstrip(),self.chunksave.rstrip()) == "No":
-								self.mode = 2
-							else:
-								self.mode = 0
 
 			elif self.mode == "command":
 				movecam = 0
