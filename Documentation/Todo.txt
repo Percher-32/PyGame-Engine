@@ -13,13 +13,7 @@ IN-ENGINE:
 	[X] - Particle-editor:  
 		* can save particle presets[X]
 		* ui for particle creator  [X]
-	[#] - ui-editor:
-		* can save all ui elements and load them[X]
-		* load states   []
-		* place rects   []
-		* place buttons []
-		* place text    []
-		* load states   []
+	
 
 
 

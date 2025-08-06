@@ -892,6 +892,49 @@ class TiledSoftwre:
 					um.elements["particlecommandtext"]["text"] = ""
 
 
+			elif self.mode == "ui-edit":
+				movecam = 0
+				um.state = "ui-edit"
+				um.elements["loadedbluprint"]["text"] = "Loaded:" + self.loadedparticle
+				um.elements["particledata"]["text"] = f"type:{use['type']} \ndivergence:{use['divergence']} \ncolor:{use['color']} \nforce:{use['force']} \nsize:{use['size']} \nsizedec:{use['sizedec']} \ndim:{use['dim']} \nalpha:{use['alpha']} \nalphadec:{use['alphadec']} \nntimes:{use['ntimes']} \nspeed:{use['speed']} \ncolordec:{use['colordec']} \ndivforce:{use['divergenceforce']} \ndivpos:{use['divergencepos']}"                      
+				self.uitext("particlecommandtext",GameManager)
+				if GameManager.em.key[pygame.K_RETURN]:
+					text = um.elements["particlecommandtext"]["text"].rstrip()
+					if text == "/x":
+						self.mode = 0
+						um.state = "def"
+					if "load:" in text:
+						self.loadedparticle = text.replace("load:","").strip()
+						self.parts = pm.bluprints[self.loadedparticle]
+					if text == "new" :
+						self.loadedparticle = None
+						self.actuallyload = False
+					if "=" in text:
+						text = text.split("=")
+						val = text[0].replace(" ","")
+						newvalue = text[1].replace(" ","")
+						if not val == "name":
+							if val in use.keys():
+								use[val] = eval(newvalue)
+						else:
+							self.loadedparticle = newvalue
+					if not self.loadedparticle == None:
+						if text == "save":
+							pm.savebluprint(self.loadedparticle,use["type"],use["divergence"],
+											use["color"],use["initvel"],use["force"],
+											use["size"],use["sizedec"],dim = use["dim"],
+											alpha = use["alpha"],alphadec=use["alphadec"],
+											colordec=use["colordec"],quality=use["quality"],
+											divergenceforce=use["divergenceforce"],
+											divergencepos=use["divergencepos"],
+											ntimes=use["ntimes"],
+											speed=use["speed"])
+							pm.loadallbluprints()
+							self.parts = pm.bluprints[self.loadedparticle]
+					
+					um.elements["particlecommandtext"]["text"] = ""
+
+
 
 
 			elif "setbg:" in self.commmandtring.rstrip():
@@ -934,7 +977,11 @@ class TiledSoftwre:
 				um.addtext("loadedbluprint","Loaded:None",univars.defont,[-0.97,0.8],univars.theme["semibright"],30,["particle-edit"],center=False)
 				um.addtext("particledata","",univars.defont,[-0.97,0.75],univars.theme["semibright"],30,["particle-edit"],center=False)
 				um.addtext("particlecommandtext","",univars.defont,[-0.98,-0.9],univars.theme["bright"],40,["particle-edit"],center = False)
-
+			elif self.commmandtring.rstrip() in ["ui","ui-edit","ui-editor"]:
+				self.mode = "Ui-edit"
+				um.addrect((univars.screen_w + 500,200),"all",[0,-1],"ui_edit_hud",color = univars.theme["dark"])
+				um.addrect((500,2000),["ui-edit"],[-0.9,0],"ui_edit_side_bar",color = univars.theme["dark"])
+				um.addtext("uistatetext",f"state:{um.state}",univars.defont,[-0.97,0.8],univars.theme["semibright"],30,"all",center=False)
 
 
 
