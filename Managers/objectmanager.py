@@ -547,19 +547,16 @@ class object_manager:
 			self.instances[name] = pygame.sprite.Group()
 			self.instances[name].add(newt)
 
-	def adds(self,name,pos,sprites,type,rot,size,alpha,layer):
+	def adds(self,name,pos,sprites,type,rot,sizen,alpha,layer):
 		"""add special for more unique items"""
 		dummy  = univars.func.getsprites(sprites)[0]
-		size = [dummy.get_width() * size[0],dummy.get_height() * size[1]]
-		realsprite = univars.func.getspritesscale(sprites,size)
-		rect = pygame.Surface.get_rect(realsprite[0])
-		rect.center = (pos[0],pos[1])
+		size = dummy.get_size()
 		if str([sprites,size]) in list(self.spritecache.keys()):
 			spritelist = self.spritecache[str([sprites,size])]
 		else:
 			spritelist = univars.func.getspritesscale(sprites,size)
 			self.spritecache[str([sprites,size])] = spritelist
-		add = {"pos":list(pos),"name":sprites,"type":type,"rot":rot,"sn":0,"gothru":0,"rendercond":1,"alpha":alpha,"layer":layer,"animname":"none","size":size}
+		add = {"pos":list(pos),"name":sprites,"type":type,"rot":rot,"sn":0,"gothru":0,"rendercond":1,"alpha":alpha,"layer":layer,"animname":"none","size":size,"sizen":sizen}
 		self.objects.update({str(name):add})
 		finalobj = inst.obj(str(name),add,spritelist)
 		if not layer in self.layers.keys():

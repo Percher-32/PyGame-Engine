@@ -29,8 +29,8 @@ class Game(Gamemananager.GameManager):
 
 	def onreload(self):
 		self.a = 0
-		bg.addbackground("test2")
-		bg.addbackgrounditem("black","test2",[0,-40]                ,surf = "mount",dimensions=[500*4,250*4],layer = 0.2,infiniscroll=True)
+		# bg.addbackground("test2")
+		# bg.addbackgrounditem("black","test2",[0,-40]                ,surf = "mount",dimensions=[500*4,250*4],layer = 0.2,infiniscroll=True)
 		
 		if "game" == self.states:
 
@@ -43,28 +43,19 @@ class Game(Gamemananager.GameManager):
 
 		if "veiw" == self.states:
 			um.changestate("test1","but1")
-			um.addbutton(univars.sizes["mediumbutton"],["test1"],[-0.5,0],"but1",color=univars.theme["dark"],surf = "testbutton")
-			um.addglide("but1",univars.sizes["mediumbutton"],univars.sizes["largebutton"])
-			um.addbutton(univars.sizes["mediumbutton"],["test1"],[0,0],"but2",color=univars.theme["dark"])
-			um.addbutton(univars.sizes["mediumbutton"],["test1"],[0.5,0],"but3",color=univars.theme["dark"])
-			um.addbutton(univars.sizes["mediumbutton"],["test1"],[0,0.5],"but4",color=univars.theme["dark"])
+			# um.addbutton(univars.sizes["mediumbutton"],["test1"],[-0.5,0],"but1",color=univars.theme["dark"],surf = "testbutton")
+			# um.addglide("but1",univars.sizes["mediumbutton"],univars.sizes["largebutton"])
+			# um.addbutton(univars.sizes["mediumbutton"],["test1"],[0,0],"but2",color=univars.theme["dark"])
+			# um.addbutton(univars.sizes["mediumbutton"],["test1"],[0.5,0],"but3",color=univars.theme["dark"])
+			# um.addbutton(univars.sizes["mediumbutton"],["test1"],[0,0.5],"but4",color=univars.theme["dark"])
+			# um.savealluielements()
+
 
 		if self.states == "test":
 			om.add((0,0),"player",0,"green",[1,1],self.dim)
 
 
 	def commence(self):
-		# self.wait("intro",1)
-		# self.maxbg = [univars.realscreeen.get_width(),univars.realscreeen.get_height()]
-		# um.addrect(self.maxbg,["default","test2","gameplay"],
-		# (0,0),"bg2",univars.theme["dark"],255)
-		# um.addrect([univars.realscreeen.get_width() - 200,0],["default","test2","gameplay"],(0,0),"bg",univars.theme["mid"],100)
-		# um.addbutton((100,50),["default","test2","gameplay"],(0,-2),
-		# "playbutton",univars.theme["dark"],255)
-		# um.addtext("playtext","play",univars.defont,(0,-1),univars.theme["semibright"],40,["default"])
-		# um.bindtobutton("playtext","playbutton")
-		# um.addglide("playbutton",univars.sizes["mediumbutton"],univars.sizes["largebutton"])
-		# self.enppos = [0,-0.5]
 		pass
 
 	def update(self):

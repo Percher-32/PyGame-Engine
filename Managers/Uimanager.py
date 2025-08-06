@@ -210,8 +210,8 @@ class Uimanager:
 
 	def savealluielements(self):
 		# todump = [self.elements[i].pop("surf").pop("cache") for i in self.elements.keys()  ]
-		with open("Saved/Ui.json","x") as file:
-			json.dump({"metadaata":self.metadata,"binds":self.binds,"glidens":self.glidens},file)
+		with open("Saved/Ui.json","w") as file:
+			json.dump({"metadata":self.metadata,"binds":self.binds,"glidens":self.glidens},file)
 			
 		
 
@@ -233,7 +233,7 @@ class Uimanager:
 		for i in elements["binds"]:
 			self.bindtobutton(i[0],i[1])
 		for i in elements["glidens"]:
-			self.addglide(i[0],i[1],1[2])
+			self.addglide(i[0],i[1],i[2])
 		
 
 
@@ -275,7 +275,7 @@ class Uimanager:
 		if self.timetillnextswap <= 0:
 			self.timetillnextswap = 0
 			if self.selectedbutton in self.elements.keys():
-				self.timetillnextswap = 3
+				self.timetillnextswap = 10
 				old = self.selectedbutton
 				if axis[0] < 0:
 					self.mode = "arrow"

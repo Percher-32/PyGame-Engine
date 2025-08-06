@@ -317,6 +317,7 @@ class GameManager():
 		self.debug = True
 		cm.setcond(cm.currentcam,"size",1)
 		self.loadanims()
+		um.loadalluielements()
 		pm.loadallbluprints()
 	def inputdetect(self):
 		em.next()

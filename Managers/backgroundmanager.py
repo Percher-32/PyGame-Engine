@@ -133,7 +133,7 @@ class Backgroundmanager:
         """
         for item in self.items.keys():
             todump = [  [i.name,i.pos,i.alpha,i.surf,i.color,i.dimensions,i.layer,i.infiniscroll]  for i in self.items[item]]
-            with open (f"Saved/backgrounds/{item}.json","x") as file:
+            with open (f"Saved/backgrounds/{item}.json","w") as file:
                 json.dump(todump,file)
             
 
