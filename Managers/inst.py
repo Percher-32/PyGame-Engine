@@ -10,13 +10,14 @@ spritecache = {}
 dataspritecache = []
 with open("Saved/Spritecache.json") as file:
 	fakespritecache = json.load(file)
-
+dataspritecache = fakespritecache
 for i in fakespritecache:
 	spritecache[str(i)] = pygame.transform.scale(univars.func.getsprites(i[0])[0],i[1])
 
 
-
-
+print(spritecache)
+for _ in range(30):
+	print("\n")
 
 
 
@@ -66,6 +67,7 @@ class inst(pygame.sprite.Sprite):
 			if not str([self.name,realestsize]) in spritecache.keys():
 				self.image =  pygame.transform.scale(self.bart,  realestsize )
 				spritecache[str([self.name,realestsize])] = self.image
+				print(str([self.name,realestsize]))
 				dataspritecache.append([self.name,realestsize])
 			else:
 				self.image = spritecache[str([self.name,realestsize])]

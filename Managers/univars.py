@@ -90,7 +90,6 @@ startstate = "debugame"
 
 #opt to optimise
 mode = 0
-
 startuistate = "def"
 
 screencol = (110,189,234)

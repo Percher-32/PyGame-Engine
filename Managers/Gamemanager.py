@@ -332,6 +332,9 @@ class GameManager():
 
 	def start(self):
 		"""run at the start of every frame"""
+		
+		clock = pygame.time.Clock()
+		clock.tick(univars.maxfps)
 		if Tiled.comm:
 			sm.state = Tiled.cht
 			self.initial()

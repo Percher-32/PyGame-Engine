@@ -27,9 +27,7 @@ class frame_manager:
 			self.dt = 0.5
 
 		self.lasttime = time.time()
-		clock = pygame.time.Clock()
 		self.frame += 1
-		clock.tick(self.fps)
 		if self.showfps:
 			self.tm.drawtext(f"fps = {round(60/ self.dt)}","pixel2.ttf",40,0,0,0,self.theme,-0.9,-0.9)
 		pygame.display.update()

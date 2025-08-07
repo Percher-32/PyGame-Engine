@@ -238,13 +238,14 @@ class Game(Gamemananager.GameManager):
 		collision = om.collide9("player",1,cam,self.dim)
 		collisionbox = om.collide("player",1,cam,extra=10)
 		ground1 = len(collision["botmid"]["inst"]) > 0
-		ground2 = len(collision["botleft"]["inst"]) > 0 and not (len(collision["midleft"]["inst"]) > 0)
-		ground3 = len(collision["botright"]["inst"]) > 0 and not (len(collision["midright"]["inst"]) > 0)
+		ground2 = len(collision["botleft"]["inst"]) > 0 and not (len(collision["midleft"]["inst"]) > 0)   and not (len(collision["topleft"]["inst"]) > 0)
+		ground3 = len(collision["botright"]["inst"]) > 0 and not (len(collision["midright"]["inst"]) > 0)  and not (len(collision["topright"]["inst"]) > 0)
 		ground = ground1 or ground2 or ground3
 		instlist = collision["botmid"]["inst"] + collision["botleft"]["inst"] + collision["botright"]["inst"] 
 		collisionlisttype = [i.type for i in instlist] 
 		collisionboxtype = [i.type for i in collisionbox["inst"]] 
 		# collisionlisttype.append(None)
+	
 		# show the mode
 		# um.showvar("des_vel",self.gp("des_vel"),[0,-0.7])
 		if self.dt == 0 or self.dt > 10:
@@ -489,6 +490,9 @@ class Game(Gamemananager.GameManager):
 								self.sp("des_vel",[  self.gp("des_vel")[0]    ,    0   ])
 								self.sp("act_vel",[  self.gp("act_vel")[0]    ,    0   ])
 								om.objects["player"]["pos"][1] = instlist[0].realpos[1] - 32
+
+
+
 				else:
 					om.translate(self,"player",[100,40])
 
