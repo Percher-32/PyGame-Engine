@@ -6,9 +6,15 @@ import json
 cam = Cameramod.cam
 
 
-
+spritecache = {}
+dataspritecache = []
 with open("Saved/Spritecache.json") as file:
-	spritecache = json.load(file)
+	fakespritecache = json.load(file)
+
+for i in fakespritecache:
+	spritecache[str(i)] = pygame.transform.scale(univars.func.getsprites(i[0])[0],i[1])
+
+
 
 
 
@@ -56,21 +62,21 @@ class inst(pygame.sprite.Sprite):
 	def update(self, camera,dim:int,showall):
 		# print(self.size)
 		if univars.camchange or univars.poschange:
-			realestsize = [round(self.size[0] * abs(camera.size),2),round(self.size[1] * abs(camera.size),2)]
+			realestsize = [round(self.size[0] * abs(camera.size),1),round(self.size[1] * abs(camera.size),1)]
 			if not str([self.name,realestsize]) in spritecache.keys():
 				self.image =  pygame.transform.scale(self.bart,  realestsize )
 				spritecache[str([self.name,realestsize])] = self.image
-				print("write")
+				dataspritecache.append([self.name,realestsize])
 			else:
 				self.image = spritecache[str([self.name,realestsize])]
-		else:
-			self.image = self.lastframe
+		# else:
+		# 	self.image = self.lastframe
 
 
 		if showall:
 			if self.alpha == 0:
-				self.alpha = 170
-				self.image.set_alpha(self.alpha)
+				alpha = 170
+				self.image.set_alpha(alpha)
 
 
 
@@ -89,6 +95,7 @@ class obj(pygame.sprite.Sprite):
 		pygame.sprite.Sprite.__init__(self)
 		screen = univars.screen
 		grandim = univars.grandim
+		self.fliped = 0
 		self.func = funcs.func(screen,grandim)
 		self.info = info
 		self.sprites = sprites
@@ -118,13 +125,14 @@ class obj(pygame.sprite.Sprite):
 
 				scale = [round(camera.size * self.info["sizen"][0] ,1)* self.info["size"][0],round(camera.size * self.info["sizen"][1],1 )* self.info["size"][1]]
 
-				if not str((self.name,scale,self.info["sn"])) in objcache: 
+				if not str((self.name,scale,self.info["sn"],self.fliped)) in objcache: 
 					b = sprite
 					b = pygame.transform.scale(b,scale)
-					objcache[str((self.name,scale,self.info["sn"]))] = b
+					objcache[str((self.name,scale,self.info["sn"],self.fliped))] = b
 
 				else:
-					b = objcache[str((self.name,scale,self.info["sn"]))]
+					b = objcache[str((self.name,scale,self.info["sn"],self.fliped))]
+
 				
 
 
@@ -149,6 +157,7 @@ class obj(pygame.sprite.Sprite):
 		self.sprites = self.func.getspritesscale(info["sprite"],info["size"])
 
 	def flip(self):
+		self.fliped = not self.fliped
 		self.sprites = [pygame.transform.flip(i,True,False) for i in self.sprites ]
 
 	

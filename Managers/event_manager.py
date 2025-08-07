@@ -107,8 +107,7 @@ class event_manager:
 				pygame.quit()
 				self.running = False
 				with open("Saved/Spritecache.json","w") as file:
-					print("dump")
-					json.dump(inst.spritecache,file)
+					json.dump(inst.dataspritecache,file)
 				exit()
 
 

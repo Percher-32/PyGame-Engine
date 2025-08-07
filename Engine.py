@@ -103,8 +103,28 @@ class Game(Gamemananager.GameManager):
 			self.moveplayer()
 
 			#move camera
-			cm.cam_focus_size("playercam",om.objects["player"]["pos"],4,univars.pixelscale/7 * ((-0.001 *      univars.func.dist([0,0],self.gp("act_vel"))                 ) + 0.5) )
-			# cm.cam_focus_size("playercam",om.objects["player"]["pos"],3,univars.pixelscale/7 * 0.5 )
+			campos = [om.objects["player"]["pos"][0],om.objects["player"]["pos"][1]]
+				
+
+			um.showvar("lookahead",self.lookahead,[0,-0.5])
+
+			if self.gp("des_vel")[0] > 0:
+				self.lookahead = self.unilerp(self.lookahead,200,8,roundto=2)
+			elif self.gp("des_vel")[0] < 0:
+				self.lookahead = self.unilerp(self.lookahead,-200,8,roundto=2)
+			else:
+				self.lookahead = self.unilerp(self.lookahead,0,20,roundto=2)
+
+			campos[0] += self.lookahead
+			# if self.gp("des_vel")[1] > 0:
+			# 	campos[1] += self.lookahead
+			# elif self.gp("des_vel")[1] < 0:
+			# 	campos[1] -= self.lookahead
+
+
+
+			# cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * ((-0.001 *      univars.func.dist([0,0],self.gp("act_vel"))                 ) + 0.5) )
+			cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.5 )
 			# cm.setcond("playercam","pos",[cm.getcam("playercam","pos")[0] + (self.key["x"] * 20) , cm.getcam("playercam","pos")[1] ])
 
 			
@@ -148,7 +168,7 @@ class Game(Gamemananager.GameManager):
 		Initialises the players variables
 		"""
 
-		
+		self.lookahead = 100
 		om.speed = 1
 
 		#create player
