@@ -103,7 +103,7 @@ poschange = 0
 
 defont = "pixel2.ttf"
 
-renderdist = 17
+renderdist = 20
 
 showinput = 0
 

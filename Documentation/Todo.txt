@@ -1,15 +1,19 @@
 Key:
 	[X] = DONE
-	[-] = IN-PROGRESS
-	[#] = currently in progress
-	[!] = Next-task
+	[-] = On the back burner
+	[#] = Current Tast
+	[^] = Next-task
 	[?] = may or may-not add
+	[!] = ERROR PRONE
+	[@] = not a priority
 
 
 
 IN-ENGINE:
+	[^] - Documentation:
+		* add taglines to frequently used functions []
 	[X] - Particle-system
-	[] - Sound system
+	[@] - Sound system
 	[X] - Fix Animations
 	[X] - Particle-editor:  
 		* can save particle presets[X]
@@ -20,7 +24,7 @@ IN-ENGINE:
 
 IN-GAME:
 	PLAYER:
-		[#] - Slopes:
+		[#!] - Slopes:
 				* removal of slope no-clip [X]
 				* preserve momentum        [X]
 				* jumping                  [#]
@@ -36,8 +40,8 @@ IN-GAME:
 				* walljumping  []
 				* ducking      []
 				* in-air       []
-		[-] - add particles to certain actions:
-				* skidding  [-]
+		[] - add particles to certain actions:
+				* skidding  []
 				* impact    []
 
 		[] - Combat:
