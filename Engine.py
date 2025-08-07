@@ -152,7 +152,7 @@ class Game(Gamemananager.GameManager):
 		om.speed = 1
 
 		#create player
-		om.adds("player",[0,-800],"player","player",0,[1,1],400,5)
+		om.adds("player",[0,250],"player","player",0,[1,1],400,5)
 		om.objects["player"]["rendercond"] = False
 
 		#creates the player sprite you actually see
@@ -239,7 +239,7 @@ class Game(Gamemananager.GameManager):
 						if ground2:
 							slanted = False
 				else:
-					if self.gp("act_vel")[0] > 0:
+					if int(self.gp("act_vel")[0]) > 0:
 						if ground3:
 							slanted = False
 				# if self.gp("act_vel")[0] > 0 :
@@ -256,8 +256,6 @@ class Game(Gamemananager.GameManager):
 			slanted = False
 
 
-		
-
 		#get out of being stuck
 		if not slanted:
 			if not len(collision["midmid"]["inst"]) > 0:
@@ -272,7 +270,7 @@ class Game(Gamemananager.GameManager):
 
 					if self.gp("xinit"):
 						self.sp("xinit",False)
-						self.sp("des_vel",[self.key["x"] * 70,self.gp("des_vel")[1]])
+						self.sp("des_vel",[self.key["x"] * 100,self.gp("des_vel")[1]])
 
 					
 
@@ -478,41 +476,59 @@ class Game(Gamemananager.GameManager):
 						self.sp("act_vel",[   self.gp("prev_act_vel")[0] * 1  ,  self.gp("prev_act_vel")[1] * -1 ])
 					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
 					om.translate(self,"player",self.gp("act_vel"))
-					om.translate(self,"player",[0,20])
 		else:
+			if self.key["jump"]:
+				self.sp("fss",16)
+				self.sp("desmooth",5)
+		
+				#normal
+				self.sp("jumpable",False)
+				self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
+				self.sp("mode","in-air")
+				self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
+				om.translate(self,"player",self.gp("act_vel"),usedt=1)
+
 			if "slantr" in collisionboxtype:
 				if not slanted == self.lastframeslanted:
 					# if not ground:
 					index = collisionboxtype.index("slantr")
-					om.objects["player"]["pos"] = [collisionbox["inst"][index].realpos[0] -20,collisionbox["inst"][index].realpos[1] -20]
+					om.objects["player"]["pos"] = [collisionbox["inst"][index].realpos[0] - 20,collisionbox["inst"][index].realpos[1] - 20]
 						# else:
 						# 	om.objects["player"]["pos"] = [collisionbox["inst"][0].realpos[0] +16,collisionbox["inst"][0].realpos[1] +16]
 				else:
 					if abs(self.key["x"]) > 0:
-						self.sp("des_vel",[         self.key["x"] * 100             ,    self.gp("des_vel")[1]   ])
+						self.sp("des_vel",[         self.key["x"] * 70             ,    self.gp("des_vel")[1]   ])
 					else:
 						self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
 					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
-					actvel = [self.gp("act_vel")[0],self.gp("act_vel")[0]]
+					if not self.key["jump"]:
+						actvel = [self.gp("act_vel")[0],self.gp("act_vel")[0]]
+					else:
+						actvel = [self.gp("act_vel")[0],self.gp("act_vel")[1]]
 					om.translate(self,"player",actvel,usedt=1)
 					self.sp("desrot",45) 
 			else:
 				if not slanted == self.lastframeslanted:
-					if not ground:
-						om.objects["player"]["pos"] = [collisionbox["inst"][0].realpos[0] -16,collisionbox["inst"][0].realpos[1] -16]
+					index = collisionboxtype.index("slantl")
+					# if not ground2:
+					om.objects["player"]["pos"] = [collisionbox["inst"][index].realpos[0] +16,collisionbox["inst"][index].realpos[1] -20]
 						# else:
 						# 	om.objects["player"]["pos"] = [collisionbox["inst"][0].realpos[0] +16,collisionbox["inst"][0].realpos[1] +16]
 				else:
 					if abs(self.key["x"]) > 0:
-						self.sp("des_vel",[         self.key["x"] * 100             ,    self.gp("des_vel")[1]   ])
+						self.sp("des_vel",[         self.key["x"] * 70             ,    self.gp("des_vel")[1]   ])
 					else:
 						self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
 					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
-					actvel = [self.gp("act_vel")[0],-1 * self.gp("act_vel")[0]]
+					if not self.key["jump"]:
+						actvel = [self.gp("act_vel")[0],-1 * self.gp("act_vel")[0]]
+					else:
+						actvel = [self.gp("act_vel")[0], self.gp("act_vel")[1]]
 					om.translate(self,"player",actvel,usedt=1)
 					self.sp("desrot",-45)
 			om.objects["playersprite"]["rot"]  =  self.unilerp(om.objects["playersprite"]["rot"],self.gp("desrot"),5,roundto=2) 
-
+			
+			
 
 
 

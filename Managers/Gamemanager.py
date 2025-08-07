@@ -10,10 +10,12 @@ import Managers.Tiled as Tiled
 import Managers.univars as univars
 import Managers.statemanager as statemanager
 import Managers.Uimanager as Uimanager
+import Managers.inst as inst
 import copy
 import Managers.backgroundmanager as backgroundmanager
 import os
 import threading
+import json
 import time
 import random
 import Managers.Particlesytem

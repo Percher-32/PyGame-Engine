@@ -3,6 +3,7 @@ Key:
 	[-] = IN-PROGRESS
 	[#] = currently in progress
 	[!] = Next-task
+	[?] = may or may-not add
 
 
 
@@ -13,21 +14,22 @@ IN-ENGINE:
 	[X] - Particle-editor:  
 		* can save particle presets[X]
 		* ui for particle creator  [X]
-	
+	[?] - shaders
 
 
 
 IN-GAME:
 	PLAYER:
-		[!] - Slopes:
+		[#] - Slopes:
 				* removal of slope no-clip [X]
 				* preserve momentum        [X]
+				* jumping                  [#]
 
 		[] - Dash:
 			* dashbaar         []
 			*  ways to fill up []
 
-		[] - Tilt on ledges
+		[?] - Tilt on ledges
 
 		[] - Animations:
 				* falling      []

@@ -2,13 +2,13 @@ import pygame
 import Managers.funcs as funcs
 import Managers.Cameramod as Cameramod
 import Managers.univars as univars
-import math
+import json
 cam = Cameramod.cam
 
 
 
-
-spritecache = {}
+with open("Saved/Spritecache.json") as file:
+	spritecache = json.load(file)
 
 
 
@@ -60,6 +60,7 @@ class inst(pygame.sprite.Sprite):
 			if not str([self.name,realestsize]) in spritecache.keys():
 				self.image =  pygame.transform.scale(self.bart,  realestsize )
 				spritecache[str([self.name,realestsize])] = self.image
+				print("write")
 			else:
 				self.image = spritecache[str([self.name,realestsize])]
 		else:
@@ -69,10 +70,10 @@ class inst(pygame.sprite.Sprite):
 		if showall:
 			if self.alpha == 0:
 				self.alpha = 170
+				self.image.set_alpha(self.alpha)
 
 
 
-		self.image.set_alpha(self.alpha)
 		self.rect = self.image.get_rect(topleft = ( (int(round(self.realpos[0] - camera.x) * camera.size + univars.screen.get_width()//2 - self.image.get_width()/2)),int(round((self.realpos[1] - camera.y) * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2)))   )
 		
 		self.lastframe = self.image

@@ -21,10 +21,10 @@ class frame_manager:
 		# if len(self.lastdts) > univars.maxfpsbuffersize:
 		# 	self.lastdts.pop(0)
 
-		if self.dt > 2:
-			self.dt = 2
-		if self.dt < 1:
-			self.dt = 1
+		if self.dt > 3:
+			self.dt = 3
+		if self.dt < 0.5:
+			self.dt = 0.5
 
 		self.lasttime = time.time()
 		clock = pygame.time.Clock()

@@ -1,6 +1,7 @@
 #event_manager
 import pygame
 import json
+import Managers.inst as inst
 import os
 pygame.joystick.init()
 joysticks = [pygame.joystick.Joystick(i) for i in range (pygame.joystick.get_count())] 
@@ -105,6 +106,9 @@ class event_manager:
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				self.running = False
+				with open("Saved/Spritecache.json","w") as file:
+					print("dump")
+					json.dump(inst.spritecache,file)
 				exit()
 
 
