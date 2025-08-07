@@ -84,7 +84,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 map = "slide"
 
-startstate = "debugame"
+startstate = "edit"
 
 
 
@@ -114,6 +114,6 @@ def update():
     global uiscreen
     screen_w = realscreeen.get_width()
     screen_h = realscreeen.get_height()
-    uiscreen = pygame.transform.scale(uiscreen,[screen_w,screen_h])
+    # uiscreen = pygame.transform.scale(uiscreen,[screen_w,screen_h])
 
 

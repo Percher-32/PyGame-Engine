@@ -15,9 +15,6 @@ for i in fakespritecache:
 	spritecache[str(i)] = pygame.transform.scale(univars.func.getsprites(i[0])[0],i[1])
 
 
-print(spritecache)
-for _ in range(30):
-	print("\n")
 
 
 
@@ -27,18 +24,19 @@ class inst(pygame.sprite.Sprite):
 
 	def __init__(self,screen,grandim,name,x,y,rot,sizen,type,alpha,sprites,size):
 		pygame.sprite.Sprite.__init__(self)
-		realestsize = [int(round(size[0] * abs(cam.size))),int(round(size[1]* abs(cam.size)))]
+		
+		camera = Cameramod.cam
+		realestsize = [round(size[0] * abs(camera.size),1),round(size[1] * abs(camera.size),1)]
 		self.screen = screen
 		self.func = funcs.func(screen,grandim)
 		self.sizen = list(sizen)
 		self.name = str(name)
 		self.type = type
 		self.bart = pygame.transform.scale(pygame.transform.rotate(sprites[0],rot),realestsize)
-		self.image = sprites[0]
+		self.image =  pygame.transform.scale(self.bart,  realestsize )
 		self.rot = int(rot)
 		self.realpos = (int(x),int(y))
 		self.size = size
-		camera = Cameramod.cam
 		self.rect = self.image.get_rect(topleft = ( (int(round(self.realpos[0] - camera.x) * camera.size + univars.screen.get_width()//2 - self.image.get_width()/2)),int(round((self.realpos[1] - camera.y) * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2))))
 		self.fakerect = pygame.Rect(x - self.size[0]//2,y - self.size[1]//2,self.size[0],self.size[1])
 		self.alpha = alpha
@@ -60,19 +58,16 @@ class inst(pygame.sprite.Sprite):
 		else:
 			return False
 
-	def update(self, camera,dim:int,showall):
-		# print(self.size)
+	def update(self,showall):
+		camera = Cameramod.cam
 		if univars.camchange or univars.poschange:
-			realestsize = [round(self.size[0] * abs(camera.size),1),round(self.size[1] * abs(camera.size),1)]
+			realestsize = [round(self.size[0] * abs(camera.size),0),round(self.size[1] * abs(camera.size),0)]
 			if not str([self.name,realestsize]) in spritecache.keys():
 				self.image =  pygame.transform.scale(self.bart,  realestsize )
 				spritecache[str([self.name,realestsize])] = self.image
-				print(str([self.name,realestsize]))
 				dataspritecache.append([self.name,realestsize])
 			else:
 				self.image = spritecache[str([self.name,realestsize])]
-		# else:
-		# 	self.image = self.lastframe
 
 
 		if showall:
@@ -84,8 +79,6 @@ class inst(pygame.sprite.Sprite):
 
 		self.rect = self.image.get_rect(topleft = ( (int(round(self.realpos[0] - camera.x) * camera.size + univars.screen.get_width()//2 - self.image.get_width()/2)),int(round((self.realpos[1] - camera.y) * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2)))   )
 		
-		self.lastframe = self.image
-		self.lastrect = self.rect
 
 
 

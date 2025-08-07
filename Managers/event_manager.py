@@ -83,6 +83,9 @@ class event_manager:
 							"touchpad": False
 
 							}
+		"""
+			contains values for wether a button has just been pressed
+		"""
 
 	def next(self):
 		self.key = pygame.key.get_pressed()
