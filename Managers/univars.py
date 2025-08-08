@@ -63,7 +63,7 @@ lumptype = {"grass":"ground","dirt":"ground","slantl":"slantl","slantr":"slantr"
 # sizeoffsets = {"grass":[0.1,0.1],"dirt":[0.1,0.1],"slantr":[0.1,0.1],"slantl":[0.1,0.1]}
 sizeoffsets = {}
 
-instables = ["dirt","grass","def","slantl","slantr"]
+instables = ["dirt","grass","def","slantl","slantr","slantlbot","slantrbot"]
 
 extras = [["def","camz",[20,20]]]
 
@@ -83,9 +83,9 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "slide"
+map = "frost"
 
-startstate = "edit"
+startstate = "debugame"
 
 
 

@@ -82,8 +82,8 @@ class inst(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect(
 										topleft = 
 												(   
-													int((round((self.realpos[0] - camera.x)/8) * 8 * camera.size + univars.screen.get_width()//2  - self.image.get_width()/2 ))      ,
-													int((round((self.realpos[1] - camera.y)/8) * 8 * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2))  
+													int((round((self.realpos[0] - camera.x)/1) * 1 * camera.size + univars.screen.get_width()//2  - self.image.get_width()/2 ))      ,
+													int((round((self.realpos[1] - camera.y)/1) * 1 * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2))  
 												)   
 													
 										)
