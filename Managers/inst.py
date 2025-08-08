@@ -31,7 +31,7 @@ class inst(pygame.sprite.Sprite):
 		self.sizen = list(sizen)
 		self.name = str(name)
 		self.type = type
-		self.bart = nullsurf
+		self.bart = sprites[0]
 		self.newbie = True
 		self.image =  nullsurf
 		self.rot = int(rot)
@@ -67,6 +67,7 @@ class inst(pygame.sprite.Sprite):
 				dataspritecache.append([self.name,realestsize])
 			else:
 				self.image = spritecache[str([self.name,realestsize])]
+			self.image = pygame.transform.rotate(self.image,self.rot)
 
 
 		if showall:

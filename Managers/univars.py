@@ -48,7 +48,6 @@ sizes = {
 
 screen = pygame.Surface((64 * pixelscale,64 * pixelscale))
 fakescreen = pygame.Surface((64 * pixelscale,64 * pixelscale))
-fakescreen.set_colorkey((0,0,0))
 
 
 uiscreen = pygame.Surface((screen_w,screen_h))

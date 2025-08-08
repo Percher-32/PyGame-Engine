@@ -146,7 +146,7 @@ class GameManager():
 		a = surf
 		a = pygame.transform.scale_by(a,abs(camera.size))
 		b = pygame.transform.rotate(a,rot)
-		univars.fakescreen.blit(b,(            (             ( (int(round(pos[0] - camera.x) * camera.size + univars.screen.get_width()//2 - b.get_width()/2)),int(round((pos[1] - camera.y) * camera.size + univars.screen.get_height()//2 - b.get_height()/2)))            )         )                  )
+		self.abttodo.append([b,pos])
 
 	def blitrect(self,surf,pos,rot,camera):
 		a = surf
@@ -355,11 +355,11 @@ class GameManager():
 		
 		#renders blits
 		camera = Cameramod.cam
-		# for i in self.abttodo:
-		# 	b = i[0]
-		# 	pos = i[1]
-		
-		# 	self.abttodo.remove(i)
+		for i in self.abttodo:
+			b = i[0]
+			pos = i[1]
+			univars.screen.blit(b,(            (             ( (int(round(pos[0] - camera.x) * camera.size + univars.screen.get_width()//2 - b.get_width()/2)),int(round((pos[1] - camera.y) * camera.size + univars.screen.get_height()//2 - b.get_height()/2)))            )         )                  )
+			self.abttodo.remove(i)
 
 		
 		#render onto screen
@@ -405,11 +405,6 @@ class GameManager():
 		self.dt = fm.dt
 		self.lastkey = self.key
 		self.inputdetect()
-		#render onto screen
-		renderwid = max([univars.screen_w,univars.screen_h])
-		univars.realscreeen.blit(pygame.transform.scale(univars.fakescreen,(renderwid ,renderwid )),(0,-1 * renderwid//4))
-		univars.fakescreen = pygame.Surface((64 * univars.pixelscale,64 * univars.pixelscale))
-		univars.fakescreen.set_colorkey((0,0,0),flags = 1)
 		self.frame_manager.next(self.publicvariables["maxfps"])
 
 	def initial(self):
