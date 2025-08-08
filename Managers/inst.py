@@ -125,7 +125,8 @@ class obj(pygame.sprite.Sprite):
 			if univars.func.dist(g,h) < 2000:
 
 
-				scale = [round(camera.size * self.info["sizen"][0] ,1)* self.info["size"][0],round(camera.size * self.info["sizen"][1],1 )* self.info["size"][1]]
+				scale = [	math.ceil((round(camera.size * self.info["sizen"][0] ,1)* self.info["size"][0])/2) * 2		,
+			 			 	math.ceil((round(camera.size * self.info["sizen"][1],1 )* self.info["size"][1])/2) * 2		]
 
 				if not str((self.name,scale,self.info["sn"],self.fliped)) in objcache: 
 					b = sprite
@@ -142,7 +143,12 @@ class obj(pygame.sprite.Sprite):
 				b.set_alpha(self.info["alpha"])
 				b = pygame.transform.rotate(b,self.info["rot"])
 				self.image = b
-				self.rect = self.image.get_rect(topleft = ( ((pos[0] - camera.x) * round(camera.size,2)) + univars.screen.get_width()//2 - b.get_width()/2 ,(    ((pos[1] - camera.y) * round(camera.size,2)))        + univars.screen.get_height()//2 - b.get_height()/2))
+				self.rect = self.image.get_rect(topleft = 
+													( 
+														((pos[0] - camera.x) * round(camera.size,2)) + univars.screen.get_width()//2 - b.get_width()/2            ,
+														(((pos[1] - camera.y) * round(camera.size,2)))        + univars.screen.get_height()//2 - b.get_height()/2
+													)
+												)
 			else:
 				self.image = pygame.Surface((0,0))
 				self.rect = pygame.Rect(0,0,0,0)
