@@ -3,6 +3,7 @@ import Managers.funcs as funcs
 import Managers.Cameramod as Cameramod
 import Managers.univars as univars
 import json
+import math
 cam = Cameramod.cam
 
 
@@ -61,7 +62,8 @@ class inst(pygame.sprite.Sprite):
 	def update(self,showall):
 		camera = Cameramod.cam
 		if univars.camchange or univars.poschange:
-			realestsize = [round(self.size[0] * abs(camera.size),0),round(self.size[1] * abs(camera.size),0)]
+			
+			realestsize = [math.ceil((self.size[0] * abs(camera.size))/2)*2,math.ceil((self.size[1] * abs(camera.size))/2)*2]
 			if not str([self.name,realestsize]) in spritecache.keys():
 				self.image =  pygame.transform.scale(self.bart,  realestsize )
 				spritecache[str([self.name,realestsize])] = self.image
@@ -77,7 +79,14 @@ class inst(pygame.sprite.Sprite):
 
 
 
-		self.rect = self.image.get_rect(topleft = ( (int(round(self.realpos[0] - camera.x) * camera.size + univars.screen.get_width()//2 - self.image.get_width()/2)),int(round((self.realpos[1] - camera.y) * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2)))   )
+		self.rect = self.image.get_rect(
+										topleft = 
+												(   
+													int((round((self.realpos[0] - camera.x)/8) * 8 * camera.size + univars.screen.get_width()//2  - self.image.get_width()/2 ))      ,
+													int((round((self.realpos[1] - camera.y)/8) * 8 * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2))  
+												)   
+													
+										)
 		
 
 

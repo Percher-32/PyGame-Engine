@@ -60,7 +60,8 @@ func = funcs.func(screen,grandim)
 
 lumptype = {"grass":"ground","dirt":"ground","slantl":"slantl","slantr":"slantr"}
 
-sizeoffsets = {"grass":[0.1,0.1],"dirt":[0.1,0.1],"slantr":[0.2,0.2],"slantl":[0.2,0.2]}
+# sizeoffsets = {"grass":[0.1,0.1],"dirt":[0.1,0.1],"slantr":[0.1,0.1],"slantl":[0.1,0.1]}
+sizeoffsets = {}
 
 instables = ["dirt","grass","def","slantl","slantr"]
 
@@ -90,6 +91,8 @@ startstate = "edit"
 
 #opt to optimise
 mode = 0
+
+
 startuistate = "def"
 
 screencol = (110,189,234)
