@@ -39,7 +39,7 @@ class inst(pygame.sprite.Sprite):
 		self.realpos = (int(x),int(y))
 		self.size = size
 		self.rect = self.image.get_rect(topleft = ( (int(round(self.realpos[0] - camera.x) * camera.size + univars.screen.get_width()//2 - self.image.get_width()/2)),int(round((self.realpos[1] - camera.y) * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2))))
-		self.fakerect = pygame.Rect(x - self.size[0]//2,y - self.size[1]//2,self.size[0],self.size[1])
+		self.fakerect = pygame.Rect(x - self.size[0]//2,y - self.size[1]//2,self.size[0] + 10,self.size[1] + 10)
 		self.alpha = alpha
 		self.lastframe = self.bart
 		self.lastrect = self.rect

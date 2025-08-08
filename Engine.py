@@ -106,7 +106,7 @@ class Game(Gamemananager.GameManager):
 			campos = [om.objects["player"]["pos"][0],om.objects["player"]["pos"][1]]
 				
 
-			um.showvar("lookahead",self.lookahead,[0,-0.5])
+			
 
 			if self.gp("des_vel")[0] > 0:
 				self.lookahead = self.unilerp(self.lookahead,200,8,roundto=2)
@@ -206,6 +206,8 @@ class Game(Gamemananager.GameManager):
 		self.lastframeslanted = False
 		self.gate = "r"
 
+		self.lastdirslant = "r"
+
 		#previous frames actual velocity
 		self.sp("prev_act_vel",[0,0])
 
@@ -221,7 +223,8 @@ class Game(Gamemananager.GameManager):
 		self.sp("desmooth",5)
 
 
-		
+		self.sp("slantdir","r")
+
 		om.set_value("skateboard","fallvalue",5)
 
        
@@ -237,6 +240,7 @@ class Game(Gamemananager.GameManager):
 	def moveplayer(self):
 		# om.speed = 0.4
 		collision = om.collide9("player",1,cam,self.dim)
+		lonepoint = om.collidep([om.objects["player"]["pos"][0] + 40,om.objects["player"]["pos"][1] - 32 ],0,32)
 		collisionbox = om.collide("player",1,cam,extra=10)
 		ground1 = len(collision["botmid"]["inst"]) > 0
 		ground2 = len(collision["botleft"]["inst"]) > 0 and not (len(collision["midleft"]["inst"]) > 0)   and not (len(collision["topleft"]["inst"]) > 0)
@@ -261,27 +265,25 @@ class Game(Gamemananager.GameManager):
 						if ground2:
 							slanted = False
 				else:
-					if int(self.gp("act_vel")[0]) > 0:
-						if ground3:
+					if self.gp("act_vel")[0] > 0:
+						if len(lonepoint["inst"]) > 0:
 							slanted = False
+							print("back")
 				# if self.gp("act_vel")[0] > 0 :
 				# 	if ground2:
 				# 		slanted = False
 				
 			else:
-				slanted = False
-
-			# if len(instlist) == 0:
-			# 	slanted = True
-			
+				slanted = False	
 		else:
 			slanted = False
 
+		um.showvar("slanted",slanted,[0,-0.5])
 
 		#Main movement
 		if not slanted:
 			if not len(collision["midmid"]["inst"]) > 0:
-				if slanted == self.lastframeslanted or self.gp("des_vel")[0] < 0 or self.key["jump"]:
+				if slanted == self.lastframeslanted or self.key["jump"]:
 					#IN HERE IS EITHER [NO MIDMID] OR [Yes MIDMID AND GROUND]
 
 					#x dir movement
@@ -312,7 +314,8 @@ class Game(Gamemananager.GameManager):
 						if  collision["topleft"]["inst"][0].type == "ground":
 							self.sp("leftwall",True)
 							self.sp("jumpable",True)	
-							om.objects["player"]["pos"][0] = collision["topleft"]["inst"][0].realpos[0] + 32
+							om.objects["player"]["pos"][0] = collision["topleft"]["inst"][0].realpos[0] + 30
+
 							if not collision["botmid"]["inst"]:
 								self.sp("des_vel",[0,self.gp("des_vel")[1]])
 								self.sp("act_vel",[0,self.gp("act_vel")[1]])
@@ -492,10 +495,13 @@ class Game(Gamemananager.GameManager):
 								self.sp("act_vel",[  self.gp("act_vel")[0]    ,    0   ])
 								om.objects["player"]["pos"][1] = instlist[0].realpos[1] - 32
 
-
-
 				else:
-					om.translate(self,"player",[100,40])
+					if self.gp("slantdir") == "r":
+						if self.lastdirslant == "r":
+							om.translate(self,"player",[100,40])
+					if self.gp("slantdir") == "l":
+						if self.lastdirslant == "r":
+							om.translate(self,"player",[-100,40])
 
 
 
@@ -509,6 +515,11 @@ class Game(Gamemananager.GameManager):
 					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
 					om.translate(self,"player",self.gp("act_vel"))
 		else:
+			if abs(self.key["x"]) > 0:
+				if self.key["x"] > 0:
+					self.lastdirslant = "l"
+				else:
+					self.lastdirslant = "r"
 			if self.key["jump"]:
 				self.sp("fss",16)
 				self.sp("desmooth",5)
@@ -519,8 +530,9 @@ class Game(Gamemananager.GameManager):
 				self.sp("mode","in-air")
 				self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
 				om.translate(self,"player",self.gp("act_vel"),usedt=1)
-
+			
 			if "slantr" in collisionboxtype:
+				self.sp("slantdir","r")
 				if not slanted == self.lastframeslanted:
 					# if not ground:
 					index = collisionboxtype.index("slantr")
@@ -529,6 +541,10 @@ class Game(Gamemananager.GameManager):
 						# 	om.objects["player"]["pos"] = [collisionbox["inst"][0].realpos[0] +16,collisionbox["inst"][0].realpos[1] +16]
 				else:
 					if abs(self.key["x"]) > 0:
+						if self.key["x"] > 0:
+							self.lastdirslant = "r"
+						else:
+							self.lastdirslant = "l"
 						self.sp("des_vel",[         self.key["x"] * 70             ,    self.gp("des_vel")[1]   ])
 					else:
 						self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
@@ -540,6 +556,7 @@ class Game(Gamemananager.GameManager):
 					om.translate(self,"player",actvel,usedt=1)
 					self.sp("desrot",45) 
 			else:
+				self.sp("slantdir","l")
 				if not slanted == self.lastframeslanted:
 					index = collisionboxtype.index("slantl")
 					# if not ground2:

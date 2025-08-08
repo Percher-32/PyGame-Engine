@@ -405,6 +405,10 @@ class GameManager():
 		self.dt = fm.dt
 		self.lastkey = self.key
 		self.inputdetect()
+		#render onto screen
+		renderwid = max([univars.screen_w,univars.screen_h])
+		univars.realscreeen.blit(pygame.transform.scale(univars.fakescreen,(renderwid ,renderwid )),(0,-1 * renderwid//4))
+
 		self.frame_manager.next(self.publicvariables["maxfps"])
 
 	def initial(self):

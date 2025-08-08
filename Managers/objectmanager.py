@@ -355,7 +355,7 @@ class object_manager:
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		#coll for non-inst
 		dim = univars.grandim
-		typel = self.getcull(pos,1,dim)
+		typel = self.getcull(pos,1,univars.grandim)
 		noninst = [self.objfromid(i) for i in typel if self.objfromid(i).fakerect.collidepoint(pos) ]
 
 		#coll for inst

@@ -20,7 +20,7 @@ grandim = 32
 
 name = "Project ender"
 
-maxfps = 200000000
+maxfps = 2000
 
 
 (40, 41, 83)
@@ -48,13 +48,14 @@ sizes = {
 
 screen = pygame.Surface((64 * pixelscale,64 * pixelscale))
 fakescreen = pygame.Surface((64 * pixelscale,64 * pixelscale))
+fakescreen.set_colorkey((0,0,0))
 uiscreen = pygame.Surface((screen_w,screen_h))
 realscreeen = pygame.display.set_mode((screen_w,screen_h),pygame.RESIZABLE)
 pygame.display.set_caption(name)
 
 screen_rect = screen.get_rect(center = (0,0))
 
-func = funcs.func(screen,grandim)
+func = funcs.func(fakescreen,grandim)
 
 
 
@@ -85,7 +86,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 map = "frost"
 
-startstate = "debugame"
+startstate = "editgame"
 
 
 
