@@ -137,8 +137,20 @@ class TiledSoftwre:
 
 			#mode for level editing
 			if self.mode == 0:
+				um.state = "def"
+				if GameManager.event_manager.key[pygame.K_v]:
+					if GameManager.event_manager.key[pygame.K_LCTRL]:
+						if GameManager.publicvariables["showdata"] == 1:
+							if self.showdatable < 1:
+								GameManager.publicvariables["showdata"] = 0
+								self.showdatable = 10
+						if GameManager.publicvariables["showdata"] == 0:
+							if self.showdatable < 1:
+								GameManager.publicvariables["showdata"] = 1
+								self.showdatable = 10
+
 				if debug:
-					um.state = "def"
+
 					#random
 					if len(self.typelist) < len(self.spritenames):
 						for i in range(len(self.spritenames) - len(self.typelist)):
@@ -360,16 +372,6 @@ class TiledSoftwre:
 
 
 					#to hide/show ui
-					if GameManager.event_manager.key[pygame.K_v]:
-						if GameManager.event_manager.key[pygame.K_LCTRL]:
-							if GameManager.publicvariables["showdata"] == 1:
-								if self.showdatable < 1:
-									GameManager.publicvariables["showdata"] = 0
-									self.showdatable = 10
-							if GameManager.publicvariables["showdata"] == 0:
-								if self.showdatable < 1:
-									GameManager.publicvariables["showdata"] = 1
-									self.showdatable = 10
 
 
 					#to open command-line

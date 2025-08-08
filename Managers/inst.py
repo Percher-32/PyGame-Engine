@@ -15,7 +15,7 @@ dataspritecache = fakespritecache
 for i in fakespritecache:
 	spritecache[str(i)] = pygame.transform.scale(univars.func.getsprites(i[0])[0],i[1])
 
-
+nullsurf = pygame.Surface((0,0))
 
 
 
@@ -28,41 +28,38 @@ class inst(pygame.sprite.Sprite):
 		
 		camera = Cameramod.cam
 		realestsize = [round(size[0] * abs(camera.size),1),round(size[1] * abs(camera.size),1)]
-		self.screen = screen
-		self.func = funcs.func(screen,grandim)
 		self.sizen = list(sizen)
 		self.name = str(name)
 		self.type = type
-		self.bart = pygame.transform.scale(pygame.transform.rotate(sprites[0],rot),realestsize)
-		self.image =  pygame.transform.scale(self.bart,  realestsize )
+		self.bart = nullsurf
+		self.newbie = True
+		self.image =  nullsurf
 		self.rot = int(rot)
 		self.realpos = (int(x),int(y))
 		self.size = size
 		self.rect = self.image.get_rect(topleft = ( (int(round(self.realpos[0] - camera.x) * camera.size + univars.screen.get_width()//2 - self.image.get_width()/2)),int(round((self.realpos[1] - camera.y) * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2))))
 		self.fakerect = pygame.Rect(x - self.size[0]//2,y - self.size[1]//2,self.size[0] + 10,self.size[1] + 10)
 		self.alpha = alpha
-		self.lastframe = self.bart
-		self.lastrect = self.rect
 
-	def inchunk(self,cam,object,dim):
-		dist = 1/cam.size * 9
-		if cam.x - (dim * dist) - (self.size[0] * dim) <= object[0] <= cam.x + (dim * dist) + (self.size[0] * dim):
-			x = True
-		else:
-			x = False
-		if cam.y - (dim * dist) - (self.size[1] * dim) <= object[1] <= cam.y + (dim * dist) + (self.size[1] * dim):
-			y = True
-		else:
-			y = False
-		if x and y:
-			return True
-		else:
-			return False
+	# def inchunk(self,cam,object,dim):
+	# 	dist = 1/cam.size * 9
+	# 	if cam.x - (dim * dist) - (self.size[0] * dim) <= object[0] <= cam.x + (dim * dist) + (self.size[0] * dim):
+	# 		x = True
+	# 	else:
+	# 		x = False
+	# 	if cam.y - (dim * dist) - (self.size[1] * dim) <= object[1] <= cam.y + (dim * dist) + (self.size[1] * dim):
+	# 		y = True
+	# 	else:
+	# 		y = False
+	# 	if x and y:
+	# 		return True
+	# 	else:
+	# 		return False
 
 	def update(self,showall):
 		camera = Cameramod.cam
-		if univars.camchange or univars.poschange:
-			
+		if univars.camchange or univars.poschange or self.newbie:
+			self.newbie = False
 			realestsize = [math.ceil((self.size[0] * abs(camera.size))/2)*2,math.ceil((self.size[1] * abs(camera.size))/2)*2]
 			if not str([self.name,realestsize]) in spritecache.keys():
 				self.image =  pygame.transform.scale(self.bart,  realestsize )

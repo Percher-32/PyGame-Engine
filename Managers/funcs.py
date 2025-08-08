@@ -2,32 +2,47 @@ import pygame
 import os
 import json
 
+
+gscache = {}
+
 with open(f"Saved/sizeoffsets.json","r") as file:
     sizeoffsets = json.load(file)
 class func:
     def __init__(self,screen,granddim):
         self.screen = screen
         self.grandim = granddim
+        self.getspritescache = {}
+        self.getspritesscalecache = {}
+
     def getsprites(self,name:str):
-        sprites = []
-        offset = [0,0]
-        if name in sizeoffsets:
-            offset = sizeoffsets[name]
-        folder_dir = f"Graphics/sprites/{name}"
-        for images in os.listdir(folder_dir):
-            frame = pygame.transform.scale_by(pygame.image.load(f"Graphics/sprites/{name}/" + images).convert_alpha(),[(self.grandim/32) + offset[0] ,(self.grandim/32) + offset[1]  ])
-            sprites.append(frame)
-        return sprites
+        if not name in self.getspritescache.keys():
+            sprites = []
+            offset = [0,0]
+            if name in sizeoffsets:
+                offset = sizeoffsets[name]
+            folder_dir = f"Graphics/sprites/{name}"
+            for images in os.listdir(folder_dir):
+                frame = pygame.transform.scale_by(pygame.image.load(f"Graphics/sprites/{name}/" + images).convert_alpha(),[(self.grandim/32) + offset[0] ,(self.grandim/32) + offset[1]  ])
+                sprites.append(frame)
+            self.getspritescache[name] = sprites
+            return sprites
+        else:
+            return self.getspritescache[name]
+
     def getspritesscale(self,name:str,scale):
-        sprites = []
-        folder_dir = f"Graphics/sprites/{name}"
-        offset = [0,0]
-        if name in sizeoffsets:
-            offset = sizeoffsets[name]
-        for images in os.listdir(folder_dir):
-            frame = pygame.transform.scale_by(pygame.transform.scale(pygame.image.load(f"Graphics/sprites/{name}/" + images).convert_alpha(), [scale[0] + offset[0],scale[1] + offset[1]]),[1,1])
-            sprites.append(frame)
-        return sprites
+        if not str((name,scale)) in self.getspritesscalecache.keys():
+            sprites = []
+            folder_dir = f"Graphics/sprites/{name}"
+            offset = [0,0]
+            if name in sizeoffsets:
+                offset = sizeoffsets[name]
+            for images in os.listdir(folder_dir):
+                frame = pygame.transform.scale_by(pygame.transform.scale(pygame.image.load(f"Graphics/sprites/{name}/" + images).convert_alpha(), [scale[0] + offset[0],scale[1] + offset[1]]),[1,1])
+                sprites.append(frame)
+            self.getspritesscalecache[str((name,scale))] = sprites
+            return sprites 
+        else:
+            return self.getspritesscalecache[str((name,scale))]
     def allsprites(self):
         return os.listdir("Graphics/sprites")
     def dist(self,pos1:list,pos2:list):

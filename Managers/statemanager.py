@@ -61,4 +61,12 @@ class sm:
             self.work = True
             self.showall = False
             self.cammove = True
+        if self.state == "test":
+            self.states = "null"
+            self.leveledit = False
+            self.speed = 1
+            self.showui = True
+            self.work = True
+            self.showall = False
+            self.cammove = True
         
