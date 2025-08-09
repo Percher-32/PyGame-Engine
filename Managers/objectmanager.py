@@ -176,7 +176,7 @@ class object_manager:
 		insts = []
 		for chunk in self.instances.keys():
 			for inst in self.instances[chunk]:
-				insts.append([{"pos":inst.realpos,"name":inst.name,"rot":inst.rot,"type":inst.type,"sizen":inst.sizen,"alpha":inst.alpha},chunk])
+				insts.append([{"pos":inst.realpos,"name":inst.name,"rot":inst.rot,"type":inst.type,"sizen":inst.sizen,"alpha":inst.alpha,"stagename":inst.stagename},chunk])
 		return [insts,self.tracker]
 
 	def decodeinst(self):
@@ -456,7 +456,7 @@ class object_manager:
 				self.objfromid(id).flip()
 				self.set_value(id,"#flipped",dir)
 
-	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen , keepprev = False):
+	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen,stagename , keepprev = False):
 		if not type in self.renderinst:
 			if not type in self.aplhainst.keys():
 				alp = 400
@@ -471,7 +471,9 @@ class object_manager:
 			spritelist = univars.func.getspritesscale(name,[temp.get_width(),temp.get_height()])
 			self.spritecache[str([name,sizen])] = spritelist
 
-		newt = inst.inst(self.screen,self.grandim,name,pos[0],pos[1],rot,sizen,univars.lumptype.get(name,name),alp,spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]])
+
+
+		newt = inst.inst(stagename,self.grandim,name,pos[0],pos[1],rot,sizen,univars.lumptype.get(stagename,type),alp,spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]])
 		name = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
 		if name in self.instances.keys():
 			self.instances[name].add(newt)
@@ -479,9 +481,10 @@ class object_manager:
 			self.instances[name] = pygame.sprite.Group()
 			self.instances[name].add(newt)
 
-	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int , keepprev = False):
+	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int , keepprev = False,statgename = None):
 		"""adds an object to the manager  , gives an id of type str"""
-		
+		if statgename == None:
+			statgename = sprites
 		pos = list(pos)
 		if sprites in univars.offsets.keys():
 			pos[0] += univars.offsets[sprites][0]
@@ -514,7 +517,7 @@ class object_manager:
 				self.layers[layer] = pygame.sprite.Group()
 			self.layers[layer].add(finalobj)
 		else:
-			self.addinst(pos,sprites,dim,rot,type,sizen)
+			self.addinst(pos,sprites,dim,rot,type,sizen,statgename)
 
 	def datatoobj(self,id,data):
 		add = data
@@ -541,7 +544,7 @@ class object_manager:
 			temp = univars.func.getsprites(name)[0]
 			spritelist = univars.func.getspritesscale(name,[temp.get_width(),temp.get_height()])
 			self.spritecache[str([name,sizen])] = spritelist
-		newt = inst.inst(self.screen,self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],univars.lumptype.get(data["name"],data["name"]),data["alpha"],spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]])
+		newt = inst.inst(data["stagename"],self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],univars.lumptype.get(data["stagename"],type),data["alpha"],spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]])
 		name = (int(round(data["pos"][0]/(univars.grandim * self.renderdist))),int(round(data["pos"][1]/(univars.grandim * self.renderdist))))
 		if name in list(self.instances.keys()):
 			self.instances[name].add(newt)

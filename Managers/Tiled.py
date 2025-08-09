@@ -79,10 +79,10 @@ class TiledSoftwre:
 	def newsprites(self):
 		for i in univars.newsprites.keys():
 			# print(self.spritelooks)
-			self.spritenames.append(univars.newsprites[i])
-			self.typelist.append(univars.newsprites[i])
+			self.spritenames.append(i)
+			self.typelist.append(i)
 			self.allsize.append([1,1])
-			self.spritelooks.append(i)
+			self.spritelooks.append(univars.newsprites[i])
 			# print(self.spritelooks)
 
 
@@ -308,7 +308,7 @@ class TiledSoftwre:
 					#to place
 					if GameManager.event_manager.mouse[0]:
 						if self.placable < 1:
-							object_manager.add(gridpos,self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL])
+							object_manager.add(gridpos,self.spritelooks[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],statgename=self.spritenames[self.sprite])
 							self.placable = 1
 
 					#to remove
@@ -354,7 +354,7 @@ class TiledSoftwre:
 							b.fill(univars.theme["dark"])
 							b.set_alpha(150)
 							GameManager.Gotomousepos2(b)
-							self.tm.textatmouse(f"Instanciated Object\nType = {a.type}\nName = { a.name }\nPos = {a.realpos}\nRot = {a.rot}\nSize = {a.size}\nAlpha = {a.alpha}","pixel2.ttf",30,0,univars.theme["bright"],GameManager.event_manager,10,-20)
+							self.tm.textatmouse(f"Instanciated Object\nType = {a.type}\nName = { a.stagename }\nPos = {a.realpos}\nRot = {a.rot}\nSize = {a.size}\nAlpha = {a.alpha}","pixel2.ttf",30,0,univars.theme["bright"],GameManager.event_manager,10,-20)
 
 							if GameManager.event_manager.key[pygame.K_LCTRL]:
 								self.dostring2 = ""

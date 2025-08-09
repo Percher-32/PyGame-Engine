@@ -72,7 +72,7 @@ extras = [["def","camz",[20,20]]]
     [Original sprite  ,  new sprite type  ,  size scale]
 """
 
-newsprites = {"slantr":"slantdecor"}
+newsprites = {"slantdecor":"slantr"}
 """
     oldspritename :newspritename
 """

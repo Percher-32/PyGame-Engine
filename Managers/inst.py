@@ -23,11 +23,12 @@ class inst(pygame.sprite.Sprite):
 	__slots__ = ["screen","grandim","name","x","y","rot","sizen","type","alpha"]
 
 
-	def __init__(self,screen,grandim,name,x,y,rot,sizen,type,alpha,sprites,size):
+	def __init__(self,stagename,grandim,name,x,y,rot,sizen,type,alpha,sprites,size):
 		pygame.sprite.Sprite.__init__(self)
 		
 		camera = Cameramod.cam
 		realestsize = [round(size[0] * abs(camera.size),1),round(size[1] * abs(camera.size),1)]
+		self.stagename = stagename
 		self.sizen = list(sizen)
 		self.name = str(name)
 		self.type = type
