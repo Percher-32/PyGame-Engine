@@ -55,6 +55,9 @@ class TiledSoftwre:
 		self.spritenames = univars.func.allsprites()
 		self.typelist = univars.func.allsprites()
 		self.allsize = univars.func.allones()
+		self.spritelooks = univars.func.allsprites()
+		self.newsprites()
+
 
 	def altmode(self,GameManager,object_manager):
 		um.remall()
@@ -73,9 +76,20 @@ class TiledSoftwre:
 		# except:
 		# 	self.tm.drawtext(f"no variables","pixel2.ttf",40,0,0,0,self.theme["semibright"],-0.8,-0.2)
 
+	def newsprites(self):
+		for i in univars.newsprites.keys():
+			# print(self.spritelooks)
+			self.spritenames.append(univars.newsprites[i])
+			self.typelist.append(univars.newsprites[i])
+			self.allsize.append([1,1])
+			self.spritelooks.append(i)
+			# print(self.spritelooks)
+
+
 	def extra(self,extras):
 		if not extras == ["none"]:
 			for i in extras:
+				self.spritelooks.append(i[0])
 				self.spritenames.append(i[0])
 				self.typelist.append(i[1])
 				self.allsize.append(i[2])
@@ -152,8 +166,8 @@ class TiledSoftwre:
 				if debug:
 
 					#random
-					if len(self.typelist) < len(self.spritenames):
-						for i in range(len(self.spritenames) - len(self.typelist)):
+					if len(self.typelist) < len(self.spritelooks):
+						for i in range(len(self.spritelooks) - len(self.typelist)):
 							self.typelist.append("none")
 
 
@@ -162,7 +176,7 @@ class TiledSoftwre:
 					self.sprite += GameManager.event_manager.scroll
 
 					#make sure it loops the sprite rotar
-					if self.sprite > (len(self.spritenames) - 1):
+					if self.sprite > (len(self.spritelooks) - 1):
 						self.sprite = 0
 					elif self.sprite < 0:
 						self.sprite = (len(self.spritenames) - 1)
@@ -176,7 +190,7 @@ class TiledSoftwre:
 					a1 = (((   (GameManager.event_manager.mousepos[0])/upscale  - self.screen.get_width()//2) / camera.size) + camera.x)
 					a2 = (((   (GameManager.event_manager.mousepos[1] + translation)/upscale  - self.screen.get_height()//2) / camera.size) + camera.y)
 					mousepos = (a1,a2)
-					thingtogo = self.func.getsprites(self.spritenames[self.sprite])[0]
+					thingtogo = self.func.getsprites(self.spritelooks[self.sprite])[0]
 					thingtogo = pygame.transform.scale_by(thingtogo,self.allsize[self.sprite])
 					thingtogo.set_alpha(100)
 					GameManager.blitsurf(thingtogo,((round(a1/dim) * dim),(round(a2/dim) * dim)),self.rot,camera)
@@ -1017,7 +1031,8 @@ class TiledSoftwre:
 
 
 			if self.showdata and self.mode == 0:
-				fulllist = self.spritenames + self.spritenames
+				# print(self.spritelooks)
+				fulllist = self.spritelooks + self.spritelooks
 				GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
 				self.tm.drawtext(f"Camera-name : {cm.currentcam}"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.6,-0.9)
 				self.tm.drawtext2(f"Camera size: { round(1 / camera.size,2)}"            ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],0,-0.9)
@@ -1034,9 +1049,9 @@ class TiledSoftwre:
 					GameManager.uibox((64 + 10,64 + 10),(0.8,0.8 ),univars.theme["semibright"],400)
 					GameManager.uibox((64 + 10,64 + 10),(0.92,0.8),univars.theme["semibright"],50)
 					GameManager.uibox((64 + 10,64 + 10),(0.68,0.8),univars.theme["semibright"],50)
-					GameManager.blituis(self.func.getsprites(self.spritenames[self.sprite])[0],(0.8,0.8),(64,64),self.rot,1000)
+					GameManager.blituis(self.func.getsprites(self.spritelooks[self.sprite])[0],(0.8,0.8),(64,64),self.rot,1000)
 					GameManager.blituis(self.func.getsprites(fulllist[self.sprite + 1])[0],(0.92,0.8),(64,64),self.rot,100)
-					GameManager.blituis(self.func.getsprites(self.spritenames[self.sprite - 1])[0],(0.68,0.8),(64,64),self.rot,100)
+					GameManager.blituis(self.func.getsprites(self.spritelooks[self.sprite - 1])[0],(0.68,0.8),(64,64),self.rot,100)
 					self.tm.drawtext(f"Object-name : {self.spritenames[self.sprite]}",       "pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.8,0.6)
 					self.tm.drawtext(f"Object-type : {self.typelist[self.sprite]}",          "pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.8,0.5)
 
