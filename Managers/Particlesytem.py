@@ -108,11 +108,12 @@ class Particlemanager:
 			
 		"""
 		for _ in range(ntimes):
-			newinitvel = [initvel[0],initvel[1]]
-			newforce = [force[0],force[1]]
-			newpos = [pos[0],pos[1]]
+			newinitvel = list([initvel[0],initvel[1]])
+			newforce = list([force[0],force[1]])
+			newpos = list([pos[0],pos[1]])
 			newinitvel[0] += random.randint(divergence[0][0],divergence[0][1])
 			newinitvel[1] += random.randint(divergence[1][0],divergence[1][1])
+			print(newinitvel)
 			newforce[0] += random.randint(divergenceforce[0][0],divergenceforce[0][1])
 			newforce[1] += random.randint(divergenceforce[1][0],divergenceforce[1][1])
 			newpos[0] += random.randint(divergencepos[0][0],divergencepos[0][1])

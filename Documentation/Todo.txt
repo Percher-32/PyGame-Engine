@@ -10,7 +10,7 @@ Key:
 
 
 IN-ENGINE:
-	[^] - Documentation:
+	[] - Documentation:
 		* add taglines to frequently used functions []
 	[X] - Particle-system
 	[@] - Sound system
@@ -24,7 +24,7 @@ IN-ENGINE:
 
 IN-GAME:
 	PLAYER:
-		[#!] - Slopes:
+		[#!-] - Slopes:
 				* removal of slope no-clip [X]
 				* preserve momentum        [X]
 				* jumping                  [#]
@@ -40,7 +40,7 @@ IN-GAME:
 				* walljumping  []
 				* ducking      []
 				* in-air       []
-		[] - add particles to certain actions:
+		[#] - add particles to certain actions:
 				* skidding  []
 				* impact    []
 

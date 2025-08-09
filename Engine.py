@@ -130,6 +130,8 @@ class Game(Gamemananager.GameManager):
 			
 
 			#update player sprite ansd skateboards position
+			particlepos = [om.objects["player"]["pos"][0] - 15,om.objects["player"]["pos"][1]]
+			pm.particlespawnbluprint(particlepos,"grind")
 			rot = om.objects["playersprite"]["rot"]
 			if self.gp("onboard"):
 				om.objects["playersprite"]["pos"][0] = om.objects["player"]["pos"][0] - math.sin((rot/180) * math.pi) * 11

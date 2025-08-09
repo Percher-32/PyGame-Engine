@@ -87,7 +87,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 map = "frost"
 
-startstate = "edit"
+startstate = "debugame"
 
 
 
