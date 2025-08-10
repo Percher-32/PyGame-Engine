@@ -18,7 +18,7 @@ IN-ENGINE:
 	[X] - Particle-editor:  
 		* can save particle presets[X]
 		* ui for particle creator  [X]
-	[?] - shaders
+	[#] - shaders
 
 
 
