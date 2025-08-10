@@ -5,8 +5,8 @@ import Managers.statemanager as sm
 
 
 pygame.display.init()
-screen_w = pygame.display.get_desktop_sizes()[0][0]/2
-screen_h = pygame.display.get_desktop_sizes()[0][1]/2
+screen_w = pygame.display.get_desktop_sizes()[0][0]/1.4
+screen_h = pygame.display.get_desktop_sizes()[0][1]/1.4
 startdims = (screen_w,screen_h)
 
 camchange = True

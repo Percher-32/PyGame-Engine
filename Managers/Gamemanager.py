@@ -417,9 +417,9 @@ class GameManager():
 
 		# univars.finalscreen.blit(univars.realscreeen,)
 		# print(pygame.display.get_window_size())
-		univars.realscreeen = pygame.transform.scale(univars.realscreeen,[pygame.display.get_window_size()[0]/univars.startdims[0] * univars.startdims[0],pygame.display.get_window_size()[1]/univars.startdims[1] * univars.startdims[1]])
-		univars.realscreeen = pygame.transform.scale_by(univars.realscreeen,pygame.display.get_window_size()[0]/univars.startdims[0])
-		print(pygame.display.get_window_size()[0]/univars.startdims[0] ** 2)
+		# univars.realscreeen = pygame.transform.scale(univars.realscreeen,[pygame.display.get_window_size()[0]/univars.startdims[0] * univars.startdims[0],pygame.display.get_window_size()[1]/univars.startdims[1] * univars.startdims[1]])
+		# # univars.realscreeen = pygame.transform.scale_by(univars.realscreeen,(pygame.display.get_window_size()[0]/univars.startdims[0]))
+		# print((pygame.display.get_window_size()[0]/univars.startdims[0]) ** 2)
 		frame_tex = shader.surf_to_texture(univars.realscreeen)
 		frame_tex.use(0)
 		shader.program['tex'] = 0
