@@ -373,6 +373,8 @@ class GameManager():
 		#runs editor
 		Tiled.Run(self.publicvariables["debug-mode"],univars.camspeeed,self,cam,self.dim,self.publicvariables["leveledit"],cm,sm.state)
 
+
+
 		#renders ui
 		self.pauseui = True
 		um.update(em,self.publicvariables,self.key["axis"],self.dt)
@@ -402,6 +404,13 @@ class GameManager():
 		pass
 				
 	def end(self):
+		renderwid = max([univars.screen_w,univars.screen_h])
+		
+		# univars.screen.blit(pm.screen,(univars.screen_w/2,univars.screen_h/2))
+		pm.updateparticles(self.dt)
+		univars.realscreeen.blit(pygame.transform.scale(univars.fakescreen,(renderwid ,renderwid )),(0,-1 * renderwid//4))
+		univars.fakescreen.fill((0,0,0))
+
 		self.dt = fm.dt
 		self.lastkey = self.key
 		self.inputdetect()

@@ -8,8 +8,7 @@ gscache = {}
 with open(f"Saved/sizeoffsets.json","r") as file:
     sizeoffsets = json.load(file)
 class func:
-    def __init__(self,screen,granddim):
-        self.screen = screen
+    def __init__(self,granddim):
         self.grandim = granddim
         self.getspritescache = {}
         self.getspritesscalecache = {}
@@ -47,9 +46,10 @@ class func:
         return os.listdir("Graphics/sprites")
     def dist(self,pos1:list,pos2:list):
         return ((((pos1[0] - pos2[0]) ** 2) + ((pos1[1] - pos2[1]) ** 2)) ** 0.5)
-    def rectblit(self,pos,width,col,camera,dim):
-        rect = pygame.Rect((pos[0] - camera.x) * camera.size + self.screen.get_width()//2,(pos[1] - camera.y) * camera.size + self.screen.get_height()//2 ,width[0] * abs(camera.size),width[1] * abs(camera.size))
-        pygame.draw.rect(self.screen,col,rect,5)
+    def rectblit(self,pos,width,col,camera,dim,screen):
+        screen
+        rect = pygame.Rect((pos[0] - camera.x) * camera.size + screen.get_width()//2,(pos[1] - camera.y) * camera.size + screen.get_height()//2 ,width[0] * abs(camera.size),width[1] * abs(camera.size))
+        pygame.draw.rect(screen,col,rect,5)
     def get(self,d:dict,val):
         return list(filter(lambda key: d[key] == val, d))
     def getif(self,d:dict,val):
@@ -92,7 +92,8 @@ class func:
             else:
                 return val
     
-    def ssblitrect(self,rect,col,camera,thickness):
+    def ssblitrect(self,rect,col,camera,thickness,screen):
         """"blits a rect onto screen space  , (for thinckness -1 means filled)"""
-        rect = pygame.Rect((rect.x - camera.x) * camera.size + self.screen.get_width()//2,(rect.y - camera.y) * camera.size + self.screen.get_height()//2 ,rect.width * abs(camera.size),rect.height * abs(camera.size))
-        pygame.draw.rect(self.screen,col,rect,thickness)
+        rect = pygame.Rect((rect.x - camera.x) * camera.size + screen.get_width()//2,(rect.y - camera.y) * camera.size + screen.get_height()//2 ,rect.width * abs(camera.size),rect.height * abs(camera.size))
+        # rect  = pygame.Rect(0,0,1000,1000)
+        pygame.draw.rect(screen,col,rect,thickness)

@@ -22,7 +22,7 @@ class TiledSoftwre:
 		self.realscreeen = realscreen
 		self.theme = theme
 		self.tm = Textmanager.Textmanager(realscreen)
-		self.func = funcs.func(screen,grandim)
+		self.func = funcs.func(grandim)
 		self.om = om
 		self.secretword = "404 error"
 		self.screen = screen
@@ -308,7 +308,7 @@ class TiledSoftwre:
 					#to place
 					if GameManager.event_manager.mouse[0]:
 						if self.placable < 1:
-							object_manager.add(gridpos,self.spritelooks[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],statgename=self.spritenames[self.sprite])
+							object_manager.add(gridpos,self.spritelooks[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],stagename=self.spritenames[self.sprite])
 							self.placable = 1
 
 					#to remove

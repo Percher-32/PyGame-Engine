@@ -28,7 +28,7 @@ class inst(pygame.sprite.Sprite):
 		
 		camera = Cameramod.cam
 		realestsize = [round(size[0] * abs(camera.size),1),round(size[1] * abs(camera.size),1)]
-		self.stagename = stagename
+		self.stagename = str(stagename)
 		self.sizen = list(sizen)
 		self.name = str(name)
 		self.type = type
@@ -99,7 +99,7 @@ class obj(pygame.sprite.Sprite):
 		screen = univars.screen
 		grandim = univars.grandim
 		self.fliped = 0
-		self.func = funcs.func(screen,grandim)
+		# self.func = funcs.func(screen,grandim)
 		self.info = info
 		self.sprites = sprites
 		self.fakerect = pygame.Rect(info["pos"][0] - info["size"][0]//2,info["pos"][1] - info["size"][1]//2,info["size"][0],info["size"][1])

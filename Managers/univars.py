@@ -48,6 +48,7 @@ sizes = {
 
 screen = pygame.Surface((64 * pixelscale,64 * pixelscale))
 fakescreen = pygame.Surface((64 * pixelscale,64 * pixelscale))
+fakescreen.set_colorkey((0,0,0))
 
 
 uiscreen = pygame.Surface((screen_w,screen_h))
@@ -56,7 +57,10 @@ pygame.display.set_caption(name)
 
 screen_rect = screen.get_rect(center = (0,0))
 
-func = funcs.func(fakescreen,grandim)
+func = funcs.func(grandim)
+"""
+    Use this one
+"""
 
 
 
@@ -94,9 +98,9 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "null"
+map = "demo2"
 
-startstate = "edit"
+startstate = "debugame"
 
 
 

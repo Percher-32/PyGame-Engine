@@ -241,9 +241,10 @@ class Game(Gamemananager.GameManager):
 
 	def moveplayer(self):
 		# om.speed = 0.4
-		collision = om.collide9("player",1,cam,self.dim)
-		lonepoint = om.collidep([om.objects["player"]["pos"][0] + 40,om.objects["player"]["pos"][1] - 32 ],0,32)
-		collisionbox = om.collide("player",1,cam,extra=10)
+		collision = om.collide9("player",0,cam,self.dim)
+		lonepoint = om.collidep([om.objects["player"]["pos"][0] + 40,om.objects["player"]["pos"][1] - 32 ],1,32,camera=cam)
+		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] + 40,om.objects["player"]["pos"][1] + 32 ],1,32,camera=cam)
+		collisionbox = om.collide("player",0,cam,extra=10)
 		ground1 = len(collision["botmid"]["inst"]) > 0
 		ground2 = len(collision["botleft"]["inst"]) > 0 and not (len(collision["midleft"]["inst"]) > 0)   and not (len(collision["topleft"]["inst"]) > 0)
 		ground3 = len(collision["botright"]["inst"]) > 0 and not (len(collision["midright"]["inst"]) > 0)  and not (len(collision["topright"]["inst"]) > 0)
@@ -252,19 +253,21 @@ class Game(Gamemananager.GameManager):
 		collisionlisttype = [i.type for i in instlist] 
 		collisionboxtype = [i.type for i in collisionbox["inst"]] 
 		# collisionlisttype.append(None)
+		if abs(self.key["x"]) > 0:
+			if self.key["x"] > 0:
+				self.lastdirslant = "l"
+			else:
+				self.lastdirslant = "r"
 	
-		# show the mode
-		# um.showvar("des_vel",self.gp("des_vel"),[0,-0.7])
 		if self.dt == 0 or self.dt > 10:
 			self.dt = 1
-
-		# print(collisionboxtype)
+		um.showvar("lor",self.lastdirslant,[0,-0.7])
 		if len(collisionboxtype) > 0:
 			if "slantl"  in collisionboxtype or "slantr" in collisionboxtype:
 				slanted = True
 				if "slantr" in collisionboxtype:
 					if self.gp("act_vel")[0] < 0:
-						if ground2:
+						if len(lonepoint2) > 0:
 							slanted = False
 				else:
 					if self.gp("act_vel")[0] > 0:
@@ -297,12 +300,12 @@ class Game(Gamemananager.GameManager):
 
 						if self.gp("xinit"):
 							self.sp("xinit",False)
-							self.sp("des_vel",[self.key["x"] * 100,self.gp("des_vel")[1]])
+							self.sp("des_vel",[self.key["x"] * 120,self.gp("des_vel")[1]])
 
 						
 
 
-						self.sp("des_vel",[          self.unilerp(self.gp("des_vel")[0],self.key["x"] * 120,30 )              ,    self.gp("des_vel")[1]   ])
+						self.sp("des_vel",[          self.unilerp(self.gp("des_vel")[0],self.key["x"] * 150,30 )              ,    self.gp("des_vel")[1]   ])
 					else:
 						self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
 						self.sp("xinit",True)
@@ -415,8 +418,6 @@ class Game(Gamemananager.GameManager):
 							#Wall jumping
 							if self.key["y"] > 0.4:
 								a = 200
-							elif self.key["y"] < -0.2:
-								a = -150
 							else:
 								a = 120
 							if self.gp("leftwall"):
@@ -501,6 +502,7 @@ class Game(Gamemananager.GameManager):
 					if self.gp("slantdir") == "r":
 						if self.lastdirslant == "r":
 							om.translate(self,"player",[100,40])
+							print("jolt")
 					if self.gp("slantdir") == "l":
 						if self.lastdirslant == "r":
 							om.translate(self,"player",[-100,40])
