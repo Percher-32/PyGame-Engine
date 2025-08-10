@@ -12,8 +12,10 @@ import Managers.statemanager as statemanager
 import Managers.Uimanager as Uimanager
 import Managers.inst as inst
 import copy
+import moderngl
 import Managers.backgroundmanager as backgroundmanager
 import os
+import Managers.Shader as shader
 import threading
 import json
 import time
@@ -411,10 +413,25 @@ class GameManager():
 		univars.realscreeen.blit(pygame.transform.scale(univars.fakescreen,(renderwid ,renderwid )),(0,-1 * renderwid//4))
 		univars.fakescreen.fill((0,0,0))
 
+
+
+		# univars.finalscreen.blit(univars.realscreeen,)
+		# print(pygame.display.get_window_size())
+		univars.realscreeen = pygame.transform.scale(univars.realscreeen,[pygame.display.get_window_size()[0]/univars.startdims[0] * univars.startdims[0],pygame.display.get_window_size()[1]/univars.startdims[1] * univars.startdims[1]])
+		univars.realscreeen = pygame.transform.scale_by(univars.realscreeen,pygame.display.get_window_size()[0]/univars.startdims[0])
+		print(pygame.display.get_window_size()[0]/univars.startdims[0] ** 2)
+		frame_tex = shader.surf_to_texture(univars.realscreeen)
+		frame_tex.use(0)
+		shader.program['tex'] = 0
+		shader.render_object.render(mode=moderngl.TRIANGLE_STRIP)
+		
+
+
 		self.dt = fm.dt
 		self.lastkey = self.key
 		self.inputdetect()
 		self.frame_manager.next(self.publicvariables["maxfps"])
+		frame_tex.release()
 
 	def initial(self):
 		self.defs()

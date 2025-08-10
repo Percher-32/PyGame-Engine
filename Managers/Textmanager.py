@@ -1,8 +1,9 @@
 import pygame
+import Managers.univars as univars
 
 class Textmanager:
     def __init__(self,screen):
-        self.realscreen = screen
+        self.realscreen = univars.realscreeen 
         self.fonts = {}
 
     def drawtext(self,text,font,size,bolder,italicer,aa,col,x,y):
