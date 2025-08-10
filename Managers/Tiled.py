@@ -165,14 +165,14 @@ class TiledSoftwre:
 
 				if debug:
 
-					#random
+					#increaes len off typelist
 					if len(self.typelist) < len(self.spritelooks):
 						for i in range(len(self.spritelooks) - len(self.typelist)):
 							self.typelist.append("none")
 
 
 					
-					#to move spite on the 
+					#to move spite on the rotar
 					self.sprite += GameManager.event_manager.scroll
 
 					#make sure it loops the sprite rotar
@@ -197,7 +197,7 @@ class TiledSoftwre:
 					gridpos = (round(mousepos[0]/self.dim) * self.dim , round(mousepos[1]/self.dim) * self.dim)
 
 
-					#to show about to be placed object
+					#to confirm the starting position
 					if self.gridable < 1:
 						if self.grip == 0:
 							if GameManager.event_manager.key[pygame.K_x]:	
@@ -214,82 +214,95 @@ class TiledSoftwre:
 					if self.gridable < 1:
 						if self.grip == 1:
 							if GameManager.event_manager.key[pygame.K_x]:
-								self.pos2 = gridpos
+								self.pos2 = list(gridpos)
 								self.grip = 0
 								self.gridable = 10
-								rectpos = (self.pos1)
-								rectwidth = ( (self.pos2[0] - self.pos1[0])/self.dim , (self.pos2[1] - self.pos1[1])/self.dim )
-								rangex = rectpos[0] - self.dim
-								rangey = rectpos[1] - self.dim
-								widthx = int(rectwidth[0])+ 1
-								widthy = int(rectwidth[1])+ 1
-								if widthy > 0:
-									y = rangey
+								xpos = (self.pos2[0] - self.pos1[0]) > 0
+								ypos = (self.pos2[1] - self.pos1[1]) > 0
+								yinc = univars.grandim
+								xinc = univars.grandim
+								if not ypos:
+									yinc *= -1
+									self.pos2[1] -= univars.grandim
 								else:
-									if widthx == 1:
-										y = rangey + self.dim + self.dim
-										widthy += -2
-									else:
-										y = rangey
-								for i in range(abs(widthy)):
-									if widthy > 0:
-										y += self.dim
-									else:
-										y -= self.dim
-
-									if widthx > 0:
-										x = rangex
-									else:
-										if widthy == 1:
-											x = rangex + self.dim + self.dim
-											widthx += -2
-										else:
-											x = rangex
-									for i in range(abs(widthx)):
-										if widthx > 0:
-											x += self.dim
-										else:
-											x -= self.dim
+									self.pos2[1] += univars.grandim
+								if not xpos:
+									xinc *= -1
+									self.pos2[0] -= univars.grandim
+								else:
+									self.pos2[0] += univars.grandim
+									
+								for y in range(self.pos1[1],self.pos2[1],yinc):
+									for x in range(self.pos1[0],self.pos2[0],xinc):
 										self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL])
 							if GameManager.event_manager.key[pygame.K_v]:
-								self.pos2 = gridpos
+								self.pos2 = list(gridpos)
 								self.grip = 0
 								self.gridable = 10
-								rectpos = (self.pos1)
-								rectwidth = ( (self.pos2[0] - self.pos1[0])/self.dim , (self.pos2[1] - self.pos1[1])/self.dim )
-								rangex = rectpos[0] - self.dim
-								rangey = rectpos[1] - self.dim
-								widthx = int(rectwidth[0])+ 1
-								widthy = int(rectwidth[1])+ 1
-								if widthy > 0:
-									y = rangey
+								xpos = (self.pos2[0] - self.pos1[0]) > 0
+								ypos = (self.pos2[1] - self.pos1[1]) > 0
+								yinc = univars.grandim
+								xinc = univars.grandim
+								if not ypos:
+									yinc *= -1
+									self.pos2[1] -= univars.grandim
 								else:
-									if widthx == 1:
-										y = rangey + self.dim + self.dim
-										widthy += -2
-									else:
-										y = rangey
-								for i in range(abs(widthy)):
-									if widthy > 0:
-										y += self.dim
-									else:
-										y -= self.dim
-
-									if widthx > 0:
-										x = rangex
-									else:
-										if widthy == 1:
-											x = rangex + self.dim + self.dim
-											widthx += -2
-										else:
-											x = rangex
-									for i in range(abs(widthx)):
-										if widthx > 0:
-											x += self.dim
-										else:
-											x -= self.dim
+									self.pos2[1] += univars.grandim
+								if not xpos:
+									xinc *= -1
+									self.pos2[0] -= univars.grandim
+								else:
+									self.pos2[0] += univars.grandim
+									
+								for y in range(self.pos1[1],self.pos2[1],yinc):
+									for x in range(self.pos1[0],self.pos2[0],xinc):
 										self.om.remove((x,y))		
+							if GameManager.event_manager.key[pygame.K_f]:
+								self.pos2 = list(gridpos)
+								self.grip = 0
+								self.gridable = 10
+								xpos = (self.pos2[0] - self.pos1[0]) > 0
+								ypos = (self.pos2[1] - self.pos1[1]) > 0
+								yinc = univars.grandim
+								xinc = univars.grandim
+								if not ypos:
+									yinc *= -1
+									self.pos2[1] -= univars.grandim
+								else:
+									self.pos2[1] += univars.grandim
+								xinc = univars.grandim
+								if not xpos:
+									xinc *= -1
+									x = self.pos1[0] + univars.grandim
+								else:
 
+									x = self.pos1[0] - univars.grandim
+								for y in range(self.pos1[1],self.pos2[1],yinc):
+									x += xinc
+									self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL])
+							if GameManager.event_manager.key[pygame.K_g]:
+								self.pos2 = list(gridpos)
+								self.grip = 0
+								self.gridable = 10
+								xpos = (self.pos2[0] - self.pos1[0]) > 0
+								ypos = (self.pos2[1] - self.pos1[1]) > 0
+								yinc = univars.grandim
+								xinc = univars.grandim
+								if not ypos:
+									yinc *= -1
+									self.pos2[1] -= univars.grandim
+								else:
+									self.pos2[1] += univars.grandim
+								xinc = univars.grandim
+								if not xpos:
+									xinc *= -1
+									x = self.pos1[0] + univars.grandim
+								else:
+
+									x = self.pos1[0] - univars.grandim
+								for y in range(self.pos1[1],self.pos2[1],yinc):
+									x += xinc
+									self.om.remove((x,y))		
 
 					#to rotate
 					if self.rotable < 1:
@@ -307,9 +320,7 @@ class TiledSoftwre:
 
 					#to place
 					if GameManager.event_manager.mouse[0]:
-						if self.placable < 1:
-							object_manager.add(gridpos,self.spritelooks[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],stagename=self.spritenames[self.sprite])
-							self.placable = 1
+						object_manager.add(gridpos,self.spritelooks[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],stagename=self.spritenames[self.sprite])
 
 					#to remove
 					if GameManager.event_manager.mouse[2]:
@@ -1010,7 +1021,7 @@ class TiledSoftwre:
 					self.mode = 0
 
 
-			self.placable -= 1 * GameManager.frame_manager.dt
+			self.placable = 0
 			self.rotable -= 1 * GameManager.frame_manager.dt
 			self.gridable -= 1 * GameManager.frame_manager.dt
 			self.saveable -= 1 * GameManager.frame_manager.dt

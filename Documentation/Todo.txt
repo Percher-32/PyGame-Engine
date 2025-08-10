@@ -24,10 +24,15 @@ IN-ENGINE:
 
 IN-GAME:
 	PLAYER:
-		[#!-] - Slopes:
+		[#] - Create good demo level:
+				* wall jumps     []
+				* long stretches []
+				* slopes         []
+				* coll combos    []
+		[X] - Slopes:
 				* removal of slope no-clip [X]
 				* preserve momentum        [X]
-				* jumping                  [#]
+				* jumping                  [X]
 
 		[] - Dash:
 			* dashbaar         []
