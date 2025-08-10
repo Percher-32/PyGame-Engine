@@ -309,10 +309,16 @@ class object_manager:
 			[noninst.append(self.objfromid(i)) for i in typel if r1.colliderect(self.objfromid(i).fakerect) ]
 
 			#coll for inst
-			camchunk = (int(round(r1.x/(dim * self.renderdist))),int(round(r1.y/(dim * self.renderdist))))
+			camchunk = [int(round(camera.x/(dim * self.renderdist))),int(round(camera.y/(dim * self.renderdist)))]
+			ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
 			inst = []
-			if camchunk in self.instances.keys():
-				inst = [ i for i in self.instances[camchunk] if r1.colliderect(i.fakerect)]
+
+			for offset in ranges:
+				a = []
+				campos = (offset[0] + camchunk[0],offset[1] + camchunk[1])
+				if campos in self.instances.keys():
+					a = [ i for i in self.instances[campos] if r1.colliderect(i.fakerect)]
+				inst += a
 
 			#render the collbox
 			if show:
@@ -351,7 +357,7 @@ class object_manager:
 
 		return {"noninst":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
 
-	def collidep(self,pos,show,dim,pointsize=5,instcol = (0,225,0),noninstcol=(0,225,150),ignore_id = None,camera = None) -> dict: 
+	def collidep(self,pos,show,dim,pointsize=5,basecolor = (255,0,0),instcol = (0,225,0),noninstcol=(0,225,150),ignore_id = None,camera = None) -> dict: 
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		#coll for non-inst
 		dim = univars.grandim
@@ -373,7 +379,7 @@ class object_manager:
 			elif len(noninst) > 0:
 				col = noninstcol
 			else:
-				col = (225,0,0)
+				col = basecolor
 			self.func.ssblitrect(pygame.Rect(pos[0],pos[1],num * pointsize,num * pointsize),col,camera,0,univars.fakescreen)
 			# self.func.ssblitrect(r1,col,camera,5)
 
