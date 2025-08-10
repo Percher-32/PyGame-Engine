@@ -165,6 +165,7 @@ class Game(Gamemananager.GameManager):
 
 
 
+
 	def initialiseplayer(self):
 		"""
 		Initialises the players variables
@@ -174,7 +175,7 @@ class Game(Gamemananager.GameManager):
 		om.speed = 1
 
 		#create player
-		om.adds("player",[0,250],"player","player",0,[1,1],400,5)
+		om.adds("player",[-1600,250],"player","player",0,[1,1],400,5)
 		om.objects["player"]["rendercond"] = False
 
 		#creates the player sprite you actually see
@@ -241,9 +242,9 @@ class Game(Gamemananager.GameManager):
 
 	def moveplayer(self):
 		# om.speed = 0.4
-		collision = om.collide9("player",0,cam,self.dim)
-		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 10 ],1,32,camera=cam,basecolor=(0,1,0))
-		collisionbox = om.collide("player",1,cam,extra=15)
+		collision = om.collide9("player",1,cam,self.dim)
+		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
+		collisionbox = om.collide("player",0,cam,extra=15)
 		ground1 = len(collision["botmid"]["inst"]) > 0
 		ground2 = len(collision["botleft"]["inst"]) > 0 and not (len(collision["midleft"]["inst"]) > 0)   and not (len(collision["topleft"]["inst"]) > 0)
 		ground3 = len(collision["botright"]["inst"]) > 0 and not (len(collision["midright"]["inst"]) > 0)  and not (len(collision["topright"]["inst"]) > 0)
@@ -268,6 +269,7 @@ class Game(Gamemananager.GameManager):
 					if self.lastdirslant == "r":
 						if len(lonepoint2["inst"]) > 0:
 							slanted = False
+							om.objects["player"]["pos"] = [lonepoint2["inst"][0].realpos[0] + univars.grandim,lonepoint2["inst"][0].realpos[1] - 32]
 				# else:
 				# 	if self.gp("act_vel")[0] > 0:
 						# if len(lonepoint["inst"]) > 0:
@@ -282,7 +284,7 @@ class Game(Gamemananager.GameManager):
 		else:
 			slanted = False
 
-		um.showvar("slanted",slanted,[0,-0.5])
+		um.showvar("point",lonepoint2["inst"],[0,-0.5])
 
 		#Main movement
 		if not slanted:
@@ -314,11 +316,11 @@ class Game(Gamemananager.GameManager):
 				
 
 					#Wall clinging
-					if len(collision["topleft"]["inst"]) > 0 :
-						if  collision["topleft"]["inst"][0].type == "ground":
+					if len(collision["midleft"]["inst"]) > 0 :
+						if  collision["midleft"]["inst"][0].type == "ground":
 							self.sp("leftwall",True)
 							self.sp("jumpable",True)	
-							om.objects["player"]["pos"][0] = collision["topleft"]["inst"][0].realpos[0] + 30
+							om.objects["player"]["pos"][0] = collision["midleft"]["inst"][0].realpos[0] + 30
 
 							if not collision["botmid"]["inst"]:
 								self.sp("des_vel",[0,self.gp("des_vel")[1]])
@@ -335,11 +337,11 @@ class Game(Gamemananager.GameManager):
 						self.sp("leftwall",False)
 
 
-					if len(collision["topright"]["inst"]) > 0 :
-						if  collision["topright"]["inst"][0].type == "ground":
+					if len(collision["midright"]["inst"]) > 0 :
+						if  collision["midright"]["inst"][0].type == "ground":
 							self.sp("rightwall",True)
 							self.sp("jumpable",True)	
-							om.objects["player"]["pos"][0] = collision["topright"]["inst"][0].realpos[0] -32
+							om.objects["player"]["pos"][0] = collision["midright"]["inst"][0].realpos[0] -32
 							if not collision["botmid"]["inst"]:
 								self.sp("des_vel",[0,self.gp("des_vel")[1]])
 								self.sp("act_vel",[0,self.gp("act_vel")[1]])
@@ -476,8 +478,7 @@ class Game(Gamemananager.GameManager):
 						om.objects["playersprite"]["rot"]  =  self.unilerp(om.objects["playersprite"]["rot"],self.gp("desrot"),5,roundto=2) 
 						self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
 						om.translate(self,"player",self.gp("act_vel"),usedt=1)
-						self.sp("prev_act_vel",self.gp("act_vel"))
-						self.sp("prev_des_vel",self.gp("des_vel"))
+						
 						if not self.gp("onboard"):
 							if om.get_value("skateboard","fallvalue")< 20:
 								om.set_value("skateboard","fallvalue",om.get_value("skateboard","fallvalue") - 2* self.dt)
@@ -501,7 +502,6 @@ class Game(Gamemananager.GameManager):
 					if self.gp("slantdir") == "r":
 						if self.lastdirslant == "l":
 							om.translate(self,"player",[100,40])
-							print("jolt")
 					if self.gp("slantdir") == "l":
 						if self.lastdirslant == "r":
 							om.translate(self,"player",[-100,40])
@@ -517,6 +517,9 @@ class Game(Gamemananager.GameManager):
 						self.sp("act_vel",[   self.gp("prev_act_vel")[0] * 1  ,  self.gp("prev_act_vel")[1] * -1 ])
 					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
 					om.translate(self,"player",self.gp("act_vel"))
+
+
+
 		else:
 			if self.key["jump"]:
 				self.sp("fss",16)
@@ -544,10 +547,10 @@ class Game(Gamemananager.GameManager):
 						self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
 					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
 					if not self.key["jump"]:
-						actvel = [self.gp("act_vel")[0],self.gp("act_vel")[0]]
+						self.sp("act_vel",[self.gp("act_vel")[0],self.gp("act_vel")[0]])
 					else:
-						actvel = [-1 * self.gp("act_vel")[0],abs(self.gp("act_vel")[1])]
-					om.translate(self,"player",actvel,usedt=1)
+						self.sp("act_vel",[-1 * self.gp("act_vel")[0],abs(self.gp("act_vel")[1])])
+					om.translate(self,"player", self.gp("act_vel"),usedt=1)
 					self.sp("desrot",45) 
 			else:
 				self.sp("slantdir","l")
@@ -564,10 +567,10 @@ class Game(Gamemananager.GameManager):
 						self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
 					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
 					if not self.key["jump"]:
-						actvel = [self.gp("act_vel")[0],-1 * self.gp("act_vel")[0]]
+						self.sp("act_vel",[self.gp("act_vel")[0],-1 * self.gp("act_vel")[0]])
 					else:
-						actvel = [self.gp("act_vel")[0], self.gp("act_vel")[1]]
-					om.translate(self,"player",actvel,usedt=1)
+						self.sp("act_vel",[self.gp("act_vel")[0], self.gp("act_vel")[1]])
+					om.translate(self,"player", self.gp("act_vel"),usedt=1)
 					self.sp("desrot",-45)
 			om.objects["playersprite"]["rot"]  =  self.unilerp(om.objects["playersprite"]["rot"],self.gp("desrot"),5,roundto=2) 
 			
@@ -579,6 +582,8 @@ class Game(Gamemananager.GameManager):
 			self.sp("desrot",0)
 
 		self.lastframeslanted = slanted
+		self.sp("prev_act_vel",self.gp("act_vel"))
+		self.sp("prev_des_vel",self.gp("des_vel"))
 
 
 	
@@ -608,8 +613,8 @@ class Game(Gamemananager.GameManager):
 
 	def cond(self,id,info):
 		"""id -> the id   info -> the info for the id"""
-		if info["name"] == "player":
-			om.playanim(self.dt,id,"fastidle",1)
+		# if info["name"] == "player":
+		# 	om.playanim(self.dt,id,"fastidle",1)
 
 
 
