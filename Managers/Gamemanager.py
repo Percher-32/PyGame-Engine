@@ -43,7 +43,7 @@ class GameManager():
 		self.frame_manager = frame_manager
 		self.event_manager = em
 		self.em = em
-		self.publicvariables = {"showinput":univars.showinput,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":univars.screencol   ,"cammove":False    }
+		self.publicvariables = {"showinput":univars.showinput,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":univars.screencol   ,"cammove":False  ,"shaderstate":0  }
 		self.timers = {}
 		self.dt = 1
 		self.abttodo = []
@@ -427,6 +427,7 @@ class GameManager():
 		frame_tex.use(0)
 		shader.program['tex'] = 0
 		shader.program['time'] = fm.frame
+		shader.program['state'] = self.publicvariables["shaderstate"]
 		shader.render_object.render(mode=moderngl.TRIANGLE_STRIP)
 
 		
