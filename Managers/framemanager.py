@@ -2,6 +2,7 @@
 import time
 import pygame
 import Managers.univars as univars
+
 class frame_manager:
 	def __init__(self,tm):
 		self.frame = 0
@@ -28,8 +29,8 @@ class frame_manager:
 
 		self.lasttime = time.time()
 		self.frame += 1
-		if self.showfps:
-			self.tm.drawtext(f"fps = {round(60/ self.dt)}","pixel2.ttf",40,0,0,0,self.theme,-0.9,-0.9)
+		# if self.showfps:
+		# 	self.tm.drawtext(f"fps = {round(60/ self.dt)}","pixel2.ttf",40,0,0,0,self.theme,-0.9,-0.9)
 		pygame.display.flip()
 		if self.frame > 10000:
 			self.frame = 0

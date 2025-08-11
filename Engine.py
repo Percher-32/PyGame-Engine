@@ -242,7 +242,7 @@ class Game(Gamemananager.GameManager):
 
 	def moveplayer(self):
 		# om.speed = 0.4
-		collision = om.collide9("player",1,cam,self.dim)
+		collision = om.collide9("player",0,cam,self.dim)
 		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
 		collisionbox = om.collide("player",0,cam,extra=15)
 		ground1 = len(collision["botmid"]["inst"]) > 0
@@ -261,7 +261,7 @@ class Game(Gamemananager.GameManager):
 	
 		if self.dt == 0 or self.dt > 10:
 			self.dt = 1
-		um.showvar("slp",collisionboxtype,[0,-0.7])
+
 		if len(collisionboxtype) > 0:
 			if "slantl"  in collisionboxtype or "slantr" in collisionboxtype:
 				slanted = True
@@ -284,7 +284,7 @@ class Game(Gamemananager.GameManager):
 		else: 
 			slanted = False
 
-		um.showvar("point",lonepoint2["inst"],[0,-0.5])
+
 
 		#Main movement
 		if not slanted:

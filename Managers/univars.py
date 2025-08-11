@@ -133,7 +133,7 @@ def update():
     global uiscreen
     screen_w = pygame.display.get_window_size()[0]
     screen_h = pygame.display.get_window_size()[1]
-    realscreeen = pygame.transform.scale(realscreeen,[screen_w,screen_h])
+    # realscreeen = pygame.transform.scale(realscreeen,[screen_w,screen_h])
     # print(realscreeen.get_size())
 
 

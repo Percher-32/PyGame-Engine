@@ -420,10 +420,14 @@ class GameManager():
 		# univars.realscreeen = pygame.transform.scale(univars.realscreeen,[pygame.display.get_window_size()[0]/univars.startdims[0] * univars.startdims[0],pygame.display.get_window_size()[1]/univars.startdims[1] * univars.startdims[1]])
 		# # univars.realscreeen = pygame.transform.scale_by(univars.realscreeen,(pygame.display.get_window_size()[0]/univars.startdims[0]))
 		# print((pygame.display.get_window_size()[0]/univars.startdims[0]) ** 2)
+		
+		if fm.showfps:
+			tm.drawtext(f"fps = {round(60/ self.dt)}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.9,-0.9)
 		frame_tex = shader.surf_to_texture(univars.realscreeen)
 		frame_tex.use(0)
 		shader.program['tex'] = 0
 		shader.render_object.render(mode=moderngl.TRIANGLE_STRIP)
+
 		
 
 
