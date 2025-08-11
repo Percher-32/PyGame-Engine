@@ -110,7 +110,7 @@ mode = 0
 
 startuistate = "def"
 
-screencol = (110,189,234)
+screencol = (100,100,0)
 
 
 camspeeed = 45

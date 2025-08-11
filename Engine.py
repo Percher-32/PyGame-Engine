@@ -59,7 +59,7 @@ class Game(Gamemananager.GameManager):
 		pass
 
 	def update(self):
-		bg.background = "test2"
+		# bg.background = "test2"
 		# pm.particlespawn("circle",[0,0],[[-5,5],[-5,5]],(0,100,255),[0,0],[0,-1],5,0.001,alpha=300,alphadec=4,divergencepos=[[-1000,1000],[0,0]],ntimes=1)
 		# cm.setcond("def","pos",[random.randint(-10000,10000),random.randint(-10000,10000)])
 
