@@ -5,8 +5,8 @@ import Managers.statemanager as sm
 
 
 pygame.display.init()
-screen_w = pygame.display.get_desktop_sizes()[0][0]/1.4
-screen_h = pygame.display.get_desktop_sizes()[0][1]/1.4
+screen_w = pygame.display.get_desktop_sizes()[0][0]/1
+screen_h = pygame.display.get_desktop_sizes()[0][1]/1
 startdims = (screen_w,screen_h)
 
 camchange = True
@@ -51,7 +51,7 @@ fakescreen.set_colorkey((0,0,0))
 
 
 uiscreen = pygame.Surface((screen_w,screen_h))
-finalscreen = pygame.display.set_mode((screen_w,screen_h),pygame.RESIZABLE|pygame.OPENGL|pygame.DOUBLEBUF)
+finalscreen = pygame.display.set_mode((screen_w,screen_h),pygame.OPENGL|pygame.DOUBLEBUF|pygame.FULLSCREEN)
 realscreeen = pygame.Surface((screen_w,screen_h))
 pygame.display.set_caption(name)
 
@@ -131,9 +131,9 @@ def update():
     global screen_h 
     global realscreeen
     global uiscreen
-    screen_w = finalscreen.get_width()
-    screen_h = finalscreen.get_height()
-    # realscreeen = pygame.transform.scale(realscreeen,[screen_w,screen_h])
-    # uiscreen = pygame.transform.scale(uiscreen,[screen_w,screen_h])
+    screen_w = pygame.display.get_window_size()[0]
+    screen_h = pygame.display.get_window_size()[1]
+    realscreeen = pygame.transform.scale(realscreeen,[screen_w,screen_h])
+    # print(realscreeen.get_size())
 
 

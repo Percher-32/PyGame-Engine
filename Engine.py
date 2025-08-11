@@ -252,7 +252,7 @@ class Game(Gamemananager.GameManager):
 		instlist = collision["botmid"]["inst"] + collision["botleft"]["inst"] + collision["botright"]["inst"] 
 		collisionlisttype = [i.type for i in instlist] 
 		collisionboxtype = [i.type for i in collisionbox["inst"]] 
-		# collisionlisttype.append(None)
+		collisionlisttype.append(None)
 		if abs(self.key["x"]) > 0:
 			if self.key["x"] > 0:
 				self.lastdirslant = "l"
@@ -281,7 +281,7 @@ class Game(Gamemananager.GameManager):
 				
 			else:
 				slanted = False	
-		else:
+		else: 
 			slanted = False
 
 		um.showvar("point",lonepoint2["inst"],[0,-0.5])
