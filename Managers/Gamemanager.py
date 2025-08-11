@@ -426,6 +426,7 @@ class GameManager():
 		frame_tex = shader.surf_to_texture(univars.realscreeen)
 		frame_tex.use(0)
 		shader.program['tex'] = 0
+		shader.program['time'] = fm.frame
 		shader.render_object.render(mode=moderngl.TRIANGLE_STRIP)
 
 		

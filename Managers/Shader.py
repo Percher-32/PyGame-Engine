@@ -31,19 +31,8 @@ void main() {
 """
 
 
-
-frag_shader = """
-#version 330 core
-
-uniform sampler2D tex;
-
-in vec2 uvs;
-out vec4 f_color; 
-
-void main(){
-    f_color = vec4(texture(tex,uvs).rgb,1.0);
-}
-"""
+with open("Shadercode.fs","r") as code:
+    frag_shader = code.read()
 
 
 program = ctx.program(vertex_shader=vert_shader,fragment_shader=frag_shader)

@@ -520,6 +520,7 @@ class Game(Gamemananager.GameManager):
 
 
 
+
 		else:
 			if self.key["jump"]:
 				self.sp("fss",16)
