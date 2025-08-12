@@ -20,8 +20,7 @@ void main() {
         //0 on outside  , 1 on inside
         float dark = 1 - dist/1.5;
 
-
-        vec2 sample_pos = vec2(uvs.x,uvs.y );
+        vec2 sample_pos = vec2(uvs.x ,uvs.y );
         vec3 map = texture(tex, sample_pos).rgb;
         f_color = vec4(map.r  * dark ,map.g * dark,map.b * (1 - dist/5)   , 0 + (time*0));
     }

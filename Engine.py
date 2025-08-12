@@ -248,8 +248,8 @@ class Game(Gamemananager.GameManager):
 		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
 		collisionbox = om.collide("player",0,cam,extra=15)
 		ground1 = len(collision["botmid"]["inst"]) > 0
-		ground2 = len(collision["botleft"]["inst"]) > 0 and not (len(collision["midleft"]["inst"]) > 0)   and not (len(collision["topleft"]["inst"]) >   0)
-		ground3 = len(collision["botright"]["inst"]) > 0 and not (len(collision["midright"]["inst"]) > 0)  and not (len(collision["topright"]["inst"]) > 0)
+		ground2 = len(collision["botleft"]["inst"]) > 0    and not (len(collision["midleft"]["inst"])  > 0  )
+		ground3 = len(collision["botright"]["inst"]) > 0   and not (len(collision["midright"]["inst"]) > 0  )
 		ground = ground1 or ground2 or ground3
 		instlist = collision["botmid"]["inst"] + collision["botleft"]["inst"] + collision["botright"]["inst"] 
 		collisionlisttype = [i.type for i in instlist] 
@@ -523,17 +523,8 @@ class Game(Gamemananager.GameManager):
 
 
 
-		else:
-			if self.key["jump"]:
-				self.sp("fss",16)
-				self.sp("desmooth",5)
-		
-				#normal
-				self.sp("jumpable",False)
-				self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
-				self.sp("mode","in-air")
-				self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
-				om.translate(self,"player",self.gp("act_vel"),usedt=1)
+		else:                                                                                                                               
+			
 			
 			if "slantr" in collisionboxtype:
 				self.sp("slantdir","r")
@@ -576,6 +567,17 @@ class Game(Gamemananager.GameManager):
 					om.translate(self,"player", self.gp("act_vel"),usedt=1)
 					self.sp("desrot",-45)
 			om.objects["playersprite"]["rot"]  =  self.unilerp(om.objects["playersprite"]["rot"],self.gp("desrot"),5,roundto=2) 
+			if self.key["jump"]:
+				self.sp("fss",16)
+				self.sp("desmooth",5)
+		
+				#normal
+				self.sp("jumpable",False)
+				self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
+				self.sp("mode","in-air")
+				self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
+				om.translate(self,"player",[self.gp("act_vel")[0],self.gp("act_vel")[1]],usedt=1)
+
 			
 			
 
