@@ -106,7 +106,7 @@ class Backgroundmanager:
     def __init__(self):
         self.items = {}
         self.background = None
-        self.backlayer = pygame.Surface((64 * univars.pixelscale,64 * univars.pixelscale))
+        self.backlayer = pygame.Surface(univars.startdims)
         self.backlayer.fill(univars.screencol)
         self.infiniscrollers = []
 
