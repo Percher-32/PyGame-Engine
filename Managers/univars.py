@@ -51,7 +51,7 @@ fakescreen.set_colorkey((0,0,0))
 
 
 uiscreen = pygame.Surface((screen_w,screen_h))
-finalscreen = pygame.display.set_mode((screen_w,screen_h),pygame.OPENGL|pygame.DOUBLEBUF|pygame.FULLSCREEN)
+finalscreen = pygame.display.set_mode((screen_w,screen_h),pygame.OPENGL|pygame.DOUBLEBUF|pygame.FULLSCREEN,vsync=1)
 realscreeen = pygame.Surface((screen_w,screen_h))
 pygame.display.set_caption(name)
 
@@ -105,7 +105,7 @@ startstate = "editgame"
 
 
 #opt to optimise
-mode = 0
+mode = "norm"
 
 
 startuistate = "def"
@@ -129,8 +129,6 @@ maxfpsbuffersize = 5
 def update():
     global screen_w
     global screen_h 
-    global realscreeen
-    global uiscreen
     screen_w = pygame.display.get_window_size()[0]
     screen_h = pygame.display.get_window_size()[1]
     # realscreeen = pygame.transform.scale(realscreeen,[screen_w,screen_h])

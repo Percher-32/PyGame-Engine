@@ -37,11 +37,12 @@ with open("Shadercode.fs","r") as code:
 
 program = ctx.program(vertex_shader=vert_shader,fragment_shader=frag_shader)
 render_object = ctx.vertex_array(program, [(quad_buffer, '2f 2f', 'vert', 'texcoord')])
+tex = ctx.texture(univars.realscreeen.get_size(), int(4))
+
+tex.filter = (moderngl.NEAREST, moderngl.NEAREST)
+tex.swizzle = 'BGRA'
 
 
 def surf_to_texture(surf):
-    tex = ctx.texture(surf.get_size(), 4)
-    tex.filter = (moderngl.NEAREST, moderngl.NEAREST)
-    tex.swizzle = 'BGRA'
     tex.write(surf.get_view('1'))
     return tex

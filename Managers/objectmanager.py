@@ -597,12 +597,12 @@ class object_manager:
 		if len(lof) > 0:
 			for i in lof:
 				self.instances[i].update(showall)
-				self.instances[i].draw(self.screen)
+				self.instances[i].draw(univars.screen)
 
 		#rendering the non-instanciates
 		for groupid in sorted(self.layers.keys()):
 			self.layers[groupid].update(camera,self,dim,showall)
-			self.layers[groupid].draw(self.screen)
+			self.layers[groupid].draw(univars.screen)
 
 
 

@@ -169,6 +169,7 @@ class obj(pygame.sprite.Sprite):
 
 	def flip(self):
 		self.fliped = not self.fliped
-		self.sprites = [pygame.transform.flip(i,True,False) for i in self.sprites ]
+		ns = [pygame.transform.flip(i,True,False) for i in self.sprites ]
+		self.sprites = ns
 
 	

@@ -43,7 +43,7 @@ class GameManager():
 		self.frame_manager = frame_manager
 		self.event_manager = em
 		self.em = em
-		self.publicvariables = {"showinput":univars.showinput,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":univars.screencol   ,"cammove":False  ,"shaderstate":0  }
+		self.publicvariables = {"showinput":univars.showinput,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":univars.screencol   ,"cammove":False  ,"shaderstate":0 ,"showallhidden":1 }
 		self.timers = {}
 		self.dt = 1
 		self.abttodo = []
@@ -437,7 +437,7 @@ class GameManager():
 		self.lastkey = self.key
 		self.inputdetect()
 		self.frame_manager.next(self.publicvariables["maxfps"])
-		frame_tex.release()
+		# frame_tex.release()
 
 	def initial(self):
 		self.defs()

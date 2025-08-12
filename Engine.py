@@ -118,22 +118,12 @@ class Game(Gamemananager.GameManager):
 				self.lookahead = self.unilerp(self.lookahead,0,20,roundto=2)
 
 			campos[0] += self.lookahead
-			# if self.gp("des_vel")[1] > 0:
-			# 	campos[1] += self.lookahead
-			# elif self.gp("des_vel")[1] < 0:
-			# 	campos[1] -= self.lookahead
 
 
 
-			# cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * ((-0.001 *      univars.func.dist([0,0],self.gp("act_vel"))                 ) + 0.5) )
 			cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.5 )
-			# cm.setcond("playercam","pos",[cm.getcam("playercam","pos")[0] + (self.key["x"] * 20) , cm.getcam("playercam","pos")[1] ])
 
 			
-
-			#update player sprite ansd skateboards position
-			# particlepos = [om.objects["player"]["pos"][0] - 15,om.objects["player"]["pos"][1]]
-			# pm.particlespawnbluprint(particlepos,"grind")
 			rot = om.objects["playersprite"]["rot"]
 			if self.gp("onboard"):
 				om.objects["playersprite"]["pos"][0] = om.objects["player"]["pos"][0] - math.sin((rot/180) * math.pi) * 11
@@ -158,12 +148,12 @@ class Game(Gamemananager.GameManager):
 
 
 
-				if not abs(self.key["x"]) > 0:
-					om.playanim(self.dt,"playersprite","idle",forceplay=True)
-				elif not abs(self.gp("des_vel")[0]  - self.key["x"] * 150) < 20:
-					om.playanim(self.dt,"playersprite","moveidle",forceplay=True)
-				else:
-					om.playanim(self.dt,"playersprite","fastidle",forceplay=True)
+			if not abs(self.key["x"]) > 0:
+				om.playanim(self.dt,"playersprite","idle",forceplay=True)
+			elif not abs(self.gp("des_vel")[0]  - self.key["x"] * 150) < 20:
+				om.playanim(self.dt,"playersprite","moveidle",forceplay=True)
+			else:
+				om.playanim(self.dt,"playersprite","fastidle",forceplay=True)
 
 
 
