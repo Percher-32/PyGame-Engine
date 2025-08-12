@@ -2,6 +2,12 @@
 uniform sampler2D tex;
 uniform float time;
 uniform int state;
+uniform vec2 sunpos;
+uniform float illuminace;
+uniform int state;
+
+
+
 
 in vec2 uvs;
 out vec4 f_color;
@@ -137,15 +143,30 @@ void main() {
     // vec2 sample_pos = uvs;
     if (state == 0){
         
-        vec2 fakeuvs = vec2(uvs.x-0.5,uvs.y-0.5);
+        vec2 fakeuvs = vec2(uvs.x-0.5 ,uvs.y-0.5 );
+
+        vec2 slighttwist = vec2(sin(time/40) + 0.5,cos(time/40) + 0.5);
+        float twistval = 0.4;
+
+
 
         //1 on outside  , 0 on inside
         float dist = abs(distance(vec2(0,0),fakeuvs));
+        dist = 0;
+
+        // 0 near sun   1 away from sun
+        float sundist = abs(distance(uvs,sunpos));
+
+
+        float twistsiist = abs(distance(uvs,slighttwist));
+
         //0 on outside  , 1 on inside
-        float dark = 1 - dist/1.5;
-        vec2 sample_pos = vec2(clamp(uvs.x + dark/30  - 0.02,0.0,0.999)  ,clamp(uvs.y + dark/30  - 0.02,0.0,0.999));
-        // sample_pos = uvs;
-        // dark += perlin();
+        float dark = 1 - ((sundist/(illuminace * 2)) + dist/2)/2;
+        // float bumpshift = 1 - ((twistsiist/twistval) + dist/2)/2;
+
+        // vec2 sample_pos = vec2(clamp(uvs.x + bumpshift/30  - 0.021,0.0,1)  ,clamp(uvs.y + bumpshift/30  - 0.021,0.0,1));
+        vec2 sample_pos = uvs;
+        // dark += abs(2* perlin());
         vec3 map = texture(tex, sample_pos).rgb;
         f_color = vec4(map.r  * dark ,map.g * dark,map.b * (1 - dist/5)   , 0 + (time*0));
     }

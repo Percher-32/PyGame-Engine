@@ -346,7 +346,7 @@ class GameManager():
 		#render background
 			
 		bg.update(self.publicvariables["screencol"])
-		# univars.screen.blit(bg.backlayer,(0,0))
+		univars.screen.blit(bg.backlayer,(0,0))
 
 
 
@@ -425,11 +425,11 @@ class GameManager():
 			tm.drawtext(f"fps = {round(60/ self.dt)}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.9,-0.9)
 
 
-		bgframe_tex = shader.bg_surf_to_texture(bg.backlayer)
-		bgframe_tex.use(0)
-		shader.bgprogram['tex'] = 0
-		shader.bgprogram['time'] = fm.frame
-		shader.bgprogram['state'] = self.publicvariables["shaderstate"]
+		# bgframe_tex = shader.bg_surf_to_texture(bg.backlayer)
+		# bgframe_tex.use(0)
+		# shader.bgprogram['tex'] = 0
+		# shader.bgprogram['time'] = fm.frame
+		# shader.bgprogram['state'] = self.publicvariables["shaderstate"]
 		# shader.bgrender_object.render(mode=moderngl.TRIANGLE_STRIP)
 
 
@@ -438,6 +438,8 @@ class GameManager():
 		shader.program['tex'] = 0
 		shader.program['time'] = fm.frame
 		shader.program['state'] = self.publicvariables["shaderstate"]
+		shader.program["illuminance"] = 1
+		shader.program["sunpos"] = [0,0]
 		shader.render_object.render(mode=moderngl.TRIANGLE_STRIP)
 
 		
@@ -447,7 +449,8 @@ class GameManager():
 		self.lastkey = self.key
 		self.inputdetect()
 		self.frame_manager.next(self.publicvariables["maxfps"])
-		bgframe_tex.release()
+		
+		# bgframe_tex.release()
 
 	def initial(self):
 		self.defs()

@@ -55,17 +55,3 @@ def surf_to_texture(surf):
 
 
 
-with open("Bgshader.fs","r") as code:
-    bg_frag_shader = code.read()
-
-
-bgprogram = bgctx.program(vertex_shader=vert_shader,fragment_shader=bg_frag_shader)
-bgrender_object = bgctx.vertex_array(bgprogram, [(bgquad_buffer, '2f 2f', 'vert', 'texcoord')])
-
-
-def bg_surf_to_texture(surf):
-    bgtex = bgctx.texture(surf.get_size(), int(4))
-    bgtex.filter = (moderngl.NEAREST, moderngl.NEAREST)
-    bgtex.swizzle = 'BGRA'
-    bgtex.write(surf.get_view('1'))
-    return bgtex
