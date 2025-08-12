@@ -238,8 +238,8 @@ class Game(Gamemananager.GameManager):
 		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
 		collisionbox = om.collide("player",0,cam,extra=15)
 		ground1 = len(collision["botmid"]["inst"]) > 0
-		ground2 = len(collision["botleft"]["inst"]) > 0    and not (len(collision["midleft"]["inst"])  > 0  )
-		ground3 = len(collision["botright"]["inst"]) > 0   and not (len(collision["midright"]["inst"]) > 0  )
+		ground2 = len(collision["botleft"]["inst"]) > 0    and not (len(collision["topleft"]["inst"])  > 0  )
+		ground3 = len(collision["botright"]["inst"]) > 0   and not (len(collision["topright"]["inst"]) > 0  )
 		ground = ground1 or ground2 or ground3
 		instlist = collision["botmid"]["inst"] + collision["botleft"]["inst"] + collision["botright"]["inst"] 
 		collisionlisttype = [i.type for i in instlist] 

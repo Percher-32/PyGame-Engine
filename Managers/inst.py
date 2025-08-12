@@ -1,5 +1,4 @@
 import pygame
-import Managers.funcs as funcs
 import Managers.Cameramod as Cameramod
 import Managers.univars as univars
 import json
