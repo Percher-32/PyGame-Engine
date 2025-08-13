@@ -29,6 +29,7 @@ class Game(Gamemananager.GameManager):
 		super().__init__(screen,fm)
 		self.ingametime = 0
 		self.publicvariables["showater"] = True
+		self.publicvariables["waterh"] = 0.9
 
 	def onreload(self):
 		self.a = 0
@@ -63,6 +64,7 @@ class Game(Gamemananager.GameManager):
 
 	def update(self):
 		bg.background = "test2"
+		# om.speed = 0.8
 		# pm.particlespawn("circle",[0,0],[[-5,5],[-5,5]],(0,100,255),[0,0],[0,-1],5,0.001,alpha=300,alphadec=4,divergencepos=[[-1000,1000],[0,0]],ntimes=1)
 		# cm.setcond("def","pos",[random.randint(-10000,10000),random.randint(-10000,10000)])
 
@@ -97,11 +99,13 @@ class Game(Gamemananager.GameManager):
 		sd.program['state'] = self.publicvariables["shaderstate"]
 		sd.program["illuminace"] = (math.cos(self.ingametime) + 2)/2
 		if self.publicvariables["showater"]:
-			sd.program["waterlevel"] = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-0.9 + ((1-cam.size)* 1.46)
+			sd.program["waterlevel"] = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-self.publicvariables["waterh"] + ((1-cam.size)* 1.46)
 		else:
 			sd.program["waterlevel"] = -1
 		sd.program["sunpos"] = [math.sin(self.ingametime) * -1.3,math.cos(self.ingametime) * -1.3]
-		sd.program["sunpos"] = [0,0]
+		# sd.program["sunpos"] = [0,0]
+		self.publicvariables["waterh"] = math.sin(fm.frame/40)/20
+		sd.program["camx"] = cam.x/univars.startdims[0]
 
 			
 	def playercode(self):
@@ -245,9 +249,9 @@ class Game(Gamemananager.GameManager):
 
 	def moveplayer(self):
 		# om.speed = 0.4
-		collision = om.collide9("player",1,cam,self.dim)
-		lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 50,om.objects["player"]["pos"][1] + 10 ],1,32,camera=cam,basecolor=(0,1,0))
-		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 10 ],1,32,camera=cam,basecolor=(0,1,0))
+		collision = om.collide9("player",0,cam,self.dim)
+		lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
+		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
 		collisionbox = om.collide("player",0,cam,extra=15)
 		ground1 = len(collision["botmid"]["inst"]) > 0
 		ground2 = len(collision["botleft"]["inst"]) > 0    and not (len(collision["topleft"]["inst"])  > 0  ) and not (len(collision["midleft"]["inst"])  > 0  )
@@ -468,32 +472,32 @@ class Game(Gamemananager.GameManager):
 				
 					
 					if collision["topmid"]["inst"]:
-						if self.gp("leftwall"):
-							om.objects["player"]["pos"][0] += 30
-							om.objects["player"]["pos"][1] += abs(self.gp("act_vel")[1])
-						elif self.gp("rightwall"):
-							om.objects["player"]["pos"][0] -= 35
-							om.objects["player"]["pos"][1] += abs(self.gp("act_vel")[1])
-						else:
-							om.objects["player"]["pos"][1] += 35 + abs(self.gp("act_vel")[1])
-							self.sp("des_vel",[self.gp("des_vel")[0],20 + abs(self.gp("act_vel")[1])])
-							self.sp("jumpable",False)
-					else:
+						# if self.gp("leftwall"):
+						# 	om.objects["player"]["pos"][0] += 30
+						# 	om.objects["player"]["pos"][1] += abs(self.gp("act_vel")[1])
+						# elif self.gp("rightwall"):
+						# 	om.objects["player"]["pos"][0] -= 35
+						# 	om.objects["player"]["pos"][1] += abs(self.gp("act_vel")[1])
+						# else:
+						# 	om.objects["player"]["pos"][1] += 50 + abs(self.gp("act_vel")[1])
+						self.sp("act_vel",[   self.gp("act_vel")[0] * 1  ,  abs(self.gp("act_vel")[1]) * -1.5 ])
+						self.sp("des_vel",[  self.gp("des_vel")[0] * 1   ,  abs(self.gp("des_vel")[1]) * -1.5 ])
+						self.sp("jumpable",False)
 						#move
 						
-						om.objects["playersprite"]["rot"]  =  self.unilerp(om.objects["playersprite"]["rot"],self.gp("desrot"),5,roundto=2) 
-						self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
-						om.translate(self,"player",self.gp("act_vel"),usedt=1)
-						
-						if not self.gp("onboard"):
-							if om.get_value("skateboard","fallvalue")< 20:
-								om.set_value("skateboard","fallvalue",om.get_value("skateboard","fallvalue") - 2* self.dt)
-							om.objects["skateboard"]["pos"] = [om.objects["player"]["pos"][0],om.objects["player"]["pos"][1] - 0]
-							om.translate(self,"skateboard",[0,om.get_value("skateboard","fallvalue")])
-						else:
-							om.set_value("skateboard","fallvalue",5)
-
+					om.objects["playersprite"]["rot"]  =  self.unilerp(om.objects["playersprite"]["rot"],self.gp("desrot"),5,roundto=2) 
+					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
+					om.translate(self,"player",self.gp("act_vel"),usedt=1)
 					
+					if not self.gp("onboard"):
+						if om.get_value("skateboard","fallvalue")< 20:
+							om.set_value("skateboard","fallvalue",om.get_value("skateboard","fallvalue") - 2* self.dt)
+						om.objects["skateboard"]["pos"] = [om.objects["player"]["pos"][0],om.objects["player"]["pos"][1] - 0]
+						om.translate(self,"skateboard",[0,om.get_value("skateboard","fallvalue")])
+					else:
+						om.set_value("skateboard","fallvalue",5)
+
+				
 
 
 					
@@ -513,14 +517,15 @@ class Game(Gamemananager.GameManager):
 							om.translate(self,"player",[-100,40])
 
 			else:
-				if len(collision["midmid"]["inst"]) > 0:
-					self.sp("desrot",1000)
-					if len(collision["topleft"]["inst"]) > 0 or len(collision["topright"]["inst"]) > 0:
-						self.sp("act_vel",[   self.gp("prev_act_vel")[0] * -1  ,  self.gp("prev_act_vel")[1] * -1 ])
-					else:
-						self.sp("act_vel",[   self.gp("prev_act_vel")[0] * 1  ,  self.gp("prev_act_vel")[1] * -1 ])
-					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
-					om.translate(self,"player",self.gp("act_vel"))
+				# self.sp("desrot",1000)
+				if len(collision["topleft"]["inst"]) > 0 or len(collision["topright"]["inst"]) > 0:
+					self.sp("act_vel",[   self.gp("prev_act_vel")[0] * -1  ,  self.gp("prev_act_vel")[1] * -1 ])
+					# self.sp("des_vel",[   self.gp("prev_des_vel")[0] * -1  ,  self.gp("prev_des_vel")[1] * -1 ])
+				else:
+					self.sp("act_vel",[   self.gp("prev_act_vel")[0] * 1  ,  self.gp("prev_act_vel")[1] * -1 ])
+					# self.sp("des_vel",[   self.gp("prev_des_vel")[0] * 1  ,  self.gp("prev_des_vel")[1] * -1 ])
+				self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
+				om.translate(self,"player",self.gp("act_vel"))
 		else:                                                                                                                               
 			
 			

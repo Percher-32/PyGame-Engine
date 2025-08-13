@@ -5,6 +5,7 @@ uniform int state;
 uniform vec2 sunpos;
 uniform float illuminace;
 uniform float waterlevel;
+uniform float camx;
 
 
 
@@ -169,11 +170,15 @@ void main() {
         float vigb = mix((1 - dist/5),dark,hurt);
         float vigr = mix(dark,(1 - dist/5),hurt);
         // float bumpshift = 1 - ((twistsiist/twistval) + dist/2)/2;
-        float offsetsine =  sin(sin(uvs.x + time/100)*20 + time/100  + 2*sin( time/100)/20     + 5*sin( time/30 + uvs.x)/20                )/20;
+        float offsetsine =  sin(sin((uvs.x + camx) + time/1000)*20 + time/100  + 2*sin( time/1000)/25     + sin( sin(time/300) + (uvs.x + camx))/20                )/50;
+        offsetsine = perlin()/20;
+
+
+
         if (uvs.y > (1-waterlevel) + offsetsine  ){
 
-            vec2 reflec_sample_pos = vec2(uvs.x  + sin(time/10 + (uvs.y) * 50)/400,(1-waterlevel) - abs((1-waterlevel)- uvs.y) );
-            vec2 underwater_sample_pos = vec2(uvs.x  + sin(time/10 + (uvs.y) * 50)/400,uvs.y+ cos(time/20 + (uvs.x) * 50)/400);
+            vec2 reflec_sample_pos = vec2(uvs.x  + sin(time/10 + (uvs.y) * 50)/800+ perlin()/50,(1-waterlevel) - abs((1-waterlevel)- uvs.y)+ perlin()/50 + 0.05);
+            vec2 underwater_sample_pos = vec2(uvs.x  + sin(time/10 + (uvs.y) * 50)/800,uvs.y+ cos(time/20 + (uvs.x) * 50)/800);
 
 
 
@@ -182,10 +187,12 @@ void main() {
 
 
 
-            underwater_sample_pos.x = clamp(underwater_sample_pos.x,0,0.99);
-            underwater_sample_pos.y = clamp(underwater_sample_pos.y,0,0.99);
+            underwater_sample_pos.x = clamp(underwater_sample_pos.x + perlin()/60,0,0.99);
+            underwater_sample_pos.y = clamp(underwater_sample_pos.y + perlin()/60,0,0.99);
 
-            float scalar = 2.5 - (waterlevel *4);
+
+
+            float scalar = 2*(1- waterlevel);
 
             if (scalar < 0){
               scalar = 0;
