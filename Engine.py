@@ -91,7 +91,7 @@ class Game(Gamemananager.GameManager):
 			else:
 				um.elements["but4"]["color"] = univars.theme["dark"]
 
-
+	
 		self.ingametime = fm.frame/200
 		sd.program['time'] = fm.frame
 		sd.program['state'] = self.publicvariables["shaderstate"]
@@ -101,6 +101,7 @@ class Game(Gamemananager.GameManager):
 		else:
 			sd.program["waterlevel"] = -1
 		sd.program["sunpos"] = [math.sin(self.ingametime) * -1.3,math.cos(self.ingametime) * -1.3]
+		sd.program["sunpos"] = [0,0]
 
 			
 	def playercode(self):
@@ -289,8 +290,7 @@ class Game(Gamemananager.GameManager):
 		else: 
 			slanted = False
 
-		um.showvar("lastdislant",self.lastdirslant,[0,0])
-		um.showvar("slantdir",self.gp("slantdir"),[0,-0.2])
+	
 		#Main movement
 		if not slanted:
 			if not len(collision["midmid"]["inst"]) > 0:
