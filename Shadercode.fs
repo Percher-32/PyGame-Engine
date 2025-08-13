@@ -178,7 +178,7 @@ void main() {
 
 
             float reflec_dark = dark * (0.5 + perlin()/5);
-            float underwater_dark = dark * (0.6 + perlin()/5);
+            float underwater_dark = dark * (0.7 + perlin()/2);
 
 
 
@@ -195,7 +195,7 @@ void main() {
             }
 
 
-            dark = mix(reflec_dark,underwater_dark,scalar);
+            dark = mix(reflec_dark,underwater_dark,1-scalar);
             map = mix(  texture(tex, underwater_sample_pos).rgb   ,  texture(tex, reflec_sample_pos).rgb  ,  scalar  );
             vigb = mix((1 - dist/5),dark,hurt);
             vigr = mix(dark,dark*2,hurt);
