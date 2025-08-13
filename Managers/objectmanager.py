@@ -104,8 +104,8 @@ class object_manager:
 		self.savetilemap(name,check=True)
 		
 
-	def getcull(self,pos,grid_size,dim) -> list:
-		return [i for i in list(self.objects.keys()) if pos[0] - grid_size * dim <= self.objects[i]["pos"][0] <= pos[0] + grid_size * dim  and pos[1] - grid_size * dim <= self.objects[i]["pos"][1] <= (pos[1]) + grid_size * dim]                                                  
+	def getcull(self,pos,grid_size,dim,ignore = []) -> list:
+		return [i for i in list(self.objects.keys()) if pos[0] - grid_size * dim <= self.objects[i]["pos"][0] <= pos[0] + grid_size * dim  and pos[1] - grid_size * dim <= self.objects[i]["pos"][1] <= (pos[1]) + grid_size * dim and not i in ignore]                                                  
 
 
 
@@ -331,13 +331,13 @@ class object_manager:
 
 			return {"noninst":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
 
-	def colliderect(self,pos,dimensions,show,camera) -> dict:
+	def colliderect(self,pos,dimensions,show,camera,ignore = []) -> dict:
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		#coll for non-inst
 		dim = univars.grandim
 		id = str(id)
 		r1 = pygame.Rect(pos[0],pos[1],dimensions[0],dimensions[1])
-		typel = self.getcull(pos,1,dim)
+		typel = self.getcull(pos,1,dim,ignore = ignore)
 		noninst = [self.objfromid(i) for i in typel if r1.colliderect(self.objfromid(i).fakerect) ]
 
 		#coll for inst
@@ -357,12 +357,12 @@ class object_manager:
 
 		return {"noninst":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
 
-	def collidep(self,pos,show,dim,pointsize=5,basecolor = (255,0,0),instcol = (0,225,0),noninstcol=(0,225,150),ignore_id = None,camera = None) -> dict: 
+	def collidep(self,pos,show,dim,pointsize=5,basecolor = (255,0,0),instcol = (0,225,0),noninstcol=(0,225,150),ignore_id = None,camera = None,ignore = []) -> dict: 
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		#coll for non-inst
 		dim = univars.grandim
-		typel = self.getcull(pos,1,univars.grandim)
-		noninst = [self.objfromid(i) for i in typel if self.objfromid(i).fakerect.collidepoint(pos) ]
+		typel = self.getcull(pos,1,univars.grandim,ignore=ignore)
+		noninst = [self.objfromid(i) for i in typel if self.objfromid(i).fakerect.collidepoint(pos) and i in ignore ]
 
 		#coll for inst
 		camchunk = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
@@ -387,7 +387,7 @@ class object_manager:
 		
 		return {"obj":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
 
-	def collide9(self,id,show,camera,dim,pointsize = 5,offsets = { "topleft":[0,0],"topmid":[0,0],"topright":[0,0],"midleft":[0,0],"midmid":[0,0],"midright":[0,0],"botleft":[0,0],"botmid":[0,0],"botright":[0,0]}) -> dict:
+	def collide9(self,id,show,camera,dim,pointsize = 5,offsets = { "topleft":[0,0],"topmid":[0,0],"topright":[0,0],"midleft":[0,0],"midmid":[0,0],"midright":[0,0],"botleft":[0,0],"botmid":[0,0],"botright":[0,0]},ignore = []) -> dict:
 		""" points :\n
 				[topleft , topmid , topright  , midleft  , midmid  ,  midright  ,  botleft  , botmid  , botleft] .\n
 
@@ -401,15 +401,15 @@ class object_manager:
 			w = self.objects[id]["size"][0]/2
 			h = self.objects[id]["size"][1]/2
 			
-			topleft  = self.collidep((x - w +  offsets["topleft"][0]  ,  y - h +  offsets["topleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera)
-			topmid   = self.collidep((x     +   offsets["topmid"][0]  ,  y - h +   offsets["topmid"][1]),show,dim,pointsize,ignore_id=id,camera=camera)
-			topright = self.collidep((x + w + offsets["topright"][0]  ,  y - h + offsets["topright"][1]),show,dim,pointsize,ignore_id=id,camera=camera)
-			midleft  = self.collidep((x - w +  offsets["midleft"][0]  ,    y   +  offsets["midleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera)
-			midmid   = self.collidep((x     +   offsets["midmid"][0]  ,    y   +   offsets["midmid"][1]),show,dim,pointsize,ignore_id=id,camera=camera)
-			midright = self.collidep((x + w + offsets["midright"][0]  ,    y   + offsets["midright"][1]),show,dim,pointsize,ignore_id=id,camera=camera)
-			botleft  = self.collidep((x - w +  offsets["botleft"][0]  ,  y + h +  offsets["botleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera)
-			botmid   = self.collidep((x     +   offsets["botmid"][0]  ,  y + h +   offsets["botmid"][1]),show,dim,pointsize,ignore_id=id,camera=camera)
-			botright = self.collidep((x + w + offsets["botright"][0]  ,  y + h + offsets["botright"][1]),show,dim,pointsize,ignore_id=id,camera=camera)
+			topleft  = self.collidep((x - w +  offsets["topleft"][0]  ,  y - h +  offsets["topleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
+			topmid   = self.collidep((x     +   offsets["topmid"][0]  ,  y - h +   offsets["topmid"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
+			topright = self.collidep((x + w + offsets["topright"][0]  ,  y - h + offsets["topright"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
+			midleft  = self.collidep((x - w +  offsets["midleft"][0]  ,    y   +  offsets["midleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
+			midmid   = self.collidep((x     +   offsets["midmid"][0]  ,    y   +   offsets["midmid"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
+			midright = self.collidep((x + w + offsets["midright"][0]  ,    y   + offsets["midright"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
+			botleft  = self.collidep((x - w +  offsets["botleft"][0]  ,  y + h +  offsets["botleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
+			botmid   = self.collidep((x     +   offsets["botmid"][0]  ,  y + h +   offsets["botmid"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
+			botright = self.collidep((x + w + offsets["botright"][0]  ,  y + h + offsets["botright"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
 			ans = { "topleft":topleft,"topmid":topmid,"topright":topright,"midleft":midleft,"midmid":midmid,"midright":midright,"botleft":botleft,"botmid":botmid,"botright":botright}
 			return ans
 

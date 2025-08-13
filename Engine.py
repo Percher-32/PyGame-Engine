@@ -38,9 +38,7 @@ class Game(Gamemananager.GameManager):
 		
 		if "game" == self.states:
 
-			#create the cameras
-			cm.addcam("playercam",[0,0],0.4)
-			cm.setcam("playercam")  
+			
 
 			#initialise player and all its variables
 			self.initialiseplayer()
@@ -94,17 +92,16 @@ class Game(Gamemananager.GameManager):
 				um.elements["but4"]["color"] = univars.theme["dark"]
 
 	
-		self.ingametime = fm.frame/200
+		self.ingametime = 0
 		sd.program['time'] = fm.frame
 		sd.program['state'] = self.publicvariables["shaderstate"]
 		sd.program["illuminace"] = (math.cos(self.ingametime) + 2)/2
 		if self.publicvariables["showater"]:
-			sd.program["waterlevel"] = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-self.publicvariables["waterh"] + ((1-cam.size)* 1.46)
+			sd.program["waterlevel"] = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-(math.sin(fm.frame/40)/80 + self.publicvariables["waterh"]) + ((1-cam.size)* 1.46)
 		else:
 			sd.program["waterlevel"] = -1
 		sd.program["sunpos"] = [math.sin(self.ingametime) * -1.3,math.cos(self.ingametime) * -1.3]
 		# sd.program["sunpos"] = [0,0]
-		self.publicvariables["waterh"] = math.sin(fm.frame/40)/20
 		sd.program["camx"] = cam.x/univars.startdims[0]
 
 			
@@ -177,12 +174,15 @@ class Game(Gamemananager.GameManager):
 		"""
 		Initialises the players variables
 		"""
+		#create the cameras
+		cm.addcam("playercam",[-1000,608],0.4)
+		cm.setcam("playercam")  
 
 		self.lookahead = 100
 		om.speed = 1
 
 		#create player
-		om.adds("player",[-1600,250],"player","player",0,[1,1],400,5)
+		om.adds("player",[-1600,608],"player","player",0,[1,1],400,5)
 		om.objects["player"]["rendercond"] = False
 
 		#creates the player sprite you actually see
@@ -204,6 +204,8 @@ class Game(Gamemananager.GameManager):
 		#smoothing
 		self.sp("smoothing",2)
 
+		self.sp("prevpos",om.objects["player"]["pos"])
+
 		#modes
 		self.sp("mode","grounded")
 
@@ -224,6 +226,8 @@ class Game(Gamemananager.GameManager):
 		#shidding?
 		self.sp("skidding",False)
 
+		self.reclock = 1
+
 
 		#on skateboard?
 		self.sp("onboard",True)
@@ -237,6 +241,8 @@ class Game(Gamemananager.GameManager):
 
 		om.set_value("skateboard","fallvalue",5)
 
+		self.sp("thickness",1)
+
        
 	def sign(self,value):
 		"""
@@ -249,7 +255,7 @@ class Game(Gamemananager.GameManager):
 
 	def moveplayer(self):
 		# om.speed = 0.4
-		collision = om.collide9("player",0,cam,self.dim)
+		collision = om.collide9("player",1,cam,self.dim,ignore= ["playersprite","skateboard"])
 		lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
 		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
 		collisionbox = om.collide("player",0,cam,extra=15)
@@ -280,14 +286,12 @@ class Game(Gamemananager.GameManager):
 						if len(lonepoint2["inst"]) > 0:
 							slanted = False
 							om.objects["player"]["pos"] = [lonepoint2["inst"][0].realpos[0] + univars.grandim,lonepoint2["inst"][0].realpos[1] - 32]
-				# else:
-				# 	if self.gp("act_vel")[0] > 0:
-						# if len(lonepoint["inst"]) > 0:
-							# slanted = False
-							# print("back")
-				# if self.gp("act_vel")[0] > 0 :
-				# 	if ground2:
-				# 		slanted = False
+				else:
+					if self.lastdirslant == "l":
+						if len(lonepoint1["inst"]) > 0:
+							slanted = False
+							om.objects["player"]["pos"] = [lonepoint2["inst"][0].realpos[0] + univars.grandim,lonepoint2["inst"][0].realpos[1] - 32]
+
 				
 			else:
 				slanted = False	
@@ -515,17 +519,6 @@ class Game(Gamemananager.GameManager):
 					if self.gp("slantdir") == "l":
 						if self.lastdirslant == "r":
 							om.translate(self,"player",[-100,40])
-
-			else:
-				# self.sp("desrot",1000)
-				if len(collision["topleft"]["inst"]) > 0 or len(collision["topright"]["inst"]) > 0:
-					self.sp("act_vel",[   self.gp("prev_act_vel")[0] * -1  ,  self.gp("prev_act_vel")[1] * -1 ])
-					# self.sp("des_vel",[   self.gp("prev_des_vel")[0] * -1  ,  self.gp("prev_des_vel")[1] * -1 ])
-				else:
-					self.sp("act_vel",[   self.gp("prev_act_vel")[0] * 1  ,  self.gp("prev_act_vel")[1] * -1 ])
-					# self.sp("des_vel",[   self.gp("prev_des_vel")[0] * 1  ,  self.gp("prev_des_vel")[1] * -1 ])
-				self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
-				om.translate(self,"player",self.gp("act_vel"))
 		else:                                                                                                                               
 			
 			
@@ -584,19 +577,36 @@ class Game(Gamemananager.GameManager):
 				self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
 				self.sp("mode","in-air")
 				self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
-				om.translate(self,"player",[self.gp("act_vel")[0],self.gp("act_vel")[1]],usedt=1)
+				om.translate(self,"player",[0,self.gp("act_vel")[1]],usedt=1)
+		
 
-			
-			
+		if not self.reclock:
+			self.lastframeslanted = slanted
+			self.sp("prev_act_vel",[  om.objects["player"]["pos"][0] - self.gp("prevpos")[0] , om.objects["player"]["pos"][1] - self.gp("prevpos")[1]   ])
+			um.showvar("desvel",self.gp("des_vel"),[0,0])
+			self.sp("prev_des_vel",self.gp("des_vel"))
 
+		if len(collision["midmid"]["inst"] )> 0 and not slanted:
+			self.reclock = 1
+			self.publicvariables["shaderstate"] = not self.publicvariables["shaderstate"]
+			if len(collision["topleft"]["inst"]) > 0 or len(collision["topright"]["inst"]) > 0 or len(collision["midleft"]["inst"]) > 0 or len(collision["midright"]["inst"]) > 0:
+				self.sp("act_vel",[   self.gp("prev_act_vel")[0] * -1  ,  self.gp("prev_act_vel")[1] * -1 ])
+				self.sp("des_vel",[   self.gp("prev_des_vel")[0] * -1  ,  self.gp("prev_des_vel")[1] * -1 ])
+			else:
+				self.sp("act_vel",[   self.gp("prev_act_vel")[0] * 1  ,  self.gp("prev_act_vel")[1] * -1 ])
+				self.sp("des_vel",[   self.gp("prev_des_vel")[0] * 1  ,  self.gp("prev_des_vel")[1] * -1 ])
+			self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
+			om.translate(self,"player",self.gp("act_vel"),usedt=1)
+		else:
+			self.reclock = 0
+				
+		
 
 
 		if  -5 > self.gp("desrot") > 5:
 			self.sp("desrot",0)
-
-		self.lastframeslanted = slanted
-		self.sp("prev_act_vel",self.gp("act_vel"))
-		self.sp("prev_des_vel",self.gp("des_vel"))
+		
+		self.sp("prevpos",om.objects["player"]["pos"])
 
 
 	

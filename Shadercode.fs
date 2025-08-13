@@ -56,6 +56,7 @@ vec2 quintic(vec2 p) {
 float perlin() {
   // part 0 - basic shader setup
   vec2 uv = uvs;
+  uv.x += camx;
 
 
   vec3 black = vec3(0.0);
@@ -177,19 +178,22 @@ void main() {
 
         if (uvs.y > (1-waterlevel) + offsetsine  ){
 
-            vec2 reflec_sample_pos = vec2(uvs.x  + sin(time/10 + (uvs.y) * 50)/800+ perlin()/50,(1-waterlevel) - abs((1-waterlevel)- uvs.y)+ perlin()/50 + 0.05);
+            vec2 reflec_sample_pos = vec2(uvs.x  + sin(time/10 + (uvs.y) * 50)/800+ perlin()/50,(1-waterlevel) - abs((1-waterlevel)- uvs.y)- perlin()/50 );
             vec2 underwater_sample_pos = vec2(uvs.x  + sin(time/10 + (uvs.y) * 50)/800,uvs.y+ cos(time/20 + (uvs.x) * 50)/800);
 
 
 
             float reflec_dark = dark * (0.5 + perlin()/5);
-            float underwater_dark = dark * (0.7 + perlin()/2);
+            float underwater_dark = dark * (0.7 + perlin()/4);
 
 
 
             underwater_sample_pos.x = clamp(underwater_sample_pos.x + perlin()/60,0,0.99);
             underwater_sample_pos.y = clamp(underwater_sample_pos.y + perlin()/60,0,0.99);
 
+
+            reflec_sample_pos.x = clamp(reflec_sample_pos.x ,0,1);
+            // reflec_sample_pos.y = clamp(reflec_sample_pos.y ,0,1);
 
 
             float scalar = 2*(1- waterlevel);
@@ -200,6 +204,8 @@ void main() {
             if (scalar > 1){
               scalar = 1;
             }
+
+            scalar = mix(0,scalar,scalar);
 
 
             dark = mix(reflec_dark,underwater_dark,1-scalar);

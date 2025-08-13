@@ -144,6 +144,8 @@ class obj(pygame.sprite.Sprite):
 				
 				b.set_alpha(self.info["alpha"])
 				b = pygame.transform.rotate(b,self.info["rot"])
+				if self.fliped:
+					b = pygame.Surface((0,0))
 				self.image = b
 				self.rect = self.image.get_rect(topleft = 
 													( 
