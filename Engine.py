@@ -28,6 +28,7 @@ class Game(Gamemananager.GameManager):
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
 		self.ingametime = 0
+		self.publicvariables["showater"] = True
 
 	def onreload(self):
 		self.a = 0
@@ -91,11 +92,14 @@ class Game(Gamemananager.GameManager):
 				um.elements["but4"]["color"] = univars.theme["dark"]
 
 
-		self.ingametime = fm.frame/500
+		self.ingametime = fm.frame/50
 		sd.program['time'] = fm.frame
 		sd.program['state'] = self.publicvariables["shaderstate"]
 		sd.program["illuminace"] = (math.cos(self.ingametime) + 2)/2
-		sd.program["waterlevel"] = cam.y/univars.screen.get_height()
+		if self.publicvariables["showater"]:
+			sd.program["waterlevel"] = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-0.9 + ((1-cam.size)* 1.46)
+		else:
+			sd.program["waterlevel"] = -1
 		sd.program["sunpos"] = [math.sin(self.ingametime) * -1.3,math.cos(self.ingametime) * -1.3]
 
 			
@@ -240,7 +244,7 @@ class Game(Gamemananager.GameManager):
 
 	def moveplayer(self):
 		# om.speed = 0.4
-		collision = om.collide9("player",0,cam,self.dim)
+		collision = om.collide9("player",1,cam,self.dim)
 		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
 		collisionbox = om.collide("player",0,cam,extra=15)
 		ground1 = len(collision["botmid"]["inst"]) > 0
@@ -250,7 +254,7 @@ class Game(Gamemananager.GameManager):
 		instlist = collision["botmid"]["inst"] + collision["botleft"]["inst"] + collision["botright"]["inst"] 
 		collisionlisttype = [i.type for i in instlist] 
 		collisionboxtype = [i.type for i in collisionbox["inst"]] 
-		collisionlisttype.append(None)
+		collisionlisttype.append("ground")
 		if abs(self.key["x"]) > 0:
 			if self.key["x"] > 0:
 				self.lastdirslant = "l"

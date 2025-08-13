@@ -170,7 +170,8 @@ void main() {
         }
         
 
-        // sample_pos = vec2(clamp(sample_pos.x,0,0.9999),clamp(sample_pos.y,0,0.9999));
+        sample_pos = vec2(clamp(sample_pos.x,0,0.9999),
+                          sample_pos.y);
 
         vec3 map = texture(tex, sample_pos).rgb;
         f_color = vec4(map.r  * dark ,map.g * dark,map.b * (1 - dist/5)   , 0 + (time*0));

@@ -424,7 +424,8 @@ class GameManager():
 		# print((pygame.display.get_window_size()[0]/univars.startdims[0]) ** 2)
 		
 		if fm.showfps:
-			tm.drawtext(f"fps = {round(60/ self.dt)}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.9,-0.9)
+			if self.dt > 0:
+				tm.drawtext(f"fps = {round(60/ self.dt)}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.9,-0.9)
 
 
 		# bgframe_tex = shader.bg_surf_to_texture(bg.backlayer)
