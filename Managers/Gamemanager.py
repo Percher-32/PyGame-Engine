@@ -4,6 +4,7 @@ import Managers.Textmanager as Textmanager
 import Managers.Cammanager as Cammanager
 import Managers.event_manager as event_manager
 import Managers.funcs as funcs
+import math
 import Managers.framemanager as framemanager
 import Managers.objectmanager as objectmanager
 import Managers.Tiled as Tiled
@@ -34,6 +35,7 @@ cm = Cammanager.camager
 sm = statemanager.sm(univars.startstate)
 um = Uimanager.ingame
 bg = backgroundmanager.bg
+sd = shader
 pm = Managers.Particlesytem.pm
 
 
@@ -436,10 +438,6 @@ class GameManager():
 		frame_tex = shader.surf_to_texture(univars.realscreeen)
 		frame_tex.use(0)
 		shader.program['tex'] = 0
-		shader.program['time'] = fm.frame
-		shader.program['state'] = self.publicvariables["shaderstate"]
-		shader.program["illuminance"] = 1
-		shader.program["sunpos"] = [0,0]
 		shader.render_object.render(mode=moderngl.TRIANGLE_STRIP)
 
 		

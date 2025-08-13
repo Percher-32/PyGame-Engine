@@ -4,7 +4,7 @@ uniform float time;
 uniform int state;
 uniform vec2 sunpos;
 uniform float illuminace;
-uniform int state;
+uniform float waterlevel;
 
 
 
@@ -140,7 +140,8 @@ float perlin() {
 
 
 void main() {
-    // vec2 sample_pos = uvs;
+    
+    vec2 sample_pos = uvs;
     if (state == 0){
         
         vec2 fakeuvs = vec2(uvs.x-0.5 ,uvs.y-0.5 );
@@ -148,14 +149,13 @@ void main() {
         vec2 slighttwist = vec2(sin(time/40) + 0.5,cos(time/40) + 0.5);
         float twistval = 0.4;
 
-
-
         //1 on outside  , 0 on inside
         float dist = abs(distance(vec2(0,0),fakeuvs));
         dist = 0;
 
         // 0 near sun   1 away from sun
-        float sundist = abs(distance(uvs,sunpos));
+        vec2 sunposoff = vec2(sunpos.x + 0.5,sunpos.y + 0.5);
+        float sundist = abs(distance(uvs,sunposoff));
 
 
         float twistsiist = abs(distance(uvs,slighttwist));
@@ -163,10 +163,15 @@ void main() {
         //0 on outside  , 1 on inside
         float dark = 1 - ((sundist/(illuminace * 2)) + dist/2)/2;
         // float bumpshift = 1 - ((twistsiist/twistval) + dist/2)/2;
+        if (uvs.y > (1-waterlevel)){
 
-        // vec2 sample_pos = vec2(clamp(uvs.x + bumpshift/30  - 0.021,0.0,1)  ,clamp(uvs.y + bumpshift/30  - 0.021,0.0,1));
-        vec2 sample_pos = uvs;
-        // dark += abs(2* perlin());
+          sample_pos = vec2(uvs.x  + sin(time/10 + (uvs.y) * 50)/70,(1-waterlevel) - abs((1-waterlevel)- uvs.y) );
+          dark *= 0.5 + perlin()/5;
+        }
+        
+
+        // sample_pos = vec2(clamp(sample_pos.x,0,0.9999),clamp(sample_pos.y,0,0.9999));
+
         vec3 map = texture(tex, sample_pos).rgb;
         f_color = vec4(map.r  * dark ,map.g * dark,map.b * (1 - dist/5)   , 0 + (time*0));
     }

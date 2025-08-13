@@ -12,8 +12,7 @@ om = Gamemananager.om
 Tiled = Gamemananager.Tiled
 cam =Gamemananager.cam
 cm = Gamemananager.cm
-
-
+sd = Gamemananager.sd
 sm = Gamemananager.sm
 um = Gamemananager.um
 bg = Gamemananager.bg
@@ -28,6 +27,7 @@ class Game(Gamemananager.GameManager):
 	"""
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
+		self.ingametime = 0
 
 	def onreload(self):
 		self.a = 0
@@ -91,6 +91,12 @@ class Game(Gamemananager.GameManager):
 				um.elements["but4"]["color"] = univars.theme["dark"]
 
 
+		self.ingametime = fm.frame/500
+		sd.program['time'] = fm.frame
+		sd.program['state'] = self.publicvariables["shaderstate"]
+		sd.program["illuminace"] = (math.cos(self.ingametime) + 2)/2
+		sd.program["waterlevel"] = cam.y/univars.screen.get_height()
+		sd.program["sunpos"] = [math.sin(self.ingametime) * -1.3,math.cos(self.ingametime) * -1.3]
 
 			
 	def playercode(self):
@@ -281,6 +287,7 @@ class Game(Gamemananager.GameManager):
 		#Main movement
 		if not slanted:
 			if not len(collision["midmid"]["inst"]) > 0:
+
 				if slanted == self.lastframeslanted or self.key["jump"]:
 					#IN HERE IS EITHER [NO MIDMID] OR [Yes MIDMID AND GROUND]
 
@@ -498,9 +505,6 @@ class Game(Gamemananager.GameManager):
 						if self.lastdirslant == "r":
 							om.translate(self,"player",[-100,40])
 
-
-
-
 			else:
 				if len(collision["midmid"]["inst"]) > 0:
 					if len(collision["topleft"]["inst"]) > 0 or len(collision["topright"]["inst"]) > 0:
@@ -509,10 +513,6 @@ class Game(Gamemananager.GameManager):
 						self.sp("act_vel",[   self.gp("prev_act_vel")[0] * 1  ,  self.gp("prev_act_vel")[1] * -1 ])
 					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
 					om.translate(self,"player",self.gp("act_vel"))
-
-
-
-
 		else:                                                                                                                               
 			
 			
