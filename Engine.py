@@ -92,7 +92,7 @@ class Game(Gamemananager.GameManager):
 				um.elements["but4"]["color"] = univars.theme["dark"]
 
 
-		self.ingametime = fm.frame/50
+		self.ingametime = fm.frame/200
 		sd.program['time'] = fm.frame
 		sd.program['state'] = self.publicvariables["shaderstate"]
 		sd.program["illuminace"] = (math.cos(self.ingametime) + 2)/2
@@ -289,8 +289,8 @@ class Game(Gamemananager.GameManager):
 		else: 
 			slanted = False
 
-
-
+		um.showvar("lastdislant",self.lastdirslant,[0,0])
+		um.showvar("slantdir",self.gp("slantdir"),[0,-0.2])
 		#Main movement
 		if not slanted:
 			if not len(collision["midmid"]["inst"]) > 0:
@@ -526,7 +526,6 @@ class Game(Gamemananager.GameManager):
 			
 			if "slantr" in collisionboxtype:
 				self.sp("slantdir","r")
-				self.publicvariables["shaderstate"]=1
 				if not slanted == self.lastframeslanted:
 					# if not ground:
 					index = collisionboxtype.index("slantr")
@@ -548,13 +547,12 @@ class Game(Gamemananager.GameManager):
 					om.translate(self,"player", self.gp("act_vel"),usedt=1)
 					self.sp("desrot",45) 
 			else:
-				self.sp("slantdir","l")
 				
+				self.sp("slantdir","l")
 				if not slanted == self.lastframeslanted:
 					index = collisionboxtype.index("slantl")
 					# if not ground2:
 					om.objects["player"]["pos"] = [collisionbox["inst"][index].realpos[0] +16,collisionbox["inst"][index].realpos[1] -20]
-					self.publicvariables["shaderstate"]=0
 					self.sp("act_vel",[  self.gp("act_vel")[0]    ,    -1 * self.gp("act_vel")[0]   ])
 					self.sp("des_vel",[  self.gp("des_vel")[0]    ,    -1 * self.gp("des_vel")[0]   ])
 						# else:

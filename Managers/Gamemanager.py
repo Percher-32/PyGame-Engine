@@ -45,7 +45,7 @@ class GameManager():
 		self.frame_manager = frame_manager
 		self.event_manager = em
 		self.em = em
-		self.publicvariables = {"showinput":univars.showinput,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":univars.screencol   ,"cammove":False  ,"shaderstate":1 ,"showallhidden":1 }
+		self.publicvariables = {"showinput":univars.showinput,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":univars.screencol   ,"cammove":False  ,"shaderstate":univars.startshaderstate ,"showallhidden":1 }
 		self.timers = {}
 		self.dt = 1
 		self.abttodo = []
@@ -325,6 +325,7 @@ class GameManager():
 		self.loadanims()
 		um.loadalluielements()
 		pm.loadallbluprints()
+
 	def inputdetect(self):
 		em.next()
 
@@ -337,8 +338,6 @@ class GameManager():
 	def start(self):
 		"""run at the start of every frame"""
 		
-		clock = pygame.time.Clock()
-		clock.tick(univars.maxfps)
 		if Tiled.comm:
 			sm.state = Tiled.cht
 			self.initial()
@@ -410,6 +409,8 @@ class GameManager():
 	def end(self):
 		renderwid = max([univars.screen_w,univars.screen_h])
 		
+		clock = pygame.time.Clock()
+		clock.tick(self.publicvariables["maxfps"])
 		# univars.screen.blit(pm.screen,(univars.screen_w/2,univars.screen_h/2))
 		pm.updateparticles(self.dt)
 		univars.realscreeen.blit(pygame.transform.scale(univars.fakescreen,(renderwid ,renderwid )),(0,-1 * renderwid//4))

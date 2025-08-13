@@ -102,6 +102,7 @@ map = "demo1"
 
 startstate = "debugame"
 
+startshaderstate = 0
 
 
 #opt to optimise
