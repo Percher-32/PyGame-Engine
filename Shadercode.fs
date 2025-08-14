@@ -193,7 +193,7 @@ void main() {
 
 
             reflec_sample_pos.x = clamp(reflec_sample_pos.x ,0,1);
-            // reflec_sample_pos.y = clamp(reflec_sample_pos.y ,0,1);
+            reflec_sample_pos.y = clamp(reflec_sample_pos.y ,0,1);
 
 
             float scalar = 2*(1- waterlevel);
@@ -204,8 +204,10 @@ void main() {
             if (scalar > 1){
               scalar = 1;
             }
+            
+            scalar = pow(scalar,2);
 
-            scalar = mix(0,scalar,scalar);
+            // scalar = mix(0,scalar,scalar);
 
 
             dark = mix(reflec_dark,underwater_dark,1-scalar);
