@@ -53,6 +53,7 @@ class GameManager():
 		self.lastkey = {}
 		self.dons = []
 		self.ids = []
+		self.fm = fm
 		self.states = []
 		self.pausebackground = False
 		self.pauseui = False

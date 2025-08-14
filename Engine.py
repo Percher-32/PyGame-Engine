@@ -29,7 +29,7 @@ class Game(Gamemananager.GameManager):
 		super().__init__(screen,fm)
 		self.ingametime = 0
 		self.publicvariables["showater"] = True
-		self.publicvariables["waterh"] = 1
+		self.publicvariables["waterh"] = 0.9
 		self.actualwaterheight = 0
 
 	def onreload(self):
@@ -94,8 +94,9 @@ class Game(Gamemananager.GameManager):
 				um.elements["but4"]["color"] = univars.theme["dark"]
 
 	
-		self.ingametime += self.dt/100 * om.speed
-		# self.ingametime = 3.5
+		# self.ingametime += self.dt/100 * om.speed
+		self.ingametime = 2
+		# self.publicvariables["waterh"] -= 0.002
 		sd.program['time'] = fm.frame
 		sd.program['state'] = self.publicvariables["shaderstate"]
 		sd.program["illuminace"] = (math.cos(self.ingametime) + 2)/2
@@ -103,7 +104,7 @@ class Game(Gamemananager.GameManager):
 			sd.program["waterlevel"] = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-( self.publicvariables["waterh"]) + ((1-cam.size)* 1.46)
 		else:
 			sd.program["waterlevel"] = -1
-		sd.program["sunpos"] = [math.sin(self.ingametime) * -1.3,math.cos(self.ingametime) * -1.5 + 0.2]
+		sd.program["sunpos"] = [math.sin(self.ingametime) * -1.3,math.cos(self.ingametime) * -1.5 ]
 		self.actualwaterheight = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-( + self.publicvariables["waterh"]) + ((1-cam.size)* 1.46)
 		# sd.program["sunpos"] = [0,0]
 		sd.program["camx"] = cam.x/univars.startdims[0]

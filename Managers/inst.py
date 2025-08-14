@@ -95,10 +95,7 @@ objcache = {}
 class obj(pygame.sprite.Sprite):
 	def __init__(self,name:str,info:dict,sprites):
 		pygame.sprite.Sprite.__init__(self)
-		screen = univars.screen
-		grandim = univars.grandim
 		self.fliped = 0
-		# self.func = funcs.func(screen,grandim)
 		self.info = info
 		self.sprites = sprites
 		self.fakerect = pygame.Rect(info["pos"][0] - info["size"][0]//2,info["pos"][1] - info["size"][1]//2,info["size"][0],info["size"][1])
@@ -112,7 +109,7 @@ class obj(pygame.sprite.Sprite):
 				return True
 		return False
 
-	def update(self, camera,om,dim,showall):
+	def update(self, camera,om,dim,showall,frame):
 		self.info = om.objects[self.name]
 		sprite = self.sprites[self.info["sn"]]
 		pos = self.info["pos"]
@@ -141,12 +138,10 @@ class obj(pygame.sprite.Sprite):
 				
 
 
-				
 				b.set_alpha(self.info["alpha"])
 				b = pygame.transform.rotate(b,self.info["rot"])
-				if self.fliped:
-					b = pygame.Surface((0,0))
 				self.image = b
+				
 				self.rect = self.image.get_rect(topleft = 
 													( 
 														int(((pos[0] - camera.x) * round(camera.size,2)) + univars.screen.get_width()//2 - b.get_width()/2)            ,
@@ -170,7 +165,8 @@ class obj(pygame.sprite.Sprite):
 
 	def flip(self):
 		self.fliped = not self.fliped
-		ns = [pygame.transform.flip(i,True,False) for i in self.sprites ]
+		# ns = self.sprites
+		ns = [pygame.transform.flip(sprite,True,False) for sprite in self.sprites ]
 		self.sprites = ns
 
 	

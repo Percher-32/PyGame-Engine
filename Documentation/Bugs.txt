@@ -1,2 +1,0 @@
-. Center collisions
-. Left right flipping

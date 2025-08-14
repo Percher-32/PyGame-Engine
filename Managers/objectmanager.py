@@ -361,8 +361,8 @@ class object_manager:
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		#coll for non-inst
 		dim = univars.grandim
-		typel = self.getcull(pos,1,univars.grandim,ignore=ignore)
-		noninst = [self.objfromid(i) for i in typel if self.objfromid(i).fakerect.collidepoint(pos) and i in ignore ]
+		typel = self.getcull(pos,1,univars.grandim)
+		noninst = [self.objfromid(i) for i in typel if self.objfromid(i).fakerect.collidepoint(pos) and not i in ignore ]
 
 		#coll for inst
 		camchunk = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
@@ -566,10 +566,13 @@ class object_manager:
 			spritelist = univars.func.getspritesscale(sprites,size)
 			self.spritecache[str([sprites,size])] = spritelist
 		add = {"pos":list(pos),"name":sprites,"type":type,"rot":rot,"sn":0,"gothru":0,"rendercond":1,"alpha":alpha,"layer":layer,"animname":"none","size":size,"sizen":sizen}
+		if name in self.objects.keys():
+			self.removeid(name)
 		self.objects.update({str(name):add})
 		finalobj = inst.obj(str(name),add,spritelist)
 		if not layer in self.layers.keys():
 			self.layers[layer] = pygame.sprite.Group()
+
 		self.layers[layer].add(finalobj)
 
 	def tile(self):
@@ -601,7 +604,7 @@ class object_manager:
 
 		#rendering the non-instanciates
 		for groupid in sorted(self.layers.keys()):
-			self.layers[groupid].update(camera,self,dim,showall)
+			self.layers[groupid].update(camera,self,dim,showall,GameManager.fm.frame)
 			self.layers[groupid].draw(univars.screen)
 
 
