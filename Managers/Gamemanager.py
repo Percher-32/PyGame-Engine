@@ -248,8 +248,9 @@ class GameManager():
 
 	def wait(self,name:str,time:float):
 		"""
-			creates a timer that will elapse in (time) seconds.
-			check if done with ondone
+			creates a timer that will elapse in (time) seconds.\n
+			check if done with ondone.\n
+			only works if there isn't a timer with that name already\n
 		"""
 		if not name in self.timers.keys():
 			self.timers[name] = time * 45

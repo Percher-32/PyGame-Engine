@@ -30,6 +30,7 @@ class Game(Gamemananager.GameManager):
 		self.ingametime = 0
 		self.publicvariables["showater"] = True
 		self.publicvariables["waterh"] = 0.9
+		self.actualwaterheight = 0
 
 	def onreload(self):
 		self.a = 0
@@ -98,10 +99,11 @@ class Game(Gamemananager.GameManager):
 		sd.program['state'] = self.publicvariables["shaderstate"]
 		sd.program["illuminace"] = (math.cos(self.ingametime) + 2)/2
 		if self.publicvariables["showater"]:
-			sd.program["waterlevel"] = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-(math.sin(fm.frame/40)/80 + self.publicvariables["waterh"]) + ((1-cam.size)* 1.46)
+			sd.program["waterlevel"] = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-( self.publicvariables["waterh"]) + ((1-cam.size)* 1.46)
 		else:
 			sd.program["waterlevel"] = -1
 		sd.program["sunpos"] = [math.sin(self.ingametime) * -1.3,math.cos(self.ingametime) * -1.3]
+		self.actualwaterheight = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-( + self.publicvariables["waterh"]) + ((1-cam.size)* 1.46)
 		# sd.program["sunpos"] = [0,0]
 		sd.program["camx"] = cam.x/univars.startdims[0]
 
@@ -302,6 +304,8 @@ class Game(Gamemananager.GameManager):
 			slanted = False
 
 	
+
+
 		#Main movement
 		if not slanted:
 			if slanted == self.lastframeslanted or self.key["jump"]:
@@ -493,7 +497,13 @@ class Game(Gamemananager.GameManager):
 						self.sp("des_vel",[  self.gp("des_vel")[0] * 1   ,  abs(self.gp("des_vel")[1]) * -1.5 ])
 						self.sp("jumpable",False)
 						#move
-						
+					um.showvar("",self.actualwaterheight,[0,0])
+					if 0.7 > self.actualwaterheight > 0.5:
+						if abs(self.gp("act_vel")[0]) > 100:
+							# self.wait("waterbreak")
+							self.sp("act_vel",[   self.gp("act_vel")[0] , 0  ]  ) 
+							self.sp("des_vel",[   self.gp("des_vel")[0] , 0  ]  ) 
+							om.objects["player"]["pos"][1] = 814
 					om.objects["playersprite"]["rot"]  =  self.unilerp(om.objects["playersprite"]["rot"],self.gp("desrot"),5,roundto=2) 
 					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
 					om.translate(self,"player",self.gp("act_vel"),usedt=1)
