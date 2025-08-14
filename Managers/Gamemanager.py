@@ -64,6 +64,7 @@ class GameManager():
 		self.boxes = []
 		Tiled.extra(univars.extras)
 		om.loadtilemap(univars.map)
+		self.clock = pygame.time.Clock()
 
 	def debug(self,message,sep = 0):
 		if self.publicvariables["printdebug"]:
@@ -409,8 +410,7 @@ class GameManager():
 	def end(self):
 		renderwid = max([univars.screen_w,univars.screen_h])
 		
-		clock = pygame.time.Clock()
-		clock.tick(self.publicvariables["maxfps"])
+		self.clock.tick(self.publicvariables["maxfps"])
 		# univars.screen.blit(pm.screen,(univars.screen_w/2,univars.screen_h/2))
 		pm.updateparticles(self.dt)
 		univars.realscreeen.blit(pygame.transform.scale(univars.fakescreen,(renderwid ,renderwid )),(0,-1 * renderwid//4))

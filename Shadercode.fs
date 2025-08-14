@@ -140,6 +140,11 @@ float perlin() {
   return perlin;
 }
 
+float coldist(vec2 uv){
+  vec3 map = texture(tex, uv).rgb;
+  return distance(vec3(0,0,0),map);
+}
+
 
 void main() {
     
@@ -168,23 +173,29 @@ void main() {
         //0 on outside  , 1 on inside
         float dark = 1 - ((sundist/(illuminace * 2)) + dist/2)/2;
         float hurt = 0;
+        vec2 sampling = vec2(sample_pos.x + 0.01,sample_pos.y);
         float vigb = mix((1 - dist/5),dark,hurt);
         float vigr = mix(dark,(1 - dist/5),hurt);
-        // float bumpshift = 1 - ((twistsiist/twistval) + dist/2)/2;
         float offsetsine =  sin(sin((uvs.x + camx) + time/1000)*20 + time/100  + 2*sin( time/1000)/25     + sin( sin(time/300) + (uvs.x + camx))/20                )/50;
         offsetsine = perlin()/20;
 
 
 
         if (uvs.y > (1-waterlevel) + offsetsine  ){
-
-            vec2 reflec_sample_pos = vec2(uvs.x  + sin(time/10 + (uvs.y) * 50)/800+ perlin()/50,(1-waterlevel) - abs((1-waterlevel)- uvs.y)- perlin()/50 );
+            float fwl = waterlevel;
+            if (fwl > 0.5){
+              fwl = 0.5;
+            }
+            vec2 reflec_sample_pos = vec2(uvs.x  + sin(time/10 + (uvs.y) * 50)/800+ perlin()/50,(1-fwl) - abs((1-fwl)- uvs.y)- perlin()/50 );
             vec2 underwater_sample_pos = vec2(uvs.x  + sin(time/10 + (uvs.y) * 50)/800,uvs.y+ cos(time/20 + (uvs.x) * 50)/800);
 
 
 
             float reflec_dark = dark * (0.5 + perlin()/5);
-            float underwater_dark = dark * (0.7 + perlin()/4);
+            float underwater_dark = dark * (0.7 + perlin()/4) + (1-uvs.y)/10 ;
+            if (distance(map,vec3(0,0,0)) > 20){
+              underwater_dark = 1;
+            }
 
 
 
@@ -193,7 +204,7 @@ void main() {
 
 
             reflec_sample_pos.x = clamp(reflec_sample_pos.x ,0,1);
-            reflec_sample_pos.y = clamp(reflec_sample_pos.y ,0,1);
+            // reflec_sample_pos.y = clamp(reflec_sample_pos.y ,0,1);
 
 
             float scalar = 2*(1- waterlevel);
@@ -205,7 +216,7 @@ void main() {
               scalar = 1;
             }
             
-            scalar = pow(scalar,2);
+            scalar = pow(scalar,3);
 
             // scalar = mix(0,scalar,scalar);
 

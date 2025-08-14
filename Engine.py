@@ -93,7 +93,7 @@ class Game(Gamemananager.GameManager):
 				um.elements["but4"]["color"] = univars.theme["dark"]
 
 	
-		self.ingametime = fm.frame/100
+		self.ingametime = fm.frame/1000
 		sd.program['time'] = fm.frame
 		sd.program['state'] = self.publicvariables["shaderstate"]
 		sd.program["illuminace"] = (math.cos(self.ingametime) + 2)/2
@@ -585,8 +585,6 @@ class Game(Gamemananager.GameManager):
 		
 
 
-		um.showvar("brevprevpos",self.gp("prevprevpos"),[-0.2,-0.2])
-		um.showvar("bpos",om.objects["player"]["pos"],[-0.4,0])
 		
 
 		if len(collision["midmid"]["inst"] )> 0 and not slanted :
@@ -597,6 +595,7 @@ class Game(Gamemananager.GameManager):
 			mip = collision["midmid"]["inst"][0].realpos
 			if collision["topmid"]["inst"] and collision["botmid"]["inst"] and collision["midright"]["inst"] and collision["midleft"]["inst"] :
 				om.translate(self,"player",[self.gp("act_vel")[0] * -1,self.gp("act_vel")[1] * -1],usedt=1)
+				self.sp("des_vel",[0,0])
 			elif top and not collision["botmid"]["inst"]:
 				om.objects["player"]["pos"][1] =  mip[1] + 32
 			elif bot and not collision["topmid"]["inst"]:
