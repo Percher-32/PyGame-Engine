@@ -181,7 +181,7 @@ void main() {
 
 
 
-        if (uvs.y > (1-waterlevel) + offsetsine  ){
+        if (uvs.y > (1-waterlevel) + offsetsine || map == vec3(255,0,0)) {
             float fwl = waterlevel;
             if (fwl > 0.5){
               fwl = 0.5;
@@ -207,7 +207,7 @@ void main() {
             // reflec_sample_pos.y = clamp(reflec_sample_pos.y ,0,1);
 
 
-            float scalar = 2*(1- waterlevel);
+            float scalar = 2*(1- waterlevel) +0.2;
 
             if (scalar < 0){
               scalar = 0;
@@ -228,6 +228,15 @@ void main() {
 
             
         }
+
+        // if ( texture(tex,uvs).rgb * vec3(255,255,255) == vec3(0,0.,255)){
+        //   float fwl = 0.5;
+        //   vec2 sample_pos = vec2(uvs.x  + sin(time/10 + (uvs.y) * 50)/8+ perlin(),(1-fwl) - abs((1-fwl)- uvs.y)- perlin() );
+        //   dark *= (0.5 + perlin()/5)/10;
+        //   vigb = mix((1 - dist/5),dark,hurt);
+        //   vigr = mix(dark,dark*2,hurt);
+        //   map = texture(tex, sample_pos).rgb;
+        // }
 
         f_color = vec4(map.r  * vigr ,map.g * dark,map.b * vigb   , 0 + (time*0));
 

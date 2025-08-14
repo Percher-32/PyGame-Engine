@@ -497,10 +497,15 @@ class Game(Gamemananager.GameManager):
 						self.sp("des_vel",[  self.gp("des_vel")[0] * 1   ,  abs(self.gp("des_vel")[1]) * -1.5 ])
 						self.sp("jumpable",False)
 						#move
-					um.showvar("",self.actualwaterheight,[0,0])
-					if 0.7 > self.actualwaterheight > 0.5:
-						if abs(self.gp("act_vel")[0]) > 100:
-							# self.wait("waterbreak")
+					# um.showvar("",self.actualwaterheight,[0,0])
+					if 0.6 > self.actualwaterheight > 0.5:
+						if abs(self.gp("act_vel")[0]) >= 120:
+							if self.gp("act_vel")[0] > 100:
+								parts = [om.objects["player"]["pos"][0] -4,om.objects["player"]["pos"][1] + 9]
+							else:
+								parts = [om.objects["player"]["pos"][0] -5,om.objects["player"]["pos"][1] + 9]
+							vel = [self.gp("act_vel")[0]/self.dim * 4,4]
+							pm.particlespawnbluprint(parts,"water",initvel= vel)
 							self.sp("act_vel",[   self.gp("act_vel")[0] , 0  ]  ) 
 							self.sp("des_vel",[   self.gp("des_vel")[0] , 0  ]  ) 
 							om.objects["player"]["pos"][1] = 814

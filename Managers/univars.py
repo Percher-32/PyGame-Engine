@@ -100,7 +100,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 map = "demo1"
 
-startstate = "editgame"
+startstate = "debugame"
 
 startshaderstate = 0
 

@@ -64,10 +64,12 @@ class Particlemanager:
 				self.bluprints[i.replace(".json","")] = json.load(file)
 
 
-	def particlespawnbluprint(self,pos,name):
+	def particlespawnbluprint(self,pos,name,initvel = None):
 		use = self.bluprints[name]
+		if initvel == None:
+			initvel = use["force"]
 		self.particlespawn(use["type"],pos,use["divergence"],
-							use["color"],use["initvel"],use["force"],
+							use["color"],initvel,use["force"],
 							use["size"],use["sizedec"],dim = use["dim"],
 							alpha = use["alpha"],alphadec=use["alphadec"],
 							colordec=use["colordec"],quality=use["quality"],
@@ -113,7 +115,6 @@ class Particlemanager:
 			newpos = list([pos[0],pos[1]])
 			newinitvel[0] += random.randint(divergence[0][0],divergence[0][1])
 			newinitvel[1] += random.randint(divergence[1][0],divergence[1][1])
-			print(newinitvel)
 			newforce[0] += random.randint(divergenceforce[0][0],divergenceforce[0][1])
 			newforce[1] += random.randint(divergenceforce[1][0],divergenceforce[1][1])
 			newpos[0] += random.randint(divergencepos[0][0],divergencepos[0][1])
