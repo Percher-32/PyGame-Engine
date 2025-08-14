@@ -596,11 +596,10 @@ class Game(Gamemananager.GameManager):
 			right = collision["topright"]["inst"] or collision["midright"]["inst"] or collision["botright"]["inst"]
 			mip = collision["midmid"]["inst"][0].realpos
 			if collision["topmid"]["inst"] and collision["botmid"]["inst"] and collision["midright"]["inst"] and collision["midleft"]["inst"] :
-				om.translate(self,"player",self.gp("prev_act_vel"),usedt=1)
+				om.translate(self,"player",[self.gp("act_vel")[0] * -1,self.gp("act_vel")[1] * -1],usedt=1)
 			elif top and not collision["botmid"]["inst"]:
 				om.objects["player"]["pos"][1] =  mip[1] + 32
 			elif bot and not collision["topmid"]["inst"]:
-				self.publicvariables["shaderstate"] = not self.publicvariables["shaderstate"]
 				om.objects["player"]["pos"][1] =  mip[1] - 32
 			elif right and not collision["midleft"]["inst"]:
 				om.objects["player"]["pos"][0] = mip[0] - 32
@@ -608,7 +607,7 @@ class Game(Gamemananager.GameManager):
 				om.objects["player"]["pos"][0] = mip[0] + 32
 		else:
 			self.lastframeslanted = slanted
-			self.sp("prev_act_vel",[  om.objects["player"]["pos"][0] - self.gp("prevprevpos")[0] , om.objects["player"]["pos"][1] - self.gp("prevprevpos")[1]   ])
+			self.sp("prev_act_vel",self.gp("act_vel"))
 			self.sp("prev_des_vel",self.gp("des_vel"))
 			self.sp("prevprevpos",om.objects["player"]["pos"])
 
