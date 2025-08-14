@@ -17,7 +17,7 @@ sm = Gamemananager.sm
 um = Gamemananager.um
 bg = Gamemananager.bg
 pm = Gamemananager.pm
-
+# 532
 
 
 class Game(Gamemananager.GameManager):	
@@ -29,7 +29,7 @@ class Game(Gamemananager.GameManager):
 		super().__init__(screen,fm)
 		self.ingametime = 0
 		self.publicvariables["showater"] = True
-		self.publicvariables["waterh"] = 0.9
+		self.publicvariables["waterh"] = 1
 		self.actualwaterheight = 0
 
 	def onreload(self):
@@ -94,7 +94,8 @@ class Game(Gamemananager.GameManager):
 				um.elements["but4"]["color"] = univars.theme["dark"]
 
 	
-		self.ingametime = fm.frame/1000
+		self.ingametime += self.dt/100 * om.speed
+		# self.ingametime = 3.5
 		sd.program['time'] = fm.frame
 		sd.program['state'] = self.publicvariables["shaderstate"]
 		sd.program["illuminace"] = (math.cos(self.ingametime) + 2)/2
@@ -102,7 +103,7 @@ class Game(Gamemananager.GameManager):
 			sd.program["waterlevel"] = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-( self.publicvariables["waterh"]) + ((1-cam.size)* 1.46)
 		else:
 			sd.program["waterlevel"] = -1
-		sd.program["sunpos"] = [math.sin(self.ingametime) * -1.3,math.cos(self.ingametime) * -1.3]
+		sd.program["sunpos"] = [math.sin(self.ingametime) * -1.3,math.cos(self.ingametime) * -1.5 + 0.2]
 		self.actualwaterheight = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-( + self.publicvariables["waterh"]) + ((1-cam.size)* 1.46)
 		# sd.program["sunpos"] = [0,0]
 		sd.program["camx"] = cam.x/univars.startdims[0]
@@ -260,7 +261,7 @@ class Game(Gamemananager.GameManager):
 		# om.speed = 0.4
 		
 		# um.showvar("pos",om.objects["player"]["pos"],[0,0])
-		collision = om.collide9("player",0,cam,self.dim,ignore= ["playersprite","skateboard"])
+		collision = om.collide9("player",1,cam,self.dim,ignore= ["playersprite","skateboard"])
 		lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 50,om.objects["player"]["pos"][1] + 10 ],1,32,camera=cam,basecolor=(0,1,0))
 		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 10 ],1,32,camera=cam,basecolor=(0,1,0))
 		collisionbox = om.collide("player",0,cam,extra=15)
@@ -336,45 +337,46 @@ class Game(Gamemananager.GameManager):
 				
 
 					#Wall clinging
-					if len(collision["topleft"]["inst"]) > 0 :
-						if collision["topleft"]["inst"][0].type == "ground":
-							self.sp("leftwall",True)
-							self.sp("jumpable",True)	
-							om.objects["player"]["pos"][0] = collision["topleft"]["inst"][0].realpos[0] + 30
+					if not collision["midmid"]["inst"]:
+						if len(collision["midleft"]["inst"]) > 0 :
+							if collision["midleft"]["inst"][0].type == "ground":
+								self.sp("leftwall",True)
+								self.sp("jumpable",True)	
+								om.objects["player"]["pos"][0] = collision["midleft"]["inst"][0].realpos[0] + 32
 
-							if not collision["botmid"]["inst"]:
-								self.sp("des_vel",[0,self.gp("des_vel")[1]])
-								self.sp("act_vel",[0,self.gp("act_vel")[1]])
+								if not collision["botmid"]["inst"]:
+									self.sp("des_vel",[0,self.gp("des_vel")[1]])
+									self.sp("act_vel",[0,self.gp("act_vel")[1]])
+								else:
+									if self.gp("des_vel")[0] < 0:
+										self.sp("des_vel",[0,0])
+									if self.gp("act_vel")[0] < 0:
+										self.sp("act_vel",[0,0])
+
 							else:
-								if self.gp("des_vel")[0] < 0:
-									self.sp("des_vel",[0,0])
-								if self.gp("act_vel")[0] < 0:
-									self.sp("act_vel",[0,0])
-
+								self.sp("leftwall",False)
 						else:
 							self.sp("leftwall",False)
-					else:
-						self.sp("leftwall",False)
 
 
-					if len(collision["topright"]["inst"]) > 0 :
-						if  collision["topright"]["inst"][0].type == "ground":
-							self.sp("rightwall",True)
-							self.sp("jumpable",True)	
-							om.objects["player"]["pos"][0] = collision["topright"]["inst"][0].realpos[0] -32
-							if not collision["botmid"]["inst"]:
-								self.sp("des_vel",[0,self.gp("des_vel")[1]])
-								self.sp("act_vel",[0,self.gp("act_vel")[1]])
+						if len(collision["midright"]["inst"]) > 0 :
+							if  collision["midright"]["inst"][0].type == "ground":
+								self.sp("rightwall",True)
+								self.sp("jumpable",True)	
+								om.objects["player"]["pos"][0] = collision["midright"]["inst"][0].realpos[0] -32
+								if not collision["botmid"]["inst"]:
+									self.sp("des_vel",[0,self.gp("des_vel")[1]])
+									self.sp("act_vel",[0,self.gp("act_vel")[1]])
+								else:
+									if self.gp("des_vel")[0] > 0:
+										self.sp("des_vel",[0,0])
+									if self.gp("act_vel")[0] > 0:
+										self.sp("act_vel",[0,0])
+
 							else:
-								if self.gp("des_vel")[0] > 0:
-									self.sp("des_vel",[0,0])
-								if self.gp("act_vel")[0] > 0:
-									self.sp("act_vel",[0,0])
-
+								self.sp("rightwall",False)
 						else:
 							self.sp("rightwall",False)
-					else:
-						self.sp("rightwall",False)
 
 
 
@@ -484,31 +486,29 @@ class Game(Gamemananager.GameManager):
 
 				
 					
-					if collision["topmid"]["inst"]:
-						# if self.gp("leftwall"):
-						# 	om.objects["player"]["pos"][0] += 30
-						# 	om.objects["player"]["pos"][1] += abs(self.gp("act_vel")[1])
-						# elif self.gp("rightwall"):
-						# 	om.objects["player"]["pos"][0] -= 35
-						# 	om.objects["player"]["pos"][1] += abs(self.gp("act_vel")[1])
-						# else:
-						# 	om.objects["player"]["pos"][1] += 50 + abs(self.gp("act_vel")[1])
-						self.sp("act_vel",[   self.gp("act_vel")[0] * 1  ,  abs(self.gp("act_vel")[1]) * -1.5 ])
-						self.sp("des_vel",[  self.gp("des_vel")[0] * 1   ,  abs(self.gp("des_vel")[1]) * -1.5 ])
+					if collision["topmid"]["inst"] and not collision["midmid"]["inst"]:
+						# self.publicvariables["shaderstate"] = not self.publicvariables["shaderstate"]
+						self.sp("act_vel",[   self.gp("act_vel")[0] * 1  , -10 ])
+						om.objects["player"]["pos"][1] =  collision["topmid"]["inst"][0].realpos[1] + 40
+						# self.sp("des_vel",[  self.gp("des_vel")[0] * 1   ,  abs(self.gp("des_vel")[1]) * -1 ])
 						self.sp("jumpable",False)
-						#move
-					# um.showvar("",self.actualwaterheight,[0,0])
-					if 0.6 > self.actualwaterheight > 0.5:
+
+					
+					#water skid
+					if 0.7 > self.actualwaterheight > 0.5:
 						if abs(self.gp("act_vel")[0]) >= 120:
 							if self.gp("act_vel")[0] > 100:
-								parts = [om.objects["player"]["pos"][0] -4,om.objects["player"]["pos"][1] + 9]
+								parts = [om.objects["player"]["pos"][0] -5,om.objects["player"]["pos"][1] + 9]
 							else:
 								parts = [om.objects["player"]["pos"][0] -5,om.objects["player"]["pos"][1] + 9]
 							vel = [self.gp("act_vel")[0]/self.dim * 4,4]
 							pm.particlespawnbluprint(parts,"water",initvel= vel)
 							self.sp("act_vel",[   self.gp("act_vel")[0] , 0  ]  ) 
 							self.sp("des_vel",[   self.gp("des_vel")[0] , 0  ]  ) 
-							om.objects["player"]["pos"][1] = 814
+							om.objects["player"]["pos"][1] = (510.11583 * self.publicvariables["waterh"])+343.6834
+
+
+
 					om.objects["playersprite"]["rot"]  =  self.unilerp(om.objects["playersprite"]["rot"],self.gp("desrot"),5,roundto=2) 
 					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
 					om.translate(self,"player",self.gp("act_vel"),usedt=1)
