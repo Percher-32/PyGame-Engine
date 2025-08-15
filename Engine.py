@@ -92,9 +92,11 @@ class Game(Gamemananager.GameManager):
 			else:
 				um.elements["but4"]["color"] = univars.theme["dark"]
 
+
 	
-		self.ingametime += self.dt/300 * om.speed
-		# self.ingametime = 0
+		# self.ingametime += self.dt/300 * om.speed
+		self.ingametime = -1
+
 		# self.publicvariables["waterh"] -= 0.002
 		sd.program['time'] = fm.frame
 		sd.program['state'] = self.publicvariables["shaderstate"]
@@ -255,9 +257,9 @@ class Game(Gamemananager.GameManager):
 		
 		# um.showvar("pos",om.objects["player"]["pos"],[0,0])
 		collision = om.collide9("player",0,cam,self.dim,ignore= ["playersprite","skateboard"])
-		lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
-		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
-		collisionbox = om.collide("player",0,cam,extra=15)
+		lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 50,om.objects["player"]["pos"][1] + 10 ],1,32,camera=cam,basecolor=(0,1,0))
+		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 17 ],0,32,camera=cam,basecolor=(0,1,0))
+		collisionbox = om.collide("player",0,cam,extra=20)
 		ground1 = len(collision["botmid"]["inst"]) > 0
 		ground2 = len(collision["botleft"]["inst"]) > 0    and not (len(collision["topleft"]["inst"])  > 0  ) and not (len(collision["midleft"]["inst"])  > 0  )
 		ground3 = len(collision["botright"]["inst"]) > 0   and not (len(collision["topright"]["inst"]) > 0  ) and not (len(collision["midright"]["inst"]) > 0  )
@@ -269,7 +271,7 @@ class Game(Gamemananager.GameManager):
 
 		rail = False
 		if len(collisionboxtype) > 0:
-			rail =  collisionboxtype[0] == "rail" 
+			rail = collisionboxtype[0] == "rail"
 
 		if abs(self.key["x"]) > 0:
 			if self.key["x"] > 0:
@@ -519,35 +521,38 @@ class Game(Gamemananager.GameManager):
 							raildir = 1
 						else:
 							raildir = -1
+
+
+
 						if railpiece.name == "rail":
 							om.objects["player"]["pos"] = [
-															collisionbox["inst"][0].realpos[0]  -  (math.sin((railrot/180) * math.pi) * 5) ,
-															collisionbox["inst"][0].realpos[1]  -  (math.cos((railrot/180) * math.pi) * 5) 
+															collisionbox["inst"][collisionboxtype.index("rail")].realpos[0]  -  (math.sin((railrot/180) * math.pi) * 5) ,
+															collisionbox["inst"][collisionboxtype.index("rail")].realpos[1]  -  (math.cos((railrot/180) * math.pi) * 5) 
 														  ]
 						else:
 							om.objects["player"]["pos"] = [
-															collisionbox["inst"][0].realpos[0]  -  (math.sin((railrot/180) * math.pi) * 20) ,
-															collisionbox["inst"][0].realpos[1]  -  (math.cos((railrot/180) * math.pi) * 20) 
+															collisionbox["inst"][collisionboxtype.index("rail")].realpos[0]  -  (math.sin((railrot/180) * math.pi) * 20) ,
+															collisionbox["inst"][collisionboxtype.index("rail")].realpos[1]  -  (math.cos((railrot/180) * math.pi) * 20) 
 														  ]
-						
-						motivate = [  500 * math.cos((railrot/180) * math.pi) * raildir,500   * math.sin((railrot/180) * math.pi) * raildir ]
+						motivate = [  300 * math.cos((railrot/180) * math.pi) * raildir,300   * math.sin((railrot/180) * math.pi) * raildir ]
 						om.translate(self,"player",motivate,usedt=1)
-						self.sp("desrot",0)
-						if self.gp("entervel") < 1:
-							self.sp("entervel",1)
+						# if self.gp("entervel") < 1:
+						# 	self.sp("entervel",1)
+
+					# um.showvar("",self.gp("dirforslant"),[0,0])
 
 					if abs(self.key["x"]) > 0.5:
 						if self.key["x"] > 0:
 							self.sp("dirforrail","l")
-							self.sp("entervel",self.gp("entervel") + abs(self.key["x"]))
+							self.sp("entervel",self.gp("entervel") + abs(self.key["x"]/2 ))
 						else:
 							self.sp("dirforrail","r")
-							self.sp("entervel",self.gp("entervel") + abs(self.key["x"]))
+							self.sp("entervel",self.gp("entervel") + abs(self.key["x"]/2 ))
 
-					if self.gp("entervel") > 150:
-						self.sp("entervel",150)
-					if self.gp("entervel") < -150:
-						self.sp("entervel",-150)
+					if self.gp("entervel") > 130:
+						self.sp("entervel",130)
+					if self.gp("entervel") < -130:
+						self.sp("entervel",-130)
 	
 
 
@@ -570,11 +575,15 @@ class Game(Gamemananager.GameManager):
 								self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
 								self.sp("mode","in-air")
 							if railrot in [45,-45] :
-								self.sp("act_vel",[  abs(self.gp("act_vel")[0]) *   self.valsign(railrot) * 2 * -1   ,   40      ])
-								self.sp("des_vel",[  abs(self.gp("des_vel")[0]) *   self.valsign(railrot) * 2 * -1   ,   150     ])
+								if raildir == -1:
+									self.sp("act_vel",[  self.gp("act_vel")[0] *   self.valsign(railrot)  * 1   ,   40      ])
+									self.sp("des_vel",[  self.gp("des_vel")[0] *   self.valsign(railrot)  * 1   ,   150     ])
+								else:
+									self.sp("act_vel",[  self.gp("act_vel")[0] *   self.valsign(railrot)  * 1   ,   150      ])
+									self.sp("des_vel",[  self.gp("des_vel")[0] *   self.valsign(railrot)  * 1   ,   300     ])
 							elif railrot in [90,-90] :
-								self.sp("act_vel",[  -40 *  self.valsign(railrot) * self.gp("entervel")/60 ,self.gp("act_vel")[1]   ] )
-								self.sp("des_vel",[   -150 * self.valsign(railrot) * self.gp("entervel")/60,self.gp("des_vel")[1]   ])
+								self.sp("act_vel",[  self.valsign(railrot) * self.gp("entervel")* -1 ,self.gp("act_vel")[1]   ] )
+								self.sp("des_vel",[  self.valsign(railrot) * self.gp("entervel")* -1,self.gp("des_vel")[1]   ])
 								self.sp("mode","in-air")
 
 

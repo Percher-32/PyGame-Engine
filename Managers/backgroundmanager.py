@@ -4,7 +4,7 @@ import json
 import Managers.Cameramod as Cameramod
 import os
 
-
+tol = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]
 
 class Item(pygame.sprite.Sprite):
     def __init__(self,name,pos,alpha = 400,surf=None,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h),layer = 1,infiniscroll = 0):
@@ -49,14 +49,19 @@ class Item(pygame.sprite.Sprite):
         self.lastcampos = [0,0]
         self.lastcamsize = 1
         
+        self.load()
+        
 
-
+    def load(self):
+        for i in tol:
+            inst =  pygame.transform.scale_by(self.baseimg,  i )
+            self.cache[str(i)] = inst
 
 
     def update(self):
         
         camera = Cameramod.cam
-        realestsize = abs(round(self.size / 0.5,2)*0.5)
+        realestsize = abs(round(self.size / 1,1)*1)
         if univars.camchange or univars.poschange:
             if univars.poschange:
                 if not self.layer == 1:
