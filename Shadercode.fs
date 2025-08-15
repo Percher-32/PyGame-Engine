@@ -150,7 +150,7 @@ void main() {
     float pixelscale = 0.0001;
     vec2 sample_pos = uvs;
     sample_pos = round(sample_pos /vec2(pixelscale)) * vec2(pixelscale);
-    sample_pos.x = clamp(sample_pos.x ,0,0.99);
+    sample_pos.x = clamp(sample_pos.x ,0,1);
     vec3 map = texture(tex, sample_pos).rgb;
     
     

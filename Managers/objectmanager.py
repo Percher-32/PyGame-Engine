@@ -571,9 +571,9 @@ class object_manager:
 		self.objects.update({str(name):add})
 		finalobj = inst.obj(str(name),add,spritelist)
 		if not layer in self.layers.keys():
-			self.layers[layer] = pygame.sprite.Group()
+			self.layers[layer] = pygame.sprite.LayeredUpdates()
 
-		self.layers[layer].add(finalobj)
+		self.layers[layer].add(finalobj,layer=0)
 
 	def tile(self):
 		speed = self.speed
