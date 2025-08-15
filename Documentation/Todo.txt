@@ -14,18 +14,23 @@ IN-ENGINE:
 		* add taglines to frequently used functions []
 	[X] - Particle-system
 	[@] - Sound system
-	[X] - Fix Animations
+	[X] - Fix Animations:
 	[X] - Particle-editor:  
 		* can save particle presets[X]
 		* ui for particle creator  [X]
-	[#] - shaders:
+	[X] - shaders:
 		* working [X]
-		* can switch between [^]
 
 
 
 IN-GAME:
 	PLAYER:
+		[#] - LAYERS!:
+				* instances have LAYERS        [#]
+				* change layer in editor       []
+				* save the layers in the file  []
+
+
 		[X] - Create good demo level:
 				* wall jumps     [X]
 				* long stretches [X]
@@ -48,14 +53,15 @@ IN-GAME:
 				* ducking      []
 				* in-air       []
 		[#] - add particles to certain actions:
-				* skidding  []
+				* skidding  [X]
 				* impact    []
+				* grinding  [X]
 
 		[] - Combat:
 				* normal hit    []
 				* dash hit      []
 				* homing attack []
 
-		[] - Rail-grinding:
+		[X] - Rail-grinding:
 				* fills bar  []
-				* particles  []
+				* particles  [X]
