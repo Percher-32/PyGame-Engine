@@ -17,7 +17,6 @@ sm = Gamemananager.sm
 um = Gamemananager.um
 bg = Gamemananager.bg
 pm = Gamemananager.pm
-# 532
 
 
 class Game(Gamemananager.GameManager):	
@@ -94,8 +93,8 @@ class Game(Gamemananager.GameManager):
 				um.elements["but4"]["color"] = univars.theme["dark"]
 
 	
-		# self.ingametime += self.dt/100 * om.speed
-		self.ingametime = 0
+		self.ingametime += self.dt/300 * om.speed
+		# self.ingametime = 0
 		# self.publicvariables["waterh"] -= 0.002
 		sd.program['time'] = fm.frame
 		sd.program['state'] = self.publicvariables["shaderstate"]
@@ -184,7 +183,7 @@ class Game(Gamemananager.GameManager):
 		om.speed = 1
 
 		#create player
-		om.adds("player",[-1472,128],"player","player",0,[1,1],400,5)
+		om.adds("player",[-1000,128],"player","player",0,[1,1],400,5)
 		om.objects["player"]["rendercond"] = False
 
 		#creates the player sprite you actually see
@@ -267,10 +266,10 @@ class Game(Gamemananager.GameManager):
 		collisionlisttype = [i.type for i in instlist] 
 		collisionboxtype = [i.type for i in collisionbox["inst"]] 
 		collisionlisttype.append("ground")
-		if len(collisionboxtype ):
+
+		rail = False
+		if len(collisionboxtype) > 0:
 			rail =  collisionboxtype[0] == "rail" 
-		else:
-			rail = False
 
 		if abs(self.key["x"]) > 0:
 			if self.key["x"] > 0:
@@ -507,7 +506,7 @@ class Game(Gamemananager.GameManager):
 
 
 				else:
-					self.sp("jumpable",1)
+					self.sp("jumpable",True)
 					railpiece = collisionbox["inst"][0]
 					if railpiece.name == "rail":
 						railrot = railpiece.rot
@@ -525,13 +524,14 @@ class Game(Gamemananager.GameManager):
 															collisionbox["inst"][0].realpos[0]  -  (math.cos((railrot/180) * math.pi) * 20) ,
 															collisionbox["inst"][0].realpos[1]  +  (math.sin((railrot/180) * math.pi) * 20) 
 														  ]
-							motivate = [  500 * math.cos((railrot/180) * math.pi) * raildir,500   * math.sin((railrot/180) * math.pi) * raildir ]
-							om.translate(self,"player",motivate,usedt=1)
 						else:
 							om.objects["player"]["pos"] = [
 															collisionbox["inst"][0].realpos[0]  -  (math.sin((railrot/180) * math.pi) * 20) ,
 															collisionbox["inst"][0].realpos[1]  -  (math.cos((railrot/180) * math.pi) * 20) 
 														  ]
+						
+						motivate = [  500 * math.cos((railrot/180) * math.pi) * raildir,500   * math.sin((railrot/180) * math.pi) * raildir ]
+						om.translate(self,"player",motivate,usedt=1)
 						self.sp("desrot",0)
 						if self.gp("entervel") < 1:
 							self.sp("entervel",1)
@@ -565,6 +565,7 @@ class Game(Gamemananager.GameManager):
 
 					if self.key["jump"]:
 						if self.gp("jumpable"):
+							# self.publicvariables["shaderstate"] = not self.publicvariables["shaderstate"]
 							if railrot in [0,45,-45] :
 								self.sp("act_vel",[self.gp("act_vel")[0],40])
 								self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
@@ -580,30 +581,29 @@ class Game(Gamemananager.GameManager):
 						
 
 
-
-				self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
-				om.translate(self,"player",self.gp("act_vel"),usedt=1)
-				
-				om.objects["playersprite"]["rot"]  =  self.unilerp(om.objects["playersprite"]["rot"],self.gp("desrot"),5,roundto=2) 
+				if not (collision["topmid"]["inst"] and collision["botmid"]["inst"] and collision["midright"]["inst"] and collision["midleft"]["inst"] ) or rail:
+					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
+					om.translate(self,"player",self.gp("act_vel"),usedt=1)
+					om.objects["playersprite"]["rot"]  =  self.unilerp(om.objects["playersprite"]["rot"],self.gp("desrot"),5,roundto=2) 
 						
 				
 
 
-				if not rail:
-					#prevent no-clip
-					if self.gp("mode") == "grounded":
-						if "ground" in collisionlisttype:
-							self.sp("des_vel",[  self.gp("des_vel")[0]    ,    0   ])
-							self.sp("act_vel",[  self.gp("act_vel")[0]    ,    0   ])
-							om.objects["player"]["pos"][1] = instlist[0].realpos[1] - 32
+					if not rail:
+						#prevent no-clip
+						if self.gp("mode") == "grounded":
+							if "ground" in collisionlisttype:
+								self.sp("des_vel",[  self.gp("des_vel")[0]    ,    0   ])
+								self.sp("act_vel",[  self.gp("act_vel")[0]    ,    0   ])
+								om.objects["player"]["pos"][1] = instlist[0].realpos[1] - 32
 
-					if not self.gp("onboard"):
-						if om.get_value("skateboard","fallvalue")< 20:
-							om.set_value("skateboard","fallvalue",om.get_value("skateboard","fallvalue") - 2* self.dt)
-						om.objects["skateboard"]["pos"] = [om.objects["player"]["pos"][0],om.objects["player"]["pos"][1] - 0]
-						om.translate(self,"skateboard",[0,om.get_value("skateboard","fallvalue")])
-					else:
-						om.set_value("skateboard","fallvalue",5)
+						if not self.gp("onboard"):
+							if om.get_value("skateboard","fallvalue")< 20:
+								om.set_value("skateboard","fallvalue",om.get_value("skateboard","fallvalue") - 2* self.dt)
+							om.objects["skateboard"]["pos"] = [om.objects["player"]["pos"][0],om.objects["player"]["pos"][1] - 0]
+							om.translate(self,"skateboard",[0,om.get_value("skateboard","fallvalue")])
+						else:
+							om.set_value("skateboard","fallvalue",5)
 
 
 			else:
@@ -684,6 +684,7 @@ class Game(Gamemananager.GameManager):
 			right = collision["topright"]["inst"] or collision["midright"]["inst"] or collision["botright"]["inst"]
 			mip = collision["midmid"]["inst"][0].realpos
 			if collision["topmid"]["inst"] and collision["botmid"]["inst"] and collision["midright"]["inst"] and collision["midleft"]["inst"] :
+				# self.publicvariables["shaderstate"] = not self.publicvariables["shaderstate"]
 				om.translate(self,"player",[self.gp("act_vel")[0] * -1,self.gp("act_vel")[1] * -1],usedt=1)
 				self.sp("des_vel",[0,0])
 			elif top and not collision["botmid"]["inst"]:

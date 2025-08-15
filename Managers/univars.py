@@ -99,7 +99,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "grind"
+map = "demo1"
 
 startstate = "debugame"
 
