@@ -452,14 +452,14 @@ class Game(Gamemananager.GameManager):
 								self.wait("leftjump",0.1)
 								self.sp("jumpable",False)
 								self.sp("des_vel",[  self.gp("des_vel")[0] , a     ])
-								self.sp("act_vel",[  100 , self.gp("act_vel")[1]     ])
+								self.sp("act_vel",[  120 , self.gp("act_vel")[1]     ])
 								self.sp("mode","in-air")
 							if self.gp("rightwall"):
 								self.deltimer("leftjump")
 								self.wait("rightjump",0.1)
 								self.sp("jumpable",False)
 								self.sp("des_vel",[  self.gp("des_vel")[0] , a     ])
-								self.sp("act_vel",[  -100 , self.gp("act_vel")[1]     ])
+								self.sp("act_vel",[  -120 , self.gp("act_vel")[1]     ])
 								self.sp("mode","in-air")
 
 					else:
@@ -496,8 +496,8 @@ class Game(Gamemananager.GameManager):
 
 					
 					#water skid
-					if 0.7 > self.actualwaterheight > 0.5:
-						if abs(self.gp("act_vel")[0]) >= 120:
+					if 0.7 > self.actualwaterheight > 0.5 and not self.key["jump"]:
+						if abs(self.gp("act_vel")[0]) >= 110:
 							if self.gp("act_vel")[0] > 100:
 								parts = [om.objects["player"]["pos"][0] -5,om.objects["player"]["pos"][1] + 9]
 							else:
@@ -507,6 +507,8 @@ class Game(Gamemananager.GameManager):
 							self.sp("act_vel",[   self.gp("act_vel")[0] , 0  ]  ) 
 							self.sp("des_vel",[   self.gp("des_vel")[0] , 0  ]  ) 
 							om.objects["player"]["pos"][1] = (510.11583 * self.publicvariables["waterh"])+343.6834
+							self.sp("jumpable",1)
+					um.showvar("velx",round(self.gp("act_vel")[0]),[0,0])
 
 
 
