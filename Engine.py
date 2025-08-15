@@ -586,6 +586,10 @@ class Game(Gamemananager.GameManager):
 								self.sp("des_vel",[  self.valsign(railrot) * self.gp("entervel")* -1,self.gp("des_vel")[1]   ])
 								self.sp("mode","in-air")
 
+					parts = om.objects["player"]["pos"]
+					vel = [self.gp("act_vel")[0]/7,self.gp("act_vel")[1]/7]
+					pm.particlespawnbluprint(parts,"grind",initvel= vel)
+
 
 
 

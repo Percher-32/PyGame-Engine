@@ -870,8 +870,7 @@ class TiledSoftwre:
 				um.elements["loadedbluprint"]["text"] = "Loaded:" + self.loadedparticle
 				um.elements["particledata"]["text"] = f"type:{use['type']} \ndivergence:{use['divergence']} \ninitvel:{use['initvel']} \ncolor:{use['color']} \nforce:{use['force']} \nsize:{use['size']} \nsizedec:{use['sizedec']} \ndim:{use['dim']} \nalpha:{use['alpha']} \nalphadec:{use['alphadec']} \nntimes:{use['ntimes']} \nspeed:{use['speed']} \ncolordec:{use['colordec']} \ndivforce:{use['divergenceforce']} \ndivpos:{use['divergencepos']}"                      
 				self.uitext("particlecommandtext",GameManager)
-				try:
-					if GameManager.em.key[pygame.K_RETURN]:
+				if GameManager.em.key[pygame.K_RETURN]:
 						text = um.elements["particlecommandtext"]["text"].rstrip()
 						if text == "/x":
 							self.mode = 0
@@ -887,7 +886,10 @@ class TiledSoftwre:
 							newvalue = text[1].replace(" ","")
 							if not val == "name":
 								if val in use.keys():
-									use[val] = eval(newvalue)
+									try:
+										use[val] = eval(newvalue)
+									except:
+										use[val] = str(newvalue)
 							else:
 								self.loadedparticle = newvalue
 						if not self.loadedparticle == None:
@@ -905,8 +907,8 @@ class TiledSoftwre:
 								self.parts = pm.bluprints[self.loadedparticle]
 						
 						um.elements["particlecommandtext"]["text"] = ""
-				except:
-					um.elements["particlecommandtext"]["text"] = "error"
+
+					# um.elements["particlecommandtext"]["text"] = "error"
 
 
 

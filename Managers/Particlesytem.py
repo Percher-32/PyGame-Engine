@@ -169,12 +169,12 @@ class Particlemanager:
 					surf.set_alpha(particle["alpha"])
 					univars.screen.blit(surf,postodraw)
 				if particle["type"] == "rect":
-					if particle.get("rect",None) == None:
-						size = [ particle["dim"][0] * particle["size"] ,  particle["dim"][1] * particle["size"] ]
-						rect = pygame.Rect((postodraw[0],postodraw[1],size))
-						particle["rect"] = rect
-					else:
-						rect = particle["rect"].move(postodraw)
+					# if particle.get("rect",None) == None:
+					size = [ particle["dim"][0] * particle["size"] * Cameramod.cam.size ,  particle["dim"][1] * particle["size"] * Cameramod.cam.size ]
+					rect = pygame.Rect((postodraw[0],postodraw[1],size[0],size[1]))
+					particle["rect"] = rect
+					# else:
+					# 	rect = particle["rect"].move(postodraw)
 					pygame.draw.rect(univars.screen,particle["color"],rect)
 			else:
 				self.particlelist.remove(particle)
