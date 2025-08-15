@@ -176,14 +176,14 @@ class Game(Gamemananager.GameManager):
 		Initialises the players variables
 		"""
 		#create the cameras
-		cm.addcam("playercam",[-1000,608],0.4)
+		cm.addcam("playercam",[8500,608],0.4)
 		cm.setcam("playercam")  
 
 		self.lookahead = 100
 		om.speed = 1
 
 		#create player
-		om.adds("player",[-1000,128],"player","player",0,[1,1],400,5)
+		om.adds("player",[8500,128],"player","player",0,[1,1],400,5)
 		om.objects["player"]["rendercond"] = False
 
 		#creates the player sprite you actually see
@@ -521,8 +521,8 @@ class Game(Gamemananager.GameManager):
 							raildir = -1
 						if railpiece.name == "rail":
 							om.objects["player"]["pos"] = [
-															collisionbox["inst"][0].realpos[0]  -  (math.cos((railrot/180) * math.pi) * 20) ,
-															collisionbox["inst"][0].realpos[1]  +  (math.sin((railrot/180) * math.pi) * 20) 
+															collisionbox["inst"][0].realpos[0]  -  (math.sin((railrot/180) * math.pi) * 5) ,
+															collisionbox["inst"][0].realpos[1]  -  (math.cos((railrot/180) * math.pi) * 5) 
 														  ]
 						else:
 							om.objects["player"]["pos"] = [
@@ -565,11 +565,13 @@ class Game(Gamemananager.GameManager):
 
 					if self.key["jump"]:
 						if self.gp("jumpable"):
-							# self.publicvariables["shaderstate"] = not self.publicvariables["shaderstate"]
-							if railrot in [0,45,-45] :
+							if railrot in [0] :
 								self.sp("act_vel",[self.gp("act_vel")[0],40])
 								self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
 								self.sp("mode","in-air")
+							if railrot in [45,-45] :
+								self.sp("act_vel",[  abs(self.gp("act_vel")[0]) *   self.valsign(railrot) * 2 * -1   ,   40      ])
+								self.sp("des_vel",[  abs(self.gp("des_vel")[0]) *   self.valsign(railrot) * 2 * -1   ,   150     ])
 							elif railrot in [90,-90] :
 								self.sp("act_vel",[  -40 *  self.valsign(railrot) * self.gp("entervel")/60 ,self.gp("act_vel")[1]   ] )
 								self.sp("des_vel",[   -150 * self.valsign(railrot) * self.gp("entervel")/60,self.gp("des_vel")[1]   ])
