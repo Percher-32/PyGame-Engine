@@ -64,12 +64,12 @@ func = funcs.func(grandim)
 
 
 
-lumptype = {"grass":"ground","dirt":"ground","slantl":"slantl","slantr":"slantr","slantdecor":"ground"}
+lumptype = {"grass":"ground","dirt":"ground","slantl":"slantl","slantr":"slantr","slantdecor":"ground","rail":"rail","rail-diag":"rail"}
 
 # sizeoffsets = {"grass":[0.1,0.1],"dirt":[0.1,0.1],"slantr":[0.1,0.1],"slantl":[0.1,0.1]}
 sizeoffsets = {}
 
-instables = ["dirt","grass","def","slantl","slantr","slantlbot","slantrbot"]
+instables = ["dirt","grass","def","slantl","slantr","slantlbot","slantrbot","rail","rail-diag"]
 
 extras = [["def","camz",[20,20]]]
 """
@@ -99,7 +99,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "demo1"
+map = "grind"
 
 startstate = "debugame"
 
