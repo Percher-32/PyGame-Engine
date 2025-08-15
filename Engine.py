@@ -95,7 +95,7 @@ class Game(Gamemananager.GameManager):
 
 	
 		# self.ingametime += self.dt/100 * om.speed
-		self.ingametime = 2
+		self.ingametime = 0
 		# self.publicvariables["waterh"] -= 0.002
 		sd.program['time'] = fm.frame
 		sd.program['state'] = self.publicvariables["shaderstate"]
@@ -262,9 +262,9 @@ class Game(Gamemananager.GameManager):
 		# om.speed = 0.4
 		
 		# um.showvar("pos",om.objects["player"]["pos"],[0,0])
-		collision = om.collide9("player",1,cam,self.dim,ignore= ["playersprite","skateboard"])
-		lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 50,om.objects["player"]["pos"][1] + 10 ],1,32,camera=cam,basecolor=(0,1,0))
-		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 10 ],1,32,camera=cam,basecolor=(0,1,0))
+		collision = om.collide9("player",0,cam,self.dim,ignore= ["playersprite","skateboard"])
+		lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
+		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
 		collisionbox = om.collide("player",0,cam,extra=15)
 		ground1 = len(collision["botmid"]["inst"]) > 0
 		ground2 = len(collision["botleft"]["inst"]) > 0    and not (len(collision["topleft"]["inst"])  > 0  ) and not (len(collision["midleft"]["inst"])  > 0  )

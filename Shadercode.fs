@@ -147,8 +147,10 @@ float coldist(vec2 uv){
 
 
 void main() {
-    
+    float pixelscale = 0.0001;
     vec2 sample_pos = uvs;
+    sample_pos = round(sample_pos /vec2(pixelscale)) * vec2(pixelscale);
+    sample_pos.x = clamp(sample_pos.x ,0,0.99);
     vec3 map = texture(tex, sample_pos).rgb;
     
     
@@ -205,6 +207,9 @@ void main() {
 
             reflec_sample_pos.x = clamp(reflec_sample_pos.x ,0,1);
             // reflec_sample_pos.y = clamp(reflec_sample_pos.y ,0,1);
+
+            underwater_sample_pos = round(underwater_sample_pos /vec2(pixelscale)) * vec2(pixelscale);
+            reflec_sample_pos = round(reflec_sample_pos /vec2(pixelscale)) * vec2(pixelscale);
 
 
             float scalar = 2*(1- waterlevel) +0.2;
