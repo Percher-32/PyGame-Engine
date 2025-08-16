@@ -25,6 +25,7 @@ class TiledSoftwre:
 		self.func = funcs.func(grandim)
 		self.om = om
 		self.secretword = "404 error"
+		self.coll = True
 		self.screen = screen
 		self.savestring = ""
 		self.mode = 0
@@ -347,18 +348,18 @@ class TiledSoftwre:
 									if strb > maxlen:
 										maxlen = strb
 									off += 1
-							b = pygame.Surface((maxlen,250 + (off * 30)))
+							b = pygame.Surface((maxlen,280 + (off * 30)))
 							b.fill(univars.theme["dark"])
 							b.set_alpha(150)
 							GameManager.Gotomousepos2(b)
-							self.tm.textatmouse(f"Normal Object\nId = { mousecol['obj'][0].name }\nName = {a['name']}\nSize = {a['size']}\nRot = {a['rot']}\nType = {a['type']}\nRender = {bool(a['rendercond'])}\nPos = {a['pos']}","pixel2.ttf",30,0,univars.theme["bright"],GameManager.event_manager,10,-20)
+							self.tm.textatmouse(f"Normal Object\nId = { mousecol['obj'][0].name }\nName = {a['name']}\nType = {a['type']}\nPos = {a['pos']}\nSize = {a['size']}\nRot = {a['rot']}\nLayer = {a['layer']}\nRender = {bool(a['rendercond'])}","pixel2.ttf",30,0,univars.theme["bright"],GameManager.event_manager,10,-20)
 							if a1 in object_manager.values.keys():
 								off = 0
 								for i in object_manager.values[a1].keys():
-									self.tm.textatmouse(f"{i} : {object_manager.values[a1][i]}","pixel2.ttf",30,0,univars.theme["bright"],GameManager.event_manager,10,(-1 * off * 30) - 240)
+									self.tm.textatmouse(f"{i} : {object_manager.values[a1][i]}","pixel2.ttf",30,0,univars.theme["bright"],GameManager.event_manager,10,(-1 * off * 30) - 270)
 									off += 1
 							else:
-								self.tm.textatmouse(f"No variables","pixel2.ttf",30,0,univars.theme["bright"],GameManager.event_manager,10,0 - 240)
+								self.tm.textatmouse(f"No variables","pixel2.ttf",30,0,univars.theme["bright"],GameManager.event_manager,10,0 - 270)
 
 							if GameManager.event_manager.key[pygame.K_LCTRL]:
 								self.dostring2 = ""
@@ -367,16 +368,16 @@ class TiledSoftwre:
 
 						if len(mousecol["inst"]) > 0:
 							a = mousecol["inst"][0]
-							b = pygame.Surface((270,250))
+							b = pygame.Surface((270,280))
 							b.fill(univars.theme["dark"])
 							b.set_alpha(150)
 							GameManager.Gotomousepos2(b)
-							self.tm.textatmouse(f"Instanciated Object\nType = {a.type}\nName = { a.stagename }\nPos = {a.realpos}\nRot = {a.rot}\nSize = {a.size}\nAlpha = {a.alpha}","pixel2.ttf",30,0,univars.theme["bright"],GameManager.event_manager,10,-20)
+							self.tm.textatmouse(f"Instanciated Object\nType = {a.type}\nName = { a.stagename }\nPos = {a.realpos}\nLayer = {a.layer}\nRot = {a.rot}\nCollision = {a.usecoll}\nSize = {a.size}\nAlpha = {a.alpha}","pixel2.ttf",30,0,univars.theme["bright"],GameManager.event_manager,10,-20)
 
-							if GameManager.event_manager.key[pygame.K_LCTRL]:
-								self.dostring2 = ""
-								self.dostring = mousecol["inst"][0]
-								self.mode = "alterinst"
+							# if GameManager.event_manager.key[pygame.K_LCTRL]:
+							# 	self.dostring2 = ""
+							# 	self.dostring = mousecol["inst"][0]
+							# 	self.mode = "alterinst"
 
 
 
@@ -1072,7 +1073,7 @@ class TiledSoftwre:
 
 				#the ui for object placement
 				if debug:
-					GameManager.uibox((360,360),(0.8,0.65 -0.07),        univars.theme["dark"],200)
+					GameManager.uibox((360,400),(0.8,0.65 -0.085),        univars.theme["dark"],200)
 					GameManager.uibox((64 + 10,64 + 10),(0.8,0.8 ),univars.theme["semibright"],400)
 					GameManager.uibox((64 + 10,64 + 10),(0.92,0.8),univars.theme["semibright"],50)
 					GameManager.uibox((64 + 10,64 + 10),(0.68,0.8),univars.theme["semibright"],50)
@@ -1082,6 +1083,7 @@ class TiledSoftwre:
 					self.tm.drawtext(f"Object-name : {self.spritenames[self.sprite]}",       "pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.8,0.6)
 					self.tm.drawtext(f"Object-type : {self.typelist[self.sprite]}",          "pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.8,0.5)
 					self.tm.drawtext(f"layer:{self.layer}",          "pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.8,0.4)
+					self.tm.drawtext(f"Collision:{self.coll}",          "pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.8,0.3)
 
 
 				

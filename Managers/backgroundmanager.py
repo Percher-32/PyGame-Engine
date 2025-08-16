@@ -61,7 +61,7 @@ class Item(pygame.sprite.Sprite):
     def update(self):
         
         camera = Cameramod.cam
-        realestsize = abs(round(self.size / 1,1)*1)
+        realestsize = abs(round(self.size * 0.01,2)/0.01)
         if univars.camchange or univars.poschange:
             if univars.poschange:
                 if not self.layer == 1:

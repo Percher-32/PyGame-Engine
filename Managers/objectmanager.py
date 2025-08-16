@@ -45,6 +45,7 @@ class object_manager:
 		self.loadingmap = False
 		#chunk id stored in a tuple "(x,y)"
 		self.instances = {}
+		self.noncolinstances = {}
 		self.instables = []
 		self.toreinst = []
 		self.loadedmap = "Null"
@@ -318,20 +319,20 @@ class object_manager:
 			r1 = self.objfromid(id).fakerect
 			r1.width = r1.width + extra
 			r1.height = r1.height + extra
+
+			# typel = self.getcull(self.objects[id]["pos"],extra + 1,dim)
+			# typel.remove(id)
+
+
+
 			colsprite =  collinst(r1.x,r1.y,r1.width,r1.height)
-
-			typel = self.getcull(self.objects[id]["pos"],extra + 1,dim)
-			typel.remove(id)
-
-
-
 			noninst = pygame.sprite.spritecollide(colsprite,self.objgroup,dokill=False)
 
 			#coll for inst
 			camchunk = [int(round(camera.x/(dim * self.renderdist))),int(round(camera.y/(dim * self.renderdist)))]
 			ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
+			
 			inst = []
-
 			for offset in ranges:
 				a = []
 				campos = (offset[0] + camchunk[0],offset[1] + camchunk[1])
@@ -342,10 +343,12 @@ class object_manager:
 
 			#render the collbox
 			if show:
-				if len(noninst) > 0:
-					col = (0,0,255)
-				if len(inst) > 0:
+				if len(inst) > 0 and len(noninst) > 0:
+					col = (0,225,255)
+				elif len(inst) > 0:
 					col = (0,225,0)
+				elif len(noninst) > 0:
+					col = (0,0,255)
 				else:
 					col = (225,0,0)
 				# self.func.ssblitrect(r1,col,camera,5,univars.fakescreen)
@@ -360,19 +363,31 @@ class object_manager:
 		dim = univars.grandim
 		id = str(id)
 		r1 = pygame.Rect(pos[0],pos[1],dimensions[0],dimensions[1])
-		typel = self.getcull(pos,1,dim,ignore = ignore)
-		noninst = [self.objfromid(i) for i in typel if r1.colliderect(self.objfromid(i).fakerect) ]
+		
+		colsprite =  collinst(r1.x,r1.y,r1.width,r1.height)
+		noninst = pygame.sprite.spritecollide(colsprite,self.objgroup,dokill=False)
 
 		#coll for inst
-		camchunk = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
+		#coll for inst
+		camchunk = [int(round(camera.x/(dim * self.renderdist))),int(round(camera.y/(dim * self.renderdist)))]
+		ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
 		inst = []
-		if camchunk in self.instances.keys():
-			inst = [ i for i in self.instances[camchunk] if r1.colliderect(i.fakerect)]
+		for offset in ranges:
+			a = []
+			campos = (offset[0] + camchunk[0],offset[1] + camchunk[1])
+			if campos in self.instances.keys():
+				# a = [ i for i in self.instances[campos] if r1.colliderect(i.fakerect)]
+				a = pygame.sprite.spritecollide(colsprite,self.instances[campos],dokill=False)
+			inst += a
 
 		#render the collbox
 		if show:
-			if len(inst or noninst) > 0:
+			if len(inst) > 0 and len(noninst) > 0:
+				col = (0,225,255)
+			elif len(inst) > 0:
 				col = (0,225,0)
+			elif len(noninst) > 0:
+				col = (0,0,255)
 			else:
 				col = (225,0,0)
 			self.func.ssblitrect(r1,col,camera,5,univars.fakescreen)
@@ -380,19 +395,28 @@ class object_manager:
 
 		return {"noninst":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
 
-	def collidep(self,pos,show,dim,pointsize=5,basecolor = (255,0,0),instcol = (0,225,0),noninstcol=(0,225,150),ignore_id = None,camera = None,ignore = []) -> dict: 
+	def collidep(self,pos,show,dim,pointsize=5,basecolor = (255,0,0),instcol = (0,225,0),noninstcol=(0,225,150),ignore_id = None,camera = Cameramod.cam,ignore = []) -> dict: 
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		#coll for non-inst
 		dim = univars.grandim
-		typel = self.getcull(pos,1,univars.grandim)
-		noninst = [self.objfromid(i) for i in typel if self.objfromid(i).fakerect.collidepoint(pos) and not i in ignore ]
+		r1 = pygame.Rect(pos[0],pos[1],10,10)
+		colsprite =  collinst(r1.x,r1.y,math.ceil(r1.width),math.ceil(r1.height))
+		noninst = pygame.sprite.spritecollide(colsprite,self.objgroup,dokill=False)
+		for obj in noninst:
+			if obj.name in ignore or obj.name == ignore_id:
+				noninst.remove(obj)
 
 		#coll for inst
-		camchunk = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
+		camchunk = [int(round(camera.x/(dim * self.renderdist))),int(round(camera.y/(dim * self.renderdist)))]
+		ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
 		inst = []
-		r1 = pygame.Rect(pos[0],pos[1],1,1)
-		if camchunk in self.instances.keys():
-			inst = [ i for i in self.instances[camchunk] if i.fakerect.collidepoint(pos)]
+		for offset in ranges:
+			a = []
+			campos = (offset[0] + camchunk[0],offset[1] + camchunk[1])
+			if campos in self.instances.keys():
+				# a = [ i for i in self.instances[campos] if r1.colliderect(i.fakerect)]
+				a = pygame.sprite.spritecollide(colsprite,self.instances[campos],dokill=False)
+			inst += a
 
 		#render the collpoint
 		if show:
@@ -447,7 +471,6 @@ class object_manager:
 			for obj in self.objgroup:
 				if obj.name == postodel[0]:
 					if obj.layer == layer or layer == "all":
-						print(layer)
 						self.objgroup.remove(obj)
 						self.objects.pop(postodel[0])
 
@@ -483,7 +506,7 @@ class object_manager:
 				self.objfromid(id).flip()
 				self.set_value(id,"#flipped",dir)
 
-	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen,stagename ,layer,keepprev = False):
+	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen,stagename ,layer,usecoll,keepprev = False):
 		if not type in self.renderinst:
 			if not type in self.aplhainst.keys():
 				alp = 400
@@ -498,15 +521,22 @@ class object_manager:
 			spritelist = univars.func.getspritesscale(name,[temp.get_width(),temp.get_height()])
 			self.spritecache[str([name,sizen])] = spritelist
 
-		newt = inst.inst(stagename,self.grandim,name,pos[0],pos[1],rot,sizen,univars.lumptype.get(stagename,type),alp,spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]],layer)
+		newt = inst.inst(stagename,self.grandim,name,pos[0],pos[1],rot,sizen,univars.lumptype.get(stagename,type),alp,spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]],layer,usecoll)
 		name = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
-		if name in self.instances.keys():
-			self.instances[name].add(newt)
+		if usecoll:
+			if name in self.instances.keys():
+				self.instances[name].add(newt)
+			else:
+				self.instances[name] = pygame.sprite.LayeredUpdates()
+				self.instances[name].add(newt)
 		else:
-			self.instances[name] = pygame.sprite.LayeredUpdates()
-			self.instances[name].add(newt)
+			if name in self.instances.keys():
+				self.noncolinstances[name].add(newt)
+			else:
+				self.noncolinstances[name] = pygame.sprite.LayeredUpdates()
+				self.noncolinstances[name].add(newt)
 
-	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int , keepprev = False,stagename = None,layer = 0):
+	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int , keepprev = False,stagename = None,layer = 0,colforinst=True):
 		"""adds an object to the manager  , gives an id of type str"""
 		if stagename == None:
 			stagename = sprites
@@ -542,7 +572,7 @@ class object_manager:
 			finalobj = inst.obj(str(self.tracker),add,spritelist)
 			self.objgroup.add(finalobj,layer = layer)
 		else:
-			self.addinst(pos,sprites,dim,rot,type,sizen,stagename,layer)
+			self.addinst(pos,sprites,dim,rot,type,sizen,stagename,layer,colforinst,keepprev=keepprev)
 
 
 
@@ -569,13 +599,20 @@ class object_manager:
 			temp = univars.func.getsprites(name)[0]
 			spritelist = univars.func.getspritesscale(name,[temp.get_width(),temp.get_height()])
 			self.spritecache[str([name,sizen])] = spritelist
-		newt = inst.inst(data["stagename"],self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],univars.lumptype.get(data["stagename"],data["type"]),data["alpha"],spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]],data["layer"])
+		newt = inst.inst(data["stagename"],self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],univars.lumptype.get(data["stagename"],data["type"]),data["alpha"],spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]],data["layer"],data["usecoll"])
 		name = (int(round(data["pos"][0]/(univars.grandim * self.renderdist))),int(round(data["pos"][1]/(univars.grandim * self.renderdist))))
-		if name in list(self.instances.keys()):
-			self.instances[name].add(newt)
+		if data["usecoll"]:
+			if name in self.instances.keys():
+				self.instances[name].add(newt)
+			else:
+				self.instances[name] = pygame.sprite.LayeredUpdates()
+				self.instances[name].add(newt)
 		else:
-			self.instances[name] = pygame.sprite.LayeredUpdates()
-			self.instances[name].add(newt)
+			if name in self.instances.keys():
+				self.noncolinstances[name].add(newt)
+			else:
+				self.noncolinstances[name] = pygame.sprite.LayeredUpdates()
+				self.noncolinstances[name].add(newt)
 
 	def adds(self,name,pos,sprites,type,rot,sizen,alpha,layer):
 		"""add special for more unique items"""
@@ -609,6 +646,7 @@ class object_manager:
 		ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
 		#the instanciate chunks to be rendered
 		lof = [  b   for b in self.instances.keys() for i in ranges   if b == ( i[0]  + camposdim[0],i[1] + camposdim[1]   )]
+		noncollof = [  b   for b in self.noncolinstances.keys() for i in ranges   if b == ( i[0]  + camposdim[0],i[1] + camposdim[1]   )]
 
 		
 
@@ -619,6 +657,12 @@ class object_manager:
 			for i in lof:
 				self.instances[i].update(showall)
 				self.instances[i].draw(univars.screen)
+			
+		#renders the non colliding instanciates
+		if len(noncollof) > 0:
+			for i in lof:
+				self.noncolinstances[i].update(showall)
+				self.noncolinstances[i].draw(univars.screen)
 
 		#rendering the non-instanciates
 		self.objgroup.update(camera,self,dim,showall,GameManager.fm.frame)
