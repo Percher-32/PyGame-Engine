@@ -23,7 +23,6 @@ for spritefolder in os.listdir("Graphics/sprites"):
 	folder_dir = f"Graphics/sprites/{spritefolder}"
 	spritesnlen[spritefolder] = len(os.listdir(folder_dir))
 
-print(spritesnlen)
 
 class TiledSoftwre:
 	def __init__(self,realscreen,theme,grandim,screen,om):
@@ -208,7 +207,7 @@ class TiledSoftwre:
 					if self.sn < 0:
 						self.sn = 0
 
-						
+
 					#some math
 					upscale = self.realscreeen.get_width() / self.screen.get_width()
 					upscaley = self.realscreeen.get_height() / self.screen.get_height()

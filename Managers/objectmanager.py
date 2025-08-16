@@ -631,6 +631,11 @@ class object_manager:
 			self.addinst(pos,sprites,dim,rot,type,sizen,stagename,layer,colforinst,sn,keepprev=keepprev)
 
 
+	def tile(self):
+		for group in self.noncolinstances.keys:
+			self.noncolinstances[group]
+
+
 	def datatoobj(self,id,data):
 		add = data
 		self.objects.update({id:add})
