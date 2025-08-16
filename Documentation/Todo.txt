@@ -42,8 +42,9 @@ IN-GAME:
 				* jumping                  [X]
 
 		[] - Dash:
-			* dashbaar         []
-			*  ways to fill up []
+			* dashbaar              []
+			*  ways to fill up      []
+			* Big dash-uses full bar[]
 
 		[?] - Tilt on ledges
 
@@ -52,16 +53,20 @@ IN-GAME:
 				* walljumping  []
 				* ducking      []
 				* in-air       []
+				* dashing      []
 		[#] - add particles to certain actions:
-				* skidding  [X]
-				* impact    []
-				* grinding  [X]
+				* skidding                [X]
+				* impact                  []
+				* grinding                [X]
+				* filling bar             []
+				* skating over dead leaves[]
 
 		[] - Combat:
-				* normal hit    []
-				* dash hit      []
-				* homing attack []
+				* normal hit                 []
+				* dash hit                   []
+				* homing attack              []
+				* skateboard inclined attacks[]
 
-		[X] - Rail-grinding:
+		[] - Rail-grinding:
 				* fills bar  []
 				* particles  [X]

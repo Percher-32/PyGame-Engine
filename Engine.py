@@ -27,7 +27,7 @@ class Game(Gamemananager.GameManager):
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
 		self.ingametime = 0
-		self.publicvariables["showater"] = True
+		self.publicvariables["showater"] = False
 		self.publicvariables["waterh"] = 0.9
 		self.actualwaterheight = 0
 
@@ -70,6 +70,7 @@ class Game(Gamemananager.GameManager):
 
 		if "game" == self.states:
 			self.playercode()
+			self.publicvariables["showater"] = True
 
 		if "veiw" == self.states:
 			if um.hover("but1"):

@@ -22,7 +22,7 @@ class inst(pygame.sprite.Sprite):
 	__slots__ = ["screen","grandim","name","x","y","rot","sizen","type","alpha"]
 
 
-	def __init__(self,stagename,grandim,name,x,y,rot,sizen,type,alpha,sprites,size):
+	def __init__(self,stagename,grandim,name,x,y,rot,sizen,type,alpha,sprites,size,layer):
 		pygame.sprite.Sprite.__init__(self)
 		
 		camera = Cameramod.cam
@@ -40,6 +40,7 @@ class inst(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect(topleft = ( (int(round(self.realpos[0] - camera.x) * camera.size + univars.screen.get_width()//2 - self.image.get_width()/2)),int(round((self.realpos[1] - camera.y) * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2))))
 		self.fakerect = pygame.Rect(x - self.size[0]//2,y - self.size[1]//2,self.size[0] + 10,self.size[1] + 10)
 		self.alpha = alpha
+		self.layer = layer
 
 	# def inchunk(self,cam,object,dim):
 	# 	dist = 1/cam.size * 9
@@ -100,6 +101,7 @@ class obj(pygame.sprite.Sprite):
 		self.sprites = sprites
 		self.fakerect = pygame.Rect(info["pos"][0] - info["size"][0]//2,info["pos"][1] - info["size"][1]//2,info["size"][0],info["size"][1])
 		self.name = name
+		self.layer = self.info["layer"]
 
 	def supvar(self,lg,lh):
 		lst = [(0,0),(0,1),(1,0),(1,1),(0,-1),(-1,0),(-1,-1),(-1,1),(1,-1),]	

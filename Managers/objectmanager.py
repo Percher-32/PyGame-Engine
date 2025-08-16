@@ -17,7 +17,7 @@ class object_manager:
 	def __init__(self,realscreeen,screen,grandim,alpha,rend):
 		self.objects = {}
 		self.values = {}
-		self.layers = {}
+		self.objgroup = pygame.sprite.LayeredUpdates()
 		self.anims = {}
 		self.forceplay = {}
 		self.func = funcs.func(grandim)
@@ -288,11 +288,9 @@ class object_manager:
 
 	def objfromid(self,id):
 		"""returns an object class with an id of the input "id" """
-		for a in self.layers.keys():
-			layer = self.layers[a]
-			for b in layer:
-				if str(b.name) == str(id):
-					return b
+		for b in self.objgroup:
+			if str(b.name) == str(id):
+				return b
 
 	def collide(self,id,show,camera,extra= 0) -> dict:
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
@@ -413,7 +411,7 @@ class object_manager:
 			ans = { "topleft":topleft,"topmid":topmid,"topright":topright,"midleft":midleft,"midmid":midmid,"midright":midright,"botleft":botleft,"botmid":botmid,"botright":botright}
 			return ans
 
-	def remove(self,pos):
+	def remove(self,pos,layer = 0):
 		# postodel = self.func.get(dict(zip(self.objects.keys(),(self.objects[i]["pos"] for i in self.objects.keys()))),[pos[0],pos[1]])
 		poscol = self.collidep(pos,0,univars.grandim)
 		postodel = [i.name for i in poscol["obj"]]
@@ -421,29 +419,27 @@ class object_manager:
 
 		#deleting non-instances
 		if not postodel == []:
-			self.objects.pop(postodel[0])
-			for a in self.layers.keys():
-				layer = self.layers[a]
-				for b in layer:
-					if b.name == postodel[0]:
-						self.layers[a].remove(b)
-
+			for obj in self.objgroup:
+				if obj.name == postodel[0]:
+					if obj.layer == layer or layer == "all":
+						print(layer)
+						self.objgroup.remove(obj)
+						self.objects.pop(postodel[0])
 
 		#deleting instances
 		for a in self.instances.keys():
 			for inst in self.instances[a]:
 				if inst in instpostodel:
-					self.instances[a].remove(inst)
+					if inst.layer == layer or layer == "all":
+						self.instances[a].remove(inst)
 
 	def removeid(self,id):
-		"""removes an object and its class"""
+		"""removes an object and its obj"""
 		postodel = id
 		self.objects.pop(postodel)
-		for a in self.layers.keys():
-			layer = self.layers[a]
-			for b in layer:
-				if b.name == postodel:
-					self.layers[a].remove(b)
+		for b in self.objgroup:
+			if b.name == postodel:
+				self.objgroup.remove(b)
 
 	def includeflipping(self,id):
 		"""
@@ -462,7 +458,7 @@ class object_manager:
 				self.objfromid(id).flip()
 				self.set_value(id,"#flipped",dir)
 
-	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen,stagename , keepprev = False):
+	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen,stagename ,layer,keepprev = False):
 		if not type in self.renderinst:
 			if not type in self.aplhainst.keys():
 				alp = 400
@@ -477,15 +473,15 @@ class object_manager:
 			spritelist = univars.func.getspritesscale(name,[temp.get_width(),temp.get_height()])
 			self.spritecache[str([name,sizen])] = spritelist
 
-		newt = inst.inst(stagename,self.grandim,name,pos[0],pos[1],rot,sizen,univars.lumptype.get(stagename,type),alp,spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]])
+		newt = inst.inst(stagename,self.grandim,name,pos[0],pos[1],rot,sizen,univars.lumptype.get(stagename,type),alp,spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]],layer)
 		name = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
 		if name in self.instances.keys():
 			self.instances[name].add(newt)
 		else:
-			self.instances[name] = pygame.sprite.Group()
+			self.instances[name] = pygame.sprite.LayeredUpdates()
 			self.instances[name].add(newt)
 
-	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int , keepprev = False,stagename = None):
+	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int , keepprev = False,stagename = None,layer = 0):
 		"""adds an object to the manager  , gives an id of type str"""
 		if stagename == None:
 			stagename = sprites
@@ -494,12 +490,14 @@ class object_manager:
 			pos[0] += univars.offsets[sprites][0]
 			pos[1] -= univars.offsets[sprites][1]
 		pos = tuple(pos)
+
+		if layer == "all":
+			layer = 0
 		
 		if not keepprev:
-			self.remove(pos)
+			self.remove(pos,layer=layer)
 
 		if not sprites in univars.instables:
-			layer = 0
 
 
 			
@@ -517,11 +515,11 @@ class object_manager:
 			add = {"pos":list(pos),"name":sprites,"type":sprites,"rot":rot,"sn":0,"gothru":0,"rendercond":1,"alpha":1000,"layer":layer,"animname":"none","size":size,"sizen":sizen}
 			self.objects.update({str(self.tracker):add})
 			finalobj = inst.obj(str(self.tracker),add,spritelist)
-			if not layer in self.layers.keys():
-				self.layers[layer] = pygame.sprite.Group()
-			self.layers[layer].add(finalobj)
+			self.objgroup.add(finalobj,layer = layer)
 		else:
-			self.addinst(pos,sprites,dim,rot,type,sizen,stagename)
+			self.addinst(pos,sprites,dim,rot,type,sizen,stagename,layer)
+
+
 
 	def datatoobj(self,id,data):
 		add = data
@@ -535,9 +533,7 @@ class object_manager:
 			spritelist = univars.func.getspritesscale(name,add["size"])
 			self.spritecache[str([name,sizen])] = spritelist
 		finalobj = inst.obj(id,add,spritelist)
-		if not data["layer"] in self.layers.keys():
-			self.layers[data["layer"]] = pygame.sprite.Group()
-		self.layers[data["layer"]].add(finalobj)
+		self.objgroup.add(finalobj,add["layer"])
 
 	def datatoinst(self,chunk,data):
 		sizen = data.get("sizen",[1,1])
@@ -548,12 +544,12 @@ class object_manager:
 			temp = univars.func.getsprites(name)[0]
 			spritelist = univars.func.getspritesscale(name,[temp.get_width(),temp.get_height()])
 			self.spritecache[str([name,sizen])] = spritelist
-		newt = inst.inst(data["stagename"],self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],univars.lumptype.get(data["stagename"],data["type"]),data["alpha"],spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]])
+		newt = inst.inst(data["stagename"],self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],univars.lumptype.get(data["stagename"],data["type"]),data["alpha"],spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]],data["layer"])
 		name = (int(round(data["pos"][0]/(univars.grandim * self.renderdist))),int(round(data["pos"][1]/(univars.grandim * self.renderdist))))
 		if name in list(self.instances.keys()):
 			self.instances[name].add(newt)
 		else:
-			self.instances[name] = pygame.sprite.Group()
+			self.instances[name] = pygame.sprite.LayeredUpdates()
 			self.instances[name].add(newt)
 
 	def adds(self,name,pos,sprites,type,rot,sizen,alpha,layer):
@@ -570,10 +566,7 @@ class object_manager:
 			self.removeid(name)
 		self.objects.update({str(name):add})
 		finalobj = inst.obj(str(name),add,spritelist)
-		if not layer in self.layers.keys():
-			self.layers[layer] = pygame.sprite.LayeredUpdates()
-
-		self.layers[layer].add(finalobj,layer=0)
+		self.objgroup.add(finalobj,layer=layer)
 
 	def tile(self):
 		speed = self.speed
@@ -603,9 +596,8 @@ class object_manager:
 				self.instances[i].draw(univars.screen)
 
 		#rendering the non-instanciates
-		for groupid in sorted(self.layers.keys()):
-			self.layers[groupid].update(camera,self,dim,showall,GameManager.fm.frame)
-			self.layers[groupid].draw(univars.screen)
+		self.objgroup.update(camera,self,dim,showall,GameManager.fm.frame)
+		self.objgroup.draw(univars.screen)
 
 
 
