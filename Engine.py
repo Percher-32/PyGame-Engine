@@ -724,6 +724,7 @@ class Game(Gamemananager.GameManager):
 			# else:
 			# 	self.sp("act_vel",[   self.gp("prev_act_vel")[0] * 1  ,  self.gp("prev_act_vel")[1] * -1 ])
 			# 	self.sp("des_vel",[   self.gp("prev_des_vel")[0] * 1  ,  self.gp("prev_des_vel")[1] * -1 ])
+			
 			# self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
 			# om.translate(self,"player",self.gp("act_vel"),usedt=1)
 				

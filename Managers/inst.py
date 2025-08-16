@@ -22,16 +22,17 @@ class inst(pygame.sprite.Sprite):
 	__slots__ = ["screen","grandim","name","x","y","rot","sizen","type","alpha"]
 
 
-	def __init__(self,stagename,grandim,name,x,y,rot,sizen,type,alpha,sprites,size,layer,usecoll):
+	def __init__(self,stagename,grandim,name,x,y,rot,sizen,type,alpha,sprites,size,layer,usecoll,sn):
 		pygame.sprite.Sprite.__init__(self)
 		
 		camera = Cameramod.cam
 		self.usecoll = usecoll
 		self.stagename = str(stagename)
+		self.sn = sn
 		self.sizen = list(sizen)
 		self.name = str(name)
 		self.type = type
-		self.bart = sprites[0]
+		self.bart = sprites[sn]
 		self.newbie = True
 		self.image =  nullsurf
 		self.rot = int(rot)
@@ -41,32 +42,18 @@ class inst(pygame.sprite.Sprite):
 		self.alpha = alpha
 		self.layer = layer
 
-	# def inchunk(self,cam,object,dim):
-	# 	dist = 1/cam.size * 9
-	# 	if cam.x - (dim * dist) - (self.size[0] * dim) <= object[0] <= cam.x + (dim * dist) + (self.size[0] * dim):
-	# 		x = True
-	# 	else:
-	# 		x = False
-	# 	if cam.y - (dim * dist) - (self.size[1] * dim) <= object[1] <= cam.y + (dim * dist) + (self.size[1] * dim):
-	# 		y = True
-	# 	else:
-	# 		y = False
-	# 	if x and y:
-	# 		return True
-	# 	else:
-	# 		return False
 
 	def update(self,showall):
 		camera = Cameramod.cam
 		if univars.camchange or univars.poschange or self.newbie:
 			self.newbie = False
 			realestsize = [math.ceil((self.size[0] * abs(camera.size))/2)*2,math.ceil((self.size[1] * abs(camera.size))/2)*2]
-			if not str([self.name,realestsize]) in spritecache.keys():
+			if not str([self.name,realestsize,self.sn]) in spritecache.keys():
 				self.image =  pygame.transform.scale(self.bart,  realestsize )
-				spritecache[str([self.name,realestsize])] = self.image
-				dataspritecache.append([self.name,realestsize])
+				spritecache[str([self.name,realestsize,self.sn])] = self.image
+				dataspritecache.append([self.name,realestsize,self.sn])
 			else:
-				self.image = spritecache[str([self.name,realestsize])]
+				self.image = spritecache[str([self.name,realestsize,self.sn])]
 			self.image = pygame.transform.rotate(self.image,self.rot)
 
 
@@ -87,11 +74,18 @@ class inst(pygame.sprite.Sprite):
 										)
 		
 
+	def resprite(self,sn):
+		"""
+			set the sprite of an inst
+		"""
+		self.sn = sn
+		self.newbie = True
+		
+
 	
 
 
 objcache = {}
-
 
 class obj(pygame.sprite.Sprite):
 	def __init__(self,name:str,info:dict,sprites):

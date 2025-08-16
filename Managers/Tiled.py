@@ -9,12 +9,21 @@ import Managers.Uimanager as Uimanager
 import Managers.Cammanager as Cammanager
 import Managers.objectmanager as objectmanager
 import Managers.Particlesytem as particlesystem
+import os
 um = Uimanager.ingame
 cam = Cameramod.cam
 cam = Cammanager.camager.cameras["def"]
 bg = backgroundmanager.bg
 object_manager = objectmanager.om
 pm = particlesystem.pm
+
+spritesnlen = {}
+
+for spritefolder in os.listdir("Graphics/sprites"):
+	folder_dir = f"Graphics/sprites/{spritefolder}"
+	spritesnlen[spritefolder] = len(os.listdir(folder_dir))
+
+print(spritesnlen)
 
 class TiledSoftwre:
 	def __init__(self,realscreen,theme,grandim,screen,om):
@@ -51,6 +60,7 @@ class TiledSoftwre:
 		self.loadedparticle = "None"
 		self.actuallyload = True
 		self.keydelay = 0
+		self.sn = 0
 		self.newparticle = None
 		self.cht = univars.startstate
 		self.loadingmap = False
@@ -174,7 +184,7 @@ class TiledSoftwre:
 
 					
 					#to move spite on the rotar
-					self.sprite -= GameManager.event_manager.scroll
+					self.sprite += GameManager.event_manager.scroll
 
 					#make sure it loops the sprite rotar
 					if self.sprite > (len(self.spritelooks) - 1):
@@ -183,6 +193,22 @@ class TiledSoftwre:
 						self.sprite = (len(self.spritenames) - 1)
 
 
+					if self.placable <= 0 and GameManager.event_manager.key[pygame.K_4]:
+						self.placable = 5
+						self.sn -= 1
+
+					if self.placable <= 0 and GameManager.event_manager.key[pygame.K_5]:
+						self.placable = 5
+						self.sn += 1
+
+
+					if self.sn >= spritesnlen[self.spritelooks[self.sprite]] -1:
+						self.sn = spritesnlen[self.spritelooks[self.sprite]] -1
+
+					if self.sn < 0:
+						self.sn = 0
+
+						
 					#some math
 					upscale = self.realscreeen.get_width() / self.screen.get_width()
 					upscaley = self.realscreeen.get_height() / self.screen.get_height()
@@ -191,7 +217,7 @@ class TiledSoftwre:
 					a1 = (((   (GameManager.event_manager.mousepos[0])/upscale  - self.screen.get_width()//2) / camera.size) + camera.x)
 					a2 = (((   (GameManager.event_manager.mousepos[1] + translation)/upscale  - self.screen.get_height()//2) / camera.size) + camera.y)
 					mousepos = (a1,a2)
-					thingtogo = self.func.getsprites(self.spritelooks[self.sprite])[0]
+					thingtogo = self.func.getsprites(self.spritelooks[self.sprite])[self.sn]
 					thingtogo = pygame.transform.scale_by(thingtogo,self.allsize[self.sprite])
 					thingtogo.set_alpha(100)
 					GameManager.blitsurf(thingtogo,((round(a1/dim) * dim),(round(a2/dim) * dim)),self.rot,camera)
@@ -235,7 +261,7 @@ class TiledSoftwre:
 									
 								for y in range(self.pos1[1],self.pos2[1],yinc):
 									for x in range(self.pos1[0],self.pos2[0],xinc):
-										self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer,colforinst=self.coll)
+										self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer,colforinst=self.coll,sn = self.sn)
 							if GameManager.event_manager.key[pygame.K_v]:
 								self.pos2 = list(gridpos)
 								self.grip = 0
@@ -280,7 +306,7 @@ class TiledSoftwre:
 									x = self.pos1[0] - univars.grandim
 								for y in range(self.pos1[1],self.pos2[1],yinc):
 									x += xinc
-									self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer,colforinst=self.coll)
+									self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer,colforinst=self.coll,sn = self.sn)
 							if GameManager.event_manager.key[pygame.K_g]:
 								self.pos2 = list(gridpos)
 								self.grip = 0
@@ -321,7 +347,7 @@ class TiledSoftwre:
 
 					#to place
 					if GameManager.event_manager.mouse[0]:
-						object_manager.add(gridpos,self.spritelooks[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],stagename=self.spritenames[self.sprite],layer = self.layer,colforinst=self.coll)
+						object_manager.add(gridpos,self.spritelooks[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],stagename=self.spritenames[self.sprite],layer = self.layer,colforinst=self.coll,sn = self.sn)
 
 					#to remove
 					if GameManager.event_manager.mouse[2]:
@@ -338,6 +364,7 @@ class TiledSoftwre:
 					if self.placable <= 0 and GameManager.event_manager.key[pygame.K_3]:
 						self.placable = 5
 						self.coll = not self.coll
+
 
 
 					#to check an inst or non-inst's info
@@ -1077,7 +1104,7 @@ class TiledSoftwre:
 
 				#the ui for object placement
 				if debug:
-					GameManager.uibox((360,370),(0.8,0.65 -0.083),        univars.theme["dark"],200)
+					GameManager.uibox((360,420),(0.8,0.65 -0.087),        univars.theme["dark"],200)
 					GameManager.uibox((64 + 10,64 + 10),(0.8,0.8 ),univars.theme["semibright"],400)
 					GameManager.uibox((64 + 10,64 + 10),(0.92,0.8),univars.theme["semibright"],50)
 					GameManager.uibox((64 + 10,64 + 10),(0.68,0.8),univars.theme["semibright"],50)
@@ -1088,6 +1115,7 @@ class TiledSoftwre:
 					self.tm.drawtext(f"Object-type : {self.typelist[self.sprite]}",          "pixel2.ttf",35,0,0,0,univars.theme["semibright"],0.8,0.52)
 					self.tm.drawtext(f"layer:{self.layer}",          "pixel2.ttf",35,0,0,0,univars.theme["semibright"],0.8,0.44)
 					self.tm.drawtext(f"Collision:{self.coll}",          "pixel2.ttf",35,0,0,0,univars.theme["semibright"],0.8,0.37)
+					self.tm.drawtext(f"sn:{self.sn}",          "pixel2.ttf",35,0,0,0,univars.theme["semibright"],0.8,0.30)
 
 
 				

@@ -562,7 +562,7 @@ class object_manager:
 				self.objfromid(id).flip()
 				self.set_value(id,"#flipped",dir)
 
-	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen,stagename ,layer,usecoll,keepprev = False):
+	def addinst(self,pos:tuple,name:str,dim:int,rot:int,type:str,sizen,stagename ,layer,usecoll,sn,keepprev = False):
 		if not type in self.renderinst:
 			if not type in self.aplhainst.keys():
 				alp = 400
@@ -577,7 +577,7 @@ class object_manager:
 			spritelist = univars.func.getspritesscale(name,[temp.get_width(),temp.get_height()])
 			self.spritecache[str([name,sizen])] = spritelist
 
-		newt = inst.inst(stagename,self.grandim,name,pos[0],pos[1],rot,sizen,univars.lumptype.get(stagename,type),alp,spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]],layer,usecoll)
+		newt = inst.inst(stagename,self.grandim,name,pos[0],pos[1],rot,sizen,univars.lumptype.get(stagename,type),alp,spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]],layer,usecoll,sn)
 		name = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
 		if usecoll:
 			if name in self.instances.keys():
@@ -592,7 +592,7 @@ class object_manager:
 				self.noncolinstances[name] = pygame.sprite.LayeredUpdates()
 				self.noncolinstances[name].add(newt)
 
-	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int , keepprev = False,stagename = None,layer = 0,colforinst=True):
+	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int , keepprev = False,stagename = None,layer = 0,colforinst=True,sn = 0):
 		"""adds an object to the manager  , gives an id of type str"""
 		if stagename == None:
 			stagename = sprites
@@ -623,13 +623,12 @@ class object_manager:
 				size = [dummy.get_width() * sizen[0],dummy.get_height() * sizen[1]]
 				spritelist = univars.func.getspritesscale(sprites,size)
 				self.spritecache[str([sprites,sizen])] = spritelist
-			add = {"pos":list(pos),"name":sprites,"type":sprites,"rot":rot,"sn":0,"gothru":0,"rendercond":1,"alpha":1000,"layer":layer,"animname":"none","size":size,"sizen":sizen}
+			add = {"pos":list(pos),"name":sprites,"type":sprites,"rot":rot,"sn":sn,"gothru":0,"rendercond":1,"alpha":1000,"layer":layer,"animname":"none","size":size,"sizen":sizen}
 			self.objects.update({str(self.tracker):add})
 			finalobj = inst.obj(str(self.tracker),add,spritelist)
 			self.objgroup.add(finalobj,layer = layer)
 		else:
-			self.addinst(pos,sprites,dim,rot,type,sizen,stagename,layer,colforinst,keepprev=keepprev)
-
+			self.addinst(pos,sprites,dim,rot,type,sizen,stagename,layer,colforinst,sn,keepprev=keepprev)
 
 
 	def datatoobj(self,id,data):
