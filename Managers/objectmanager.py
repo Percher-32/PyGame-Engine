@@ -434,6 +434,55 @@ class object_manager:
 		
 		return {"obj":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
 
+	def unopcollidep(self,pos,show,dim,pointsize=5,basecolor = (255,0,0),instcol = (0,225,0),noninstcol=(0,225,150),ignore_id = None,camera = Cameramod.cam,ignore = []) -> dict: 
+		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
+		#coll for non-inst
+		dim = univars.grandim
+		r1 = pygame.Rect(pos[0],pos[1],10,10)
+		colsprite =  collinst(r1.x,r1.y,math.ceil(r1.width),math.ceil(r1.height))
+		noninst = pygame.sprite.spritecollide(colsprite,self.objgroup,dokill=False)
+		for obj in noninst:
+			if obj.name in ignore or obj.name == ignore_id:
+				noninst.remove(obj)
+
+		#coll for inst
+		camchunk = [int(round(camera.x/(dim * self.renderdist))),int(round(camera.y/(dim * self.renderdist)))]
+		ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
+		inst = []
+		for offset in ranges:
+			a = []
+			campos = (offset[0] + camchunk[0],offset[1] + camchunk[1])
+			if campos in self.instances.keys():
+				# a = [ i for i in self.instances[campos] if r1.colliderect(i.fakerect)]
+				a = pygame.sprite.spritecollide(colsprite,self.instances[campos],dokill=False)
+			inst += a
+
+		for offset in ranges:
+			a = []
+			campos = (offset[0] + camchunk[0],offset[1] + camchunk[1])
+			if campos in self.noncolinstances.keys():
+				# a = [ i for i in self.instances[campos] if r1.colliderect(i.fakerect)]
+				a = pygame.sprite.spritecollide(colsprite,self.noncolinstances[campos],dokill=False)
+			inst += a
+
+		#render the collpoint
+		if show:
+			num = max(0.6,1/camera.size)
+			if len(inst) > 0:
+				col = instcol
+			elif len(noninst) > 0:
+				col = noninstcol
+			else:
+				col = basecolor
+			self.func.ssblitrect(pygame.Rect(pos[0],pos[1],num * pointsize,num * pointsize),col,camera,0,univars.fakescreen)
+			# self.func.ssblitrect(r1,col,camera,5)
+
+
+		
+		return {"obj":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
+
+
+
 	def collide9(self,id,show,camera,dim,pointsize = 5,offsets = { "topleft":[0,0],"topmid":[0,0],"topright":[0,0],"midleft":[0,0],"midmid":[0,0],"midright":[0,0],"botleft":[0,0],"botmid":[0,0],"botright":[0,0]},ignore = []) -> dict:
 		""" points :\n
 				[topleft , topmid , topright  , midleft  , midmid  ,  midright  ,  botleft  , botmid  , botleft] .\n
@@ -462,7 +511,7 @@ class object_manager:
 
 	def remove(self,pos,layer = 0):
 		# postodel = self.func.get(dict(zip(self.objects.keys(),(self.objects[i]["pos"] for i in self.objects.keys()))),[pos[0],pos[1]])
-		poscol = self.collidep(pos,0,univars.grandim)
+		poscol = self.unopcollidep(pos,0,univars.grandim)
 		postodel = [i.name for i in poscol["obj"]]
 		instpostodel = poscol["inst"]
 
@@ -473,6 +522,13 @@ class object_manager:
 					if obj.layer == layer or layer == "all":
 						self.objgroup.remove(obj)
 						self.objects.pop(postodel[0])
+
+		#deleting instances
+		for a in self.noncolinstances.keys():
+			for inst in self.noncolinstances[a]:
+				if inst in instpostodel:
+					if inst.layer == layer or layer == "all":
+						self.noncolinstances[a].remove(inst)
 
 		#deleting instances
 		for a in self.instances.keys():
@@ -530,7 +586,7 @@ class object_manager:
 				self.instances[name] = pygame.sprite.LayeredUpdates()
 				self.instances[name].add(newt)
 		else:
-			if name in self.instances.keys():
+			if name in self.noncolinstances.keys():
 				self.noncolinstances[name].add(newt)
 			else:
 				self.noncolinstances[name] = pygame.sprite.LayeredUpdates()
@@ -660,7 +716,7 @@ class object_manager:
 			
 		#renders the non colliding instanciates
 		if len(noncollof) > 0:
-			for i in lof:
+			for i in noncollof:
 				self.noncolinstances[i].update(showall)
 				self.noncolinstances[i].draw(univars.screen)
 

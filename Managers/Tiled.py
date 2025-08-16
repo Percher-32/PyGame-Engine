@@ -235,7 +235,7 @@ class TiledSoftwre:
 									
 								for y in range(self.pos1[1],self.pos2[1],yinc):
 									for x in range(self.pos1[0],self.pos2[0],xinc):
-										self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer)
+										self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer,colforinst=self.coll)
 							if GameManager.event_manager.key[pygame.K_v]:
 								self.pos2 = list(gridpos)
 								self.grip = 0
@@ -280,7 +280,7 @@ class TiledSoftwre:
 									x = self.pos1[0] - univars.grandim
 								for y in range(self.pos1[1],self.pos2[1],yinc):
 									x += xinc
-									self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer)
+									self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer,colforinst=self.coll)
 							if GameManager.event_manager.key[pygame.K_g]:
 								self.pos2 = list(gridpos)
 								self.grip = 0
@@ -321,22 +321,28 @@ class TiledSoftwre:
 
 					#to place
 					if GameManager.event_manager.mouse[0]:
-						object_manager.add(gridpos,self.spritelooks[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],stagename=self.spritenames[self.sprite],layer = self.layer)
+						object_manager.add(gridpos,self.spritelooks[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],stagename=self.spritenames[self.sprite],layer = self.layer,colforinst=self.coll)
 
 					#to remove
 					if GameManager.event_manager.mouse[2]:
 						object_manager.remove(gridpos,layer=self.layer)
 					
 					if self.placable <= 0 and type(self.layer) == int:
-						self.placable = 5
 						if GameManager.event_manager.key[pygame.K_1]:
+							self.placable = 5
 							self.layer -= 1
 						if GameManager.event_manager.key[pygame.K_2]:
+							self.placable = 5
 							self.layer += 1
+
+					if self.placable <= 0 and GameManager.event_manager.key[pygame.K_3]:
+						self.placable = 5
+						self.coll = not self.coll
+
 
 					#to check an inst or non-inst's info
 					if GameManager.event_manager.key[pygame.K_r]:
-						mousecol = object_manager.collidep(gridpos,0,camera,dim)
+						mousecol = object_manager.unopcollidep(gridpos,0,camera,dim)
 						if len(mousecol["obj"]) > 0:
 							a = mousecol["obj"][0].info
 							a1 = mousecol['obj'][0].name
@@ -380,7 +386,6 @@ class TiledSoftwre:
 							# 	self.mode = "alterinst"
 
 
-
 					#to load levels
 					if GameManager.event_manager.key[pygame.K_l]:
 						if GameManager.event_manager.key[pygame.K_LCTRL]:
@@ -404,7 +409,6 @@ class TiledSoftwre:
 
 
 					#to hide/show ui
-
 
 					#to open command-line
 					if GameManager.event_manager.key[pygame.K_b]:
@@ -1073,17 +1077,17 @@ class TiledSoftwre:
 
 				#the ui for object placement
 				if debug:
-					GameManager.uibox((360,400),(0.8,0.65 -0.085),        univars.theme["dark"],200)
+					GameManager.uibox((360,370),(0.8,0.65 -0.083),        univars.theme["dark"],200)
 					GameManager.uibox((64 + 10,64 + 10),(0.8,0.8 ),univars.theme["semibright"],400)
 					GameManager.uibox((64 + 10,64 + 10),(0.92,0.8),univars.theme["semibright"],50)
 					GameManager.uibox((64 + 10,64 + 10),(0.68,0.8),univars.theme["semibright"],50)
 					GameManager.blituis(self.func.getsprites(self.spritelooks[self.sprite])[0],(0.8,0.8),(64,64),self.rot,1000)
 					GameManager.blituis(self.func.getsprites(fulllist[self.sprite + 1])[0],(0.92,0.8),(64,64),self.rot,100)
 					GameManager.blituis(self.func.getsprites(self.spritelooks[self.sprite - 1])[0],(0.68,0.8),(64,64),self.rot,100)
-					self.tm.drawtext(f"Object-name : {self.spritenames[self.sprite]}",       "pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.8,0.6)
-					self.tm.drawtext(f"Object-type : {self.typelist[self.sprite]}",          "pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.8,0.5)
-					self.tm.drawtext(f"layer:{self.layer}",          "pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.8,0.4)
-					self.tm.drawtext(f"Collision:{self.coll}",          "pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.8,0.3)
+					self.tm.drawtext(f"Object-name : {self.spritenames[self.sprite]}",       "pixel2.ttf",35,0,0,0,univars.theme["semibright"],0.8,0.6)
+					self.tm.drawtext(f"Object-type : {self.typelist[self.sprite]}",          "pixel2.ttf",35,0,0,0,univars.theme["semibright"],0.8,0.52)
+					self.tm.drawtext(f"layer:{self.layer}",          "pixel2.ttf",35,0,0,0,univars.theme["semibright"],0.8,0.44)
+					self.tm.drawtext(f"Collision:{self.coll}",          "pixel2.ttf",35,0,0,0,univars.theme["semibright"],0.8,0.37)
 
 
 				
