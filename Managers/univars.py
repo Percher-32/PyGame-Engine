@@ -101,9 +101,9 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 map = "null"
 
-startstate = "edit"
+startstate = "editgame"
 
-startshaderstate = 0
+startshaderstate = 1
 
 
 #opt to optimise

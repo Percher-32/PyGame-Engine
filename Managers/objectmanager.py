@@ -6,10 +6,27 @@ import Managers.Textmanager as Textmanager
 import itertools
 import Managers.inst as inst
 import time
+import Managers.Cameramod as Cameramod
 import Managers.univars as univars
 import os
 import math
 # from render import render
+
+class collinst(pygame.sprite.Sprite):
+	def __init__(self,x,y,w,h):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = pygame.Surface((100,100))
+		self.pos = (x,y)
+		self.size = (w,h)
+		self.rect = pygame.Rect((x,y,w,h))
+		self.fakerect = self.rect
+		
+		self.rect = pygame.Rect( (self.fakerect.x - Cameramod.cam.x) * Cameramod.cam.size + univars.screen.get_width()//2
+						  		,(self.fakerect.y - Cameramod.cam.y) * Cameramod.cam.size + univars.screen.get_height()//2 
+								, self.fakerect.width * abs(Cameramod.cam.size)
+								, self.fakerect.height * abs(Cameramod.cam.size))
+        # rect  = pygame.Rect(0,0,1000,1000)
+
 
 
 
@@ -301,10 +318,14 @@ class object_manager:
 			r1 = self.objfromid(id).fakerect
 			r1.width = r1.width + extra
 			r1.height = r1.height + extra
+			colsprite =  collinst(r1.x,r1.y,r1.width,r1.height)
+
 			typel = self.getcull(self.objects[id]["pos"],extra + 1,dim)
 			typel.remove(id)
-			noninst = []
-			[noninst.append(self.objfromid(i)) for i in typel if r1.colliderect(self.objfromid(i).fakerect) ]
+
+
+
+			noninst = pygame.sprite.spritecollide(colsprite,self.objgroup,dokill=False)
 
 			#coll for inst
 			camchunk = [int(round(camera.x/(dim * self.renderdist))),int(round(camera.y/(dim * self.renderdist)))]
@@ -315,16 +336,20 @@ class object_manager:
 				a = []
 				campos = (offset[0] + camchunk[0],offset[1] + camchunk[1])
 				if campos in self.instances.keys():
-					a = [ i for i in self.instances[campos] if r1.colliderect(i.fakerect)]
+					# a = [ i for i in self.instances[campos] if r1.colliderect(i.fakerect)]
+					a = pygame.sprite.spritecollide(colsprite,self.instances[campos],dokill=False)
 				inst += a
 
 			#render the collbox
 			if show:
-				if len(inst or noninst) > 0:
+				if len(noninst) > 0:
+					col = (0,0,255)
+				if len(inst) > 0:
 					col = (0,225,0)
 				else:
 					col = (225,0,0)
-				self.func.ssblitrect(r1,col,camera,5,univars.fakescreen)
+				# self.func.ssblitrect(r1,col,camera,5,univars.fakescreen)
+				self.func.ssblitrect(colsprite.fakerect,col,camera,5,univars.fakescreen)
 
 
 			return {"noninst":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}

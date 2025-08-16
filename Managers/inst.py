@@ -88,6 +88,7 @@ class inst(pygame.sprite.Sprite):
 										)
 		
 
+	
 
 
 objcache = {}

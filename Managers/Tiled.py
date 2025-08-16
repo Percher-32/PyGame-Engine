@@ -173,7 +173,7 @@ class TiledSoftwre:
 
 					
 					#to move spite on the rotar
-					self.sprite += GameManager.event_manager.scroll
+					self.sprite -= GameManager.event_manager.scroll
 
 					#make sure it loops the sprite rotar
 					if self.sprite > (len(self.spritelooks) - 1):
