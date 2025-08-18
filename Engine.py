@@ -405,9 +405,6 @@ class Game(Gamemananager.GameManager):
 							self.sp("mode","grounded")
 							self.sp("jumpable",True)
 							self.sp("onboard",True)
-							self.sp("des_vel",[  self.gp("des_vel")[0]    ,    0   ])
-							self.sp("act_vel",[  self.gp("act_vel")[0]    ,    0   ])
-							om.objects["player"]["pos"][1] = instlist[0].realpos[1] - 32
 						else:
 							if self.key["jump"]:
 								self.sp("onboard",True)
@@ -434,7 +431,7 @@ class Game(Gamemananager.GameManager):
 							
 							if self.gp("jumpable"):
 								#normal
-								
+								self.lastframejumped = 1
 								self.sp("jumpable",False)
 								self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
 								self.sp("mode","in-air")
@@ -462,6 +459,7 @@ class Game(Gamemananager.GameManager):
 									self.sp("mode","in-air")
 
 						else:
+							self.lastframejumped = 0
 							self.sp("fss",8)
 
 							if self.gp("leftwall") or self.gp("rightwall"):
@@ -481,7 +479,17 @@ class Game(Gamemananager.GameManager):
 							# 		self.sp("desrot",self.gp("desrot") - self.gp("act_vel")[1]/20 )
 
 
-						
+						if ground:
+							if not self.lastframejumped:
+								self.sp("desrot",0)
+								self.sp("mode","grounded")
+								self.sp("jumpable",True)
+								self.sp("onboard",True)
+								self.sp("des_vel",[  self.gp("des_vel")[0]    ,    0   ])
+								self.sp("act_vel",[  self.gp("act_vel")[0]    ,    0   ])
+								om.objects["player"]["pos"][1] = instlist[0].realpos[1] - 32
+							else:
+								self.lastframejumped = 0
 
 
 					
