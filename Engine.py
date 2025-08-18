@@ -27,7 +27,7 @@ class Game(Gamemananager.GameManager):
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
 		self.ingametime = 0
-		self.publicvariables["showater"] = 0
+		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = 0.9
 		self.actualwaterheight = 0
 
