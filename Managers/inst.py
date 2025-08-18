@@ -12,7 +12,7 @@ with open("Saved/Spritecache.json") as file:
 	fakespritecache = json.load(file)
 dataspritecache = fakespritecache
 for i in fakespritecache:
-	spritecache[str(i)] = pygame.transform.scale(univars.func.getsprites(i[0])[0],i[1])
+	spritecache[str(i)] = pygame.transform.scale(univars.func.getsprites(i[0])[i[2]],i[1])
 
 nullsurf = pygame.Surface((0,0))
 

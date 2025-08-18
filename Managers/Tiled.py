@@ -240,10 +240,16 @@ class TiledSoftwre:
 					if self.gridable < 1:
 						if self.grip == 1:
 							if GameManager.event_manager.key[pygame.K_x]:
+								cont = GameManager.event_manager.key[pygame.K_LCTRL]
+								savedrot = self.rot
+								savedsn = self.sn
+								savedcol  = self.coll
 								self.pos2 = list(gridpos)
 								self.grip = 0
 								self.gridable = 10
+								#if endpos is greater than start  (x)
 								xpos = (self.pos2[0] - self.pos1[0]) > 0
+								#if endpos is greater than start  (y)
 								ypos = (self.pos2[1] - self.pos1[1]) > 0
 								yinc = univars.grandim
 								xinc = univars.grandim
@@ -260,7 +266,50 @@ class TiledSoftwre:
 									
 								for y in range(self.pos1[1],self.pos2[1],yinc):
 									for x in range(self.pos1[0],self.pos2[0],xinc):
+										if cont:
+											xedge = x == self.pos2[0] - xinc 
+											yedge = y == self.pos2[1] - yinc
+											startxedge = x == self.pos1[0] 
+											startyedge = y == self.pos1[1] 
+											top = startyedge and yinc or yedge and not yinc
+											bot = yedge and yinc or startyedge and not yinc
+											left = startxedge and xinc or xedge and not xinc
+											right = xedge and yinc or startxedge and not xinc
+											if not xedge and not yedge and not startxedge and not startyedge:
+												self.coll = False
+												self.sn = 1
+											else:
+												self.coll = True
+												self.sn = 0
+
+											if top:
+												self.rot = 0
+											elif bot:
+												self.rot = 180
+											elif left:
+												self.rot = 90
+											elif right:
+												self.rot = 270
+												
+											
+										
+											# # if ypos:
+											# if yedge:
+											# else:
+											# else:
+											# 	if startyedge:
+											# 		self.sn = 0
+											# 	else:
+											# 		self.sn = 1
+
+
+
 										self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer,colforinst=self.coll,sn = self.sn)
+
+								self.coll = savedcol
+								self.sn = savedsn
+								self.rot = savedrot
+
 							if GameManager.event_manager.key[pygame.K_v]:
 								self.pos2 = list(gridpos)
 								self.grip = 0
