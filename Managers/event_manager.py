@@ -20,6 +20,7 @@ class event_manager:
 		self.Mouser = False
 		self.running = True
 		self.scroll = 0
+		self.releasekey = False
 		self.open = True
 		self.keyb = False
 		self.keyr = False
@@ -94,6 +95,7 @@ class event_manager:
 		self.Mouseb = False
 		self.Mouser = False
 		self.scroll = 0
+		self.releasekey = False
 		self.keyb = False
 		self.keyr = False
 		self.keydown = False
@@ -116,9 +118,14 @@ class event_manager:
 
 			if event.type == pygame.KEYDOWN:
 				self.code = event.unicode
+				self.releasekey = 0
 
 			if event.type == pygame.JOYAXISMOTION:
 				self.analog_keys[event.axis] = event.value 
+
+
+			if event.type == pygame.KEYUP:
+				self.releasekey = 1
 
 
 

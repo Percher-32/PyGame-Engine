@@ -182,8 +182,21 @@ class TiledSoftwre:
 
 
 					
+					# if GameManager.event_manager.releasekey:
+					# 	self.placable = -1
 					#to move spite on the rotar
 					self.sprite += GameManager.event_manager.scroll
+					if self.placable <= 0:
+						if GameManager.event_manager.key[pygame.K_6]:
+							self.placable = 6
+							self.sprite -= 1
+						if GameManager.event_manager.key[pygame.K_7]:						
+							self.placable = 6
+							self.sprite += 1
+
+
+
+					
 
 					#make sure it loops the sprite rotar
 					if self.sprite > (len(self.spritelooks) - 1):
@@ -316,6 +329,14 @@ class TiledSoftwre:
 											if bevel:
 												self.sn = 3
 												self.coll = 1
+												if left:
+													self.rot = 0
+												elif right:
+													self.rot = -180
+												elif top:
+													self.rot = 90
+												elif top:
+													self.rot = 270
 											elif corner:
 												if cor1:
 													self.rot = 0
@@ -356,7 +377,6 @@ class TiledSoftwre:
 								self.coll = savedcol
 								self.sn = savedsn
 								self.rot = savedrot
-
 							if GameManager.event_manager.key[pygame.K_v]:
 								self.pos2 = list(gridpos)
 								self.grip = 0
@@ -434,6 +454,10 @@ class TiledSoftwre:
 						if GameManager.event_manager.key[pygame.K_c]:
 							self.rot -= 45
 							self.rotable = 10
+						if self.rot == 360:
+							self.rot = 0
+						if self.rot == -90:
+							self.rot = 270
 
 
 
@@ -1203,7 +1227,7 @@ class TiledSoftwre:
 					GameManager.uibox((64 + 10,64 + 10),(0.8,0.8 ),univars.theme["semibright"],400)
 					GameManager.uibox((64 + 10,64 + 10),(0.92,0.8),univars.theme["semibright"],50)
 					GameManager.uibox((64 + 10,64 + 10),(0.68,0.8),univars.theme["semibright"],50)
-					GameManager.blituis(self.func.getsprites(self.spritelooks[self.sprite])[0],(0.8,0.8),(64,64),self.rot,1000)
+					GameManager.blituis(self.func.getsprites(self.spritelooks[self.sprite])[self.sn],(0.8,0.8),(64,64),self.rot,1000)
 					GameManager.blituis(self.func.getsprites(fulllist[self.sprite + 1])[0],(0.92,0.8),(64,64),self.rot,100)
 					GameManager.blituis(self.func.getsprites(self.spritelooks[self.sprite - 1])[0],(0.68,0.8),(64,64),self.rot,100)
 					self.tm.drawtext(f"Object-name : {self.spritenames[self.sprite]}",       "pixel2.ttf",35,0,0,0,univars.theme["semibright"],0.8,0.6)

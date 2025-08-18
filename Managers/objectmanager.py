@@ -197,7 +197,10 @@ class object_manager:
 		insts = []
 		for chunk in self.instances.keys():
 			for inst in self.instances[chunk]:
-				insts.append([{"pos":inst.realpos,"name":inst.name,"rot":inst.rot,"type":inst.type,"sizen":inst.sizen,"alpha":inst.alpha,"stagename":str(inst.stagename)},chunk])
+				insts.append([{"pos":inst.realpos,"name":inst.name,"rot":inst.rot,"type":inst.type,"sizen":inst.sizen,"alpha":inst.alpha,"stagename":str(inst.stagename),"usecoll":inst.usecoll,"layer":inst.layer,"sn":inst.sn},chunk])
+		for chunk in self.noncolinstances.keys():
+			for inst in self.noncolinstances[chunk]:
+				insts.append([{"pos":inst.realpos,"name":inst.name,"rot":inst.rot,"type":inst.type,"sizen":inst.sizen,"alpha":inst.alpha,"stagename":str(inst.stagename),"usecoll":inst.usecoll,"layer":inst.layer,"sn":inst.sn},chunk])
 		return [insts,self.tracker]
 
 	def decodeinst(self):
@@ -213,57 +216,46 @@ class object_manager:
 			for obj in allobj.keys():
 				self.datatoobj(obj,allobj[obj])
 
-	def tilemap(self,i,gm,a,uld,urd,ldr,ulr,lr,ud,n,dt,dl,ur,ul,dr,rt,lt,ut):
-		if self.tileup:
-			posl = [self.objects[i][0][0] - gm.dim,self.objects[i][0][1]]
-			posr = [self.objects[i][0][0] + gm.dim,self.objects[i][0][1]]
-			posu = [self.objects[i][0][0],self.objects[i][0][1] - gm.dim]
-			posd = [self.objects[i][0][0],self.objects[i][0][1] + gm.dim]
-			poslist = dict(zip(self.objects.keys(),(self.objects[i][0] for i in self.objects.keys())))
-			l = self.func.getif(poslist,posl)
-			r = self.func.getif(poslist,posr)
-			u = self.func.getif(poslist,posu)
-			d = self.func.getif(poslist,posd)
-			if l:
-				l = self.objects[self.func.get(poslist,posl)[0]][0] == self.objects[i][0]
-			if r:
-				r = self.objects[self.func.get(poslist,posr)[0]][0] == self.objects[i][0]
-			if u:
-				u = self.objects[self.func.get(poslist,posu)[0]][0] == self.objects[i][0]
-			if d:
-				d = self.objects[self.func.get(poslist,posd)[0]][0] == self.objects[i][0]
-			if l and r and u and d:
-				self.objects[i][4] = n
-			elif l and r and not u and not d:
-				self.objects[i][4] = ud
-			elif l and r and u and not d:
-				self.objects[i][4] = dt
-			elif l and r and d and not u:
-				self.objects[i][4] = ut
-			elif u and l and d and not r:
-				self.objects[i][4] = rt
-			elif u and r and d and not l:
-				self.objects[i][4] = lt
-			elif u and d and not l and not r:
-				self.objects[i][4] = lr
-			elif not u and not d and not l and not r:
-				self.objects[i][4] = a
-			elif d and l and not u and not r:
-				self.objects[i][4] = ur
-			elif u and r and not d and not l:
-				self.objects[i][4] = dl
-			elif u and l and not d and not r:
-				self.objects[i][4] = dr
-			elif d and not l and not r and not u:
-				self.objects[i][4] = ulr
-			elif d and r and not l and not u:
-				self.objects[i][4] = ul
-			elif l and not d and not u and not r:
-				self.objects[i][4] = urd
-			elif r and not l and not u and not d:
-				self.objects[i][4] = uld
-			elif u and not d and not l and not r:
-				self.objects[i][4] = ldr
+
+	def datatoobj(self,id,data):
+		add = data
+		self.objects.update({id:add})
+		name = add["name"]
+		sizen = add.get("sizen",[  data["size"][0] /univars.grandim ,  data["size"][1] /univars.grandim ])
+
+		if str([name,sizen]) in list(self.spritecache.keys()):
+			spritelist = self.spritecache[str([name,sizen])]
+		else:
+			spritelist = univars.func.getspritesscale(name,add["size"])
+			self.spritecache[str([name,sizen])] = spritelist
+		finalobj = inst.obj(id,add,spritelist)
+		self.objgroup.add(finalobj,layer = add["layer"])
+
+	def datatoinst(self,chunk,data):
+		sizen = data.get("sizen",[1,1])
+		name = data["name"]
+		if str([name,sizen]) in list(self.spritecache.keys()):
+			spritelist = self.spritecache[str([name,sizen])]
+		else:
+			temp = univars.func.getsprites(name)[0]
+			spritelist = univars.func.getspritesscale(name,[temp.get_width(),temp.get_height()])
+			self.spritecache[str([name,sizen])] = spritelist
+		newt = inst.inst(data["stagename"],self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],univars.lumptype.get(data["stagename"],data["type"]),data["alpha"],spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]],data["layer"],data["usecoll"],data["sn"])
+		name = (int(round(data["pos"][0]/(univars.grandim * self.renderdist))),int(round(data["pos"][1]/(univars.grandim * self.renderdist))))
+		if data["usecoll"]:
+			if name in self.instances.keys():
+				self.instances[name].add(newt,layer =data["layer"])
+			else:
+				self.instances[name] = pygame.sprite.LayeredUpdates()
+				self.instances[name].add(newt,layer =data["layer"])
+		else:
+			if name in self.noncolinstances.keys():
+				self.noncolinstances[name].add(newt,layer =data["layer"])
+			else:
+				self.noncolinstances[name] = pygame.sprite.LayeredUpdates()
+				self.noncolinstances[name].add(newt,layer =data["layer"])
+
+
 
 	def translate(self,GameManager,id:str,vector:list,usedt = False):
 		"""
@@ -410,7 +402,7 @@ class object_manager:
 				noninst.remove(obj)
 
 		#coll for inst
-		camchunk = [int(round(camera.x/(dim * self.renderdist))),int(round(camera.y/(dim * self.renderdist)))]
+		camchunk = [int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist)))]
 		ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
 		inst = []
 		for offset in ranges:
@@ -450,7 +442,7 @@ class object_manager:
 				noninst.remove(obj)
 
 		#coll for inst
-		camchunk = [int(round(camera.x/(dim * self.renderdist))),int(round(camera.y/(dim * self.renderdist)))]
+		camchunk = [int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist)))]
 		ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
 		inst = []
 		for offset in ranges:
@@ -461,13 +453,12 @@ class object_manager:
 				a = pygame.sprite.spritecollide(colsprite,self.instances[campos],dokill=False)
 			inst += a
 
-		for offset in ranges:
-			a = []
+			b = []
 			campos = (offset[0] + camchunk[0],offset[1] + camchunk[1])
 			if campos in self.noncolinstances.keys():
 				# a = [ i for i in self.instances[campos] if r1.colliderect(i.fakerect)]
-				a = pygame.sprite.spritecollide(colsprite,self.noncolinstances[campos],dokill=False)
-			inst += a
+				b = pygame.sprite.spritecollide(colsprite,self.noncolinstances[campos],dokill=False)
+			inst += b
 
 		#render the collpoint
 		if show:
@@ -527,7 +518,7 @@ class object_manager:
 						self.objgroup.remove(obj)
 						self.objects.pop(postodel[0])
 
-		#deleting instances
+		#deleting noncolinstances
 		for a in self.noncolinstances.keys():
 			for inst in self.noncolinstances[a]:
 				if inst in instpostodel:
@@ -585,16 +576,16 @@ class object_manager:
 		name = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
 		if usecoll:
 			if name in self.instances.keys():
-				self.instances[name].add(newt)
+				self.instances[name].add(newt,layer = layer)
 			else:
 				self.instances[name] = pygame.sprite.LayeredUpdates()
-				self.instances[name].add(newt)
+				self.instances[name].add(newt,layer = layer)
 		else:
 			if name in self.noncolinstances.keys():
-				self.noncolinstances[name].add(newt)
+				self.noncolinstances[name].add(newt,layer = layer)
 			else:
 				self.noncolinstances[name] = pygame.sprite.LayeredUpdates()
-				self.noncolinstances[name].add(newt)
+				self.noncolinstances[name].add(newt,layer = layer)
 
 	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int , keepprev = False,stagename = None,layer = 0,colforinst=True,sn = 0):
 		"""adds an object to the manager  , gives an id of type str"""
@@ -639,44 +630,6 @@ class object_manager:
 		return self.collidep(pos,0,1)["if"]
 		
 
-
-	def datatoobj(self,id,data):
-		add = data
-		self.objects.update({id:add})
-		name = add["name"]
-		sizen = add.get("sizen",[  data["size"][0] /univars.grandim ,  data["size"][1] /univars.grandim ])
-
-		if str([name,sizen]) in list(self.spritecache.keys()):
-			spritelist = self.spritecache[str([name,sizen])]
-		else:
-			spritelist = univars.func.getspritesscale(name,add["size"])
-			self.spritecache[str([name,sizen])] = spritelist
-		finalobj = inst.obj(id,add,spritelist)
-		self.objgroup.add(finalobj,add["layer"])
-
-	def datatoinst(self,chunk,data):
-		sizen = data.get("sizen",[1,1])
-		name = data["name"]
-		if str([name,sizen]) in list(self.spritecache.keys()):
-			spritelist = self.spritecache[str([name,sizen])]
-		else:
-			temp = univars.func.getsprites(name)[0]
-			spritelist = univars.func.getspritesscale(name,[temp.get_width(),temp.get_height()])
-			self.spritecache[str([name,sizen])] = spritelist
-		newt = inst.inst(data["stagename"],self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],univars.lumptype.get(data["stagename"],data["type"]),data["alpha"],spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]],data["layer"],data["usecoll"])
-		name = (int(round(data["pos"][0]/(univars.grandim * self.renderdist))),int(round(data["pos"][1]/(univars.grandim * self.renderdist))))
-		if data["usecoll"]:
-			if name in self.instances.keys():
-				self.instances[name].add(newt)
-			else:
-				self.instances[name] = pygame.sprite.LayeredUpdates()
-				self.instances[name].add(newt)
-		else:
-			if name in self.instances.keys():
-				self.noncolinstances[name].add(newt)
-			else:
-				self.noncolinstances[name] = pygame.sprite.LayeredUpdates()
-				self.noncolinstances[name].add(newt)
 
 	def adds(self,name,pos,sprites,type,rot,sizen,alpha,layer):
 		"""add special for more unique items"""
