@@ -179,14 +179,14 @@ class Game(Gamemananager.GameManager):
 		Initialises the players variables
 		"""
 		#create the cameras
-		cm.addcam("playercam",[0,0],0.4)
+		cm.addcam("playercam",[-1536,416],0.4)
 		cm.setcam("playercam")  
 
 		self.lookahead = 100
 		om.speed = 1
 
 		#create player
-		om.adds("player",[0,0],"player","player",0,[1,1],400,5)
+		om.adds("player",[-1536,416],"player","player",0,[1,1],400,5)
 		om.objects["player"]["rendercond"] = False
 
 		#creates the player sprite you actually see

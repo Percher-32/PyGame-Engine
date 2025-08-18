@@ -282,7 +282,7 @@ class TiledSoftwre:
 										already = False
 										bevel = 0
 										bevelsleek = 0
-										if cont:
+										if cont and self.spritenames[self.sprite] == "grass":
 											xedge = x == self.pos2[0] - xinc 
 											yedge = y == self.pos2[1] - yinc
 											startxedge = x == self.pos1[0] 

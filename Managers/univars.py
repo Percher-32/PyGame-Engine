@@ -103,7 +103,7 @@ map = "null"
 
 startstate = "edit"
 
-startshaderstate = 1
+startshaderstate = 0
 
 
 #opt to optimise
