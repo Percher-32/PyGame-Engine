@@ -271,25 +271,54 @@ class TiledSoftwre:
 											yedge = y == self.pos2[1] - yinc
 											startxedge = x == self.pos1[0] 
 											startyedge = y == self.pos1[1] 
-											top = startyedge and yinc or yedge and not yinc
-											bot = yedge and yinc or startyedge and not yinc
-											left = startxedge and xinc or xedge and not xinc
-											right = xedge and yinc or startxedge and not xinc
-											if not xedge and not yedge and not startxedge and not startyedge:
-												self.coll = False
+
+
+											mincrustx = x == self.pos2[0] - xinc - xinc or x == self.pos1[0] + xinc
+											mincrusty = y == self.pos2[1] - yinc - yinc or y == self.pos1[1] + yinc
+											mincrust = mincrustx or mincrusty
+
+											top = startyedge and ypos or yedge and not ypos
+											bot =  yedge and ypos or startyedge and not ypos
+											left = startxedge and xpos or xedge and not xpos
+											right = xedge and xpos or startxedge and not xpos
+
+											cor1 = top and right
+											cor2 = top and left
+											cor3 = bot and right
+											cor4 = bot and left
+											corner =  cor1 or cor2 or cor3  or cor4
+
+											if (not xedge and not yedge and not startxedge and not startyedge) or object_manager.atpoint([x,y]):
+												if not mincrust:
+													self.coll = False
+												else:
+													self.coll = True
 												self.sn = 1
+											elif corner:
+												self.sn = 2
+												self.coll = True
 											else:
 												self.coll = True
 												self.sn = 0
 
-											if top:
-												self.rot = 0
-											elif bot:
-												self.rot = 180
-											elif left:
-												self.rot = 90
-											elif right:
-												self.rot = 270
+											if not corner:
+												if top:
+													self.rot = 0
+												elif bot:
+													self.rot = 180
+												elif left:
+													self.rot = 90
+												elif right:
+													self.rot = 270
+											else:
+												if cor1:
+													self.rot = 0
+												elif cor2:
+													self.rot = 90
+												elif cor3:
+													self.rot = 270
+												elif cor4:
+													self.rot = 180
 												
 											
 										

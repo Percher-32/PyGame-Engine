@@ -30,6 +30,9 @@ class collinst(pygame.sprite.Sprite):
 
 
 
+
+
+
 class object_manager: 
 	def __init__(self,realscreeen,screen,grandim,alpha,rend):
 		self.objects = {}
@@ -435,7 +438,8 @@ class object_manager:
 		return {"obj":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
 
 	def unopcollidep(self,pos,show,dim,pointsize=5,basecolor = (255,0,0),instcol = (0,225,0),noninstcol=(0,225,150),ignore_id = None,camera = Cameramod.cam,ignore = []) -> dict: 
-		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
+		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" 
+			\n Dim not needed"""
 		#coll for non-inst
 		dim = univars.grandim
 		r1 = pygame.Rect(pos[0],pos[1],10,10)
@@ -631,9 +635,9 @@ class object_manager:
 			self.addinst(pos,sprites,dim,rot,type,sizen,stagename,layer,colforinst,sn,keepprev=keepprev)
 
 
-	def tile(self):
-		for group in self.noncolinstances.keys:
-			self.noncolinstances[group]
+	def atpoint(self,pos):
+		return self.collidep(pos,0,1)["if"]
+		
 
 
 	def datatoobj(self,id,data):
