@@ -548,18 +548,15 @@ class Game(Gamemananager.GameManager):
 						# if self.gp("entervel") < 1:
 						# 	self.sp("entervel",1)
 
-					
-					if railrot > 180:
-						railrot =  railrot -360
 
 
 					if abs(self.key["x"]) > 0.5:
 						if self.key["x"] > 0:
 							self.sp("dirforrail","l")
-							self.sp("entervel",self.gp("entervel") + abs(self.key["x"]/2 ))
+							self.sp("entervel",self.gp("entervel") + abs(self.key["x"] ))
 						else:
 							self.sp("dirforrail","r")
-							self.sp("entervel",self.gp("entervel") + abs(self.key["x"]/2 ))
+							self.sp("entervel",self.gp("entervel") + abs(self.key["x"] ))
 
 					if self.gp("entervel") > 130:
 						self.sp("entervel",130)
@@ -580,6 +577,11 @@ class Game(Gamemananager.GameManager):
 					self.sp("des_vel",railvel)
 					self.lastdirrail = railrot
 
+					
+					
+					if railrot > 180:
+						railrot =  railrot -360
+
 					if self.key["jump"]:
 						if self.gp("jumpable"):
 							if railrot in [0] :
@@ -587,12 +589,16 @@ class Game(Gamemananager.GameManager):
 								self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
 								self.sp("mode","in-air")
 							if railrot in [45,-45] :
-								if raildir == -1:
-									self.sp("act_vel",[  self.gp("act_vel")[0] *   self.valsign(railrot)  * 1   ,   40      ])
-									self.sp("des_vel",[  self.gp("des_vel")[0] *   self.valsign(railrot)  * 1   ,   150     ])
+								# if raildir == -1:
+								if not self.valsign(self.gp("act_vel")[0]) == self.valsign(raildir):
+									self.sp("act_vel",[  self.gp("act_vel")[0]   ,   40      ])
+									self.sp("des_vel",[  self.gp("des_vel")[0]   ,   60     ])
 								else:
-									self.sp("act_vel",[  self.gp("act_vel")[0] *   self.valsign(railrot)  * 1   ,   150      ])
-									self.sp("des_vel",[  self.gp("des_vel")[0] *   self.valsign(railrot)  * 1   ,   300     ])
+									self.sp("act_vel",[  self.gp("act_vel")[0]   ,   150      ])
+									self.sp("des_vel",[  self.gp("des_vel")[0]   ,   300     ])
+								# else:
+								# 	self.sp("act_vel",[  self.gp("act_vel")[0] *   self.valsign(railrot)  * 1   ,   150      ])
+								# 	self.sp("des_vel",[  self.gp("des_vel")[0] *   self.valsign(railrot)  * 1   ,   300     ])
 							elif railrot in [90,-90] :
 								self.sp("act_vel",[  self.valsign(railrot) * self.gp("entervel")* -1 ,self.gp("act_vel")[1]   ] )
 								self.sp("des_vel",[  self.valsign(railrot) * self.gp("entervel")* -1,self.gp("des_vel")[1]   ])
