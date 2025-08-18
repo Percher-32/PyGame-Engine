@@ -266,6 +266,9 @@ class TiledSoftwre:
 									
 								for y in range(self.pos1[1],self.pos2[1],yinc):
 									for x in range(self.pos1[0],self.pos2[0],xinc):
+										already = False
+										bevel = 0
+										bevelsleek = 0
 										if cont:
 											xedge = x == self.pos2[0] - xinc 
 											yedge = y == self.pos2[1] - yinc
@@ -287,9 +290,17 @@ class TiledSoftwre:
 											cor3 = bot and right
 											cor4 = bot and left
 											corner =  cor1 or cor2 or cor3  or cor4
+											unop = object_manager.unopcollidep((x,y),0,0)
 
-											if (not xedge and not yedge and not startxedge and not startyedge) or object_manager.atpoint([x,y]):
-												if not mincrust:
+											if len(unop["inst"]) > 0:
+												already = 1
+												bevel = (unop["inst"][0].sn == 0 or unop["inst"][0].sn == 3  or unop["inst"][0].sn == 2) and (xedge or startxedge or yedge or startyedge)
+												bevelsleek =  unop["inst"][0].usecoll == 1
+
+											
+											
+											if ((not xedge and not yedge and not startxedge and not startyedge) or already) and not bevel:
+												if (not mincrust) or already:
 													self.coll = False
 												else:
 													self.coll = True
@@ -301,7 +312,22 @@ class TiledSoftwre:
 												self.coll = True
 												self.sn = 0
 
-											if not corner:
+
+											if bevel:
+												self.sn = 3
+												self.coll = 1
+											elif corner:
+												if cor1:
+													self.rot = 0
+												elif cor2:
+													self.rot = 90
+												elif cor3:
+													self.rot = 270
+												elif cor4:
+													self.rot = 180
+												
+								
+											elif self.sn == 0:
 												if top:
 													self.rot = 0
 												elif bot:
@@ -311,14 +337,7 @@ class TiledSoftwre:
 												elif right:
 													self.rot = 270
 											else:
-												if cor1:
-													self.rot = 0
-												elif cor2:
-													self.rot = 90
-												elif cor3:
-													self.rot = 270
-												elif cor4:
-													self.rot = 180
+												self.rot = 0
 												
 											
 										
@@ -331,9 +350,8 @@ class TiledSoftwre:
 											# 	else:
 											# 		self.sn = 1
 
-
-
-										self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer,colforinst=self.coll,sn = self.sn)
+										if not already or bevel or bevelsleek:
+											self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer,colforinst=self.coll,sn = self.sn)
 
 								self.coll = savedcol
 								self.sn = savedsn
