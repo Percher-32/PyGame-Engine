@@ -394,7 +394,7 @@ class object_manager:
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		#coll for non-inst
 		dim = univars.grandim
-		r1 = pygame.Rect(pos[0],pos[1],10,10)
+		r1 = pygame.Rect(pos[0],pos[1],4,4)
 		colsprite =  collinst(r1.x,r1.y,math.ceil(r1.width),math.ceil(r1.height))
 		noninst = pygame.sprite.spritecollide(colsprite,self.objgroup,dokill=False)
 		for obj in noninst:
@@ -422,8 +422,8 @@ class object_manager:
 				col = noninstcol
 			else:
 				col = basecolor
-			self.func.ssblitrect(pygame.Rect(pos[0],pos[1],num * pointsize,num * pointsize),col,camera,0,univars.fakescreen)
-			# self.func.ssblitrect(r1,col,camera,5)
+			# self.func.ssblitrect(pygame.Rect(pos[0],pos[1],num * pointsize,num * pointsize),col,camera,0,univars.fakescreen)
+			self.func.ssblitrect(r1,col,camera,5,univars.fakescreen)
 
 
 		
@@ -492,13 +492,13 @@ class object_manager:
 			w = self.objects[id]["size"][0]/2
 			h = self.objects[id]["size"][1]/2
 			
-			topleft  = self.collidep((x - w +  offsets["topleft"][0]  ,  y - h +  offsets["topleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
+			topleft  = self.collidep((x - w +  offsets["topleft"][0]-3,  y - h +  offsets["topleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
 			topmid   = self.collidep((x     +   offsets["topmid"][0]  ,  y - h +   offsets["topmid"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
 			topright = self.collidep((x + w + offsets["topright"][0]  ,  y - h + offsets["topright"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
-			midleft  = self.collidep((x - w +  offsets["midleft"][0]  ,    y   +  offsets["midleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
+			midleft  = self.collidep((x - w +  offsets["midleft"][0]-3,    y   +  offsets["midleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
 			midmid   = self.collidep((x     +   offsets["midmid"][0]  ,    y   +   offsets["midmid"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
 			midright = self.collidep((x + w + offsets["midright"][0]  ,    y   + offsets["midright"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
-			botleft  = self.collidep((x - w +  offsets["botleft"][0]  ,  y + h +  offsets["botleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
+			botleft  = self.collidep((x - w +  offsets["botleft"][0]-3,  y + h +  offsets["botleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
 			botmid   = self.collidep((x     +   offsets["botmid"][0]  ,  y + h +   offsets["botmid"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
 			botright = self.collidep((x + w + offsets["botright"][0]  ,  y + h + offsets["botright"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
 			ans = { "topleft":topleft,"topmid":topmid,"topright":topright,"midleft":midleft,"midmid":midmid,"midright":midright,"botleft":botleft,"botmid":botmid,"botright":botright}

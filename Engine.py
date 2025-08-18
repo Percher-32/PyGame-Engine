@@ -257,10 +257,10 @@ class Game(Gamemananager.GameManager):
 		# om.speed = 0.4
 		
 		# um.showvar("pos",om.objects["player"]["pos"],[0,0])
-		collision = om.collide9("player",0,cam,self.dim,ignore= ["playersprite","skateboard"])
+		collision = om.collide9("player",1,cam,self.dim,ignore= ["playersprite","skateboard"])
 		lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
 		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 17 ],0,32,camera=cam,basecolor=(0,1,0))
-		collisionbox = om.collide("player",1,cam,extra=20)
+		collisionbox = om.collide("player",0,cam,extra=20)
 		ground1 = len(collision["botmid"]["inst"]) > 0
 		ground2 = len(collision["botleft"]["inst"]) > 0    and not (len(collision["topleft"]["inst"])  > 0  ) and not (len(collision["midleft"]["inst"])  > 0  )
 		ground3 = len(collision["botright"]["inst"]) > 0   and not (len(collision["topright"]["inst"]) > 0  ) and not (len(collision["midright"]["inst"]) > 0  )
@@ -548,7 +548,10 @@ class Game(Gamemananager.GameManager):
 						# if self.gp("entervel") < 1:
 						# 	self.sp("entervel",1)
 
-					# um.showvar("",self.gp("dirforslant"),[0,0])
+					
+					if railrot > 180:
+						railrot =  railrot -360
+
 
 					if abs(self.key["x"]) > 0.5:
 						if self.key["x"] > 0:
@@ -608,6 +611,13 @@ class Game(Gamemananager.GameManager):
 				if not (collision["topmid"]["inst"] and collision["botmid"]["inst"] and collision["midright"]["inst"] and collision["midleft"]["inst"] ) or rail:
 					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
 					om.translate(self,"player",self.gp("act_vel"),usedt=1)
+					if self.gp("desrot") > 180:
+						self.sp("desrot", self.gp("desrot")-360)
+					# if round(self.gp("desrot")) == 270:
+					# 	self.sp("desrot",-90)
+						# print(self.gp("desrot"))
+					# if self.gp("desrot") < 0:
+					# 	self.sp("desrot",0 - self.gp("desrot"))
 					om.objects["playersprite"]["rot"]  =  self.unilerp(om.objects["playersprite"]["rot"],self.gp("desrot"),5,roundto=2) 
 						
 				
