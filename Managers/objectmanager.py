@@ -676,7 +676,7 @@ class object_manager:
 				# print(self.instances[i].sprites)
 				# print()
 				self.instances[i].update(showall)
-				self.instances[i].draw(univars.screen)
+				# self.instances[i].draw(univars.screen)
 
 		# print("noncol:")
 		#renders the non colliding instanciates
@@ -685,7 +685,7 @@ class object_manager:
 				# print(self.instances[i].sprites)
 				# print()
 				self.noncolinstances[i].update(showall)
-				self.noncolinstances[i].draw(univars.screen)
+				# self.noncolinstances[i].draw(univars.screen)
 
 		# print("/////////")
 
