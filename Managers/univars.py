@@ -19,7 +19,7 @@ grandim = 32
 
 name = "Project ender"
 
-maxfps = 60
+maxfps = 200
 
 
 (40, 41, 83)
@@ -99,9 +99,9 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "demo1"
+map = "demo2"
 
-startstate = "debugame"
+startstate = "editgame"
 
 startshaderstate = 0
 

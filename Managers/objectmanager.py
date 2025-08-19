@@ -397,9 +397,9 @@ class object_manager:
 		r1 = pygame.Rect(pos[0],pos[1],4,4)
 		colsprite =  collinst(r1.x,r1.y,math.ceil(r1.width),math.ceil(r1.height))
 		noninst = pygame.sprite.spritecollide(colsprite,self.objgroup,dokill=False)
-		for obj in noninst:
-			if obj.name in ignore or obj.name == ignore_id:
-				noninst.remove(obj)
+		# for obj in noninst:
+		# 	if obj.name in ignore or obj.name == ignore_id:
+		# 		noninst.remove(obj)
 
 		#coll for inst
 		camchunk = [int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist)))]
@@ -669,17 +669,25 @@ class object_manager:
 
 		
 
+		# print("/////////")
 		#rendering the instanciates
 		if len(lof) > 0:
 			for i in lof:
+				# print(self.instances[i].sprites)
+				# print()
 				self.instances[i].update(showall)
 				self.instances[i].draw(univars.screen)
-			
+
+		# print("noncol:")
 		#renders the non colliding instanciates
 		if len(noncollof) > 0:
 			for i in noncollof:
+				# print(self.instances[i].sprites)
+				# print()
 				self.noncolinstances[i].update(showall)
 				self.noncolinstances[i].draw(univars.screen)
+
+		# print("/////////")
 
 		#rendering the non-instanciates
 		self.objgroup.update(camera,self,dim,showall,GameManager.fm.frame)

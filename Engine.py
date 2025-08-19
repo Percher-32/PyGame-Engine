@@ -1,6 +1,7 @@
 import Managers.Gamemanager as Gamemananager
 import Managers.univars as univars
 import cProfile
+import pygame
 import random
 import math
 
@@ -179,14 +180,15 @@ class Game(Gamemananager.GameManager):
 		Initialises the players variables
 		"""
 		#create the cameras
-		cm.addcam("playercam",[-1536,416],0.4)
+		startpos = [0,0]
+		cm.addcam("playercam",startpos,0.4)
 		cm.setcam("playercam")  
 
 		self.lookahead = 100
 		om.speed = 1
 
 		#create player
-		om.adds("player",[-1536,416],"player","player",0,[1,1],400,5)
+		om.adds("player",startpos,"player","player",0,[1,1],400,5)
 		om.objects["player"]["rendercond"] = False
 
 		#creates the player sprite you actually see
@@ -415,10 +417,11 @@ class Game(Gamemananager.GameManager):
 								self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    self.unilerp(self.gp("des_vel")[1],-130,8,roundto = 0)   ]     )
 								self.sp("mode","in-air")
 
-							if  self.gp("leftwall") or  self.gp("rightwall"):
-								self.sp("onboard",True)
-							else:
-								self.sp("desrot",self.key["x"] * 20)
+							if not self.key["jump"]:
+								if  self.gp("leftwall") or  self.gp("rightwall"):
+									self.sp("onboard",True)
+								else:
+									self.sp("desrot",self.key["x"] * 20)
 
 
 
@@ -537,20 +540,20 @@ class Game(Gamemananager.GameManager):
 							om.objects["player"]["pos"] = [
 															collisionbox["inst"][collisionboxtype.index("rail")].realpos[0]  -  (math.sin((railrot/180) * math.pi) * 5) ,
 															collisionbox["inst"][collisionboxtype.index("rail")].realpos[1]  -  (math.cos((railrot/180) * math.pi) * 5) 
-														  ]
+														]
 						else:
 							om.objects["player"]["pos"] = [
 															collisionbox["inst"][collisionboxtype.index("rail")].realpos[0]  -  (math.sin((railrot/180) * math.pi) * 20) ,
 															collisionbox["inst"][collisionboxtype.index("rail")].realpos[1]  -  (math.cos((railrot/180) * math.pi) * 20) 
-														  ]
+														]
 						motivate = [  300 * math.cos((railrot/180) * math.pi) * raildir,300   * math.sin((railrot/180) * math.pi) * raildir ]
 						om.translate(self,"player",motivate,usedt=1)
 						# if self.gp("entervel") < 1:
 						# 	self.sp("entervel",1)
 
 
-
-					if abs(self.key["x"]) > 0.5:
+					
+					if abs(self.key["x"]) > 0.5 and not self.key["jump"]:
 						if self.key["x"] > 0:
 							self.sp("dirforrail","l")
 							self.sp("entervel",self.gp("entervel") + abs(self.key["x"] ))
@@ -579,8 +582,8 @@ class Game(Gamemananager.GameManager):
 
 					
 					
-					if railrot > 180:
-						railrot =  railrot -360
+					# if railrot > 180:
+					# 	railrot =  railrot -360
 
 					if self.key["jump"]:
 						if self.gp("jumpable"):
@@ -590,7 +593,7 @@ class Game(Gamemananager.GameManager):
 								self.sp("mode","in-air")
 							if railrot in [45,-45] :
 								# if raildir == -1:
-								if not self.valsign(self.gp("act_vel")[0]) == self.valsign(raildir):
+								if not self.valsign(self.gp("act_vel")[0]) == self.valsign(railrot):
 									self.sp("act_vel",[  self.gp("act_vel")[0]   ,   40      ])
 									self.sp("des_vel",[  self.gp("des_vel")[0]   ,   60     ])
 								else:

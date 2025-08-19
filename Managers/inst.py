@@ -35,6 +35,10 @@ class inst(pygame.sprite.Sprite):
 		self.bart = sprites[sn]
 		self.newbie = True
 		self.image =  nullsurf
+		if rot > 180:
+			rot = rot - 360
+		if rot < -180:
+			rot = rot + 360
 		self.rot = int(rot)
 		self.realpos = (int(x),int(y))
 		self.fakerect = pygame.Rect((x,y,size[0],size[1]))
@@ -46,16 +50,16 @@ class inst(pygame.sprite.Sprite):
 
 	def update(self,showall):
 		camera = Cameramod.cam
-		if univars.camchange or univars.poschange or self.newbie:
-			self.newbie = False
-			realestsize = [math.ceil((self.size[0] * abs(camera.size))/2)*2,math.ceil((self.size[1] * abs(camera.size))/2)*2]
-			if not str([self.name,realestsize,self.sn]) in spritecache.keys():
-				self.image =  pygame.transform.scale(self.bart,  realestsize )
-				spritecache[str([self.name,realestsize,self.sn])] = self.image
-				dataspritecache.append([self.name,realestsize,self.sn])
-			else:
-				self.image = spritecache[str([self.name,realestsize,self.sn])]
-			self.image = pygame.transform.rotate(self.image,self.rot)
+		# if univars.camchange or univars.poschange or self.newbie:
+		self.newbie = False
+		realestsize = [math.ceil((self.size[0] * abs(camera.size))/2)*2,math.ceil((self.size[1] * abs(camera.size))/2)*2]
+		if not str([self.name,realestsize,self.sn]) in spritecache.keys():
+			self.image =  pygame.transform.scale(self.bart,  realestsize )
+			spritecache[str([self.name,realestsize,self.sn])] = self.image
+			dataspritecache.append([self.name,realestsize,self.sn])
+		else:
+			self.image = spritecache[str([self.name,realestsize,self.sn])]
+		self.image = pygame.transform.rotate(self.image,self.rot)
 
 
 		if showall:
@@ -65,14 +69,20 @@ class inst(pygame.sprite.Sprite):
 
 
 
-		self.rect = self.image.get_rect(
-										topleft = 
-												(   
-													int((round((self.realpos[0] - camera.x)/1) * 1 * camera.size + univars.screen.get_width()//2  - self.image.get_width()/2 ))      ,
-													int((round((self.realpos[1] - camera.y)/1) * 1 * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2))  
-												)   
+		# self.rect = self.image.get_rect(
+		# 								topleft = 
+		# 										(   
+		# 											int((round((self.realpos[0] - camera.x)/1) * 1 * camera.size + univars.screen.get_width()//2  - self.image.get_width()/2 ))      ,
+		# 											int((round((self.realpos[1] - camera.y)/1) * 1 * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2))  
+		# 										)   
 													
-										)
+		# 								)
+		self.rect.x = int((round((self.realpos[0] - camera.x)/1) * 1 * camera.size + univars.screen.get_width()//2  - self.image.get_width()/2 ))
+		self.rect.y = int((round((self.realpos[1] - camera.y)/1) * 1 * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2)) 
+		self.rect.width = realestsize[0]
+		self.rect.height = realestsize[1]
+		# self.rect.width += 8
+		# self.rect.height += 8
 		
 
 	def resprite(self,sn):
