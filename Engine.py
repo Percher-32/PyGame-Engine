@@ -413,9 +413,9 @@ class Game(Gamemananager.GameManager):
 							if not self.gp("leftwall") or not self.gp("rightwall"):
 								self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    self.unilerp(self.gp("des_vel")[1],-130,self.gp("fss"),roundto = 0)   ]     )
 								self.sp("mode","in-air")
-							else:
-								self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    self.unilerp(self.gp("des_vel")[1],-130,8,roundto = 0)   ]     )
-								self.sp("mode","in-air")
+							# else:
+							# 	self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    self.unilerp(self.gp("des_vel")[1],-130,8,roundto = 0)   ]     )
+							# 	self.sp("mode","in-air")
 
 							if not self.key["jump"]:
 								if  self.gp("leftwall") or  self.gp("rightwall"):

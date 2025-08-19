@@ -52,35 +52,44 @@ class inst(pygame.sprite.Sprite):
 		camera = Cameramod.cam
 		# if univars.camchange or univars.poschange or self.newbie:
 		self.newbie = False
-		realestsize = [math.ceil((self.size[0] * abs(camera.size))/2)*2,math.ceil((self.size[1] * abs(camera.size))/2)*2]
-		if not str([self.name,realestsize,self.sn]) in spritecache.keys():
-			self.image =  pygame.transform.scale(self.bart,  realestsize )
-			spritecache[str([self.name,realestsize,self.sn])] = self.image
-			dataspritecache.append([self.name,realestsize,self.sn])
+		g = self.realpos
+		h = [camera.x,camera.y]
+		if univars.func.dist(g,h) < 1/camera.size * 570:
+			realestsize = [math.ceil((self.size[0] * abs(camera.size))/2)*2,math.ceil((self.size[1] * abs(camera.size))/2)*2]
+			if not str([self.name,realestsize,self.sn]) in spritecache.keys():
+				self.image =  pygame.transform.scale(self.bart,  realestsize )
+				spritecache[str([self.name,realestsize,self.sn])] = self.image
+				dataspritecache.append([self.name,realestsize,self.sn])
+			else:
+				self.image = spritecache[str([self.name,realestsize,self.sn])]
+			self.image = pygame.transform.rotate(self.image,self.rot)
+
+
+			if showall:
+				if self.alpha == 0:
+					alpha = 170
+					self.image.set_alpha(alpha)
+
+
+
+			# self.rect = self.image.get_rect(
+			# 								topleft = 
+			# 										(   
+			# 											int((round((self.realpos[0] - camera.x)/1) * 1 * camera.size + univars.screen.get_width()//2  - self.image.get_width()/2 ))      ,
+			# 											int((round((self.realpos[1] - camera.y)/1) * 1 * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2))  
+			# 										)   
+														
+			# 								)
+			self.rect.x = int((round((self.realpos[0] - camera.x)/1) * 1 * camera.size + univars.screen.get_width()//2  - self.image.get_width()/2 ))
+			self.rect.y = int((round((self.realpos[1] - camera.y)/1) * 1 * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2)) 
+			self.rect.width = realestsize[0]
+			self.rect.height = realestsize[1]
 		else:
-			self.image = spritecache[str([self.name,realestsize,self.sn])]
-		self.image = pygame.transform.rotate(self.image,self.rot)
-
-
-		if showall:
-			if self.alpha == 0:
-				alpha = 170
-				self.image.set_alpha(alpha)
-
-
-
-		# self.rect = self.image.get_rect(
-		# 								topleft = 
-		# 										(   
-		# 											int((round((self.realpos[0] - camera.x)/1) * 1 * camera.size + univars.screen.get_width()//2  - self.image.get_width()/2 ))      ,
-		# 											int((round((self.realpos[1] - camera.y)/1) * 1 * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2))  
-		# 										)   
-													
-		# 								)
-		self.rect.x = int((round((self.realpos[0] - camera.x)/1) * 1 * camera.size + univars.screen.get_width()//2  - self.image.get_width()/2 ))
-		self.rect.y = int((round((self.realpos[1] - camera.y)/1) * 1 * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2)) 
-		self.rect.width = realestsize[0]
-		self.rect.height = realestsize[1]
+			self.image = pygame.Surface((0,0))
+			self.rect.x      = 0
+			self.rect.y      = 0
+			self.rect.width  = 0
+			self.rect.height = 0
 		# self.rect.width += 8
 		# self.rect.height += 8
 		

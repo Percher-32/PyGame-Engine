@@ -395,7 +395,7 @@ class object_manager:
 		#coll for non-inst
 		dim = univars.grandim
 		r1 = pygame.Rect(pos[0],pos[1],4,4)
-		colsprite =  collinst(r1.x,r1.y,math.ceil(r1.width),math.ceil(r1.height))
+		colsprite =  collinst(r1.x,r1.y,math.ceil(r1.width +3),math.ceil(r1.height +3))
 		noninst = pygame.sprite.spritecollide(colsprite,self.objgroup,dokill=False)
 		# for obj in noninst:
 		# 	if obj.name in ignore or obj.name == ignore_id:
