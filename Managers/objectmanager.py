@@ -25,7 +25,23 @@ class collinst(pygame.sprite.Sprite):
 						  		,(self.fakerect.y - Cameramod.cam.y) * Cameramod.cam.size + univars.screen.get_height()//2 
 								, self.fakerect.width * abs(Cameramod.cam.size)
 								, self.fakerect.height * abs(Cameramod.cam.size))
-        # rect  = pygame.Rect(0,0,1000,1000)
+		
+class Ghostcollinst(pygame.sprite.Sprite):
+	def __init__(self,x,y,w,h):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = pygame.Surface((100,100))
+		self.pos = (x,y)
+		self.size = (w,h)
+		self.rect = pygame.Rect((x,y,w,h))
+		
+
+
+class Ghost(pygame.sprite.Sprite):
+	def __init__(self,inst):
+		pygame.sprite.Sprite.__init__(self)
+		self.inst = inst
+		self.rect = inst.fakerect
+		self.image = pygame.Surface((0,0))
 
 
 
@@ -48,6 +64,13 @@ class object_manager:
 		self.loadingmap = False
 		#chunk id stored in a tuple "(x,y)"
 		self.instances = {}
+		"""
+			a dictianry of sprite groups each sprite has collisions
+		"""
+		self.ghostinstances = {}
+		"""
+			a dictianry of sprite groups each sprite contains a reference to the instanciagte
+		"""
 		self.noncolinstances = {}
 		self.instables = []
 		self.toreinst = []
@@ -242,12 +265,16 @@ class object_manager:
 			self.spritecache[str([name,sizen])] = spritelist
 		newt = inst.inst(data["stagename"],self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],univars.lumptype.get(data["stagename"],data["type"]),data["alpha"],spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]],data["layer"],data["usecoll"],data["sn"])
 		name = (int(round(data["pos"][0]/(univars.grandim * self.renderdist))),int(round(data["pos"][1]/(univars.grandim * self.renderdist))))
+		newtg = Ghost(newt)
 		if data["usecoll"]:
 			if name in self.instances.keys():
 				self.instances[name].add(newt,layer =data["layer"])
+				self.ghostinstances[name].add(newtg)
 			else:
 				self.instances[name] = pygame.sprite.LayeredUpdates()
+				self.ghostinstances[name] = pygame.sprite.Group()
 				self.instances[name].add(newt,layer =data["layer"])
+				self.ghostinstances[name].add(newtg)
 		else:
 			if name in self.noncolinstances.keys():
 				self.noncolinstances[name].add(newt,layer =data["layer"])
@@ -409,9 +436,13 @@ class object_manager:
 			a = []
 			campos = (offset[0] + camchunk[0],offset[1] + camchunk[1])
 			if campos in self.instances.keys():
-				# a = [ i for i in self.instances[campos] if r1.colliderect(i.fakerect)]
-				a = pygame.sprite.spritecollide(colsprite,self.instances[campos],dokill=False)
+				# a = [ i for i in self.instances[campos] if i.fakerect.collidepoint(pos)]
+				a = pygame.sprite.spritecollide(Ghostcollinst(r1.x,r1.y,r1.width,r1.height),self.ghostinstances[campos],dokill=False)
+				
+				a = [ghost.inst for ghost in a]
+
 			inst += a
+		# print(inst)
 
 		#render the collpoint
 		if show:
@@ -422,8 +453,8 @@ class object_manager:
 				col = noninstcol
 			else:
 				col = basecolor
-			# self.func.ssblitrect(pygame.Rect(pos[0],pos[1],num * pointsize,num * pointsize),col,camera,0,univars.fakescreen)
-			self.func.ssblitrect(r1,col,camera,5,univars.fakescreen)
+			self.func.ssblitrect(pygame.Rect(pos[0],pos[1],num * pointsize,num * pointsize),col,camera,0,univars.fakescreen)
+			# self.func.ssblitrect(r1,col,camera,5,univars.fakescreen)
 
 
 		
@@ -492,13 +523,13 @@ class object_manager:
 			w = self.objects[id]["size"][0]/2
 			h = self.objects[id]["size"][1]/2
 			
-			topleft  = self.collidep((x - w +  offsets["topleft"][0]-3,  y - h +  offsets["topleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
+			topleft  = self.collidep((x - w +  offsets["topleft"][0],  y - h +  offsets["topleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
 			topmid   = self.collidep((x     +   offsets["topmid"][0]  ,  y - h +   offsets["topmid"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
 			topright = self.collidep((x + w + offsets["topright"][0]  ,  y - h + offsets["topright"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
-			midleft  = self.collidep((x - w +  offsets["midleft"][0]-3,    y   +  offsets["midleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
+			midleft  = self.collidep((x - w +  offsets["midleft"][0],    y   +  offsets["midleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
 			midmid   = self.collidep((x     +   offsets["midmid"][0]  ,    y   +   offsets["midmid"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
 			midright = self.collidep((x + w + offsets["midright"][0]  ,    y   + offsets["midright"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
-			botleft  = self.collidep((x - w +  offsets["botleft"][0]-3,  y + h +  offsets["botleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
+			botleft  = self.collidep((x - w +  offsets["botleft"][0],  y + h +  offsets["botleft"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
 			botmid   = self.collidep((x     +   offsets["botmid"][0]  ,  y + h +   offsets["botmid"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
 			botright = self.collidep((x + w + offsets["botright"][0]  ,  y + h + offsets["botright"][1]),show,dim,pointsize,ignore_id=id,camera=camera,ignore = ignore)
 			ans = { "topleft":topleft,"topmid":topmid,"topright":topright,"midleft":midleft,"midmid":midmid,"midright":midright,"botleft":botleft,"botmid":botmid,"botright":botright}
@@ -574,12 +605,16 @@ class object_manager:
 
 		newt = inst.inst(stagename,self.grandim,name,pos[0],pos[1],rot,sizen,univars.lumptype.get(stagename,type),alp,spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]],layer,usecoll,sn)
 		name = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
+		newtg = Ghost(newt)
 		if usecoll:
 			if name in self.instances.keys():
 				self.instances[name].add(newt,layer = layer)
+				self.ghostinstances[name].add(newtg)
 			else:
 				self.instances[name] = pygame.sprite.LayeredUpdates()
+				self.ghostinstances[name] = pygame.sprite.Group()
 				self.instances[name].add(newt,layer = layer)
+				self.ghostinstances[name].add(newtg)
 		else:
 			if name in self.noncolinstances.keys():
 				self.noncolinstances[name].add(newt,layer = layer)

@@ -154,6 +154,9 @@ class TiledSoftwre:
 		
 	
 		if work:
+			if GameManager.states == "Editor":
+				Cammanager.camager.setcam("def")
+
 			self.comm = False
 			self.loadingmap = False
 			self.dim = dim
@@ -484,8 +487,8 @@ class TiledSoftwre:
 						self.placable = 5
 						self.coll = not self.coll
 
-
-
+					if self.placable <= 0 and GameManager.event_manager.key[pygame.K_0]:
+						GameManager.setbosh("edit")
 					#to check an inst or non-inst's info
 					if GameManager.event_manager.key[pygame.K_r]:
 						mousecol = object_manager.unopcollidep(gridpos,0,camera,dim)

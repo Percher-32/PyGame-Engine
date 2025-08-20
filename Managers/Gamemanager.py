@@ -329,6 +329,12 @@ class GameManager():
 		um.loadalluielements()
 		pm.loadallbluprints()
 
+	def setbosh(self,state):
+		sm.state = state
+		sm.update()
+		self.bosh()
+		print(f"bosh to {state}")
+
 	def inputdetect(self):
 		em.next()
 

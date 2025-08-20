@@ -41,7 +41,8 @@ class inst(pygame.sprite.Sprite):
 			rot = rot + 360
 		self.rot = int(rot)
 		self.realpos = (int(x),int(y))
-		self.fakerect = pygame.Rect((x,y,size[0],size[1]))
+		self.fakerect = pygame.Rect((x,y,size[0] + 10,size[1] + 10))
+		self.fakerect.center = (x,y)
 		self.size = size
 		self.rect = self.image.get_rect(topleft = ( (int(round(self.realpos[0] - camera.x) * camera.size + univars.screen.get_width()//2 - self.image.get_width()/2)),int(round((self.realpos[1] - camera.y) * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2))))
 		self.alpha = alpha
