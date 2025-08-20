@@ -43,7 +43,7 @@ class Game(Gamemananager.GameManager):
 			
 
 			#initialise player and all its variables
-			self.initialiseplayer()
+			self.initialiseplayer([0,0])
 
 		if "veiw" == self.states:
 			um.changestate("test1","but1")
@@ -58,6 +58,14 @@ class Game(Gamemananager.GameManager):
 		if self.states == "test":
 			om.add((0,0),"player",0,"green",[1,1],self.dim)
 
+	def quickrel(self):
+		if "game" == self.states:
+			self.initialiseplayer(cm.getcam("def","pos"))
+		if "Editor" == self.states:
+			cm.setcond("def","pos",cm.getcam("playercam","pos"))
+			cm.setcond("def","size",cm.getcam("playercam","size"))
+
+		
 
 	def commence(self):
 		pass
@@ -175,12 +183,12 @@ class Game(Gamemananager.GameManager):
 			else:
 				om.playanim(self.dt,"playersprite","fastidle",forceplay=True)
 
-	def initialiseplayer(self):
+	def initialiseplayer(self,pos):
 		"""
 		Initialises the players variables
 		"""
 		#create the cameras
-		startpos = [0,0]
+		startpos = pos
 		cm.addcam("playercam",startpos,0.4)
 		cm.setcam("playercam")  
 

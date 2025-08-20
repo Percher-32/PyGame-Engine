@@ -62,6 +62,7 @@ class GameManager():
 		self.fpsmax = univars.maxfps
 		self.leveledit = True
 		self.previousbacklayer = pygame.Surface((0,0))
+		self.smstate = sm.state
 		self.boxes = []
 		Tiled.extra(univars.extras)
 		om.loadtilemap(univars.map)
@@ -283,6 +284,7 @@ class GameManager():
 		self.publicvariables["showdata"] = sm.showui
 		self.publicvariables["cammove"] = sm.cammove
 		self.publicvariables["showallhidden"] = sm.showall
+		self.smstate = sm.state
 
 	def sp(self,val:str,to):
 		"""
@@ -333,7 +335,12 @@ class GameManager():
 		sm.state = state
 		sm.update()
 		self.bosh()
-		print(f"bosh to {state}")
+		self.smstate = sm.state
+		# print(f"bosh to {state}")
+		self.quickrel()
+
+	def quickrel(self):
+		pass
 
 	def inputdetect(self):
 		em.next()
