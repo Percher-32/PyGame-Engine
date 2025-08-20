@@ -394,7 +394,7 @@ class object_manager:
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		#coll for non-inst
 		dim = univars.grandim
-		r1 = pygame.Rect(pos[0],pos[1],4,4)
+		r1 = pygame.Rect(pos[0],pos[1],1,1)
 		colsprite =  collinst(r1.x,r1.y,math.ceil(r1.width +3),math.ceil(r1.height +3))
 		noninst = pygame.sprite.spritecollide(colsprite,self.objgroup,dokill=False)
 		# for obj in noninst:
@@ -676,7 +676,7 @@ class object_manager:
 				# print(self.instances[i].sprites)
 				# print()
 				self.instances[i].update(showall)
-				# self.instances[i].draw(univars.screen)
+				self.instances[i].draw(univars.screen)
 
 		# print("noncol:")
 		#renders the non colliding instanciates
@@ -685,7 +685,7 @@ class object_manager:
 				# print(self.instances[i].sprites)
 				# print()
 				self.noncolinstances[i].update(showall)
-				# self.noncolinstances[i].draw(univars.screen)
+				self.noncolinstances[i].draw(univars.screen)
 
 		# print("/////////")
 
