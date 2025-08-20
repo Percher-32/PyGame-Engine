@@ -463,10 +463,10 @@ class TiledSoftwre:
 						if GameManager.event_manager.key[pygame.K_c]:
 							self.rot -= 45
 							self.rotable = 10
-						if self.rot == 360:
-							self.rot = 0
-						if self.rot == -90:
-							self.rot = 270
+						if self.rot == 180:
+							self.rot = -180
+						if self.rot < -180:
+							self.rot = 360 + self.rot
 
 
 

@@ -211,6 +211,9 @@ class Game(Gamemananager.GameManager):
 		#desired velocity
 
 
+		self.sp("lastframewall",0)
+
+
 
 		self.lastrail = 0
 
@@ -248,10 +251,15 @@ class Game(Gamemananager.GameManager):
 
 		self.reclock = 1
 
+		self.sp("rot",0)
+
 
 		#on skateboard?
 		self.sp("onboard",True)
 
+		self.sp("unboundrot",0)
+
+		self.sp("rotoffset",0)
 
 		self.sp("desrot",0)
 		self.sp("desmooth",5)
@@ -333,7 +341,7 @@ class Game(Gamemananager.GameManager):
 							if self.gp("xinit"):
 								self.sp("xinit",False)
 								self.sp("des_vel",[self.key["x"] * 120,self.gp("des_vel")[1]])
-
+							
 							
 
 
@@ -390,7 +398,12 @@ class Game(Gamemananager.GameManager):
 
 
 
-						
+						if self.gp("lastframewall") and not self.gp("leftwall") and not self.gp("rightwall"):
+							self.sp("xinit",False)
+							self.sp("mode","in-air")
+							ground = False
+							self.spin(20 ,1)
+							self.sp("des_vel",[self.key["x"] * 150,200])
 
 
 							
@@ -431,14 +444,16 @@ class Game(Gamemananager.GameManager):
 								else:
 									self.sp("desrot",self.key["x"] * 20)
 
-
+						if self.gp("leftwall") or self.gp("rightwall"):
+							self.killtimer("rotate")
+							self.sp("rotoffset",0)
 
 
 
 						#jumping
 						if self.key["jump"]:
 							self.sp("fss",16)
-							self.sp("desmooth",5)
+							# self.sp("desmooth",5)
 							
 							if self.gp("jumpable"):
 								#normal
@@ -454,14 +469,14 @@ class Game(Gamemananager.GameManager):
 									a = 200
 								else:
 									a = 120
-								if self.gp("leftwall"):
+								if self.gp("leftwall") and not  len(collision["botmid"]["inst"]) > 0:
 									self.deltimer("rightjump")
 									self.wait("leftjump",0.1)
 									self.sp("jumpable",False)
 									self.sp("des_vel",[  self.gp("des_vel")[0] , a     ])
 									self.sp("act_vel",[  120 , self.gp("act_vel")[1]     ])
 									self.sp("mode","in-air")
-								if self.gp("rightwall"):
+								if self.gp("rightwall") and not  len(collision["botmid"]["inst"]) > 0:
 									self.deltimer("leftjump")
 									self.wait("rightjump",0.1)
 									self.sp("jumpable",False)
@@ -487,11 +502,14 @@ class Game(Gamemananager.GameManager):
 
 							# else:
 							# 	if not ground:
-							# 		self.sp("desrot",self.gp("desrot") - self.gp("act_vel")[1]/20 )
+						self.sp("desrot",self.gp("desrot") - self.gp("act_vel")[1]/20 )
+
 
 
 						if ground:
-							if not self.lastframejumped:
+							self.killtimer("rotate")
+							self.sp("rotoffset",0)
+							if not self.lastframejumped and not self.gp("lastframewall"):
 								self.sp("desrot",0)
 								self.sp("mode","grounded")
 								self.sp("jumpable",True)
@@ -628,14 +646,42 @@ class Game(Gamemananager.GameManager):
 				if not (collision["topmid"]["inst"] and collision["botmid"]["inst"] and collision["midright"]["inst"] and collision["midleft"]["inst"] ) or rail:
 					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
 					om.translate(self,"player",self.gp("act_vel"),usedt=1)
-					if self.gp("desrot") > 180:
-						self.sp("desrot", self.gp("desrot")-360)
+					
 					# if round(self.gp("desrot")) == 270:
 					# 	self.sp("desrot",-90)
 						# print(self.gp("desrot"))
 					# if self.gp("desrot") < 0:
 					# 	self.sp("desrot",0 - self.gp("desrot"))
-					om.objects["playersprite"]["rot"]  =  self.unilerp(om.objects["playersprite"]["rot"],self.gp("desrot"),5,roundto=2) 
+					if self.isthere("rotate"):
+						self.sp("rotoffset",self.gp("rotoffset") + self.gp("rot"))
+
+					if self.ondone("rotate"):
+						self.sp("rotoffset",0)
+
+					# if self.gp("rotoffset") > 180:
+					# 	self.sp("rotoffset",self.gp("rotoffset") - 360)
+					# if self.gp("rotoffset") < -180:
+					# 	self.sp("rotoffset",self.gp("rotoffset") + 360)
+
+					rot = self.gp("unboundrot")
+					dest = self.gp("desrot")+ self.gp("rotoffset")
+
+
+					# if path == d1: 
+					# dest = fm.frame* 30
+					# print(dest)
+					# om.objects["playersprite"]["rot"]   +=  30
+					 
+					# om.objects["playersprite"]["rot"]   =  
+					self.sp("unboundrot",self.unilerp(rot,dest,5,roundto=2))
+					a = self.gp("unboundrot")
+					b = self.gp("unboundrot")
+					min_value = -180
+					max_value = 180
+					range_size = max_value - min_value
+					a = ((a - min_value) % range_size) + min_value
+					om.objects["playersprite"]["rot"] = a
+
 						
 				
 
@@ -727,7 +773,7 @@ class Game(Gamemananager.GameManager):
 
 
 		
-
+		#get out of wall
 		if len(collision["midmid"]["inst"] )> 0 and not slanted and not rail :
 			top = collision["topmid"]["inst"] or collision["topleft"]["inst"] or collision["topright"]["inst"]
 			bot = collision["botmid"]["inst"] or collision["botleft"]["inst"] or collision["botright"]["inst"]
@@ -762,6 +808,8 @@ class Game(Gamemananager.GameManager):
 			
 			# self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
 			# om.translate(self,"player",self.gp("act_vel"),usedt=1)
+		self.sp("lastframewall",self.gp("leftwall") or self.gp("rightwall"))
+
 				
 		
 
@@ -772,8 +820,12 @@ class Game(Gamemananager.GameManager):
 		
 		self.lastrail = rail
 
-	
-
+	def spin(self,angle,time):
+		"""
+			rotates the player by (angle) for (time) seconds
+		"""
+		self.wait(f"rotate",time,barrier=False)
+		self.sp("rot",angle)
 
 
 	def unilerp(self,val,max,sm,roundto = None):

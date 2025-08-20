@@ -248,13 +248,13 @@ class GameManager():
 	def cond(self,obj,info):
 		pass
 
-	def wait(self,name:str,time:float):
+	def wait(self,name:str,time:float,barrier=True):
 		"""
 			creates a timer that will elapse in (time) seconds.\n
 			check if done with ondone.\n
-			only works if there isn't a timer with that name already\n
+			barier:True = only works if there isn't a timer with that name already\n
 		"""
-		if not name in self.timers.keys():
+		if not name in self.timers.keys() or not barrier:
 			self.timers[name] = time * 45
 
 	def updatetime(self):
@@ -272,6 +272,12 @@ class GameManager():
 	def ondone(self,name:str) -> bool:
 		return name in self.dons
 
+	def killtimer(self,name):
+		"""
+			removes a timer if it exists
+		"""
+		if name in self.timers.keys():
+			self.timers.pop(name)
 
 	def bosh(self):
 		"""
