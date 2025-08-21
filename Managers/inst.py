@@ -55,7 +55,7 @@ class inst(pygame.sprite.Sprite):
 		self.newbie = False
 		g = self.realpos
 		h = [camera.x,camera.y]
-		if univars.func.dist(g,h) < 1/camera.size * 570:
+		if univars.func.dist(g,h) < 1/camera.size * 580:
 			realestsize = [math.ceil((self.size[0] * abs(camera.size))/2)*2,math.ceil((self.size[1] * abs(camera.size))/2)*2]
 			if not str([self.name,realestsize,self.sn]) in spritecache.keys():
 				self.image =  pygame.transform.scale(self.bart,  realestsize )
@@ -81,8 +81,8 @@ class inst(pygame.sprite.Sprite):
 			# 										)   
 														
 			# 								)
-			self.rect.x = int((round((self.realpos[0] - camera.x)/1) * 1 * camera.size + univars.screen.get_width()//2  - self.image.get_width()/2 ))
-			self.rect.y = int((round((self.realpos[1] - camera.y)/1) * 1 * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2)) 
+			self.rect.x = (  round((self.realpos[0] - camera.x)/1) * camera.size + univars.screen.get_width()//2  - self.image.get_width()//2 )
+			self.rect.y = (  round((self.realpos[1] - camera.y)/1) * camera.size + univars.screen.get_height()//2 - self.image.get_height()//2)
 			self.rect.width = realestsize[0]
 			self.rect.height = realestsize[1]
 		else:
@@ -138,7 +138,7 @@ class obj(pygame.sprite.Sprite):
 		if self.info["rendercond"] or showall:
 			g = [round(self.info["pos"][0]),round(self.info["pos"][1])]
 			h = [round(camera.x),round(camera.y)]
-			if univars.func.dist(g,h) < 2000:
+			if univars.func.dist(g,h) < 500:
 
 				# realestsize = [math.ceil((self.size[0] * abs(camera.size))/2)*2                                 , 
 				#    			  math.ceil((self.size[1] * abs(camera.size))/2)*2]

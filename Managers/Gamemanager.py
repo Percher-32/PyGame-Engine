@@ -108,7 +108,7 @@ class GameManager():
 		else:
 			self.key["x"] = 0
 		if abs(em.analog_keys[1]) > 0.3:
-			self.key["y"] = -1 * em.analog_keys[1]
+			self.key["y"] = round(-1 * em.analog_keys[1],2)
 		elif em.key[pygame.K_UP] or em.key[pygame.K_w] or em.controller["up_arrow"]:
 			self.key["y"] = 1
 		elif em.key[pygame.K_DOWN] or em.key[pygame.K_s] or em.controller["down_arrow"]:

@@ -264,7 +264,7 @@ class object_manager:
 			spritelist = univars.func.getspritesscale(name,[temp.get_width(),temp.get_height()])
 			self.spritecache[str([name,sizen])] = spritelist
 		newt = inst.inst(data["stagename"],self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],univars.lumptype.get(data["stagename"],data["type"]),data["alpha"],spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]],data["layer"],data["usecoll"],data["sn"])
-		name = (int(round(data["pos"][0]/(univars.grandim * self.renderdist))),int(round(data["pos"][1]/(univars.grandim * self.renderdist))))
+		name = (int(round(data["pos"][0]/(univars.grandim * self.renderdist[0]))),int(round(data["pos"][1]/(univars.grandim * self.renderdist[1]))))
 		newtg = Ghost(newt)
 		if data["usecoll"]:
 			if name in self.instances.keys():
@@ -351,7 +351,7 @@ class object_manager:
 			noninst = pygame.sprite.spritecollide(colsprite,self.objgroup,dokill=False)
 
 			#coll for inst
-			camchunk = [int(round(camera.x/(dim * self.renderdist))),int(round(camera.y/(dim * self.renderdist)))]
+			camchunk = [int(round(camera.x/(dim * self.renderdist[0]))),int(round(camera.y/(dim * self.renderdist[1])))]
 			ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
 			
 			inst = []
@@ -391,7 +391,7 @@ class object_manager:
 
 		#coll for inst
 		#coll for inst
-		camchunk = [int(round(camera.x/(dim * self.renderdist))),int(round(camera.y/(dim * self.renderdist)))]
+		camchunk = [int(round(camera.x/(dim * self.renderdist[0]))),int(round(camera.y/(dim * self.renderdist[1])))]
 		ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
 		inst = []
 		for offset in ranges:
@@ -429,7 +429,7 @@ class object_manager:
 		# 		noninst.remove(obj)
 
 		#coll for inst
-		camchunk = [int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist)))]
+		camchunk = [int(round(pos[0]/(dim * self.renderdist[0]))),int(round(pos[1]/(dim * self.renderdist[1])))]
 		ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
 		inst = []
 		for offset in ranges:
@@ -473,7 +473,7 @@ class object_manager:
 				noninst.remove(obj)
 
 		#coll for inst
-		camchunk = [int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist)))]
+		camchunk = [int(round(pos[0]/(dim * self.renderdist[0]))),int(round(pos[1]/(dim * self.renderdist[1])))]
 		ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
 		inst = []
 		for offset in ranges:
@@ -604,7 +604,7 @@ class object_manager:
 			self.spritecache[str([name,sizen])] = spritelist
 
 		newt = inst.inst(stagename,self.grandim,name,pos[0],pos[1],rot,sizen,univars.lumptype.get(stagename,type),alp,spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]],layer,usecoll,sn)
-		name = (int(round(pos[0]/(dim * self.renderdist))),int(round(pos[1]/(dim * self.renderdist))))
+		name = (int(round(pos[0]/(dim * self.renderdist[0]))),int(round(pos[1]/(dim * self.renderdist[1]))))
 		newtg = Ghost(newt)
 		if usecoll:
 			if name in self.instances.keys():
@@ -693,7 +693,7 @@ class object_manager:
 
 	def render(self,camera,GameManager,dim:int,showall):
 		#camera-chunk
-		camposdim = [int(round(camera.x/(dim * self.renderdist))),int(round(camera.y/(dim * self.renderdist)))]
+		camposdim = [int(round(camera.x/(dim * self.renderdist[0]))),int(round(camera.y/(dim * self.renderdist[1])))]
 		#availabe chunks
 		ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
 		#the instanciate chunks to be rendered

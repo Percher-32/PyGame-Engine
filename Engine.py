@@ -260,9 +260,12 @@ class Game(Gamemananager.GameManager):
 		self.sp("unboundrot",0)
 
 		self.sp("rotoffset",0)
+		self.sp("rotdes",0)
 
 		self.sp("desrot",0)
 		self.sp("desmooth",5)
+
+		self.sp("lastwall","l")
 
 
 		self.sp("slantdir","r")
@@ -359,6 +362,7 @@ class Game(Gamemananager.GameManager):
 							if len(collision["midleft"]["inst"]) > 0 :
 								if collision["midleft"]["inst"][0].type == "ground":
 									self.sp("leftwall",True)
+									self.sp("lastwall","l")
 									self.sp("jumpable",True)	
 									om.objects["player"]["pos"][0] = collision["midleft"]["inst"][0].realpos[0] + 32
 
@@ -380,6 +384,7 @@ class Game(Gamemananager.GameManager):
 							if len(collision["midright"]["inst"]) > 0 :
 								if  collision["midright"]["inst"][0].type == "ground":
 									self.sp("rightwall",True)
+									self.sp("lastwall","r")
 									self.sp("jumpable",True)	
 									om.objects["player"]["pos"][0] = collision["midright"]["inst"][0].realpos[0] -32
 									if not collision["botmid"]["inst"]:
@@ -397,13 +402,18 @@ class Game(Gamemananager.GameManager):
 								self.sp("rightwall",False)
 
 
-
+						#wall ledge spin
 						if self.gp("lastframewall") and not self.gp("leftwall") and not self.gp("rightwall"):
 							self.sp("xinit",False)
 							self.sp("mode","in-air")
 							ground = False
-							self.spin(20 ,1)
-							self.sp("des_vel",[self.key["x"] * 150,200])
+							if not abs(self.key["x"]):
+								if self.gp("lastwall") == "r":
+									self.spin(13 ,10,spindec = 0.4)
+									self.sp("des_vel",[0,200])
+								else:
+									self.spin(-13 ,10,spindec = 0.4)
+									self.sp("des_vel",[0,200])
 
 
 							
@@ -438,12 +448,14 @@ class Game(Gamemananager.GameManager):
 							# 	self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    self.unilerp(self.gp("des_vel")[1],-130,8,roundto = 0)   ]     )
 							# 	self.sp("mode","in-air")
 
-							if not self.key["jump"]:
+							if not self.key["jump"] and not self.isthere("rotate"):
 								if  self.gp("leftwall") or  self.gp("rightwall"):
 									self.sp("onboard",True)
 								else:
 									self.sp("desrot",self.key["x"] * 20)
 
+
+						#prevent rotation on walls
 						if self.gp("leftwall") or self.gp("rightwall"):
 							self.killtimer("rotate")
 							self.sp("rotoffset",0)
@@ -655,13 +667,18 @@ class Game(Gamemananager.GameManager):
 					if self.isthere("rotate"):
 						self.sp("rotoffset",self.gp("rotoffset") + self.gp("rot"))
 
-					if self.ondone("rotate"):
-						self.sp("rotoffset",0)
+						self.sp("rot",self.gp("rot") - (self.valsign(self.gp("rot")) * abs(self.gp("rotdes")) ) )
+						
 
+					# min_value = -180
+					# max_value = 180
+					# range_size = max_value - min_value
+					# self.sp("rotoffset", ((self.gp("rotoffset") - min_value) % range_size) + min_value)
 					# if self.gp("rotoffset") > 180:
 					# 	self.sp("rotoffset",self.gp("rotoffset") - 360)
 					# if self.gp("rotoffset") < -180:
 					# 	self.sp("rotoffset",self.gp("rotoffset") + 360)
+
 
 					rot = self.gp("unboundrot")
 					dest = self.gp("desrot")+ self.gp("rotoffset")
@@ -820,11 +837,12 @@ class Game(Gamemananager.GameManager):
 		
 		self.lastrail = rail
 
-	def spin(self,angle,time):
+	def spin(self,angle,time,spindec = 0):
 		"""
 			rotates the player by (angle) for (time) seconds
 		"""
 		self.wait(f"rotate",time,barrier=False)
+		self.sp("rotdes",spindec)
 		self.sp("rot",angle)
 
 
