@@ -75,7 +75,7 @@ class GameManager():
 			prints a string in game in the debug menu
 		"""
 		self.output.append(str(string))
-		if len(self.output) > 50:
+		if len(self.output) > 200:
 			self.output.pop(0)
 
 	def console(self):
@@ -380,7 +380,9 @@ class GameManager():
 
 	def start(self):
 		"""run at the start of every frame"""
-		
+		if self.dt == 0:
+			self.dt = 1
+		self.fps = round(60/ self.dt,3)
 		if Tiled.comm:
 			sm.state = Tiled.cht
 			self.initial()
@@ -419,6 +421,10 @@ class GameManager():
 		#runs editor
 		Tiled.Run(self.publicvariables["debug-mode"],univars.camspeeed,self,cam,self.dim,self.publicvariables["leveledit"],cm,sm.state)
 
+		
+		if fm.showfps:
+			if self.dt > 0:
+				tm.drawtext(f"fps = {round(60/ self.dt)}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.9,-0.9)
 
 
 		#renders ui
@@ -465,10 +471,6 @@ class GameManager():
 		# univars.realscreeen = pygame.transform.scale(univars.realscreeen,[pygame.display.get_window_size()[0]/univars.startdims[0] * univars.startdims[0],pygame.display.get_window_size()[1]/univars.startdims[1] * univars.startdims[1]])
 		# # univars.realscreeen = pygame.transform.scale_by(univars.realscreeen,(pygame.display.get_window_size()[0]/univars.startdims[0]))
 		# print((pygame.display.get_window_size()[0]/univars.startdims[0]) ** 2)
-		
-		if fm.showfps:
-			if self.dt > 0:
-				tm.drawtext(f"fps = {round(60/ self.dt)}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.9,-0.9)
 
 
 		# bgframe_tex = shader.bg_surf_to_texture(bg.backlayer)

@@ -176,11 +176,17 @@ class TiledSoftwre:
 						self.showconsolebool = not self.showconsolebool
 
 			if GameManager.event_manager.key[pygame.K_PAGEUP]:
-				self.consoletextscoll += 0.1
+				self.consoletextscoll -= 0.05 * GameManager.dt
 
 			if GameManager.event_manager.key[pygame.K_PAGEDOWN]:
-				self.consoletextscoll -= 0.1
+				self.consoletextscoll += 0.05 * GameManager.dt
 
+			if GameManager.event_manager.key[pygame.K_LCTRL]:
+				if GameManager.event_manager.key[pygame.K_PAGEUP]:
+					self.consoletextscoll -= 0.05 * GameManager.dt
+
+				if GameManager.event_manager.key[pygame.K_PAGEDOWN]:
+					self.consoletextscoll += 0.05 * GameManager.dt
 			# GameManager.print(self.consoletextscoll)
 
 			self.showconsole(GameManager)
@@ -1177,6 +1183,18 @@ class TiledSoftwre:
 					GameManager.publicvariables[vartochange] = eval(valtoreplace)
 				except:
 					GameManager.publicvariables[vartochange] = valtoreplace
+				
+				GameManager.print(f"{vartochange} = {valtoreplace}")
+				# GameManager.print(self.cht)
+				self.commmandtring = ""
+			elif ("debug:" in self.commmandtring.rstrip() or "db:" in self.commmandtring.rstrip()) and not "=" in self.commmandtring.rstrip() : 
+				self.cht = self.commmandtring.rstrip().split(":")[1]
+				self.cht.replace(" ","")
+				if self.cht in GameManager.publicvariables.keys():
+					GameManager.print(f"{self.cht} = {GameManager.publicvariables[self.cht]}")
+				else:
+					GameManager.print(f"ERROR:\n    {self.cht} is not a publicvariable")
+				self.showconsolebool = 1
 				self.commmandtring = ""
 			elif self.commmandtring.rstrip() in self.spritenames : 
 				self.sprite = self.spritenames.index(self.commmandtring.rstrip())
@@ -1290,8 +1308,8 @@ class TiledSoftwre:
 
 	def showconsole(self,GM):
 		if self.showconsolebool:
-			um.addrect([1000,univars.screen_h],"all",[-1,0],"#debugrect",color = univars.theme["dark"],alpha=255)
-			um.addtext("#debugtext",GM.console(),univars.defont,[-1,self.consoletextscoll],univars.theme["semibright"],30,"all",center=False)
+			um.addrect([1000,univars.screen_h],"all",[-1,0],"#debugrect",color = univars.theme["dark"],alpha=200)
+			um.addtext("#debugtext",GM.console(),univars.defont,[-1,self.consoletextscoll],univars.theme["semibright"],35,"all",center=False)
 			um.elements["#debugtext"]["text"] = GM.console()
 			um.elements["#debugtext"]["pos"][1] = self.consoletextscoll
 		else:
