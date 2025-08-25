@@ -29,6 +29,7 @@ class TiledSoftwre:
 		self.pause = True
 		self.showconsolebool = 0
 		self.realscreeen = realscreen
+		self.consoletextscoll = 1
 		self.theme = theme
 		self.tm = Textmanager.Textmanager(realscreen)
 		self.func = funcs.func(grandim)
@@ -174,7 +175,15 @@ class TiledSoftwre:
 						self.placable = 5
 						self.showconsolebool = not self.showconsolebool
 
-			self.showconsole()
+			if GameManager.event_manager.key[pygame.K_PAGEUP]:
+				self.consoletextscoll += 0.1
+
+			if GameManager.event_manager.key[pygame.K_PAGEDOWN]:
+				self.consoletextscoll -= 0.1
+
+			# GameManager.print(self.consoletextscoll)
+
+			self.showconsole(GameManager)
 							
 
 
@@ -1279,11 +1288,15 @@ class TiledSoftwre:
 			self.showinput(GameManager)
 
 
-	def showconsole(self):
+	def showconsole(self,GM):
 		if self.showconsolebool:
-			um.addrect([300,univars.screen_h],"all",[-1,0],"#debugrect",color = univars.theme["dark"],alpha=150)
+			um.addrect([1000,univars.screen_h],"all",[-1,0],"#debugrect",color = univars.theme["dark"],alpha=255)
+			um.addtext("#debugtext",GM.console(),univars.defont,[-1,self.consoletextscoll],univars.theme["semibright"],30,"all",center=False)
+			um.elements["#debugtext"]["text"] = GM.console()
+			um.elements["#debugtext"]["pos"][1] = self.consoletextscoll
 		else:
-			um.deleleelem("#debugelem")
+			um.deleleelem("#debugrect")
+			um.deleleelem("#debugtext")
 			
 
 	def showinput(self,GameManager):

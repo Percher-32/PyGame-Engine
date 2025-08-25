@@ -70,12 +70,12 @@ class GameManager():
 		self.clock = pygame.time.Clock()
 
 
-	def print(self,str):
+	def print(self,string):
 		"""
 			prints a string in game in the debug menu
 		"""
-		self.output.append(str)
-		if len(self.output) > 100:
+		self.output.append(str(string))
+		if len(self.output) > 50:
 			self.output.pop(0)
 
 	def console(self):
