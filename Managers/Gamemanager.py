@@ -324,17 +324,7 @@ class GameManager():
 		self.publicvariables["showallhidden"] = sm.showall
 		self.smstate = sm.state
 
-	def sp(self,val:str,to):
-		"""
-		changes the value a players variable
-		"""
-		om.set_value("player",val,to)
 
-	def gp(self,val:str):
-		"""
-		gets the value a players variable
-		"""
-		return om.get_value("player",val)
 
 	def Run(self):
 		self.commence()

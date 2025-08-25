@@ -231,7 +231,7 @@ class Game(Gamemananager.GameManager):
 		om.adds("player",startpos,"player","player",0,[1,1],400,5)
 		om.objects["player"]["rendercond"] = False
 
-		self.sp("dashmeter",50)
+		self.sp("dashmeter",500)
 		
 		self.sp("dashcooldown",0)
 		self.sp("deshrem",0)
@@ -564,7 +564,7 @@ class Game(Gamemananager.GameManager):
 									if not self.isthere("rotate"):
 										# if not abs()
 										self.sp("rotoffset",self.rotlerp(self.gp("rotoffset"),0,5))
-										self.sp("desrot",self.rotlerp(self.gp("desrot"),self.gp("act_vel")[0]/10,5) )
+										self.sp("desrot",self.rotlerp(self.gp("desrot"),self.gp("act_vel")[0]/4,5) )
 
 						
 
@@ -572,26 +572,28 @@ class Game(Gamemananager.GameManager):
 						if self.key["secondary"]:
 							if self.gp("dashmeter") > 0:
 								if not self.isthere("dashcooldown"):
-									self.wait("dashcooldown",1)
+									self.wait("dashcooldown",0.5)
 									self.wait("dashrem",0.4)
-									actmult = [130,180]
+									self.sp("dashmeter",self.gp("dashmeter") - 10)
+									actmult = [90,140]
 									actvel = [  self.key["axis"][0] * actmult[0] , self.key["axis"][1] * actmult[1] ]
-									desmult = [130,180]
+									desmult = [90,140]
 									desvel = [  self.key["axis"][0] * desmult[0] , self.key["axis"][1] * desmult[1] ]
-									self.spin(30,0.5,0.5)
+									self.spin(20,0.4,0.1)
 
-									self.sp("dashav",self.listdiv(actvel,30))
-									self.sp("dashdv",self.listdiv(desvel,30))
+									self.sp("dashav",self.listdiv(actvel,60))
+									self.sp("dashdv",self.listdiv(desvel,60))
 
-
+									self.sp("act_vel",0,1)
+									self.sp("des_vel",0,1)
 									self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
 									self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
 									
 
 
 						if self.isthere("dashrem"):
-							self.unilerp(self.gp("dashav"),[0,0],5)
-							self.unilerp(self.gp("dashdv"),[0,0],5)
+							self.unilerp(self.gp("dashav"),[0,0],3)
+							self.unilerp(self.gp("dashdv"),[0,0],3)
 							self.sp("act_vel",self.listadd((self.gp("act_vel"),self.gp("dashav"))))
 							self.sp("des_vel",self.listadd((self.gp("des_vel"),self.gp("dashdv"))))
 
@@ -1003,7 +1005,29 @@ class Game(Gamemananager.GameManager):
 		"""
 		return [i/num for i in list]
 
+	def sp(self,val:str,to,index=None):
+		"""
+		changes the value a players variable
+		"""
+		if index == None:
+			om.set_value("player",val,to)
+		else:
+			change = to
+			to = self.gp(val)
+			to[index] = change
+			om.set_value("player",val,to)
 
+	def gp(self,val:str,index=None):
+		"""
+		gets the value a players variable
+		"""
+		if index == None:
+			return om.get_value("player",val)
+		else:
+			return om.get_value("player",val)[index]
+	
+
+	
 
 
 
