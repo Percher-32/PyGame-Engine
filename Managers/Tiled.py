@@ -27,6 +27,7 @@ for spritefolder in os.listdir("Graphics/sprites"):
 class TiledSoftwre:
 	def __init__(self,realscreen,theme,grandim,screen,om):
 		self.pause = True
+		self.showconsolebool = 0
 		self.realscreeen = realscreen
 		self.theme = theme
 		self.tm = Textmanager.Textmanager(realscreen)
@@ -167,6 +168,14 @@ class TiledSoftwre:
 			self.loadingmap = False
 			self.dim = dim
 			# um.addbutton([300,300],"all",[0,0],"srbiunp",color=(200,200,200))
+			if GameManager.event_manager.key[pygame.K_p]:
+				if GameManager.event_manager.key[pygame.K_LCTRL]:
+					if self.placable <= 0:
+						self.placable = 5
+						self.showconsolebool = not self.showconsolebool
+
+			self.showconsole()
+							
 
 
 			#mode for level editing
@@ -1016,8 +1025,6 @@ class TiledSoftwre:
 
 
 
-
-
 			elif self.mode == "Particle-edit":
 				movecam = 0
 				um.state = "particle-edit"
@@ -1272,9 +1279,12 @@ class TiledSoftwre:
 			self.showinput(GameManager)
 
 
-
-
-
+	def showconsole(self):
+		if self.showconsolebool:
+			um.addrect([300,univars.screen_h],"all",[-1,0],"#debugrect",color = univars.theme["dark"],alpha=150)
+		else:
+			um.deleleelem("#debugelem")
+			
 
 	def showinput(self,GameManager):
 		GameManager.uibox((190,190),(-0.8,-0.5),univars.theme["dark"],200)

@@ -41,6 +41,7 @@ pm = Managers.Particlesytem.pm
 
 class GameManager():
 	def __init__(self,screen_colour,frame_manager):
+		self.output = []
 		self.screen_colour = screen_colour
 		self.frame_manager = frame_manager
 		self.event_manager = em
@@ -67,6 +68,26 @@ class GameManager():
 		Tiled.extra(univars.extras)
 		om.loadtilemap(univars.map)
 		self.clock = pygame.time.Clock()
+
+
+	def print(self,str):
+		"""
+			prints a string in game in the debug menu
+		"""
+		self.output.append(str)
+		if len(self.output) > 100:
+			self.output.pop(0)
+
+	def console(self):
+		"""
+			returns a string all printed items
+		"""
+		out = ""
+		for i in self.output:
+			out += i + "\n"
+		return out
+
+		
 
 	def debug(self,message,sep = 0):
 		if self.publicvariables["printdebug"]:

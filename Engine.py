@@ -286,8 +286,8 @@ class Game(Gamemananager.GameManager):
 		ground2 = len(collision["botleft"]["inst"]) > 0    and not (len(collision["topleft"]["inst"])  > 0  ) and not (len(collision["midleft"]["inst"])  > 0  )
 		ground3 = len(collision["botright"]["inst"]) > 0   and not (len(collision["topright"]["inst"]) > 0  ) and not (len(collision["midright"]["inst"]) > 0  )
 		ground = ground1 or ground2 or ground3
-		instlist = collision["botmid"]["inst"] + collision["botleft"]["inst"] + collision["botright"]["inst"] 
-		collisionlisttype = [i.type for i in instlist] 
+		instlist = collision["botmid"]["inst"] + collision["botleft"]["inst"] + collision["botright"]["inst"]
+		collisionlisttype = [i.type for i in instlist]
 		collisionboxtype = [i.type for i in collisionbox["inst"]] 
 		collisionlisttype.append("ground")
 
@@ -409,11 +409,14 @@ class Game(Gamemananager.GameManager):
 							ground = False
 							if not abs(self.key["x"]):
 								if self.gp("lastwall") == "r":
-									self.spin(13 ,10,spindec = 0.4)
+									self.spin(10 ,10,spindec = 0.4)
 									self.sp("des_vel",[0,200])
 								else:
-									self.spin(-13 ,10,spindec = 0.4)
+									self.spin(-10 ,10,spindec = 0.4)
 									self.sp("des_vel",[0,200])
+							else:
+								self.spin(self.valsign(self.key["x"]) * -16 ,3,spindec = 0.4)
+								self.sp("des_vel",[self.key["x"] * 150,200])
 
 
 							

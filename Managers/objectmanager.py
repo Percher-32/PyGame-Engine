@@ -12,6 +12,9 @@ import os
 import math
 # from render import render
 
+
+
+
 class collinst(pygame.sprite.Sprite):
 	def __init__(self,x,y,w,h):
 		pygame.sprite.Sprite.__init__(self)
@@ -151,7 +154,23 @@ class object_manager:
 	def getcull(self,pos,grid_size,dim,ignore = []) -> list:
 		return [i for i in list(self.objects.keys()) if pos[0] - grid_size * dim <= self.objects[i]["pos"][0] <= pos[0] + grid_size * dim  and pos[1] - grid_size * dim <= self.objects[i]["pos"][1] <= (pos[1]) + grid_size * dim and not i in ignore]                                                  
 
+	# def grouptosprite(self,chunk):
+	# 	size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
+	# 	chunksprite = pygame.Surface(size)
+	# 	for inst in self.noncolinstances[chunk].sprites:
+	# 		pos =  [inst.fakerect.x,inst.fakerect.y]
+	# 		relativepos = [   
+	# 						pos[0] - (chunk[0] * univars.grandim),
+	# 						pos[1] - (chunk[1] * univars.grandim)
+	# 		   			  ]
+	# 		chunksprite.blit(inst.bart,relativepos)
+	# 	self.noncolinstances[chunk].clear
+	# 	newt = inst.inst
+	# 	self.noncolinstances[chunk].add(newt)
+			
 
+
+		
 
 
 
