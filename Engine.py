@@ -231,6 +231,11 @@ class Game(Gamemananager.GameManager):
 		om.adds("player",startpos,"player","player",0,[1,1],400,5)
 		om.objects["player"]["rendercond"] = False
 
+		self.sp("dashmeter",50)
+		
+		self.sp("dashcooldown",0)
+		self.sp("deshrem",0)
+
 		#creates the player sprite you actually see
 		om.adds("playersprite",[-1400,400],"player","player",0,[1,1],400,5)
 		om.objects["playersprite"]["rendercond"] = True
@@ -308,7 +313,8 @@ class Game(Gamemananager.GameManager):
 
 	def moveplayer(self):
 		# om.speed = 0.4
-		
+		self.println(self.key["secondary"],1)
+		self.println(self.gp("dashmeter"),2)
 		# um.showvar("pos",om.objects["player"]["pos"],[0,0])
 		collision = om.collide9("player",0,cam,self.dim,ignore= ["playersprite","skateboard"])
 		lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
@@ -561,11 +567,34 @@ class Game(Gamemananager.GameManager):
 										self.sp("desrot",self.rotlerp(self.gp("desrot"),self.gp("act_vel")[0]/10,5) )
 
 						
-						# self.println(self.gp("rotoffset"),1)
+
+						#dash
+						if self.key["secondary"]:
+							if self.gp("dashmeter") > 0:
+								if not self.isthere("dashcooldown"):
+									self.wait("dashcooldown",1)
+									self.wait("dashrem",0.4)
+									actmult = [130,180]
+									actvel = [  self.key["axis"][0] * actmult[0] , self.key["axis"][1] * actmult[1] ]
+									desmult = [130,180]
+									desvel = [  self.key["axis"][0] * desmult[0] , self.key["axis"][1] * desmult[1] ]
+									self.spin(30,0.5,0.5)
+
+									self.sp("dashav",self.listdiv(actvel,30))
+									self.sp("dashdv",self.listdiv(desvel,30))
 
 
+									self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
+									self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
+									
 
-						# self.println(f"{self.gp('rotoffset')} | {self.isthere('rotate') }",1)
+
+						if self.isthere("dashrem"):
+							self.unilerp(self.gp("dashav"),[0,0],5)
+							self.unilerp(self.gp("dashdv"),[0,0],5)
+							self.sp("act_vel",self.listadd((self.gp("act_vel"),self.gp("dashav"))))
+							self.sp("des_vel",self.listadd((self.gp("des_vel"),self.gp("dashdv"))))
+
 
 
 
@@ -955,8 +984,24 @@ class Game(Gamemananager.GameManager):
 		else:
 			return -1
 
+	def listadd(self,lists:tuple) -> list:
+		"""
+			lists = tuple of lists to add together
+		"""
+		# print(lists[0])
+		mainlist = [0 for i in lists[0]]
+		self.println(lists,3)
+		for lst in lists:
+			for index in range(len(lst)):
+				mainlist[index] += lst[index]
+		self.println(mainlist,4)
+		return mainlist
 
-
+	def listdiv(self,list,num):
+		"""
+			divides a list by single number
+		"""
+		return [i/num for i in list]
 
 
 
