@@ -65,8 +65,8 @@ class Item(pygame.sprite.Sprite):
         if univars.camchange or univars.poschange:
             if univars.poschange:
                 if not self.layer == 1:
-                    self.pos[0] -= (camera.x - self.lastcampos[0])*(self.layer)  *  camera.size
-                    self.pos[1] -= (camera.y - self.lastcampos[1])*(self.layer)  *  camera.size
+                    self.pos[0] -= (camera.x - self.lastcampos[0])*(self.layer)
+                    self.pos[1] -= (camera.y - self.lastcampos[1])*(self.layer)
                 else:
                     self.pos[0] -= (camera.x - self.lastcampos[0])*(self.layer)
                     self.pos[1] -= (camera.y - self.lastcampos[1])*(self.layer)

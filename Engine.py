@@ -105,21 +105,52 @@ class Game(Gamemananager.GameManager):
 
 
 	
-		# self.ingametime += self.dt/300 * om.speed
-		self.ingametime = -1
+		self.publicvariables["mood"] = "night"
+		mood = self.publicvariables["mood"]
 
 		# self.publicvariables["waterh"] -= 0.002
 		sd.program['time'] = fm.frame
 		sd.program['state'] = self.publicvariables["shaderstate"]
-		sd.program["illuminace"] = (math.cos(self.ingametime) + 2)/2
+
+
+		if mood == "brightday":
+			sd.program["illuminace"] = 20
+			sd.program["sunpos"] = [0,0]
+			sd.program["pacify"] = 0
+
+		if mood == "sunset":
+			sd.program["illuminace"] = 0.5
+			sd.program["sunpos"] = [0.5,0.5]
+			sd.program["pacify"] = 0.2
+
+		if mood == "day":
+			sd.program["illuminace"] = 1
+			sd.program["sunpos"] = [0,0]
+			sd.program["pacify"] = 0
+
+		if mood == "night":
+			sd.program["illuminace"] = 0.5
+			sd.program["sunpos"] = [0,0]
+			sd.program["pacify"] = 0.3
+
+
+
+		
+
+
+
+
+
+		self.actualwaterheight = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-( + self.publicvariables["waterh"]) + ((1-cam.size)* 1.46)
 		if self.publicvariables["showater"]:
 			sd.program["waterlevel"] = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-( self.publicvariables["waterh"]) + ((1-cam.size)* 1.46)
 		else:
 			sd.program["waterlevel"] = -1
-		sd.program["sunpos"] = [math.sin(self.ingametime) * -1.3,math.cos(self.ingametime) * -1.5 ]
-		self.actualwaterheight = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-( + self.publicvariables["waterh"]) + ((1-cam.size)* 1.46)
-		# sd.program["sunpos"] = [0,0]
+		
+
+		
 		sd.program["camx"] = cam.x/univars.startdims[0]
+
 
 			
 	def playercode(self):

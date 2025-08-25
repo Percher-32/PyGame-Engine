@@ -1,6 +1,7 @@
 #version 330 core
 uniform sampler2D tex;
 uniform float time;
+uniform float pacify;
 uniform int state;
 uniform vec2 sunpos;
 uniform float illuminace;
@@ -171,12 +172,11 @@ void main() {
 
 
         float twistsiist = abs(distance(uvs,slighttwist));
-
         //0 on outside  , 1 on inside
-        float dark = 1 - ((sundist/(illuminace * 2)) + dist/2)/2;
+        float dark = 1 - ((sundist/(illuminace * 2)) + dist/2)/2 - pacify;
         float hurt = 0;
         vec2 sampling = vec2(sample_pos.x + 0.01,sample_pos.y);
-        float vigb = mix((1 - dist/5),dark,hurt);
+        float vigb = mix((1 - dist/3),dark,hurt);
         float vigr = mix(dark,(1 - dist/5),hurt);
         float offsetsine =  sin(sin((uvs.x + camx) + time/1000)*20 + time/100  + 2*sin( time/1000)/25     + sin( sin(time/300) + (uvs.x + camx))/20                )/50;
         offsetsine = perlin()/20;
@@ -224,7 +224,6 @@ void main() {
             scalar = pow(scalar,3);
 
             // scalar = mix(0,scalar,scalar);
-
 
             dark = mix(reflec_dark,underwater_dark,1-scalar);
             map = mix(  texture(tex, underwater_sample_pos).rgb   ,  texture(tex, reflec_sample_pos).rgb  ,  scalar  );
