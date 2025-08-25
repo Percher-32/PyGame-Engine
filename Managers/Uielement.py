@@ -7,12 +7,13 @@ tm = Textmanager.Textmanager(univars.realscreeen)
 
 
 class Ui(pygame.sprite.Sprite):
-    def __init__(self,surf,states,pos,name,cando = True):
+    def __init__(self,surf,states,pos,name,cando = True,fromstart = 0):
         pygame.sprite.Sprite.__init__(self)
         self.image = surf
         self.pos = pos
         self.name = name
         self.baseimg = surf
+        self.fromstart = fromstart
         self.rect = self.baseimg.get_rect(center = pos)
         self.states = states
         self.cando = cando
@@ -47,7 +48,10 @@ class Ui(pygame.sprite.Sprite):
                 self.pos = elements[self.name]["pos"]
                 self.image = self.baseimg
                 pos = self.pos
-                self.rect = self.baseimg.get_rect(center = (pos[0] * univars.realscreeen.get_width()//2  + univars.realscreeen.get_width()//2 ,-1 * pos[1] * univars.realscreeen.get_height()//2  + univars.realscreeen.get_height()//2 ))
+                if not self.fromstart:
+                    self.rect = self.baseimg.get_rect(center = (pos[0] * univars.realscreeen.get_width()//2  + univars.realscreeen.get_width()//2 ,-1 * pos[1] * univars.realscreeen.get_height()//2  + univars.realscreeen.get_height()//2 ))
+                else:
+                    self.rect = self.baseimg.get_rect(center = (pos[0] * univars.realscreeen.get_width()//2  + univars.realscreeen.get_width()//2 + self.image.get_width()/2,-1 * pos[1] * univars.realscreeen.get_height()//2  + univars.realscreeen.get_height()//2 ))
                 self.extra(em,elements,state)
             else:
                 self.image = pygame.Surface((0,0))
@@ -62,7 +66,7 @@ class Ui(pygame.sprite.Sprite):
 
 
 class Uirect(Ui):
-    def __init__(self,dimensions,states,pos,name,surf = None):
+    def __init__(self,dimensions,states,pos,name,surf = None,fromstart = 0):
         if not surf == None:
             img = surf
             cd = 0
@@ -70,14 +74,14 @@ class Uirect(Ui):
             img = pygame.Surface(dimensions)
             cd  = 1
         
-        super().__init__(img,states, pos, name,cando=cd)
+        super().__init__(img,states, pos, name,cando=cd,fromstart = fromstart)
         self.surf = surf
         self.dimensions = dimensions
 
         
 class Uibutton(Uirect):
-    def __init__(self, dimensions, states, pos,name,surf = None):
-        super().__init__(dimensions, states, pos,name,surf=surf)
+    def __init__(self, dimensions, states, pos,name,surf = None,fromstart = 0):
+        super().__init__(dimensions, states, pos,name,surf=surf,fromstart = fromstart)
         self.click = 0
         self.hover = 0
 

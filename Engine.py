@@ -68,7 +68,6 @@ class Game(Gamemananager.GameManager):
 		
 
 	def commence(self):
-		self.print("WORKING")
 		pass
 
 	def update(self):
@@ -169,13 +168,7 @@ class Game(Gamemananager.GameManager):
 				
 
 			
-
-			if self.gp("des_vel")[0] > 0:
-				self.lookahead = self.unilerp(self.lookahead,200,8,roundto=2)
-			elif self.gp("des_vel")[0] < 0:
-				self.lookahead = self.unilerp(self.lookahead,-200,8,roundto=2)
-			else:
-				self.lookahead = self.unilerp(self.lookahead,0,20,roundto=2)
+			
 
 			campos[0] += self.lookahead
 
@@ -231,7 +224,7 @@ class Game(Gamemananager.GameManager):
 		om.adds("player",startpos,"player","player",0,[1,1],400,5)
 		om.objects["player"]["rendercond"] = False
 
-		self.sp("dashmeter",500)
+		self.sp("dashmeter",100)
 		
 		self.sp("dashcooldown",0)
 		self.sp("deshrem",0)
@@ -311,10 +304,40 @@ class Game(Gamemananager.GameManager):
 
 		self.sp("thickness",1)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+		#UI
+		um.changestate("maingame",None)
+		um.addrect([1000 -19,100 + 30 - 30],["maingame"],[-0.5 + 0.02,0.8],"dashbarback",color=(0,0,0),fromstart=1)
+		um.addrect([1000 - 30 - 20,90 - 30],["maingame"],[-0.5 + 0.017 + 0.02,0.8],"dashbar",color=(50,100,100),fromstart=1)
+
+
+
+
+
 	def moveplayer(self):
 		# om.speed = 0.4
-		self.println(self.key["secondary"],1)
-		self.println(self.gp("dashmeter"),2)
+		# self.println(self.gp("dashmeter"),2)
+		self.sp("dashmeter",min([100,self.gp("dashmeter")]))
+		self.sp("dashmeter",max([0,self.gp("dashmeter")]))
+
+
+		um.elements["dashbar"]["dimensions"][0] = abs((self.gp("dashmeter") * 10) - 50)
+		if self.gp("dashmeter") <= 0:
+			um.elements["dashbar"]["dimensions"][0] = 0
+		um.elements["dashbar"]["color"] = (um.elements["dashbar"]["color"][0], um.elements["dashbar"]["color"][1] ,min([self.gp("dashmeter") / 100 * 225 + 100,255]))
+		# um.elements["dashbar"]["pos"][0] = self.gp("dashmeter")
 		# um.showvar("pos",om.objects["player"]["pos"],[0,0])
 		collision = om.collide9("player",0,cam,self.dim,ignore= ["playersprite","skateboard"])
 		lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
@@ -441,7 +464,8 @@ class Game(Gamemananager.GameManager):
 
 
 						#wall ledge spin
-						if self.gp("lastframewall") and not self.gp("leftwall") and not self.gp("rightwall"):
+						# self.println(len(collision["botmid"]),6)
+						if self.gp("lastframewall") and not self.gp("leftwall") and not self.gp("rightwall") and not (collision["botmid"]["inst"] and collision["botleft"]["inst"] and collision["botright"]["inst"]):
 							self.sp("xinit",False)
 							self.sp("mode","in-air")
 							ground = False
@@ -574,10 +598,11 @@ class Game(Gamemananager.GameManager):
 								if not self.isthere("dashcooldown"):
 									self.wait("dashcooldown",0.5)
 									self.wait("dashrem",0.4)
+									# cm.setcond("playercam","shake",6)
 									self.sp("dashmeter",self.gp("dashmeter") - 10)
-									actmult = [90,140]
+									actmult = [90,160]
 									actvel = [  self.key["axis"][0] * actmult[0] , self.key["axis"][1] * actmult[1] ]
-									desmult = [90,140]
+									desmult = [90,160]
 									desvel = [  self.key["axis"][0] * desmult[0] , self.key["axis"][1] * desmult[1] ]
 									self.spin(20,0.4,0.1)
 
@@ -588,6 +613,8 @@ class Game(Gamemananager.GameManager):
 									self.sp("des_vel",0,1)
 									self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
 									self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
+
+						
 									
 
 
@@ -596,6 +623,8 @@ class Game(Gamemananager.GameManager):
 							self.unilerp(self.gp("dashdv"),[0,0],3)
 							self.sp("act_vel",self.listadd((self.gp("act_vel"),self.gp("dashav"))))
 							self.sp("des_vel",self.listadd((self.gp("des_vel"),self.gp("dashdv"))))
+							
+							# cm.setcond("playercam","shake",0)
 
 
 
@@ -934,8 +963,17 @@ class Game(Gamemananager.GameManager):
 		if  -5 > self.gp("desrot") > 5:
 			self.sp("desrot",0)
 
+		if not rail:
+			if self.gp("des_vel")[0] > 0:
+				self.lookahead = self.unilerp(self.lookahead,200,8,roundto=2)
+			elif self.gp("des_vel")[0] < 0:
+				self.lookahead = self.unilerp(self.lookahead,-200,8,roundto=2)
+			else:
+				self.lookahead = self.unilerp(self.lookahead,0,20,roundto=2)
+
 		
 		self.lastrail = rail
+
 
 	def spin(self,angle,time,spindec = 0):
 		"""

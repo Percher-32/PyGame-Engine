@@ -106,7 +106,7 @@ startstate = "debugame"
 startshaderstate = 0
 
 
-showdebugonstart = 1
+showdebugonstart = 0
 
 #opt to optimise
 mode = "norm"

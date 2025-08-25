@@ -195,7 +195,8 @@ class TiledSoftwre:
 
 			#mode for level editing
 			if self.mode == 0:
-				um.state = "def"
+				if GameManager.states == "Editor":
+					um.state = "def"
 				if GameManager.event_manager.key[pygame.K_v]:
 					if GameManager.event_manager.key[pygame.K_LCTRL]:
 						if GameManager.publicvariables["showdata"] == 1:
