@@ -113,6 +113,7 @@ mode = "norm"
 startuistate = "def"
 
 screencol = (110,189,234)
+# screencol = (0,0,50)
 
 
 camspeeed = 45
@@ -122,7 +123,7 @@ poschange = 0
 
 defont = "pixel2.ttf"
 
-renderdist = [14,9]
+renderdist = [15,9]
 
 showinput = 0
 

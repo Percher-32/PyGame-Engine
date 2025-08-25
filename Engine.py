@@ -105,7 +105,7 @@ class Game(Gamemananager.GameManager):
 
 
 	
-		self.publicvariables["mood"] = "night"
+		self.publicvariables["mood"] = "day"
 		mood = self.publicvariables["mood"]
 
 		# self.publicvariables["waterh"] -= 0.002
@@ -114,12 +114,12 @@ class Game(Gamemananager.GameManager):
 
 
 		if mood == "brightday":
-			sd.program["illuminace"] = 20
+			sd.program["illuminace"] = 2
 			sd.program["sunpos"] = [0,0]
 			sd.program["pacify"] = 0
 
 		if mood == "sunset":
-			sd.program["illuminace"] = 0.5
+			sd.program["illuminace"] = 1
 			sd.program["sunpos"] = [0.5,0.5]
 			sd.program["pacify"] = 0.2
 
@@ -129,9 +129,9 @@ class Game(Gamemananager.GameManager):
 			sd.program["pacify"] = 0
 
 		if mood == "night":
-			sd.program["illuminace"] = 0.5
+			sd.program["illuminace"] = 0.6
 			sd.program["sunpos"] = [0,0]
-			sd.program["pacify"] = 0.3
+			sd.program["pacify"] = 0
 
 
 

@@ -720,7 +720,7 @@ class object_manager:
 		noncollof = [  b   for b in self.noncolinstances.keys() for i in ranges   if b == ( i[0]  + camposdim[0],i[1] + camposdim[1]   )]
 
 		
-
+		# pygame.sprite.Group.draw(special_flags=)
 		
 
 		# print("/////////")
@@ -730,7 +730,7 @@ class object_manager:
 				# print(self.instances[i].sprites)
 				# print()
 				self.instances[i].update(showall)
-				self.instances[i].draw(univars.screen)
+				self.instances[i].draw(univars.screen,special_flags=0)
 
 		# print("noncol:")
 		#renders the non colliding instanciates
@@ -739,7 +739,7 @@ class object_manager:
 				# print(self.instances[i].sprites)
 				# print()
 				self.noncolinstances[i].update(showall)
-				self.noncolinstances[i].draw(univars.screen)
+				self.noncolinstances[i].draw(univars.screen,special_flags=0)
 
 		# print("/////////")
 
