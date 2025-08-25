@@ -27,7 +27,7 @@ for spritefolder in os.listdir("Graphics/sprites"):
 class TiledSoftwre:
 	def __init__(self,realscreen,theme,grandim,screen,om):
 		self.pause = True
-		self.showconsolebool = 0
+		self.showconsolebool = univars.showdebugonstart
 		self.realscreeen = realscreen
 		self.consoletextscoll = 1
 		self.theme = theme

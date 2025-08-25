@@ -105,7 +105,7 @@ class Game(Gamemananager.GameManager):
 
 
 	
-		self.publicvariables["mood"] = "day"
+		self.publicvariables["mood"] = "daybreak"
 		mood = self.publicvariables["mood"]
 
 		# self.publicvariables["waterh"] -= 0.002
@@ -113,7 +113,7 @@ class Game(Gamemananager.GameManager):
 		sd.program['state'] = self.publicvariables["shaderstate"]
 
 
-		if mood == "brightday":
+		if mood == "afternoon":
 			sd.program["illuminace"] = 2
 			sd.program["sunpos"] = [0,0]
 			sd.program["pacify"] = 0
@@ -123,8 +123,8 @@ class Game(Gamemananager.GameManager):
 			sd.program["sunpos"] = [0.5,0.5]
 			sd.program["pacify"] = 0.2
 
-		if mood == "day":
-			sd.program["illuminace"] = 1
+		if mood == "daybreak":
+			sd.program["illuminace"] = 0.5
 			sd.program["sunpos"] = [0,0]
 			sd.program["pacify"] = 0
 
@@ -310,7 +310,7 @@ class Game(Gamemananager.GameManager):
 		# om.speed = 0.4
 		
 		# um.showvar("pos",om.objects["player"]["pos"],[0,0])
-		collision = om.collide9("player",1,cam,self.dim,ignore= ["playersprite","skateboard"])
+		collision = om.collide9("player",0,cam,self.dim,ignore= ["playersprite","skateboard"])
 		lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
 		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 17 ],0,32,camera=cam,basecolor=(0,1,0))
 		collisionbox = om.collide("player",0,cam,extra=20)
@@ -441,13 +441,13 @@ class Game(Gamemananager.GameManager):
 							ground = False
 							if not abs(self.key["x"]):
 								if self.gp("lastwall") == "r":
-									self.spin(10 ,10,spindec = 0.4)
+									self.spin(16 ,1,spindec = 0.4)
 									self.sp("des_vel",[0,200])
 								else:
-									self.spin(-10 ,10,spindec = 0.4)
+									self.spin(-16 ,1,spindec = 0.4)
 									self.sp("des_vel",[0,200])
 							else:
-								self.spin(self.valsign(self.key["x"]) * -16 ,3,spindec = 0.4)
+								self.spin(self.valsign(self.key["x"]) * -16 ,1,spindec = 0.4)
 								self.sp("des_vel",[self.key["x"] * 150,200])
 
 
@@ -549,7 +549,23 @@ class Game(Gamemananager.GameManager):
 
 							# else:
 							# 	if not ground:
-						self.sp("desrot",self.gp("desrot") - self.gp("act_vel")[1]/20 )
+
+
+						#tilt when moving
+						if not ground:
+							if not self.gp("leftwall") and not self.gp("rightwall"):
+								if abs(self.key["x"]) > 0:
+									if not self.isthere("rotate"):
+										# if not abs()
+										self.sp("rotoffset",self.rotlerp(self.gp("rotoffset"),0,5))
+										self.sp("desrot",self.rotlerp(self.gp("desrot"),self.gp("act_vel")[0]/10,5) )
+
+						
+						# self.println(self.gp("rotoffset"),1)
+
+
+
+						# self.println(f"{self.gp('rotoffset')} | {self.isthere('rotate') }",1)
 
 
 
@@ -733,7 +749,6 @@ class Game(Gamemananager.GameManager):
 					
 					destinations = {d1:dest-360,d2:dest+360,d3:dest}
 
-					self.println(self.gp("rot"),2)
 
 					dest = destinations[min([d1,d2,d3])]
 
@@ -900,7 +915,23 @@ class Game(Gamemananager.GameManager):
 		self.sp("rot",angle)
 
 
-	def unilerp(self,val,max,sm,roundto = None):
+	def rotlerp(self,rot,dest,sm,roundto = 2):
+		"""
+			a ROTATION lerp function that incorperates IN-GAME time and DELTA-TIME into its incorperation.  sm -> float or int\n
+			FINDS SHORTEST DISTANCE
+		"""					
+		d1 = abs(rot - (dest - 360))
+		d2 = abs(rot - (dest + 360))
+		d3 = abs(rot - (dest + 0))
+					
+		destinations = {d1:dest-360,d2:dest+360,d3:dest}
+
+		dest = destinations[min([d1,d2,d3])]
+
+		rot = self.unilerp(rot,dest,sm,roundto=roundto)
+		return rot
+		
+	def unilerp(self,val,max,sm,roundto = 2):
 		"""
 			a lerp function that incorperates IN-GAME time and DELTA-TIME into its incorperation.  sm -> float or int
 		"""
