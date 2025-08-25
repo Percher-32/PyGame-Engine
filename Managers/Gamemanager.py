@@ -78,6 +78,17 @@ class GameManager():
 		if len(self.output) > 200:
 			self.output.pop(0)
 
+	def println(self,string,line):
+		"""
+			prints onto a specific line if it exists\n
+			if not it just adds it on the next line
+		"""
+		while len(self.output) <= line:
+			self.output.append("")
+		self.output[line] = str(string)
+		
+	
+
 	def console(self):
 		"""
 			returns a string all printed items

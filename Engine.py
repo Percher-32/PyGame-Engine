@@ -704,6 +704,15 @@ class Game(Gamemananager.GameManager):
 
 						self.sp("rot",self.gp("rot") - (self.valsign(self.gp("rot")) * abs(self.gp("rotdes")) ) )
 						
+					# om.objects["playersprite"]["rot"] = a
+					if abs(self.gp("unboundrot")) > 180 and abs(self.gp("rotoffset")) > 180 :
+						min_value = -180
+						max_value = 180
+						range_size = max_value - min_value
+
+						self.sp("rotoffset",((self.gp("rotoffset") - min_value) % range_size) + min_value)
+						self.sp("unboundrot",((self.gp("unboundrot") - min_value) % range_size) + min_value)
+						
 
 					# min_value = -180
 					# max_value = 180
@@ -718,6 +727,16 @@ class Game(Gamemananager.GameManager):
 					rot = self.gp("unboundrot")
 					dest = self.gp("desrot")+ self.gp("rotoffset")
 
+					d1 = abs(rot - (dest - 360))
+					d2 = abs(rot - (dest + 360))
+					d3 = abs(rot - (dest + 0))
+					
+					destinations = {d1:dest-360,d2:dest+360,d3:dest}
+
+					self.println(self.gp("rot"),2)
+
+					dest = destinations[min([d1,d2,d3])]
+
 
 					# if path == d1: 
 					# dest = fm.frame* 30
@@ -725,9 +744,9 @@ class Game(Gamemananager.GameManager):
 					# om.objects["playersprite"]["rot"]   +=  30
 					 
 					# om.objects["playersprite"]["rot"]   =  
+					
 					self.sp("unboundrot",self.unilerp(rot,dest,5,roundto=2))
 					a = self.gp("unboundrot")
-					b = self.gp("unboundrot")
 					min_value = -180
 					max_value = 180
 					range_size = max_value - min_value

@@ -581,6 +581,9 @@ class object_manager:
 				if inst in instpostodel:
 					if inst.layer == layer or layer == "all":
 						self.instances[a].remove(inst)
+						for ghost in self.ghostinstances[a]:
+							if ghost.inst == inst:
+								self.ghostinstances[a].remove(ghost)
 
 	def removeid(self,id):
 		"""removes an object and its obj"""
