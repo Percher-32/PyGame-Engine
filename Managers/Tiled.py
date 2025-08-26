@@ -1320,7 +1320,7 @@ class TiledSoftwre:
 
 	def showinput(self,GameManager):
 		GameManager.uibox((190,190),(-0.8,-0.5),univars.theme["dark"],200)
-		GameManager.uibox((50,50),[-0.8 + GameManager.key["alt-x"]/18,-0.5 + GameManager.key["y"]/12],univars.theme["accent"],200)
+		GameManager.uibox((50,50),[-0.8 + GameManager.key["x"]/18,-0.5 + GameManager.key["y"]/12],univars.theme["accent"],200)
 		GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
 
 		# GameManager.uibox((190,190),(-0.5,-0.5),univars.theme["dark"],200)
@@ -1338,10 +1338,10 @@ class TiledSoftwre:
 			self.tm.drawtext(f"attack"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.5,-0.9)
 		else:
 			self.tm.drawtext(f"attack"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.5,-0.9)
-		if GameManager.key["dodge"]:
-			self.tm.drawtext(f"dodge"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.3,-0.9)
+		if GameManager.key["throw"]:
+			self.tm.drawtext(f"throw"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.3,-0.9)
 		else:
-			self.tm.drawtext(f"dodge"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.3,-0.9)
+			self.tm.drawtext(f"throw"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.3,-0.9)
 		if GameManager.key["option"]:
 			self.tm.drawtext(f"option"                        ,"pixel2.ttf",40,0,0,0,univars.theme["accent"],-0.1,-0.9)
 		else:

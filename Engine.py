@@ -327,6 +327,7 @@ class Game(Gamemananager.GameManager):
 
 
 	def moveplayer(self):
+		self.println(self.key["axis"],5)
 		# om.speed = 0.4
 		# self.println(self.gp("dashmeter"),2)
 		self.sp("dashmeter",min([100,self.gp("dashmeter")]))
@@ -597,7 +598,7 @@ class Game(Gamemananager.GameManager):
 							if self.gp("dashmeter") > 0:
 								if not self.isthere("dashcooldown"):
 									self.wait("dashcooldown",0.5)
-									self.wait("dashrem",0.4)
+									self.wait("dashrem",2)
 									# cm.setcond("playercam","shake",6)
 									self.sp("dashmeter",self.gp("dashmeter") - 10)
 									actmult = [90,160]
@@ -606,8 +607,8 @@ class Game(Gamemananager.GameManager):
 									desvel = [  self.key["axis"][0] * desmult[0] , self.key["axis"][1] * desmult[1] ]
 									self.spin(20,0.4,0.1)
 
-									self.sp("dashav",self.listdiv(actvel,60))
-									self.sp("dashdv",self.listdiv(desvel,60))
+									self.sp("dashav",self.listdiv(actvel,15))
+									self.sp("dashdv",self.listdiv(desvel,15))
 
 									self.sp("act_vel",0,1)
 									self.sp("des_vel",0,1)
@@ -619,8 +620,8 @@ class Game(Gamemananager.GameManager):
 
 
 						if self.isthere("dashrem"):
-							self.unilerp(self.gp("dashav"),[0,0],3)
-							self.unilerp(self.gp("dashdv"),[0,0],3)
+							self.unilerp(self.gp("dashav"),[0,0],5)
+							self.unilerp(self.gp("dashdv"),[0,0],5)
 							self.sp("act_vel",self.listadd((self.gp("act_vel"),self.gp("dashav"))))
 							self.sp("des_vel",self.listadd((self.gp("des_vel"),self.gp("dashdv"))))
 							

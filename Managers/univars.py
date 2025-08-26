@@ -128,7 +128,7 @@ defont = "pixel2.ttf"
 renderdist = [14,9]
 
 
-showinput = 0
+showinput = 1
 
 maxfpsbuffersize = 5
 
