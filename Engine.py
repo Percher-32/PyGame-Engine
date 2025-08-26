@@ -327,7 +327,7 @@ class Game(Gamemananager.GameManager):
 
 
 	def moveplayer(self):
-		self.println(self.key["axis"],5)
+		# self.println(self.key["axis"],5)
 		# om.speed = 0.4
 		# self.println(self.gp("dashmeter"),2)
 		self.sp("dashmeter",min([100,self.gp("dashmeter")]))
@@ -620,8 +620,8 @@ class Game(Gamemananager.GameManager):
 
 
 						if self.isthere("dashrem"):
-							self.unilerp(self.gp("dashav"),[0,0],5)
-							self.unilerp(self.gp("dashdv"),[0,0],5)
+							self.unilerp(self.gp("dashav"),[0,0],3)
+							self.unilerp(self.gp("dashdv"),[0,0],3)
 							self.sp("act_vel",self.listadd((self.gp("act_vel"),self.gp("dashav"))))
 							self.sp("des_vel",self.listadd((self.gp("des_vel"),self.gp("dashdv"))))
 							

@@ -116,11 +116,11 @@ class GameManager():
 			self.key["secondary"] = True
 		else:
 			self.key["secondary"] = False
-		if em.controller["square"] or em.key[pygame.K_o] or em.key[pygame.K_c]:
+		if em.controller["square"] or em.key[pygame.K_o] or em.key[pygame.K_x]:
 			self.key["attack"] = True
 		else:
 			self.key["attack"] = False
-		if em.controller["circle"] or em.key[pygame.K_i] or em.key[pygame.K_x]:
+		if em.controller["circle"] or em.key[pygame.K_i] or em.key[pygame.K_c]:
 			self.key["throw"] = True
 		else:
 			self.key["throw"] = False
@@ -355,7 +355,7 @@ class GameManager():
 		cm.setcam("def")
 		self.debug = True
 		cm.setcond(cm.currentcam,"size",1)
-		self.loadanims()
+		# self.loadanims()
 		um.loadalluielements()
 		pm.loadallbluprints()
 
@@ -445,13 +445,13 @@ class GameManager():
 		cam.update()
 		univars.update()
 
-	def loadanims(self):
-		for filename in os.listdir("Saved/animations"):
-			if  not filename ==  "None":
-				objfile = "Saved/animations" + "/" + filename
-				for anim in os.listdir(objfile):
-					anim = anim.replace(".json","")
-					om.loadanim(filename,anim)
+	# def loadanims(self):
+	# 	for filename in os.listdir("Saved/animations"):
+	# 		if  not filename ==  "None":
+	# 			objfile = "Saved/animations" + "/" + filename
+	# 			for anim in os.listdir(objfile):
+	# 				anim = anim.replace(".json","")
+	# 				om.loadanim(filename,anim)
 
 	def update(self):			
 		pass

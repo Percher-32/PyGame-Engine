@@ -91,6 +91,17 @@ class object_manager:
 		self.spritecache = {"hi":"hello"}
 		self.speed = 0
 		self.animations = {}
+		self.loadanims()
+		
+
+	def loadanims(self):
+		for filename in os.listdir("Saved/animations"):
+			if  not filename ==  "None":
+				objfile = "Saved/animations" + "/" + filename
+				for anim in os.listdir(objfile):
+					anim = anim.replace(".json","")
+					self.loadanim(filename,anim)
+
 
 	def inchunk(self,campos,object,dim,dist):
 		if campos[0] - (dim * dist) <= object[0] <= campos[0] + (dim * dist):
