@@ -498,6 +498,9 @@ class GameManager():
 		# bgframe_tex.release()
 
 	def initial(self):
+		"""
+			calles the in - engine and in game reload funcions
+		"""
 		self.defs()
 		self.onreload()
 		

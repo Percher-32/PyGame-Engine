@@ -84,6 +84,7 @@ class object_manager:
 		self.instables = []
 		self.toreinst = []
 		self.loadedmap = "Null"
+		self.baked = 0
 		self.renderdist = univars.renderdist
 		self.dodist = 128
 		self.tracker = 0
@@ -151,20 +152,22 @@ class object_manager:
 			self.__init__(self.realscreen,self.screen,univars.grandim,self.aplhainst,self.renderinst)
 
 	def savetilemap(self,name,check = False):
-		if os.path.exists(f"Saved/tilemaps/{name}") and not check:
-			return "No"
+		if not self.baked:
+			if os.path.exists(f"Saved/tilemaps/{name}") and not check:
+				return "No"
+			else:
+				if not check:
+					os.mkdir(f"Saved/tilemaps/{name}")
+				with open(f"Saved/tilemaps/{name}/inst.json","w") as file:
+					todump = self.encodeinst()
+					json.dump(todump,file)
+				with open(f"Saved/tilemaps/{name}/non-inst.json","w") as file:
+					todump = self.objects
+					json.dump(todump,file)
+				self.loadtilemap(name)
+				return "True"
 		else:
-			if not check:
-				os.mkdir(f"Saved/tilemaps/{name}")
-			with open(f"Saved/tilemaps/{name}/inst.json","w") as file:
-				todump = self.encodeinst()
-				json.dump(todump,file)
-			with open(f"Saved/tilemaps/{name}/non-inst.json","w") as file:
-				todump = self.objects
-				json.dump(todump,file)
-			self.loadtilemap(name)
-			return "True"
-		
+			pass
 	def forcesavetilemap(self,name):
 		self.savetilemap(name,check=True)
 		
@@ -183,38 +186,39 @@ class object_manager:
 			for instance in self.noncolinstances[chunk].sprites():
 				pos =  [instance.realpos[0],instance.realpos[1]]
 				relativepos = [   
-								(16 * 12) + (pos[0] - (chunk[0] * univars.renderdist[0] * univars.grandim)  )   ,
-								(16 * 12) + (pos[1] - (chunk[1] * univars.renderdist[1] * univars.grandim)  )  
+								(16 * (univars.renderdist[0] - 2) ) + (pos[0] - (chunk[0] * univars.renderdist[0] * univars.grandim)  )   ,
+								(16 * (univars.renderdist[1] - 2) ) + (pos[1] - (chunk[1] * univars.renderdist[1] * univars.grandim)  )  
 							  ]
 				chunksprite.blit(instance.bart,relativepos)
 			self.noncolinstances[chunk] = pygame.sprite.LayeredUpdates()
-			self.noncolghostinstances[chunk].clear
+			self.noncolghostinstances[chunk] = pygame.sprite.Group()
 			newt = inst.inst("UNOS",univars.grandim,str(chunk) + "noncol" + "#BAKEDINST",(chunk[0] * univars.grandim * univars.renderdist[0]) + univars.grandim/2,(chunk[1] * univars.grandim * univars.renderdist[1]) + univars.grandim/2,0,[1,1],"unot",255,[chunksprite],size,0,0,0)
 			self.noncolinstances[chunk].add(newt)
 
 		
-		# if chunk in self.instances.keys() and len(self.instances[chunk]) > 1:
-		# 	size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
-		# 	chunksprite = pygame.Surface(size)
-		# 	chunksprite.fill((random.randint(0,255),random.randint(0,255),random.randint(0,255)))
-		# 	# chunksprite.fill((0,0,0))
-		# 	chunksprite.set_colorkey((0,0,0))
-		# 	# for instance in self.instances[chunk].sprites():
-		# 	# 	pos =  [instance.fakerect.x,instance.fakerect.y]
-		# 	# 	relativepos = [   
-		# 	# 					 0+ univars.grandim/2,
-		# 	# 					 0+ univars.grandim/2
-		# 	# 				  ]
+		if chunk in self.instances.keys() and len(self.instances[chunk]) > 1:
+			size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
+			chunksprite = pygame.Surface(size)
+			chunksprite.fill((random.randint(0,255),random.randint(0,255),random.randint(0,255)))
+			chunksprite.fill((0,0,0))
+			chunksprite.set_colorkey((0,0,0))
+			for instance in self.instances[chunk].sprites():
+				pos =  [instance.realpos[0],instance.realpos[1]]
+				relativepos = [   
+								(16 * (univars.renderdist[0] - 2) ) + (pos[0] - (chunk[0] * univars.renderdist[0] * univars.grandim)  )   ,
+								(16 * (univars.renderdist[1] - 2) ) + (pos[1] - (chunk[1] * univars.renderdist[1] * univars.grandim)  )  
+							  ]
 				
-		# 	# 	chunksprite.blit(instance.bart,relativepos)
-		# 	self.instances[chunk] = pygame.sprite.LayeredUpdates()
-		# 	newt = inst.inst("UNOS",univars.grandim,str(chunk) + "col" + "#BAKEDINST",chunk[0] * univars.grandim * univars.renderdist[0],chunk[1] * univars.grandim * univars.renderdist[1],0,[1,1],"unot",255,[chunksprite],size,-1,0,0)
-		# 	self.instances[chunk].add(newt)
+				chunksprite.blit(instance.bart,relativepos)
+			self.instances[chunk] = pygame.sprite.LayeredUpdates()
+			newt = inst.inst("UNOS",univars.grandim,str(chunk) + "col" + "#BAKEDINST",(chunk[0] * univars.grandim * univars.renderdist[0]) + univars.grandim/2,(chunk[1] * univars.grandim * univars.renderdist[1]) + univars.grandim/2,0,[1,1],"unot",255,[chunksprite],size,-1,0,0)
+			self.instances[chunk].add(newt)
 			
 	def BAKE(self):
 		"""
 			optimises rendering for all noncolliding instanciates by baking them all into one sprite for each chunk
 		"""
+		self.baked = 1
 		for chunk in self.noncolghostinstances.keys():
 			self.grouptosprite(chunk)
 		for chunk in self.ghostinstances.keys():
@@ -688,7 +692,7 @@ class object_manager:
 			self.spritecache[str([name,sizen])] = spritelist
 
 		newt = inst.inst(stagename,self.grandim,name,pos[0],pos[1],rot,sizen,univars.lumptype.get(stagename,type),alp,spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]],layer,usecoll,sn)
-		name = (int(round(pos[0]/(dim * self.renderdist[0]))),int(round(pos[1]/(dim * self.renderdist[1]))))
+		name = (int(round((pos[0] - 16)/(dim * self.renderdist[0]))),int(round((pos[1] - 16)/(dim * self.renderdist[1]))))
 		newtg = Ghost(newt)
 		if usecoll:
 			if name in self.instances.keys():

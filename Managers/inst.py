@@ -33,6 +33,7 @@ class inst(pygame.sprite.Sprite):
 		self.name = str(name)
 		self.type = type
 		self.bart = sprites[sn]
+		self.bart = pygame.transform.rotate(self.bart,rot)
 		self.newbie = True
 		self.image =  nullsurf
 		if rot > 180:

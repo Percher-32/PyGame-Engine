@@ -1200,7 +1200,12 @@ class TiledSoftwre:
 			elif self.commmandtring.rstrip() in self.spritenames : 
 				self.sprite = self.spritenames.index(self.commmandtring.rstrip())
 				self.commmandtring = ""
-			
+			elif self.commmandtring.rstrip() in ["rel","reload"]:
+				GameManager.initial()
+				self.commmandtring = ""
+			elif self.commmandtring.rstrip() == "bake":
+				object_manager.BAKE()
+				self.commmandtring = ""
 
 			elif self.commmandtring.rstrip() in ["particle","part","particle-edit","particle-editor"]:
 				self.mode = "Particle-edit"
@@ -1214,6 +1219,8 @@ class TiledSoftwre:
 				um.addrect((univars.screen_w + 500,200),"all",[0,-1],"ui_edit_hud",color = univars.theme["dark"])
 				um.addrect((500,2000),["ui-edit"],[-0.9,0],"ui_edit_side_bar",color = univars.theme["dark"])
 				um.addtext("uistatetext",f"state:{um.state}",univars.defont,[-0.97,0.8],univars.theme["semibright"],30,"all",center=False)
+			
+
 
 
 

@@ -33,7 +33,7 @@ class Game(Gamemananager.GameManager):
 		self.actualwaterheight = 0
 
 	def onreload(self):
-		om.BAKE()
+		# om.BAKE()
 		self.a = 0
 		# bg.addbackground("test2")
 		# bg.addbackgrounditem("black2","test2",[0,-40]                ,surf = "mount",dimensions=[500*5,250*5],layer = 0.15,infiniscroll=True)
@@ -611,11 +611,13 @@ class Game(Gamemananager.GameManager):
 									desvel = [  self.key["axis"][0] * desmult[0] , self.key["axis"][1] * desmult[1] ]
 									self.spin(20,0.4,0.1)
 
-									self.sp("dashav",self.listdiv(actvel,15))
-									self.sp("dashdv",self.listdiv(desvel,15))
+									self.sp("dashav",self.listdiv(actvel,40))
+									self.sp("dashdv",self.listdiv(desvel,40))
 
 									self.sp("act_vel",0,1)
 									self.sp("des_vel",0,1)
+									# self.sp("act_vel",0,0)
+									# self.sp("des_vel",0,0)
 									self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
 									self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
 
