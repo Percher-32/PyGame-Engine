@@ -10,6 +10,8 @@ import Managers.Cameramod as Cameramod
 import Managers.univars as univars
 import os
 import math
+
+
 # from render import render
 
 
@@ -51,7 +53,6 @@ class Ghost(pygame.sprite.Sprite):
 
 
 
-
 class object_manager: 
 	def __init__(self,realscreeen,screen,grandim,alpha,rend):
 		self.objects = {}
@@ -71,6 +72,10 @@ class object_manager:
 			a dictianry of sprite groups each sprite has collisions
 		"""
 		self.ghostinstances = {}
+		"""
+			a dictianry of sprite groups each sprite contains a reference to the instanciagte
+		"""
+		self.noncolghostinstances = {}
 		"""
 			a dictianry of sprite groups each sprite contains a reference to the instanciagte
 		"""
@@ -131,6 +136,7 @@ class object_manager:
 	# 	self.showmap = 0
 	# 	self.loadedchunk = 0
 	# 	self.showcolist = []
+	
 	# 	self.showall = False
 	# 	self.speed = 0
 
@@ -165,21 +171,26 @@ class object_manager:
 	def getcull(self,pos,grid_size,dim,ignore = []) -> list:
 		return [i for i in list(self.objects.keys()) if pos[0] - grid_size * dim <= self.objects[i]["pos"][0] <= pos[0] + grid_size * dim  and pos[1] - grid_size * dim <= self.objects[i]["pos"][1] <= (pos[1]) + grid_size * dim and not i in ignore]                                                  
 
-	# def grouptosprite(self,chunk):
-	# 	size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
-	# 	chunksprite = pygame.Surface(size)
-	# 	for inst in self.noncolinstances[chunk].sprites:
-	# 		pos =  [inst.fakerect.x,inst.fakerect.y]
-	# 		relativepos = [   
-	# 						pos[0] - (chunk[0] * univars.grandim),
-	# 						pos[1] - (chunk[1] * univars.grandim)
-	# 		   			  ]
-	# 		chunksprite.blit(inst.bart,relativepos)
-	# 	self.noncolinstances[chunk].clear
-	# 	newt = inst.inst
-	# 	self.noncolinstances[chunk].add(newt)
+	def grouptosprite(self,chunk):
+		size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
+		chunksprite = pygame.Surface(size)
+		for instance in self.noncolinstances[chunk].sprites():
+			pos =  [instance.fakerect.x,instance.fakerect.y]
+			relativepos = [   
+							pos[0] - (chunk[0] * univars.renderdist[0]),
+							pos[1] - (chunk[1] * univars.renderdist[1])
+			   			  ]
+			chunksprite.blit(instance.bart,relativepos)
+		self.noncolinstances[chunk].clear
+		newt = inst.inst("UNOS",univars.grandim,str(chunk) + "noncol" + "#BAKEDINST",chunk[0] * univars.grandim * univars.renderdist[0],chunk[1] * univars.grandim * univars.renderdist[1],0,[1,1],"unot",255,[chunksprite],size,0,0,0)
+		self.noncolinstances[chunk].add(newt)
 			
-
+	def BAKE(self):
+		"""
+			optimises rendering for all noncolliding instanciates by baking them all into one sprite for each chunk
+		"""
+		for chunk in self.noncolghostinstances.keys():
+			self.grouptosprite(chunk)
 
 		
 
@@ -308,9 +319,13 @@ class object_manager:
 		else:
 			if name in self.noncolinstances.keys():
 				self.noncolinstances[name].add(newt,layer =data["layer"])
+				self.noncolghostinstances[name].add(newtg)
 			else:
 				self.noncolinstances[name] = pygame.sprite.LayeredUpdates()
 				self.noncolinstances[name].add(newt,layer =data["layer"])
+				self.noncolghostinstances[name] = pygame.sprite.Group()
+				self.noncolghostinstances[name].add(newtg)
+				
 
 
 
@@ -510,16 +525,24 @@ class object_manager:
 			a = []
 			campos = (offset[0] + camchunk[0],offset[1] + camchunk[1])
 			if campos in self.instances.keys():
-				# a = [ i for i in self.instances[campos] if r1.colliderect(i.fakerect)]
-				a = pygame.sprite.spritecollide(colsprite,self.instances[campos],dokill=False)
+				# a = [ i for i in self.instances[campos] if i.fakerect.collidepoint(pos)]
+				a = pygame.sprite.spritecollide(Ghostcollinst(r1.x,r1.y,r1.width,r1.height),self.ghostinstances[campos],dokill=False)
+				
+				
+				a = [ghost.inst for ghost in a]
 			inst += a
-
+			
 			b = []
-			campos = (offset[0] + camchunk[0],offset[1] + camchunk[1])
 			if campos in self.noncolinstances.keys():
-				# a = [ i for i in self.instances[campos] if r1.colliderect(i.fakerect)]
-				b = pygame.sprite.spritecollide(colsprite,self.noncolinstances[campos],dokill=False)
+				# a = [ i for i in self.instances[campos] if i.fakerect.collidepoint(pos)]
+				b = pygame.sprite.spritecollide(Ghostcollinst(r1.x,r1.y,r1.width,r1.height),self.noncolghostinstances[campos],dokill=False)
+				
+				
+				b = [ghost.inst for ghost in b]
+
 			inst += b
+
+
 
 		#render the collpoint
 		if show:
@@ -651,9 +674,12 @@ class object_manager:
 		else:
 			if name in self.noncolinstances.keys():
 				self.noncolinstances[name].add(newt,layer = layer)
+				self.noncolghostinstances[name].add(newtg)
 			else:
 				self.noncolinstances[name] = pygame.sprite.LayeredUpdates()
 				self.noncolinstances[name].add(newt,layer = layer)
+				self.noncolghostinstances[name] = pygame.sprite.Group()
+				self.noncolghostinstances[name].add(newtg)
 
 	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int , keepprev = False,stagename = None,layer = 0,colforinst=True,sn = 0):
 		"""adds an object to the manager  , gives an id of type str"""

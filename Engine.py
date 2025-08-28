@@ -33,6 +33,7 @@ class Game(Gamemananager.GameManager):
 		self.actualwaterheight = 0
 
 	def onreload(self):
+		om.BAKE()
 		self.a = 0
 		# bg.addbackground("test2")
 		# bg.addbackgrounditem("black2","test2",[0,-40]                ,surf = "mount",dimensions=[500*5,250*5],layer = 0.15,infiniscroll=True)
@@ -57,6 +58,9 @@ class Game(Gamemananager.GameManager):
 
 		if self.states == "test":
 			om.add((0,0),"player",0,"green",[1,1],self.dim)
+
+		if sm.state == "game":
+			om.BAKE()
 
 	def quickrel(self):
 		if "game" == self.states:

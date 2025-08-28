@@ -64,12 +64,8 @@ class Item(pygame.sprite.Sprite):
         realestsize = abs(round(self.size * 0.01,2)/0.01)
         if univars.camchange or univars.poschange:
             if univars.poschange:
-                if not self.layer == 1:
-                    self.pos[0] -= (camera.x - self.lastcampos[0])*(self.layer)
-                    self.pos[1] -= (camera.y - self.lastcampos[1])*(self.layer)
-                else:
-                    self.pos[0] -= (camera.x - self.lastcampos[0])*(self.layer)
-                    self.pos[1] -= (camera.y - self.lastcampos[1])*(self.layer)
+                self.pos[0] -= (camera.x - self.lastcampos[0])*(self.layer)
+                self.pos[1] -= (camera.y - self.lastcampos[1])*(self.layer)
                 
             if univars.camchange:
                 self.size += (camera.size - self.lastcamsize)*self.layer

@@ -55,12 +55,13 @@ class inst(pygame.sprite.Sprite):
 		self.newbie = False
 		g = self.realpos
 		h = [camera.x,camera.y]
-		if univars.func.dist(g,h) < 1/camera.size * 580:
+		if univars.func.dist(g,h) < (1/camera.size * 580) + univars.func.dist([0,0],self.size):
 			realestsize = [math.ceil((self.size[0] * abs(camera.size))/2)*2,math.ceil((self.size[1] * abs(camera.size))/2)*2]
 			if not str([self.name,realestsize,self.sn]) in spritecache.keys():
 				self.image =  pygame.transform.scale(self.bart,  realestsize )
 				spritecache[str([self.name,realestsize,self.sn])] = self.image
-				dataspritecache.append([self.name,realestsize,self.sn])
+				if not "#BAKEDINST" in self.name:
+					dataspritecache.append([self.name,realestsize,self.sn])
 			else:
 				self.image = spritecache[str([self.name,realestsize,self.sn])]
 			self.image = pygame.transform.rotate(self.image,self.rot)
@@ -103,7 +104,6 @@ class inst(pygame.sprite.Sprite):
 		self.newbie = True
 		
 
-	
 
 
 objcache = {}
