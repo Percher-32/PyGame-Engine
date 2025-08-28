@@ -3,6 +3,7 @@ import json
 import Managers.funcs as funcs
 import pygame
 import Managers.Textmanager as Textmanager
+import random
 import itertools
 import Managers.inst as inst
 import time
@@ -172,24 +173,49 @@ class object_manager:
 		return [i for i in list(self.objects.keys()) if pos[0] - grid_size * dim <= self.objects[i]["pos"][0] <= pos[0] + grid_size * dim  and pos[1] - grid_size * dim <= self.objects[i]["pos"][1] <= (pos[1]) + grid_size * dim and not i in ignore]                                                  
 
 	def grouptosprite(self,chunk):
-		size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
-		chunksprite = pygame.Surface(size)
-		for instance in self.noncolinstances[chunk].sprites():
-			pos =  [instance.fakerect.x,instance.fakerect.y]
-			relativepos = [   
-							pos[0] - (chunk[0] * univars.renderdist[0]),
-							pos[1] - (chunk[1] * univars.renderdist[1])
-			   			  ]
-			chunksprite.blit(instance.bart,relativepos)
-		self.noncolinstances[chunk].clear
-		newt = inst.inst("UNOS",univars.grandim,str(chunk) + "noncol" + "#BAKEDINST",chunk[0] * univars.grandim * univars.renderdist[0],chunk[1] * univars.grandim * univars.renderdist[1],0,[1,1],"unot",255,[chunksprite],size,0,0,0)
-		self.noncolinstances[chunk].add(newt)
+		
+		if chunk in self.noncolinstances.keys():
+			size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
+			chunksprite = pygame.Surface(size)
+			chunksprite.set_colorkey((0,0,0))
+			for instance in self.noncolinstances[chunk].sprites():
+				pos =  [instance.fakerect.x,instance.fakerect.y]
+				relativepos = [   
+								0,
+								0
+							]
+				debugaad = instance.bart
+				debugaad.fill([random.randint(0,255) , random.randint(0,255) , random.randint(0,255)  ])
+			self.noncolinstances[chunk] = pygame.sprite.LayeredUpdates()
+			self.noncolghostinstances[chunk].clear
+			newt = inst.inst("UNOS",univars.grandim,str(chunk) + "noncol" + "#BAKEDINST",chunk[0] * univars.grandim * univars.renderdist[0],chunk[1] * univars.grandim * univars.renderdist[1],0,[1,1],"unot",255,[chunksprite],size,0,0,0)
+			self.noncolinstances[chunk].add(newt)
+
+		
+		if chunk in self.instances.keys():
+			size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
+			chunksprite = pygame.Surface(size)
+			chunksprite.set_colorkey((0,0,0))
+			for instance in self.instances[chunk].sprites():
+				pos =  [instance.fakerect.x,instance.fakerect.y]
+				relativepos = [   
+								0,
+								0
+							  ]
+				debugaad = instance.bart
+				debugaad.fill([random.randint(0,255) , random.randint(0,255) , random.randint(0,255)  ])
+				chunksprite.blit(instance.bart,relativepos)
+			self.instances[chunk] = pygame.sprite.LayeredUpdates()
+			newt = inst.inst("UNOS",univars.grandim,str(chunk) + "col" + "#BAKEDINST",chunk[0] * univars.grandim * univars.renderdist[0],chunk[1] * univars.grandim * univars.renderdist[1],0,[1,1],"unot",255,[chunksprite],size,-1,0,0)
+			self.instances[chunk].add(newt)
 			
 	def BAKE(self):
 		"""
 			optimises rendering for all noncolliding instanciates by baking them all into one sprite for each chunk
 		"""
 		for chunk in self.noncolghostinstances.keys():
+			self.grouptosprite(chunk)
+		for chunk in self.ghostinstances.keys():
 			self.grouptosprite(chunk)
 
 		
@@ -758,12 +784,11 @@ class object_manager:
 		#the instanciate chunks to be rendered
 		lof = [  b   for b in self.instances.keys() for i in ranges   if b == ( i[0]  + camposdim[0],i[1] + camposdim[1]   )]
 		noncollof = [  b   for b in self.noncolinstances.keys() for i in ranges   if b == ( i[0]  + camposdim[0],i[1] + camposdim[1]   )]
-
+		# GameManager.println()
 		
 		# pygame.sprite.Group.draw(special_flags=)
 		
-
-		# print("/////////")
+		
 		#rendering the instanciates
 		if len(lof) > 0:
 			for i in lof:
@@ -777,7 +802,7 @@ class object_manager:
 		if len(noncollof) > 0:
 			for i in noncollof:
 				# print(self.instances[i].sprites)
-				# print()
+				# # print()
 				self.noncolinstances[i].update(showall)
 				self.noncolinstances[i].draw(univars.screen,special_flags=0)
 

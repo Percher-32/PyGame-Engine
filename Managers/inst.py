@@ -50,7 +50,8 @@ class inst(pygame.sprite.Sprite):
 
 
 	def update(self,showall):
-		camera = Cameramod.cam
+		camera = Cameramod.cam 
+		# print(self.name)
 		# if univars.camchange or univars.poschange or self.newbie:
 		self.newbie = False
 		g = self.realpos

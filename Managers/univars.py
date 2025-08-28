@@ -125,10 +125,10 @@ poschange = 0
 
 defont = "pixel2.ttf"
 
-renderdist = [14,9]
+renderdist = [14,14]
 
 
-showinput = 1
+showinput = 0
 
 maxfpsbuffersize = 5
 
