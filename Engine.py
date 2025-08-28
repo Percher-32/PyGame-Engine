@@ -33,7 +33,7 @@ class Game(Gamemananager.GameManager):
 		self.actualwaterheight = 0
 
 	def onreload(self):
-		# om.BAKE()
+		om.BAKE()
 		self.a = 0
 		# bg.addbackground("test2")
 		# bg.addbackgrounditem("black2","test2",[0,-40]                ,surf = "mount",dimensions=[500*5,250*5],layer = 0.15,infiniscroll=True)
@@ -59,8 +59,8 @@ class Game(Gamemananager.GameManager):
 		if self.states == "test":
 			om.add((0,0),"player",0,"green",[1,1],self.dim)
 
-		# if sm.state == "game":
-		# 	om.BAKE()
+		if sm.state == "game":
+			om.BAKE()
 
 	def quickrel(self):
 		if "game" == self.states:
@@ -357,9 +357,13 @@ class Game(Gamemananager.GameManager):
 		collisionboxtype = [i.type for i in collisionbox["inst"]] 
 		collisionlisttype.append("ground")
 
+		
+
 		rail = False
 		if len(collisionboxtype) > 0:
 			rail = collisionboxtype[0] == "rail"
+			
+		self.println(collisionlisttype,0)
 
 		if abs(self.key["x"]) > 0:
 			if self.key["x"] > 0:
@@ -482,7 +486,7 @@ class Game(Gamemananager.GameManager):
 									self.spin(-16 ,1,spindec = 0.4)
 									self.sp("des_vel",[0,200])
 							else:
-								self.spin(self.valsign(self.key["x"]) * -16 ,1,spindec = 0.4)
+								self.spin(self.valsign(self.key["x"]) * -23 ,1,spindec = 0.5)
 								self.sp("des_vel",[self.key["x"] * 150,200])
 
 
@@ -676,6 +680,7 @@ class Game(Gamemananager.GameManager):
 
 
 				else:
+					# self.print("RAIL")
 					self.sp("jumpable",True)
 					railpiece = collisionbox["inst"][0]
 					if railpiece.name == "rail":

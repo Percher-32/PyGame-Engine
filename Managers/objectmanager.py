@@ -424,7 +424,7 @@ class object_manager:
 
 
 
-			colsprite =  collinst(r1.x,r1.y,r1.width,r1.height)
+			colsprite =  Ghostcollinst(r1.x,r1.y,r1.width,r1.height)
 			noninst = pygame.sprite.spritecollide(colsprite,self.objgroup,dokill=False)
 
 			#coll for inst
@@ -437,7 +437,8 @@ class object_manager:
 				campos = (offset[0] + camchunk[0],offset[1] + camchunk[1])
 				if campos in self.instances.keys():
 					# a = [ i for i in self.instances[campos] if r1.colliderect(i.fakerect)]
-					a = pygame.sprite.spritecollide(colsprite,self.instances[campos],dokill=False)
+					a = pygame.sprite.spritecollide(colsprite,self.ghostinstances[campos],dokill=False)
+					a = [i.inst for i in a]
 				inst += a
 
 			#render the collbox
@@ -463,7 +464,7 @@ class object_manager:
 		id = str(id)
 		r1 = pygame.Rect(pos[0],pos[1],dimensions[0],dimensions[1])
 		
-		colsprite =  collinst(r1.x,r1.y,r1.width,r1.height)
+		colsprite =  Ghostcollinst(r1.x,r1.y,r1.width,r1.height)
 		noninst = pygame.sprite.spritecollide(colsprite,self.objgroup,dokill=False)
 
 		#coll for inst
@@ -476,7 +477,8 @@ class object_manager:
 			campos = (offset[0] + camchunk[0],offset[1] + camchunk[1])
 			if campos in self.instances.keys():
 				# a = [ i for i in self.instances[campos] if r1.colliderect(i.fakerect)]
-				a = pygame.sprite.spritecollide(colsprite,self.instances[campos],dokill=False)
+				a = pygame.sprite.spritecollide(colsprite,self.ghostinstances[campos],dokill=False)
+				a = [i.inst for i in a]
 			inst += a
 
 		#render the collbox
