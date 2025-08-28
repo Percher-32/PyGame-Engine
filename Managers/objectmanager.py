@@ -177,39 +177,39 @@ class object_manager:
 		if chunk in self.noncolinstances.keys() and len(self.noncolinstances[chunk]) > 1:
 			size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
 			chunksprite = pygame.Surface(size)
-			chunksprite.fill((random.randint(0,255),random.randint(0,255),random.randint(0,255)))
-			# chunksprite.fill((0,0,0))
+			# chunksprite.fill((random.randint(0,255),random.randint(0,255),random.randint(0,255)))
+			chunksprite.fill((0,0,0))
 			chunksprite.set_colorkey((0,0,0))
 			for instance in self.noncolinstances[chunk].sprites():
-				pos =  [instance.fakerect.x,instance.fakerect.y]
+				pos =  [instance.realpos[0],instance.realpos[1]]
 				relativepos = [   
-								 0+ univars.grandim/2,
-								 0+ univars.grandim/2
+								(16 * 12) + (pos[0] - (chunk[0] * univars.renderdist[0] * univars.grandim)  )   ,
+								(16 * 12) + (pos[1] - (chunk[1] * univars.renderdist[1] * univars.grandim)  )  
 							  ]
 				chunksprite.blit(instance.bart,relativepos)
 			self.noncolinstances[chunk] = pygame.sprite.LayeredUpdates()
 			self.noncolghostinstances[chunk].clear
-			newt = inst.inst("UNOS",univars.grandim,str(chunk) + "noncol" + "#BAKEDINST",chunk[0] * univars.grandim * univars.renderdist[0],chunk[1] * univars.grandim * univars.renderdist[1],0,[1,1],"unot",255,[chunksprite],size,0,0,0)
+			newt = inst.inst("UNOS",univars.grandim,str(chunk) + "noncol" + "#BAKEDINST",(chunk[0] * univars.grandim * univars.renderdist[0]) + univars.grandim/2,(chunk[1] * univars.grandim * univars.renderdist[1]) + univars.grandim/2,0,[1,1],"unot",255,[chunksprite],size,0,0,0)
 			self.noncolinstances[chunk].add(newt)
 
 		
-		if chunk in self.instances.keys() and len(self.instances[chunk]) > 1:
-			size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
-			chunksprite = pygame.Surface(size)
-			chunksprite.fill((random.randint(0,255),random.randint(0,255),random.randint(0,255)))
-			chunksprite.fill((0,0,0))
-			chunksprite.set_colorkey((0,0,0))
-			for instance in self.instances[chunk].sprites():
-				pos =  [instance.fakerect.x,instance.fakerect.y]
-				relativepos = [   
-								 0+ univars.grandim/2,
-								 0+ univars.grandim/2
-							  ]
+		# if chunk in self.instances.keys() and len(self.instances[chunk]) > 1:
+		# 	size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
+		# 	chunksprite = pygame.Surface(size)
+		# 	chunksprite.fill((random.randint(0,255),random.randint(0,255),random.randint(0,255)))
+		# 	# chunksprite.fill((0,0,0))
+		# 	chunksprite.set_colorkey((0,0,0))
+		# 	# for instance in self.instances[chunk].sprites():
+		# 	# 	pos =  [instance.fakerect.x,instance.fakerect.y]
+		# 	# 	relativepos = [   
+		# 	# 					 0+ univars.grandim/2,
+		# 	# 					 0+ univars.grandim/2
+		# 	# 				  ]
 				
-				chunksprite.blit(instance.bart,relativepos)
-			self.instances[chunk] = pygame.sprite.LayeredUpdates()
-			newt = inst.inst("UNOS",univars.grandim,str(chunk) + "col" + "#BAKEDINST",chunk[0] * univars.grandim * univars.renderdist[0],chunk[1] * univars.grandim * univars.renderdist[1],0,[1,1],"unot",255,[chunksprite],size,-1,0,0)
-			self.instances[chunk].add(newt)
+		# 	# 	chunksprite.blit(instance.bart,relativepos)
+		# 	self.instances[chunk] = pygame.sprite.LayeredUpdates()
+		# 	newt = inst.inst("UNOS",univars.grandim,str(chunk) + "col" + "#BAKEDINST",chunk[0] * univars.grandim * univars.renderdist[0],chunk[1] * univars.grandim * univars.renderdist[1],0,[1,1],"unot",255,[chunksprite],size,-1,0,0)
+		# 	self.instances[chunk].add(newt)
 			
 	def BAKE(self):
 		"""
@@ -333,7 +333,7 @@ class object_manager:
 			spritelist = univars.func.getspritesscale(name,[temp.get_width(),temp.get_height()])
 			self.spritecache[str([name,sizen])] = spritelist
 		newt = inst.inst(data["stagename"],self.grandim,data["name"],data["pos"][0],data["pos"][1],data["rot"],data["sizen"],univars.lumptype.get(data["stagename"],data["type"]),data["alpha"],spritelist,[spritelist[0].get_width() * sizen[0],spritelist[0].get_height() * sizen[1]],data["layer"],data["usecoll"],data["sn"])
-		name = (int(round(data["pos"][0]/(univars.grandim * self.renderdist[0]))),int(round(data["pos"][1]/(univars.grandim * self.renderdist[1]))))
+		name = (int(round((data["pos"][0] - 16)/(univars.grandim * self.renderdist[0]))),int(round((data["pos"][1] - 16)/(univars.grandim * self.renderdist[1]))))
 		newtg = Ghost(newt)
 		if data["usecoll"]:
 			if name in self.instances.keys():
