@@ -363,7 +363,6 @@ class Game(Gamemananager.GameManager):
 		if len(collisionboxtype) > 0:
 			rail = collisionboxtype[0] == "rail"
 			
-		self.println(collisionlisttype,0)
 
 		if abs(self.key["x"]) > 0:
 			if self.key["x"] > 0:
@@ -474,20 +473,21 @@ class Game(Gamemananager.GameManager):
 
 						#wall ledge spin
 						# self.println(len(collision["botmid"]),6)
-						if self.gp("lastframewall") and not self.gp("leftwall") and not self.gp("rightwall") and not (collision["botmid"]["inst"] and collision["botleft"]["inst"] and collision["botright"]["inst"]):
-							self.sp("xinit",False)
-							self.sp("mode","in-air")
-							ground = False
-							if not abs(self.key["x"]):
-								if self.gp("lastwall") == "r":
-									self.spin(16 ,1,spindec = 0.4)
-									self.sp("des_vel",[0,200])
+						if self.gp("des_vel",1) > 0:
+							if self.gp("lastframewall") and not self.gp("leftwall") and not self.gp("rightwall") and not (collision["botmid"]["inst"] and collision["botleft"]["inst"] and collision["botright"]["inst"]):
+								self.sp("xinit",False)
+								self.sp("mode","in-air")
+								ground = False
+								if not abs(self.key["x"]):
+									if self.gp("lastwall") == "r":
+										self.spin(16 ,1,spindec = 0.4)
+										self.sp("des_vel",[0,200])
+									else:
+										self.spin(-16 ,1,spindec = 0.4)
+										self.sp("des_vel",[0,200])
 								else:
-									self.spin(-16 ,1,spindec = 0.4)
-									self.sp("des_vel",[0,200])
-							else:
-								self.spin(self.valsign(self.key["x"]) * -23 ,1,spindec = 0.5)
-								self.sp("des_vel",[self.key["x"] * 150,200])
+									self.spin(self.valsign(self.key["x"]) * -23 ,1,spindec = 0.5)
+									self.sp("des_vel",[self.key["x"] * 150,200])
 
 
 							
@@ -602,26 +602,34 @@ class Game(Gamemananager.GameManager):
 						
 
 						#dash
+						axis = [self.key["x"],self.key["y"] * 1]
+						axis = pygame.math.Vector2(axis[0],axis[1])
+						if axis.length()> 0:
+							axis.normalize()
+							axis.scale_to_length(1.2)
+						axis = [axis.x,axis.y]
+						axis[1] = round(axis[1],2)
+						self.println(axis,0)
 						if self.key["secondary"]:
 							if self.gp("dashmeter") > 0:
 								if not self.isthere("dashcooldown"):
-									self.wait("dashcooldown",0.5)
+									self.wait("dashcooldown",0.2)
 									self.wait("dashrem",2)
 									# cm.setcond("playercam","shake",6)
-									self.sp("dashmeter",self.gp("dashmeter") - 10)
-									actmult = [90,160]
-									actvel = [  self.key["axis"][0] * actmult[0] , self.key["axis"][1] * actmult[1] ]
-									desmult = [90,160]
-									desvel = [  self.key["axis"][0] * desmult[0] , self.key["axis"][1] * desmult[1] ]
+									self.sp("dashmeter",self.gp("dashmeter") - 0)
+									actmult = [160,160]
+									actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
+									desmult = [160,160]
+									desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
 									self.spin(20,0.4,0.1)
 
-									self.sp("dashav",self.listdiv(actvel,40))
-									self.sp("dashdv",self.listdiv(desvel,40))
+									self.sp("dashav",self.listdiv(actvel,80))
+									self.sp("dashdv",self.listdiv(desvel,80))
 
 									self.sp("act_vel",0,1)
 									self.sp("des_vel",0,1)
-									# self.sp("act_vel",0,0)
-									# self.sp("des_vel",0,0)
+									self.sp("act_vel",0,0)
+									self.sp("des_vel",0,0)
 									self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
 									self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
 
@@ -1110,5 +1118,8 @@ if univars.mode == "opt":
 	if __name__ == "__main__":
 		cProfile.run('main()', sort='cumtime')
 else:
-	rm.Run()
- 
+	try:
+		rm.Run()
+	except Exception as error:
+		print(error)
+		em.close()
