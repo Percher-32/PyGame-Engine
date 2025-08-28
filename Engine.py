@@ -59,8 +59,8 @@ class Game(Gamemananager.GameManager):
 		if self.states == "test":
 			om.add((0,0),"player",0,"green",[1,1],self.dim)
 
-		if sm.state == "game":
-			om.BAKE()
+		# if sm.state == "game":
+		# 	om.BAKE()
 
 	def quickrel(self):
 		if "game" == self.states:

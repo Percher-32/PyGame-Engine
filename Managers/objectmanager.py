@@ -174,36 +174,38 @@ class object_manager:
 
 	def grouptosprite(self,chunk):
 		
-		if chunk in self.noncolinstances.keys():
+		if chunk in self.noncolinstances.keys() and len(self.noncolinstances[chunk]) > 1:
 			size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
 			chunksprite = pygame.Surface(size)
+			chunksprite.fill((random.randint(0,255),random.randint(0,255),random.randint(0,255)))
+			# chunksprite.fill((0,0,0))
 			chunksprite.set_colorkey((0,0,0))
 			for instance in self.noncolinstances[chunk].sprites():
 				pos =  [instance.fakerect.x,instance.fakerect.y]
 				relativepos = [   
-								0,
-								0
-							]
-				debugaad = instance.bart
-				debugaad.fill([random.randint(0,255) , random.randint(0,255) , random.randint(0,255)  ])
+								 0+ univars.grandim/2,
+								 0+ univars.grandim/2
+							  ]
+				chunksprite.blit(instance.bart,relativepos)
 			self.noncolinstances[chunk] = pygame.sprite.LayeredUpdates()
 			self.noncolghostinstances[chunk].clear
 			newt = inst.inst("UNOS",univars.grandim,str(chunk) + "noncol" + "#BAKEDINST",chunk[0] * univars.grandim * univars.renderdist[0],chunk[1] * univars.grandim * univars.renderdist[1],0,[1,1],"unot",255,[chunksprite],size,0,0,0)
 			self.noncolinstances[chunk].add(newt)
 
 		
-		if chunk in self.instances.keys():
+		if chunk in self.instances.keys() and len(self.instances[chunk]) > 1:
 			size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
 			chunksprite = pygame.Surface(size)
+			chunksprite.fill((random.randint(0,255),random.randint(0,255),random.randint(0,255)))
+			chunksprite.fill((0,0,0))
 			chunksprite.set_colorkey((0,0,0))
 			for instance in self.instances[chunk].sprites():
 				pos =  [instance.fakerect.x,instance.fakerect.y]
 				relativepos = [   
-								0,
-								0
+								 0+ univars.grandim/2,
+								 0+ univars.grandim/2
 							  ]
-				debugaad = instance.bart
-				debugaad.fill([random.randint(0,255) , random.randint(0,255) , random.randint(0,255)  ])
+				
 				chunksprite.blit(instance.bart,relativepos)
 			self.instances[chunk] = pygame.sprite.LayeredUpdates()
 			newt = inst.inst("UNOS",univars.grandim,str(chunk) + "col" + "#BAKEDINST",chunk[0] * univars.grandim * univars.renderdist[0],chunk[1] * univars.grandim * univars.renderdist[1],0,[1,1],"unot",255,[chunksprite],size,-1,0,0)
