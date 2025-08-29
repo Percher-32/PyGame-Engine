@@ -103,7 +103,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "demo2"
+map = "demo3"
 startstate = "debugame"
 startshaderstate = 0
 bakeonreload = 1
@@ -118,8 +118,7 @@ startuistate = "def"
 
 
 
-screencol = (110,189,234)
-# screencol = (0,0,50)
+screencol = (110 ,189 ,234 )
 
 
 camspeeed = 45
@@ -129,7 +128,7 @@ poschange = 0
 
 defont = "pixel2.ttf"
 
-renderdist = [10,10]
+renderdist = [12,12]
 
 
 showinput = 0

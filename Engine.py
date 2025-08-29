@@ -28,7 +28,7 @@ class Game(Gamemananager.GameManager):
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
 		self.ingametime = 0
-		self.publicvariables["mood"] = "sunset"
+		self.publicvariables["mood"] = "afternoon"
 		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = 0.9
 		self.lookaheady = 0
@@ -117,24 +117,29 @@ class Game(Gamemananager.GameManager):
 
 
 		if mood == "afternoon":
+			self.publicvariables["screencol"] = (70 ,189 ,234 )
 			sd.program["illuminace"] = 0.5
 			sd.program["sunpos"] = [0,0]
 			sd.program["pacify"] = -0.5
 
 		if mood == "sunset":
-			sd.program["illuminace"] = 0.7
-			sd.program["sunpos"] = [0.5,0.5]
-			sd.program["pacify"] = 0.1
+			self.publicvariables["screencol"] = (110 ,189 ,234 )
+			sd.program["illuminace"] = 0.24
+			sd.program["sunpos"] = [0,-1 * self.actualwaterheight/10 + 0.5]
+			sd.program["pacify"] = -0.65
+
 
 		if mood == "daybreak":
+			self.publicvariables["screencol"] = (110 ,189 ,234 )
 			sd.program["illuminace"] = 0.5
 			sd.program["sunpos"] = [0,0]
 			sd.program["pacify"] = 0
 
 		if mood == "night":
+			self.publicvariables["screencol"] = (0,0,50)
 			sd.program["illuminace"] = 1
-			sd.program["sunpos"] = [1,-1]
-			sd.program["pacify"] = 0.4
+			sd.program["sunpos"] = [0,0]
+			sd.program["pacify"] = 0.6
 
 
 
@@ -182,7 +187,7 @@ class Game(Gamemananager.GameManager):
 			if not self.gp("slinging"):
 				cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.5 )
 			else:
-				cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.4 )
+				cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.35 )
 
 			
 			rot = om.objects["playersprite"]["rot"]
@@ -484,7 +489,6 @@ class Game(Gamemananager.GameManager):
 
 
 						#wall ledge spin
-						# self.println(len(collision["botmid"]),6)
 						if self.gp("des_vel",1) > 0:
 							if self.gp("lastframewall") and not self.gp("leftwall") and not self.gp("rightwall") and not (collision["botmid"]["inst"] and collision["botleft"]["inst"] and collision["botright"]["inst"]):
 								self.sp("xinit",False)
@@ -515,7 +519,15 @@ class Game(Gamemananager.GameManager):
 						if not self.isthere("leftjump") or not self.isthere("rightjump"):
 							if not self.sign(self.key["x"]) == self.sign(self.gp("lastx")):
 								self.sp("xinit",True)
+								if ground and abs(self.gp("act_vel")[0]) > 100:
+									self.wait("skid",0.3)
+									# self.print("shid")
 							self.sp("lastx",self.key["x"])
+
+
+						if self.isthere("skid"):
+							if ground:
+								pm.particlespawnbluprint(om.objects["player"]["pos"],"grind",initvel=[0,0])
 
 						#ground detection + falling
 						if ground:
@@ -648,25 +660,25 @@ class Game(Gamemananager.GameManager):
 						
 
 						#slingshot
-						if self.key["secondary"] and self.gp("dashmeter") > 0:
+						if self.key["secondary"] and self.gp("dashmeter") > 0 and not ground:
 							self.sp("slinging",1)
-							om.speed = self.unilerp(om.speed,0.3,5,roundto=2,useigt=0)
+							self.sp("dashmeter",self.gp("dashmeter") - self.dt/10)
+							om.speed = self.unilerp(om.speed,0.1,5,roundto=2,useigt=0) 
 							self.sp("slomorot",vecaxis.angle)
-							self.println(self.gp("slomorot"),0)
 						else:
 							om.speed = univars.func.lerp(om.speed,1,5,roundto=2)
 							self.sp("slinging",0)
 
 
 							if self.gp("lastframeswing"):
-								self.print("RELEASE")
+								self.sp("dashmeter",self.gp("dashmeter") - 10)
 								self.wait("dashrem",2)
 								# cm.setcond("playercam","shake",6)
 								actmult = [190,190]
 								actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
 								desmult = [190,190]
 								desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
-								self.spin(20,0.4,0.1)
+								self.spin(20,0.7,0.1)
 
 								self.sp("dashav",self.listdiv(actvel,40))
 								self.sp("dashdv",self.listdiv(desvel,40))
@@ -725,7 +737,7 @@ class Game(Gamemananager.GameManager):
 						
 						#water skid
 						if 0.7 > self.actualwaterheight > 0.5 and not (self.key["jump"] and self.gp("act_vel")[1] >= 0) :
-							if abs(self.gp("act_vel")[0]) >= 110:
+							if abs(self.gp("act_vel")[0]) >= 150:
 								if self.gp("act_vel")[0] > 100:
 									parts = [om.objects["player"]["pos"][0] -5,om.objects["player"]["pos"][1] + 9]
 								else:
@@ -740,8 +752,13 @@ class Game(Gamemananager.GameManager):
 
 
 				else:
-					# self.print("RAIL")
+					#RAIL
+					om.speed = univars.func.lerp(om.speed,1,5,roundto=2)
+					self.sp("slinging",0)
 					self.sp("jumpable",True)
+
+					self.killtimer("rotate")
+					self.sp("rotoffset",0)
 					railpiece = collisionbox["inst"][0]
 					if railpiece.name == "rail":
 						railrot = railpiece.rot
