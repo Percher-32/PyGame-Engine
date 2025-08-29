@@ -104,7 +104,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 map = "demo2"
-startstate = "edit"
+startstate = "debugame"
 startshaderstate = 0
 bakeonreload = 1
 showdebugonstart = 0
@@ -129,7 +129,7 @@ poschange = 0
 
 defont = "pixel2.ttf"
 
-renderdist = [8,8]
+renderdist = [10,10]
 
 
 showinput = 0

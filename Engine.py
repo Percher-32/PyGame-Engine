@@ -31,6 +31,7 @@ class Game(Gamemananager.GameManager):
 		self.publicvariables["mood"] = "sunset"
 		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = 0.9
+		self.lookaheady = 0
 		self.actualwaterheight = 0
 
 	def onreload(self):
@@ -175,10 +176,13 @@ class Game(Gamemananager.GameManager):
 			
 
 			campos[0] += self.lookahead
+			campos[1] += self.lookaheady
 
 
-
-			cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.5 )
+			if not self.gp("slinging"):
+				cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.5 )
+			else:
+				cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.4 )
 
 			
 			rot = om.objects["playersprite"]["rot"]
@@ -201,6 +205,9 @@ class Game(Gamemananager.GameManager):
 					om.flip("playersprite","right")
 				if self.gp("des_vel")[0] < 0:
 					om.flip("playersprite","left")
+
+				if self.gp("slinging"):
+					om.flip("playersprite","right")
 
 
 
@@ -225,6 +232,7 @@ class Game(Gamemananager.GameManager):
 		om.speed = 1
 
 		#create player
+		
 		om.adds("player",startpos,"player","player",0,[1,1],400,5)
 		om.objects["player"]["rendercond"] = False
 
@@ -248,6 +256,7 @@ class Game(Gamemananager.GameManager):
 		self.sp("lastframewall",0)
 
 
+		self.sp("slinging",0)
 
 		self.lastrail = 0
 
@@ -276,6 +285,7 @@ class Game(Gamemananager.GameManager):
 		self.gate = "r"
 
 		self.lastdirrail = 0
+		self.sp("lastframeswing",0)
 
 		self.lastdirslant = "r"
 
@@ -539,14 +549,14 @@ class Game(Gamemananager.GameManager):
 
 
 						axis = [self.key["x"],self.key["y"] * 1]
-						axis = pygame.math.Vector2(axis[0],axis[1])
-						if axis.length()> 0:
-							axis.normalize()
-							axis.scale_to_length(1.2)
-						axis = [axis.x,axis.y]
+						vecaxis = pygame.math.Vector2(axis[0],axis[1])
+						if vecaxis.length()> 0:
+							vecaxis.normalize()
+							vecaxis.scale_to_length(1.2)
+						axis = [vecaxis.x,vecaxis.y]
 						axis[1] = round(axis[1],2)
-						if not self.lastkey == self.key:
-							self.print("UNEQ")
+
+						#AIR DASH
 						if self.key["jump"] and not ground and not self.lastkey["jump"]:
 							if not self.isthere("doublejumpcd") and self.gp("candj"):
 								self.sp("candj",0)
@@ -637,7 +647,41 @@ class Game(Gamemananager.GameManager):
 
 						
 
-						#dash
+						#slingshot
+						if self.key["secondary"] and self.gp("dashmeter") > 0:
+							self.sp("slinging",1)
+							om.speed = self.unilerp(om.speed,0.3,5,roundto=2,useigt=0)
+							self.sp("slomorot",vecaxis.angle)
+							self.println(self.gp("slomorot"),0)
+						else:
+							om.speed = univars.func.lerp(om.speed,1,5,roundto=2)
+							self.sp("slinging",0)
+
+
+							if self.gp("lastframeswing"):
+								self.print("RELEASE")
+								self.wait("dashrem",2)
+								# cm.setcond("playercam","shake",6)
+								actmult = [190,190]
+								actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
+								desmult = [190,190]
+								desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
+								self.spin(20,0.4,0.1)
+
+								self.sp("dashav",self.listdiv(actvel,40))
+								self.sp("dashdv",self.listdiv(desvel,40))
+
+								self.sp("act_vel",0,1)
+								self.sp("des_vel",0,1)
+								self.sp("act_vel",0,0)
+								self.sp("des_vel",0,0)
+								self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
+								self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))	
+
+						
+						self.sp("lastframeswing",self.gp("slinging"))	
+						self.println(self.gp("lastframeswing"),1)
+
 						
 
 						
@@ -680,7 +724,7 @@ class Game(Gamemananager.GameManager):
 
 						
 						#water skid
-						if 0.7 > self.actualwaterheight > 0.5 and not self.key["jump"]:
+						if 0.7 > self.actualwaterheight > 0.5 and not (self.key["jump"] and self.gp("act_vel")[1] >= 0) :
 							if abs(self.gp("act_vel")[0]) >= 110:
 								if self.gp("act_vel")[0] > 100:
 									parts = [om.objects["player"]["pos"][0] -5,om.objects["player"]["pos"][1] + 9]
@@ -692,6 +736,7 @@ class Game(Gamemananager.GameManager):
 								self.sp("des_vel",[   self.gp("des_vel")[0] , 0  ]  ) 
 								om.objects["player"]["pos"][1] = (320 * self.publicvariables["waterh"])+257 + (math.sin(fm.frame/10) * 15)
 								self.sp("jumpable",1)
+								self.sp("candj",0)
 
 
 				else:
@@ -792,7 +837,7 @@ class Game(Gamemananager.GameManager):
 
 						
 
-
+				#UPDATE POSITIONS AND ROTATIONS
 				if not (collision["topmid"]["inst"] and collision["botmid"]["inst"] and collision["midright"]["inst"] and collision["midleft"]["inst"] ) or rail:
 					self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
 					om.translate(self,"player",self.gp("act_vel"),usedt=1)
@@ -815,6 +860,15 @@ class Game(Gamemananager.GameManager):
 
 						self.sp("rotoffset",((self.gp("rotoffset") - min_value) % range_size) + min_value)
 						self.sp("unboundrot",((self.gp("unboundrot") - min_value) % range_size) + min_value)
+
+
+					if self.gp("slinging"):
+						if abs(self.gp("unboundrot")) > 180 :
+							min_value = -180
+							max_value = 180
+							range_size = max_value - min_value
+
+							self.sp("unboundrot",((self.gp("unboundrot") - min_value) % range_size) + min_value)
 						
 
 					# min_value = -180
@@ -828,7 +882,10 @@ class Game(Gamemananager.GameManager):
 
 
 					rot = self.gp("unboundrot")
-					dest = self.gp("desrot")+ self.gp("rotoffset")
+					if not self.gp("slinging"):
+						dest = self.gp("desrot")+ self.gp("rotoffset")
+					else:
+						dest = self.gp("slomorot")
 
 					d1 = abs(rot - (dest - 360))
 					d2 = abs(rot - (dest + 360))
@@ -846,16 +903,24 @@ class Game(Gamemananager.GameManager):
 					# om.objects["playersprite"]["rot"]   +=  30
 					 
 					# om.objects["playersprite"]["rot"]   =  
-					
-					self.sp("unboundrot",self.unilerp(rot,dest,5,roundto=2))
-					a = self.gp("unboundrot")
-					min_value = -180
-					max_value = 180
-					range_size = max_value - min_value
-					a = ((a - min_value) % range_size) + min_value
-					if -5 < a < 5:
-						om.objects["playersprite"]["rot"]  =  0
+					if not self.gp("slinging"):
+						self.sp("unboundrot",self.unilerp(rot,dest,5,roundto=2))
+						a = self.gp("unboundrot")
+						min_value = -180
+						max_value = 180
+						range_size = max_value - min_value
+						a = ((a - min_value) % range_size) + min_value
+						if -5 < a < 5:
+							om.objects["playersprite"]["rot"]  =  0
+						else:
+							om.objects["playersprite"]["rot"] = a
 					else:
+						self.sp("unboundrot",self.unilerp(rot,dest,5,roundto=2,useigt=0))
+						a = self.gp("unboundrot")
+						min_value = -180
+						max_value = 180
+						range_size = max_value - min_value
+						a = ((a - min_value) % range_size) + min_value
 						om.objects["playersprite"]["rot"] = a
 					
 
@@ -980,33 +1045,29 @@ class Game(Gamemananager.GameManager):
 			self.sp("prev_des_vel",self.gp("des_vel"))
 			self.sp("prevprevpos",om.objects["player"]["pos"])
 
-		# um.showvar("prevprevpos",self.gp("prevprevpos"),[0,-0.2])
-			# if len(collision["topleft"]["inst"]) > 0 or len(collision["topright"]["inst"]) > 0 or len(collision["midleft"]["inst"]) > 0 or len(collision["midright"]["inst"]) > 0:
-			# 	self.sp("act_vel",[   self.gp("prev_act_vel")[0] * -1  ,  self.gp("prev_act_vel")[1] * -1 ])
-			# 	self.sp("des_vel",[   self.gp("prev_des_vel")[0] * -1  ,  self.gp("prev_des_vel")[1] * -1 ])
-			# else:
-			# 	self.sp("act_vel",[   self.gp("prev_act_vel")[0] * 1  ,  self.gp("prev_act_vel")[1] * -1 ])
-			# 	self.sp("des_vel",[   self.gp("prev_des_vel")[0] * 1  ,  self.gp("prev_des_vel")[1] * -1 ])
-			
-			# self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
-			# om.translate(self,"player",self.gp("act_vel"),usedt=1)
-		self.sp("lastframewall",self.gp("leftwall") or self.gp("rightwall"))
+
 
 				
 		
 
 
-
+		#LOOK AHEAD
 		if not rail:
-			if self.gp("des_vel")[0] > 0:
-				self.lookahead = self.unilerp(self.lookahead,200,8,roundto=2)
-			elif self.gp("des_vel")[0] < 0:
-				self.lookahead = self.unilerp(self.lookahead,-200,8,roundto=2)
+			if not self.gp("slinging"):
+				self.lookaheady = self.unilerp(self.lookaheady,0,1,roundto=2,useigt=1)
+				if self.gp("des_vel")[0] > 0:
+					self.lookahead = self.unilerp(self.lookahead,200,8,roundto=2)
+				elif self.gp("des_vel")[0] < 0:
+					self.lookahead = self.unilerp(self.lookahead,-200,8,roundto=2)
+				else:
+					self.lookahead = self.unilerp(self.lookahead,0,20,roundto=2)
 			else:
-				self.lookahead = self.unilerp(self.lookahead,0,20,roundto=2)
-
+				self.lookaheady = self.unilerp(self.lookaheady,self.key["y"] * -20,4,roundto=2,useigt=0)
+				self.lookahead = self.unilerp(self.lookahead,self.key["x"] * 20,4,roundto=2,useigt=0)
+				self.println([self.lookahead,self.lookaheady],3)
 		
 		self.lastrail = rail
+		self.sp("lastframewall",self.gp("leftwall") or self.gp("rightwall"))
 
 
 	def spin(self,angle,time,spindec = 0):
@@ -1034,12 +1095,15 @@ class Game(Gamemananager.GameManager):
 		rot = self.unilerp(rot,dest,sm,roundto=roundto)
 		return rot
 		
-	def unilerp(self,val,max,sm,roundto = 2):
+	def unilerp(self,val,max,sm,roundto = 2,useigt = True):
 		"""
 			a lerp function that incorperates IN-GAME time and DELTA-TIME into its incorperation.  sm -> float or int
 		"""
-		return univars.func.lerp(val,max,              (  (sm/om.speed) / self.dt)*1.5              ,roundto = roundto)
-	
+		if useigt:
+			return univars.func.lerp(val,max,              (  (sm/om.speed) / self.dt)*1.5              ,roundto = roundto)
+		else:
+			return univars.func.lerp(val,max,              (  (sm) / self.dt)*1.5              ,roundto = roundto)
+		
 	def sign(self,value):
 		"""
 		 	returns + or -
@@ -1131,7 +1195,7 @@ if univars.profile == "opt":
 				rm.Run()
 			except Exception as error:
 				print(error)
-				em.close()
+				pygame.quit()
 		else:
 			rm.Run()
 	if __name__ == "__main__":
@@ -1142,6 +1206,6 @@ else:
 			rm.Run()
 		except Exception as error:
 			print(error)
-			em.close()
+			pygame.quit()
 	else:
 		rm.Run()
