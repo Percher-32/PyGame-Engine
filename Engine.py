@@ -28,6 +28,7 @@ class Game(Gamemananager.GameManager):
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
 		self.ingametime = 0
+		self.publicvariables["mood"] = "sunset"
 		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = 0.9
 		self.actualwaterheight = 0
@@ -75,7 +76,6 @@ class Game(Gamemananager.GameManager):
 
 	def update(self):
 		bg.background = "test2"
-		self.println(univars.pixelscale,3)
 		# om.speed = 0.8
 		# pm.particlespawn("circle",[0,0],[[-5,5],[-5,5]],(0,100,255),[0,0],[0,-1],5,0.001,alpha=300,alphadec=4,divergencepos=[[-1000,1000],[0,0]],ntimes=1)
 		# cm.setcond("def","pos",[random.randint(-10000,10000),random.randint(-10000,10000)])
@@ -108,7 +108,6 @@ class Game(Gamemananager.GameManager):
 
 
 	
-		self.publicvariables["mood"] = "daybreak"
 		mood = self.publicvariables["mood"]
 
 		# self.publicvariables["waterh"] -= 0.002
@@ -117,14 +116,14 @@ class Game(Gamemananager.GameManager):
 
 
 		if mood == "afternoon":
-			sd.program["illuminace"] = 2
+			sd.program["illuminace"] = 0.5
 			sd.program["sunpos"] = [0,0]
-			sd.program["pacify"] = 0
+			sd.program["pacify"] = -0.5
 
 		if mood == "sunset":
-			sd.program["illuminace"] = 1
+			sd.program["illuminace"] = 0.7
 			sd.program["sunpos"] = [0.5,0.5]
-			sd.program["pacify"] = 0.2
+			sd.program["pacify"] = 0.1
 
 		if mood == "daybreak":
 			sd.program["illuminace"] = 0.5
@@ -132,9 +131,10 @@ class Game(Gamemananager.GameManager):
 			sd.program["pacify"] = 0
 
 		if mood == "night":
-			sd.program["illuminace"] = 0.6
-			sd.program["sunpos"] = [0,0]
-			sd.program["pacify"] = 0
+			sd.program["illuminace"] = 1
+			sd.program["sunpos"] = [1,-1]
+			sd.program["pacify"] = 0.4
+
 
 
 
@@ -252,6 +252,8 @@ class Game(Gamemananager.GameManager):
 		self.lastrail = 0
 
 		self.sp("des_vel",[0,0])
+
+		self.sp("candj",0)
 
 		#actual velocity
 		self.sp("act_vel",[0,0])
@@ -536,12 +538,46 @@ class Game(Gamemananager.GameManager):
 
 
 
+						axis = [self.key["x"],self.key["y"] * 1]
+						axis = pygame.math.Vector2(axis[0],axis[1])
+						if axis.length()> 0:
+							axis.normalize()
+							axis.scale_to_length(1.2)
+						axis = [axis.x,axis.y]
+						axis[1] = round(axis[1],2)
+						if not self.lastkey == self.key:
+							self.print("UNEQ")
+						if self.key["jump"] and not ground and not self.lastkey["jump"]:
+							if not self.isthere("doublejumpcd") and self.gp("candj"):
+								self.sp("candj",0)
+								self.wait("dashrem",2)
+								# cm.setcond("playercam","shake",6)
+								actmult = [160,160]
+								actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
+								desmult = [160,160]
+								desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
+								self.spin(20,0.4,0.1)
+
+								self.sp("dashav",self.listdiv(actvel,80))
+								self.sp("dashdv",self.listdiv(desvel,80))
+
+								self.sp("act_vel",0,1)
+								self.sp("des_vel",0,1)
+								self.sp("act_vel",0,0)
+								self.sp("des_vel",0,0)
+								self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
+								self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
+
+
 						#jumping
 						if self.key["jump"]:
 							self.sp("fss",16)
 							# self.sp("desmooth",5)
-							
 							if self.gp("jumpable"):
+								self.sp("jumpable",0)
+								self.deltimer("doublejumpcd")
+								self.wait("doublejumpcd",0.1)
+								self.sp("candj",1)
 								#normal
 								self.lastframejumped = 1
 								self.sp("jumpable",False)
@@ -602,36 +638,7 @@ class Game(Gamemananager.GameManager):
 						
 
 						#dash
-						axis = [self.key["x"],self.key["y"] * 1]
-						axis = pygame.math.Vector2(axis[0],axis[1])
-						if axis.length()> 0:
-							axis.normalize()
-							axis.scale_to_length(1.2)
-						axis = [axis.x,axis.y]
-						axis[1] = round(axis[1],2)
-						self.println(axis,0)
-						if self.key["secondary"]:
-							if self.gp("dashmeter") > 0:
-								if not self.isthere("dashcooldown"):
-									self.wait("dashcooldown",0.2)
-									self.wait("dashrem",2)
-									# cm.setcond("playercam","shake",6)
-									self.sp("dashmeter",self.gp("dashmeter") - 0)
-									actmult = [160,160]
-									actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
-									desmult = [160,160]
-									desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
-									self.spin(20,0.4,0.1)
-
-									self.sp("dashav",self.listdiv(actvel,80))
-									self.sp("dashdv",self.listdiv(desvel,80))
-
-									self.sp("act_vel",0,1)
-									self.sp("des_vel",0,1)
-									self.sp("act_vel",0,0)
-									self.sp("des_vel",0,0)
-									self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
-									self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
+						
 
 						
 									
@@ -683,7 +690,7 @@ class Game(Gamemananager.GameManager):
 								pm.particlespawnbluprint(parts,"water",initvel= vel)
 								self.sp("act_vel",[   self.gp("act_vel")[0] , 0  ]  ) 
 								self.sp("des_vel",[   self.gp("des_vel")[0] , 0  ]  ) 
-								om.objects["player"]["pos"][1] = (510.11583 * self.publicvariables["waterh"])+343.6834
+								om.objects["player"]["pos"][1] = (320 * self.publicvariables["waterh"])+257 + (math.sin(fm.frame/10) * 15)
 								self.sp("jumpable",1)
 
 
@@ -846,11 +853,15 @@ class Game(Gamemananager.GameManager):
 					max_value = 180
 					range_size = max_value - min_value
 					a = ((a - min_value) % range_size) + min_value
-					om.objects["playersprite"]["rot"] = a
+					if -5 < a < 5:
+						om.objects["playersprite"]["rot"]  =  0
+					else:
+						om.objects["playersprite"]["rot"] = a
+					
 
 						
 				
-
+				
 
 					if not rail:
 						#prevent no-clip
@@ -924,7 +935,12 @@ class Game(Gamemananager.GameManager):
 						self.sp("act_vel",[self.gp("act_vel")[0], self.gp("act_vel")[1]])
 					om.translate(self,"player", self.gp("act_vel"),usedt=1)
 					self.sp("desrot",-45)
-			om.objects["playersprite"]["rot"]  =  self.unilerp(om.objects["playersprite"]["rot"],self.gp("desrot"),5,roundto=2) 
+
+			if -5 < self.gp("desrot") < 5:
+				om.objects["playersprite"]["rot"]  =  0
+			else:
+				om.objects["playersprite"]["rot"]  =  self.unilerp(om.objects["playersprite"]["rot"],self.gp("desrot"),5,roundto=2) 
+
 			if self.key["jump"]:
 				self.sp("fss",16)
 				self.sp("desmooth",5)
@@ -980,8 +996,6 @@ class Game(Gamemananager.GameManager):
 		
 
 
-		if  -5 > self.gp("desrot") > 5:
-			self.sp("desrot",0)
 
 		if not rail:
 			if self.gp("des_vel")[0] > 0:
@@ -1050,11 +1064,9 @@ class Game(Gamemananager.GameManager):
 		"""
 		# print(lists[0])
 		mainlist = [0 for i in lists[0]]
-		self.println(lists,3)
 		for lst in lists:
 			for index in range(len(lst)):
 				mainlist[index] += lst[index]
-		self.println(mainlist,4)
 		return mainlist
 
 	def listdiv(self,list,num):
@@ -1110,6 +1122,7 @@ class Game(Gamemananager.GameManager):
 
 
 rm = Game(univars.screencol,fm)
+
 if univars.profile == "opt":
 	def main():
 		rm = Game(univars.screencol,fm)

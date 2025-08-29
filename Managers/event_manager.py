@@ -164,5 +164,9 @@ class event_manager:
 				self.keydown = False
 
 	def close(self):
-		self.open = False
+		pygame.quit()
+		self.running = False
+		with open("Saved/Spritecache.json","w") as file:
+			json.dump(inst.dataspritecache,file)
+		exit()
 

@@ -107,6 +107,7 @@ class GameManager():
 				print()
 
 	def keybind(self):
+		self.lastkey = self.key.copy()
 		#main 5 inputs
 		if em.controller["x"] or em.key[pygame.K_SPACE]:
 			self.key["jump"] = True
@@ -493,7 +494,7 @@ class GameManager():
 
 
 		self.dt = fm.dt
-		self.lastkey = self.key
+		
 		self.inputdetect()
 		self.frame_manager.next(self.publicvariables["maxfps"])
 		

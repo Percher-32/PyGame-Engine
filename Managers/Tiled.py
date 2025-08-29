@@ -158,7 +158,7 @@ class TiledSoftwre:
 		if work:
 			if GameManager.states == "Editor":
 				Cammanager.camager.setcam("def")
-			if self.placable <= 0 and GameManager.event_manager.key[pygame.K_0] and GameManager.event_manager.key[pygame.K_LCTRL]:
+			if self.placable <= 0 and GameManager.event_manager.key[pygame.K_0] and GameManager.event_manager.key[pygame.K_LCTRL] or self.placable <= 0 and GameManager.event_manager.controller["touchpad"]:
 				self.placable = 5
 				if GameManager.smstate == "edit":
 					GameManager.setbosh("debugame")
@@ -1205,6 +1205,15 @@ class TiledSoftwre:
 				self.commmandtring = ""
 			elif self.commmandtring.rstrip() == "bake":
 				object_manager.BAKE()
+				self.commmandtring = ""
+			elif   "print:" in self.commmandtring.rstrip():
+				self.cht = self.commmandtring.rstrip().split(":")[1]
+				GameManager.print(self.cht)
+				self.commmandtring = ""
+			elif "println:" in self.commmandtring.rstrip():
+				self.cht = self.commmandtring.rstrip().split(":")[1]
+				line = self.commmandtring.rstrip().split(",")[1]
+				GameManager.println(self.cht,line)
 				self.commmandtring = ""
 
 			elif self.commmandtring.rstrip() in ["particle","part","particle-edit","particle-editor"]:
