@@ -642,6 +642,10 @@ class object_manager:
 				if inst in instpostodel:
 					if inst.layer == layer or layer == "all":
 						self.noncolinstances[a].remove(inst)
+						for ghost in self.noncolghostinstances[a]:
+							if ghost.inst == inst:
+								self.noncolghostinstances[a].remove(ghost)
+
 
 		#deleting instances
 		for a in self.instances.keys():

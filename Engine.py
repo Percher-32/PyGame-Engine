@@ -28,8 +28,8 @@ class Game(Gamemananager.GameManager):
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
 		self.ingametime = 0
-		self.publicvariables["mood"] = "afternoon"
-		self.publicvariables["showater"] = 1
+		self.publicvariables["mood"] = "daybreak"
+		self.publicvariables["showater"] = 0
 		self.publicvariables["waterh"] = 0.9
 		self.lookaheady = 0
 		self.actualwaterheight = 0
@@ -45,7 +45,7 @@ class Game(Gamemananager.GameManager):
 			
 
 			#initialise player and all its variables
-			self.initialiseplayer([0,0])
+			self.initialiseplayer([-3936,256])
 
 		if "veiw" == self.states:
 			um.changestate("test1","but1")
@@ -184,8 +184,9 @@ class Game(Gamemananager.GameManager):
 			campos[1] += self.lookaheady
 
 
+
 			if not self.gp("slinging"):
-				cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.5 )
+				cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.4 )
 			else:
 				cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.35 )
 
@@ -351,6 +352,7 @@ class Game(Gamemananager.GameManager):
 		# self.println(self.key["axis"],5)
 		# om.speed = 0.4
 		# self.println(self.gp("dashmeter"),2)
+		cm.setcond("playercam","shake",0)
 		self.sp("dashmeter",min([100,self.gp("dashmeter")]))
 		self.sp("dashmeter",max([0,self.gp("dashmeter")]))
 
@@ -578,7 +580,7 @@ class Game(Gamemananager.GameManager):
 								actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
 								desmult = [160,160]
 								desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
-								self.spin(20,0.4,0.1)
+								self.spin(21,0.4,0.1)
 
 								self.sp("dashav",self.listdiv(actvel,80))
 								self.sp("dashdv",self.listdiv(desvel,80))
@@ -746,7 +748,7 @@ class Game(Gamemananager.GameManager):
 								pm.particlespawnbluprint(parts,"water",initvel= vel)
 								self.sp("act_vel",[   self.gp("act_vel")[0] , 0  ]  ) 
 								self.sp("des_vel",[   self.gp("des_vel")[0] , 0  ]  ) 
-								om.objects["player"]["pos"][1] = (320 * self.publicvariables["waterh"])+257 + (math.sin(fm.frame/10) * 15)
+								om.objects["player"]["pos"][1] = (320 * self.publicvariables["waterh"])+350 + (math.sin(fm.frame/10) * 15)
 								self.sp("jumpable",1)
 								self.sp("candj",0)
 
@@ -1070,18 +1072,34 @@ class Game(Gamemananager.GameManager):
 
 		#LOOK AHEAD
 		if not rail:
-			if not self.gp("slinging"):
-				self.lookaheady = self.unilerp(self.lookaheady,0,1,roundto=2,useigt=1)
-				if self.gp("des_vel")[0] > 0:
-					self.lookahead = self.unilerp(self.lookahead,200,8,roundto=2)
-				elif self.gp("des_vel")[0] < 0:
-					self.lookahead = self.unilerp(self.lookahead,-200,8,roundto=2)
-				else:
-					self.lookahead = self.unilerp(self.lookahead,0,20,roundto=2)
-			else:
+			if self.gp("slinging"):
 				self.lookaheady = self.unilerp(self.lookaheady,self.key["y"] * -20,4,roundto=2,useigt=0)
 				self.lookahead = self.unilerp(self.lookahead,self.key["x"] * 20,4,roundto=2,useigt=0)
-				self.println([self.lookahead,self.lookaheady],3)
+			else:
+				
+				self.lookahead = self.unilerp(self.lookahead,0,4,roundto=2,useigt=1)
+				if self.gp("leftwall") or self.gp("rightwall"):
+					if self.key["y"] < 0:
+						self.lookaheady = self.unilerp(self.lookaheady,200,8,roundto=2)
+					elif self.key["y"] > 0:
+						self.lookaheady = self.unilerp(self.lookaheady,-200,8,roundto=2)
+					else:
+						self.lookaheady = self.unilerp(self.lookaheady,0,20,roundto=2)
+				else:
+					self.lookaheady = self.unilerp(self.lookaheady,0,4,roundto=2,useigt=1)
+					if self.gp("des_vel")[0] > 0:
+						self.lookahead = self.unilerp(self.lookahead,200,8,roundto=2)
+					elif self.gp("des_vel")[0] < 0:
+						self.lookahead = self.unilerp(self.lookahead,-200,8,roundto=2)
+					else:
+						self.lookahead = self.unilerp(self.lookahead,0,20,roundto=2)
+		else:
+			cm.setcond("playercam","shake",3)
+			self.lookaheady = self.unilerp(self.lookaheady,-300 * math.sin((railrot/180) * math.pi) * raildir ,4,roundto=2,useigt=0)
+			self.lookahead = self.unilerp(self.lookahead,300 * math.cos((railrot/180) * math.pi) * raildir,4,roundto=2,useigt=0)
+
+			
+			self.println([self.lookahead,self.lookaheady],3)
 		
 		self.lastrail = rail
 		self.sp("lastframewall",self.gp("leftwall") or self.gp("rightwall"))

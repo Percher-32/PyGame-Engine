@@ -11,7 +11,7 @@ startdims = (screen_w,screen_h)
 
 camchange = True
 
-pixelscale = 10
+pixelscale = 12
 
 
 grandim = 32
@@ -66,7 +66,6 @@ func = funcs.func(grandim)
 
 lumptype = {"grass":"ground","dirt":"ground","slantl":"slantl","slantr":"slantr","slantdecor":"ground","rail":"rail","rail-diag":"rail"}
 
-# sizeoffsets = {"grass":[0.1,0.1],"dirt":[0.1,0.1],"slantr":[0.1,0.1],"slantl":[0.1,0.1]}
 sizeoffsets = {}
 
 instables = ["dirt","grass","def","slantl","slantr","slantlbot","slantrbot","rail","rail-diag"]
@@ -103,14 +102,15 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "demo3"
+map = "maindemo"
 startstate = "debugame"
 startshaderstate = 0
-bakeonreload = 1
+bakeonreload = 0
 showdebugonstart = 0
 profile = 0
-safemode = 0
+safemode = 1
 startuistate = "def"
+showinput = 0
 
 
 
@@ -131,7 +131,6 @@ defont = "pixel2.ttf"
 renderdist = [12,12]
 
 
-showinput = 0
 
 maxfpsbuffersize = 5
 
@@ -145,5 +144,28 @@ def update():
     screen_h = pygame.display.get_window_size()[1]
     # realscreeen = pygame.transform.scale(realscreeen,[screen_w,screen_h])
     # print(realscreeen.get_size())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
