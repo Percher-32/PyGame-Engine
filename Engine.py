@@ -33,7 +33,6 @@ class Game(Gamemananager.GameManager):
 		self.actualwaterheight = 0
 
 	def onreload(self):
-		om.BAKE()
 		self.a = 0
 		# bg.addbackground("test2")
 		# bg.addbackgrounditem("black2","test2",[0,-40]                ,surf = "mount",dimensions=[500*5,250*5],layer = 0.15,infiniscroll=True)
@@ -76,6 +75,7 @@ class Game(Gamemananager.GameManager):
 
 	def update(self):
 		bg.background = "test2"
+		self.println(univars.pixelscale,3)
 		# om.speed = 0.8
 		# pm.particlespawn("circle",[0,0],[[-5,5],[-5,5]],(0,100,255),[0,0],[0,-1],5,0.001,alpha=300,alphadec=4,divergencepos=[[-1000,1000],[0,0]],ntimes=1)
 		# cm.setcond("def","pos",[random.randint(-10000,10000),random.randint(-10000,10000)])
@@ -1110,16 +1110,25 @@ class Game(Gamemananager.GameManager):
 
 
 rm = Game(univars.screencol,fm)
-if univars.mode == "opt":
+if univars.profile == "opt":
 	def main():
 		rm = Game(univars.screencol,fm)
-		rm.Run()
-
+		if univars.safemode:
+			try:
+				rm.Run()
+			except Exception as error:
+				print(error)
+				em.close()
+		else:
+			rm.Run()
 	if __name__ == "__main__":
 		cProfile.run('main()', sort='cumtime')
 else:
-	try:
+	if univars.safemode:
+		try:
+			rm.Run()
+		except Exception as error:
+			print(error)
+			em.close()
+	else:
 		rm.Run()
-	except Exception as error:
-		print(error)
-		em.close()

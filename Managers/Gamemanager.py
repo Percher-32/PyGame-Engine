@@ -352,6 +352,8 @@ class GameManager():
 		self.bosh()
 		bg.loadbg()
 		om.instables = univars.instables
+		if univars.bakeonreload:
+			om.BAKE()
 		cm.setcam("def")
 		self.debug = True
 		cm.setcond(cm.currentcam,"size",1)

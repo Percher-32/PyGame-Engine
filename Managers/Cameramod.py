@@ -1,4 +1,5 @@
 import random
+import Managers.univars as univars
 class camera:
 	def __init__(self,pos,size):
 		self.x = pos[0]
@@ -7,6 +8,7 @@ class camera:
 		self.b = pos[1]
 		self.lsize = 0
 		self.size = size
+		self.givensize = size
 		self.screenshakevalue = 1000
 		self.end = [(0,0),1]
 		self.smooth = 3
@@ -16,6 +18,7 @@ class camera:
 		self.b = self.y
 		self.x = self.a
 		self.y = self.b
+		self.size = self.givensize 
 		self.x += random.randint(-1 * self.screenshakevalue,self.screenshakevalue)
 		self.y += random.randint(-1 * self.screenshakevalue,self.screenshakevalue)
 

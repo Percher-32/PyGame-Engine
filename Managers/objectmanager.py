@@ -180,7 +180,7 @@ class object_manager:
 		if chunk in self.noncolinstances.keys() and len(self.noncolinstances[chunk]) > 1:
 			size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
 			chunksprite = pygame.Surface(size)
-			# chunksprite.fill((random.randint(0,255),random.randint(0,255),random.randint(0,255)))
+			chunksprite.fill((random.randint(0,255),random.randint(0,255),random.randint(0,255)))
 			chunksprite.fill((0,0,0))
 			chunksprite.set_colorkey((0,0,0))
 			for instance in self.noncolinstances[chunk].sprites():
@@ -788,7 +788,28 @@ class object_manager:
 		#camera-chunk
 		camposdim = [int(round(camera.x/(dim * self.renderdist[0]))),int(round(camera.y/(dim * self.renderdist[1])))]
 		#availabe chunks
-		ranges = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]
+		ranges = [
+					[ 0, 0],
+					[ 0, 1],
+					[ 0,-1],
+					[ 1, 0],
+					[-1, 0],
+					[ 1, 1],
+					[-1, 1],
+					[ 1,-1],
+					[-1,-1],
+
+					[-2, 0],
+					[ 2, 0],
+					[-2, 1],
+					[ 2, 1],
+					[-2,-1],
+					[ 2,-1],
+
+				]
+		
+		ranges = [ chunk for chunk in ranges  if univars.func.dist([0,0],chunk) < 1/camera.size * 2.5  ]
+		GameManager.println(ranges,0)
 		#the instanciate chunks to be rendered
 		lof = [  b   for b in self.instances.keys() for i in ranges   if b == ( i[0]  + camposdim[0],i[1] + camposdim[1]   )]
 		noncollof = [  b   for b in self.noncolinstances.keys() for i in ranges   if b == ( i[0]  + camposdim[0],i[1] + camposdim[1]   )]

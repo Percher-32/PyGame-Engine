@@ -25,7 +25,7 @@ class Cammanager:
 			univars.poschange = True
 		self.cam.x = self.cameras[name][0][0]
 		self.cam.y = self.cameras[name][0][1]
-		self.cam.size = self.cameras[name][1]
+		self.cam.givensize = self.cameras[name][1]
 		self.cam.screenshakevalue = self.cameras[name][2]
 		self.currentcam = name
 

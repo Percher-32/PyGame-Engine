@@ -11,7 +11,7 @@ startdims = (screen_w,screen_h)
 
 camchange = True
 
-pixelscale = 15
+pixelscale = 10
 
 
 grandim = 32
@@ -99,20 +99,24 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
+
+
+
+
 map = "demo2"
-
-startstate = "debugame"
-
+startstate = "edit"
 startshaderstate = 0
-
-
-showdebugonstart = 1
-
-#opt to optimise
-mode = "norm"
-
-
+bakeonreload = 1
+showdebugonstart = 0
+profile = 0
+safemode = 0
 startuistate = "def"
+
+
+
+
+
+
 
 screencol = (110,189,234)
 # screencol = (0,0,50)
@@ -125,7 +129,7 @@ poschange = 0
 
 defont = "pixel2.ttf"
 
-renderdist = [14,10]
+renderdist = [8,8]
 
 
 showinput = 0
