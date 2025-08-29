@@ -28,7 +28,7 @@ class Game(Gamemananager.GameManager):
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
 		self.ingametime = 0
-		self.publicvariables["mood"] = "daybreak"
+		self.publicvariables["mood"] = "sunset"
 		self.publicvariables["showater"] = 0
 		self.publicvariables["waterh"] = 0.9
 		self.lookaheady = 0
@@ -1206,8 +1206,24 @@ class Game(Gamemananager.GameManager):
 
 	def cond(self,id,info):
 		"""id -> the id   info -> the info for the id"""
-		# if info["name"] == "player":
-		# 	om.playanim(self.dt,id,"fastidle",1)
+		# if info["name"] == "enemy":
+		# 	env = pygame.math.Vector2(info["pos"])
+		# 	plv = pygame.math.Vector2(om.objects["player"]["pos"])
+		# 	distvec = env - plv
+		# 	if 100 < distvec.length():
+		# 		if distvec.length() > 0:
+		# 			distvec.normalize()
+		# 		distvec.scale_to_length(-10)
+		# 		distl = [distvec[0],distvec[1] * -1]
+		# 		om.translate(self,id,distl,1)
+		# 	om.set_value(id,"rot",distvec.angle_rad)
+		# else:
+		# 	om.set_value(id,"rot",om.get_value(id,"rot") + (5/180 * math.pi) )
+		# 	om.objects[id]["pos"] = [
+		# 		om.objects["player"]["pos"][0] * math.sin(om.get_value(id,"rot")) * 100,
+		# 		om.objects["player"]["pos"][1] * math.cos(om.get_value(id,"rot")) * 100
+		# 	]
+
 
 
 
