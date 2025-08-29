@@ -29,9 +29,10 @@ class Game(Gamemananager.GameManager):
 		super().__init__(screen,fm)
 		self.ingametime = 0
 		self.publicvariables["mood"] = "sunset"
-		self.publicvariables["showater"] = 0
+		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = 0.9
 		self.lookaheady = 0
+		self.lookahead = 100
 		self.actualwaterheight = 0
 
 	def onreload(self):
@@ -45,7 +46,7 @@ class Game(Gamemananager.GameManager):
 			
 
 			#initialise player and all its variables
-			self.initialiseplayer([-3936,256])
+			self.initialiseplayer([0,256])
 
 		if "veiw" == self.states:
 			um.changestate("test1","but1")
@@ -234,7 +235,6 @@ class Game(Gamemananager.GameManager):
 		cm.addcam("playercam",startpos,0.4)
 		cm.setcam("playercam")  
 
-		self.lookahead = 100
 		om.speed = 1
 
 		#create player
@@ -600,7 +600,7 @@ class Game(Gamemananager.GameManager):
 							if self.gp("jumpable"):
 								self.sp("jumpable",0)
 								self.deltimer("doublejumpcd")
-								self.wait("doublejumpcd",0.1)
+								self.wait("doublejumpcd",0.2)
 								self.sp("candj",1)
 								#normal
 								self.lastframejumped = 1
@@ -1088,18 +1088,19 @@ class Game(Gamemananager.GameManager):
 				else:
 					self.lookaheady = self.unilerp(self.lookaheady,0,4,roundto=2,useigt=1)
 					if self.gp("des_vel")[0] > 0:
-						self.lookahead = self.unilerp(self.lookahead,200,8,roundto=2)
+						self.lookahead = self.unilerp(self.lookahead,800,8,roundto=2)
 					elif self.gp("des_vel")[0] < 0:
-						self.lookahead = self.unilerp(self.lookahead,-200,8,roundto=2)
+						self.lookahead = self.unilerp(self.lookahead,-800,8,roundto=2)
 					else:
 						self.lookahead = self.unilerp(self.lookahead,0,20,roundto=2)
+				
+				self.println([self.lookahead,self.lookaheady],3)
 		else:
 			cm.setcond("playercam","shake",3)
 			self.lookaheady = self.unilerp(self.lookaheady,-300 * math.sin((railrot/180) * math.pi) * raildir ,4,roundto=2,useigt=0)
 			self.lookahead = self.unilerp(self.lookahead,300 * math.cos((railrot/180) * math.pi) * raildir,4,roundto=2,useigt=0)
 
 			
-			self.println([self.lookahead,self.lookaheady],3)
 		
 		self.lastrail = rail
 		self.sp("lastframewall",self.gp("leftwall") or self.gp("rightwall"))
