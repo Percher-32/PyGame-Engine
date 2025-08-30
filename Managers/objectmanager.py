@@ -49,6 +49,13 @@ class Ghost(pygame.sprite.Sprite):
 		self.rect = inst.fakerect
 		self.image = pygame.Surface((0,0))
 
+# class Ghost(pygame.sprite.Sprite):
+# 	def __init__(self,inst):
+# 		pygame.sprite.Sprite.__init__(self)
+# 		self.inst = inst
+# 		self.rect = inst.fakerect
+# 		self.image = pygame.Surface((0,0))
+
 
 
 
@@ -409,15 +416,18 @@ class object_manager:
 			if str(b.name) == str(id):
 				return b
 
-	def collide(self,id,show,camera,extra= 0) -> dict:
+	def collide(self,id,show,camera,extrax= 0,extray = 0,extra = 0) -> dict:
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		if not self.objfromid(id) == None:
 			#coll for non-inst
 			dim = univars.grandim
 			id = str(id)
 			r1 = self.objfromid(id).fakerect
-			r1.width = r1.width + extra
-			r1.height = r1.height + extra
+			r1.width = r1.width + (extrax + extra)
+			r1.height = r1.height + (extray + extra)
+
+			r1.x -= (extrax + extra)/2
+			r1.y -= (extray + extra)/2
 
 			# typel = self.getcull(self.objects[id]["pos"],extra + 1,dim)
 			# typel.remove(id)
@@ -452,10 +462,10 @@ class object_manager:
 				else:
 					col = (225,0,0)
 				# self.func.ssblitrect(r1,col,camera,5,univars.fakescreen)
-				self.func.ssblitrect(colsprite.fakerect,col,camera,5,univars.fakescreen)
+				self.func.ssblitrect(r1,col,camera,5,univars.fakescreen)
 
 
-			return {"noninst":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
+			return {"obj":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
 
 	def colliderect(self,pos,dimensions,show,camera,ignore = []) -> dict:
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """

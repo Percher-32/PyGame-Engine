@@ -11,7 +11,7 @@ startdims = (screen_w,screen_h)
 
 camchange = True
 
-pixelscale = 12
+pixelscale = 14
 
 
 grandim = 32
@@ -102,7 +102,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "demo4"
+map = "fight"
 startstate = "edit"
 startshaderstate = 0
 bakeonreload = 0

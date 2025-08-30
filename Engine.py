@@ -28,7 +28,7 @@ class Game(Gamemananager.GameManager):
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
 		self.ingametime = 0
-		self.publicvariables["mood"] = "sunset"
+		self.publicvariables["mood"] = "daybreak"
 		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = 0.9
 		self.lookaheady = 0
@@ -46,7 +46,7 @@ class Game(Gamemananager.GameManager):
 			
 
 			#initialise player and all its variables
-			self.initialiseplayer([0,256])
+			self.initialiseplayer([0,0])
 
 		if "veiw" == self.states:
 			um.changestate("test1","but1")
@@ -151,9 +151,9 @@ class Game(Gamemananager.GameManager):
 
 
 
-		self.actualwaterheight = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-( + self.publicvariables["waterh"]) + ((1-cam.size)* 1.46)
+		self.actualwaterheight = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-( + self.publicvariables["waterh"]) + ((1-cam.size * univars.pixelscale/10)* 1.46)
 		if self.publicvariables["showater"]:
-			sd.program["waterlevel"] = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-( self.publicvariables["waterh"]) + ((1-cam.size)* 1.46)
+			sd.program["waterlevel"] = self.actualwaterheight
 		else:
 			sd.program["waterlevel"] = -1
 		
@@ -190,6 +190,9 @@ class Game(Gamemananager.GameManager):
 				cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.4 )
 			else:
 				cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.35 )
+
+
+			
 
 			
 			rot = om.objects["playersprite"]["rot"]
@@ -367,6 +370,10 @@ class Game(Gamemananager.GameManager):
 		lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
 		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 17 ],0,32,camera=cam,basecolor=(0,1,0))
 		collisionbox = om.collide("player",0,cam,extra=20)
+		attackbox = om.collide("player",1,cam,extrax=800,extray=400)
+
+		self.println(attackbox["obj"],4)
+
 		ground1 = len(collision["botmid"]["inst"]) > 0
 		ground2 = len(collision["botleft"]["inst"]) > 0    and not (len(collision["topleft"]["inst"])  > 0  ) and not (len(collision["midleft"]["inst"])  > 0  )
 		ground3 = len(collision["botright"]["inst"]) > 0   and not (len(collision["topright"]["inst"]) > 0  ) and not (len(collision["midright"]["inst"]) > 0  )
@@ -412,7 +419,46 @@ class Game(Gamemananager.GameManager):
 		else: 
 			slanted = False
 
-	
+
+
+
+
+		axis = [self.key["x"],self.key["y"] * 1]
+		vecaxis = pygame.math.Vector2(axis[0],axis[1])
+		if vecaxis.length()> 0:
+			vecaxis.normalize()
+			vecaxis.scale_to_length(1.2)
+		axis = [vecaxis.x,vecaxis.y]
+		axis[1] = round(axis[1],2)
+
+		
+
+		if len(attackbox["obj"]):
+			# enaxis = pygame.math.Vector2(axis[0],axis[1])
+			# if enaxis.length()> 0:
+			# 	enaxis.normalize()
+			# else:
+			# 	enaxis = pygame.math.Vector2(-1,0)
+			vec = None
+			closeness = None
+			playervec = pygame.math.Vector2(om.objects["player"]["pos"])
+			for obj in attackbox["obj"]:
+				emvec = pygame.math.Vector2(obj.info["pos"])
+				distvec = emvec - playervec 
+				if vec == None:
+					vec = obj.name
+					closeness = abs(distvec.length())
+				else:
+					if abs(distvec.length()) > closeness:
+						vec = obj.name
+						closeness = abs(distvec.length())
+
+			self.println(vec,5)
+				
+
+
+
+
 
 
 		#Main movement
@@ -560,16 +606,6 @@ class Game(Gamemananager.GameManager):
 							self.killtimer("rotate")
 							self.sp("rotoffset",0)
 
-
-
-						axis = [self.key["x"],self.key["y"] * 1]
-						vecaxis = pygame.math.Vector2(axis[0],axis[1])
-						if vecaxis.length()> 0:
-							vecaxis.normalize()
-							vecaxis.scale_to_length(1.2)
-						axis = [vecaxis.x,vecaxis.y]
-						axis[1] = round(axis[1],2)
-
 						#AIR DASH
 						if self.key["jump"] and not ground and not self.lastkey["jump"]:
 							if not self.isthere("doublejumpcd") and self.gp("candj"):
@@ -591,7 +627,6 @@ class Game(Gamemananager.GameManager):
 								self.sp("des_vel",0,0)
 								self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
 								self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
-
 
 						#jumping
 						if self.key["jump"]:
@@ -739,7 +774,7 @@ class Game(Gamemananager.GameManager):
 						
 						#water skid
 						if 0.7 > self.actualwaterheight > 0.5 and not (self.key["jump"] and self.gp("act_vel")[1] >= 0) :
-							if abs(self.gp("act_vel")[0]) >= 150:
+							if abs(self.gp("act_vel")[0]) >= 120:
 								if self.gp("act_vel")[0] > 100:
 									parts = [om.objects["player"]["pos"][0] -5,om.objects["player"]["pos"][1] + 9]
 								else:
@@ -748,9 +783,10 @@ class Game(Gamemananager.GameManager):
 								pm.particlespawnbluprint(parts,"water",initvel= vel)
 								self.sp("act_vel",[   self.gp("act_vel")[0] , 0  ]  ) 
 								self.sp("des_vel",[   self.gp("des_vel")[0] , 0  ]  ) 
-								om.objects["player"]["pos"][1] = (320 * self.publicvariables["waterh"])+350 + (math.sin(fm.frame/10) * 15)
+								om.objects["player"]["pos"][1] = (320 * self.publicvariables["waterh"]) + 780 + (math.sin(fm.frame/10) * 15)
 								self.sp("jumpable",1)
 								self.sp("candj",0)
+						self.println(self.actualwaterheight,2)
 
 
 				else:
@@ -796,15 +832,15 @@ class Game(Gamemananager.GameManager):
 					if abs(self.key["x"]) > 0.5 and not self.key["jump"]:
 						if self.key["x"] > 0:
 							self.sp("dirforrail","l")
-							self.sp("entervel",self.gp("entervel") + abs(self.key["x"] ))
+							self.sp("entervel",self.gp("entervel") + abs(self.key["x"] * 2 ))
 						else:
 							self.sp("dirforrail","r")
-							self.sp("entervel",self.gp("entervel") + abs(self.key["x"] ))
+							self.sp("entervel",self.gp("entervel") + abs(self.key["x"] * 2 ))
 
-					if self.gp("entervel") > 130:
-						self.sp("entervel",130)
-					if self.gp("entervel") < -130:
-						self.sp("entervel",-130)
+					if self.gp("entervel") > 160:
+						self.sp("entervel",160)
+					if self.gp("entervel") < -160:
+						self.sp("entervel",-160)
 	
 
 
@@ -1077,8 +1113,8 @@ class Game(Gamemananager.GameManager):
 				self.lookahead = self.unilerp(self.lookahead,self.key["x"] * 20,4,roundto=2,useigt=0)
 			else:
 				
-				self.lookahead = self.unilerp(self.lookahead,0,4,roundto=2,useigt=1)
 				if self.gp("leftwall") or self.gp("rightwall"):
+					self.lookahead = self.unilerp(self.lookahead,0,4,roundto=2,useigt=1)
 					if self.key["y"] < 0:
 						self.lookaheady = self.unilerp(self.lookaheady,200,8,roundto=2)
 					elif self.key["y"] > 0:
@@ -1086,15 +1122,18 @@ class Game(Gamemananager.GameManager):
 					else:
 						self.lookaheady = self.unilerp(self.lookaheady,0,20,roundto=2)
 				else:
-					self.lookaheady = self.unilerp(self.lookaheady,0,4,roundto=2,useigt=1)
+					self.lookaheady = self.unilerp(self.lookaheady,self.key["y"] * -100,4,roundto=2,useigt=1)
+					if self.gp("xinit"):
+						self.lookahead = 0
 					if self.gp("des_vel")[0] > 0:
-						self.lookahead = self.unilerp(self.lookahead,800,8,roundto=2)
+						self.lookahead = self.unilerp(self.lookahead,400,8,roundto=2)
 					elif self.gp("des_vel")[0] < 0:
-						self.lookahead = self.unilerp(self.lookahead,-800,8,roundto=2)
+						self.lookahead = self.unilerp(self.lookahead,-400,8,roundto=2)
 					else:
 						self.lookahead = self.unilerp(self.lookahead,0,20,roundto=2)
+					
 				
-				self.println([self.lookahead,self.lookaheady],3)
+				# self.println([self.lookahead,self.lookaheady],3)
 		else:
 			cm.setcond("playercam","shake",3)
 			self.lookaheady = self.unilerp(self.lookaheady,-300 * math.sin((railrot/180) * math.pi) * raildir ,4,roundto=2,useigt=0)
@@ -1203,7 +1242,10 @@ class Game(Gamemananager.GameManager):
 
 
 
-
+	def oncreate(self,id,info):
+		if info["name"] == "target":
+			om.objects[id]["type"] = "enemy-L"
+			# self.print(om.objects[id]["type"])
 
 	def cond(self,id,info):
 		"""id -> the id   info -> the info for the id"""

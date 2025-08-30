@@ -109,7 +109,7 @@ class GameManager():
 	def keybind(self):
 		self.lastkey = self.key.copy()
 		#main 5 inputs
-		if em.controller["x"] or em.key[pygame.K_SPACE]:
+		if em.controller["x"] or em.key[pygame.K_SPACE] or em.key[pygame.K_RETURN]:
 			self.key["jump"] = True
 		else:
 			self.key["jump"] = False
@@ -359,6 +359,7 @@ class GameManager():
 		self.debug = True
 		cm.setcond(cm.currentcam,"size",1)
 		# self.loadanims()
+		self.roster()
 		um.loadalluielements()
 		pm.loadallbluprints()
 
@@ -455,6 +456,20 @@ class GameManager():
 	# 			for anim in os.listdir(objfile):
 	# 				anim = anim.replace(".json","")
 	# 				om.loadanim(filename,anim)
+	def oncreate(self,id,info):
+		pass
+
+	def roster(self):
+		"""
+			goes through all sprites on reload
+		"""
+		if len(om.objects.keys()) > 0:
+			stabledict = om.objects
+			for obj in stabledict.keys():
+				range =  2000
+				if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
+					self.oncreate(obj,stabledict[obj])
+			
 
 	def update(self):			
 		pass
