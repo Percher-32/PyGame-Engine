@@ -466,9 +466,7 @@ class GameManager():
 		if len(om.objects.keys()) > 0:
 			stabledict = om.objects
 			for obj in stabledict.keys():
-				range =  2000
-				if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
-					self.oncreate(obj,stabledict[obj])
+				self.oncreate(obj,stabledict[obj])
 			
 
 	def update(self):			

@@ -11,7 +11,7 @@ startdims = (screen_w,screen_h)
 
 camchange = True
 
-pixelscale = 14
+pixelscale = 10
 
 
 grandim = 32

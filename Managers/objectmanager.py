@@ -49,12 +49,12 @@ class Ghost(pygame.sprite.Sprite):
 		self.rect = inst.fakerect
 		self.image = pygame.Surface((0,0))
 
-# class Ghost(pygame.sprite.Sprite):
-# 	def __init__(self,inst):
-# 		pygame.sprite.Sprite.__init__(self)
-# 		self.inst = inst
-# 		self.rect = inst.fakerect
-# 		self.image = pygame.Surface((0,0))
+class ObjGhost(pygame.sprite.Sprite):
+	def __init__(self,obj):
+		pygame.sprite.Sprite.__init__(self)
+		self.obj = obj
+		self.rect = obj.fakerect
+		self.image = pygame.Surface((0,0))
 
 
 
@@ -66,6 +66,7 @@ class object_manager:
 		self.objects = {}
 		self.values = {}
 		self.objgroup = pygame.sprite.LayeredUpdates()
+		self.objghostgroup = pygame.sprite.Group()
 		self.anims = {}
 		self.forceplay = {}
 		self.func = funcs.func(grandim)
@@ -333,6 +334,7 @@ class object_manager:
 			self.spritecache[str([name,sizen])] = spritelist
 		finalobj = inst.obj(id,add,spritelist)
 		self.objgroup.add(finalobj,layer = add["layer"])
+		self.objghostgroup.add(ObjGhost(finalobj))
 
 	def datatoinst(self,chunk,data):
 		sizen = data.get("sizen",[1,1])
@@ -434,8 +436,8 @@ class object_manager:
 
 
 
-			colsprite =  Ghostcollinst(r1.x,r1.y,r1.width,r1.height)
-			noninst = pygame.sprite.spritecollide(colsprite,self.objgroup,dokill=False)
+			ghcolsprite =  Ghostcollinst(r1.x,r1.y,r1.width,r1.height)
+			noninst = pygame.sprite.spritecollide(ghcolsprite,self.objghostgroup,dokill=False)
 
 			#coll for inst
 			camchunk = [int(round(camera.x/(dim * self.renderdist[0]))),int(round(camera.y/(dim * self.renderdist[1])))]
@@ -447,10 +449,10 @@ class object_manager:
 				campos = (offset[0] + camchunk[0],offset[1] + camchunk[1])
 				if campos in self.instances.keys():
 					# a = [ i for i in self.instances[campos] if r1.colliderect(i.fakerect)]
-					a = pygame.sprite.spritecollide(colsprite,self.ghostinstances[campos],dokill=False)
+					a = pygame.sprite.spritecollide(ghcolsprite,self.ghostinstances[campos],dokill=False)
 					a = [i.inst for i in a]
 				inst += a
-
+			noninst = [ghost.obj for ghost in noninst]
 			#render the collbox
 			if show:
 				if len(inst) > 0 and len(noninst) > 0:
@@ -471,12 +473,13 @@ class object_manager:
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		#coll for non-inst
 		dim = univars.grandim
-		id = str(id)
-		r1 = pygame.Rect(pos[0],pos[1],dimensions[0],dimensions[1])
+		# id = str(id)
+		r1 = pygame.Rect(pos[0] - dimensions[0]/2,pos[1] - dimensions[1]/2,dimensions[0],dimensions[1])
 		
-		colsprite =  Ghostcollinst(r1.x,r1.y,r1.width,r1.height)
-		noninst = pygame.sprite.spritecollide(colsprite,self.objgroup,dokill=False)
+		ghcolsprite =  Ghostcollinst(r1.x,r1.y,r1.width,r1.height)
+		noninst = pygame.sprite.spritecollide(ghcolsprite,self.objghostgroup,dokill=False)
 
+		noninst = [ghost.obj for ghost in noninst]
 		#coll for inst
 		#coll for inst
 		camchunk = [int(round(camera.x/(dim * self.renderdist[0]))),int(round(camera.y/(dim * self.renderdist[1])))]
@@ -487,10 +490,9 @@ class object_manager:
 			campos = (offset[0] + camchunk[0],offset[1] + camchunk[1])
 			if campos in self.instances.keys():
 				# a = [ i for i in self.instances[campos] if r1.colliderect(i.fakerect)]
-				a = pygame.sprite.spritecollide(colsprite,self.ghostinstances[campos],dokill=False)
+				a = pygame.sprite.spritecollide(ghcolsprite,self.ghostinstances[campos],dokill=False)
 				a = [i.inst for i in a]
 			inst += a
-
 		#render the collbox
 		if show:
 			if len(inst) > 0 and len(noninst) > 0:
@@ -504,18 +506,19 @@ class object_manager:
 			self.func.ssblitrect(r1,col,camera,5,univars.fakescreen)
 
 
-		return {"noninst":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
+		return {"obj":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
 
 	def collidep(self,pos,show,dim,pointsize=5,basecolor = (255,0,0),instcol = (0,225,0),noninstcol=(0,225,150),ignore_id = None,camera = Cameramod.cam,ignore = []) -> dict: 
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		#coll for non-inst
 		dim = univars.grandim
 		r1 = pygame.Rect(pos[0],pos[1],1,1)
-		colsprite =  collinst(r1.x,r1.y,math.ceil(r1.width +3),math.ceil(r1.height +3))
-		noninst = pygame.sprite.spritecollide(colsprite,self.objgroup,dokill=False)
+		ghcolsprite =  Ghostcollinst(r1.x,r1.y,r1.width,r1.height)
+		noninst = pygame.sprite.spritecollide(ghcolsprite,self.objghostgroup,dokill=False)
 		# for obj in noninst:
 		# 	if obj.name in ignore or obj.name == ignore_id:
 		# 		noninst.remove(obj)
+		noninst = [ghost.obj for ghost in noninst]
 
 		#coll for inst
 		camchunk = [int(round(pos[0]/(dim * self.renderdist[0]))),int(round(pos[1]/(dim * self.renderdist[1])))]
@@ -526,13 +529,12 @@ class object_manager:
 			campos = (offset[0] + camchunk[0],offset[1] + camchunk[1])
 			if campos in self.instances.keys():
 				# a = [ i for i in self.instances[campos] if i.fakerect.collidepoint(pos)]
-				a = pygame.sprite.spritecollide(Ghostcollinst(r1.x,r1.y,r1.width,r1.height),self.ghostinstances[campos],dokill=False)
+				a = pygame.sprite.spritecollide(ghcolsprite,self.ghostinstances[campos],dokill=False)
 				
 				a = [ghost.inst for ghost in a]
 
 			inst += a
 		# print(inst)
-
 		#render the collpoint
 		if show:
 			num = max(0.6,1/camera.size)
@@ -555,8 +557,9 @@ class object_manager:
 		#coll for non-inst
 		dim = univars.grandim
 		r1 = pygame.Rect(pos[0],pos[1],10,10)
-		colsprite =  collinst(r1.x,r1.y,math.ceil(r1.width),math.ceil(r1.height))
-		noninst = pygame.sprite.spritecollide(colsprite,self.objgroup,dokill=False)
+		ghcolsprite =  Ghostcollinst(r1.x,r1.y,r1.width,r1.height)
+		noninst = pygame.sprite.spritecollide(ghcolsprite,self.objghostgroup,dokill=False)
+		noninst = [ghost.obj for ghost in noninst]
 		for obj in noninst:
 			if obj.name in ignore or obj.name == ignore_id:
 				noninst.remove(obj)
@@ -570,7 +573,7 @@ class object_manager:
 			campos = (offset[0] + camchunk[0],offset[1] + camchunk[1])
 			if campos in self.instances.keys():
 				# a = [ i for i in self.instances[campos] if i.fakerect.collidepoint(pos)]
-				a = pygame.sprite.spritecollide(Ghostcollinst(r1.x,r1.y,r1.width,r1.height),self.ghostinstances[campos],dokill=False)
+				a = pygame.sprite.spritecollide(ghcolsprite,self.ghostinstances[campos],dokill=False)
 				
 				
 				a = [ghost.inst for ghost in a]
@@ -579,13 +582,13 @@ class object_manager:
 			b = []
 			if campos in self.noncolinstances.keys():
 				# a = [ i for i in self.instances[campos] if i.fakerect.collidepoint(pos)]
-				b = pygame.sprite.spritecollide(Ghostcollinst(r1.x,r1.y,r1.width,r1.height),self.noncolghostinstances[campos],dokill=False)
+				b = pygame.sprite.spritecollide(ghcolsprite,self.noncolghostinstances[campos],dokill=False)
 				
 				
 				b = [ghost.inst for ghost in b]
 
 			inst += b
-
+		
 
 
 		#render the collpoint
@@ -764,6 +767,7 @@ class object_manager:
 			self.objects.update({str(self.tracker):add})
 			finalobj = inst.obj(str(self.tracker),add,spritelist)
 			self.objgroup.add(finalobj,layer = layer)
+			self.objghostgroup.add(ObjGhost(finalobj))
 		else:
 			self.addinst(pos,sprites,dim,rot,type,sizen,stagename,layer,colforinst,sn,keepprev=keepprev)
 

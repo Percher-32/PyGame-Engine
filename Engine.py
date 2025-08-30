@@ -48,6 +48,7 @@ class Game(Gamemananager.GameManager):
 			#initialise player and all its variables
 			self.initialiseplayer([0,0])
 
+
 		if "veiw" == self.states:
 			um.changestate("test1","but1")
 			# um.addbutton(univars.sizes["mediumbutton"],["test1"],[-0.5,0],"but1",color=univars.theme["dark"],surf = "testbutton")
@@ -330,13 +331,18 @@ class Game(Gamemananager.GameManager):
 		self.sp("thickness",1)
 
 
+		self.joyaxis = pygame.math.Vector2(self.key["x"],self.key["y"])
+		if self.joyaxis.length()> 0:
+			self.joyaxis.normalize()
+		else:
+			self.joyaxis = pygame.math.Vector2(-1,0)
 
 
 
 
-
-
-
+		#In_game_UI
+		om.adds("enemyzoom",[0,0],"enemyzoom","In_Game_UI",0,[1.6,1.6],255,5)
+		om.objects["enemyzoom"]["rendercond"] = 0
 
 
 
@@ -344,8 +350,8 @@ class Game(Gamemananager.GameManager):
 
 		#UI
 		um.changestate("maingame",None)
-		um.addrect([1000 -19,100 + 30 - 30],["maingame"],[-0.5 + 0.02,0.8],"dashbarback",color=(0,0,0),fromstart=1)
-		um.addrect([1000 - 30 - 20,90 - 30],["maingame"],[-0.5 + 0.017 + 0.02,0.8],"dashbar",color=(50,100,100),fromstart=1)
+		um.addrect([1000 -19,100 + 30 - 30],["maingame"],[-0.5 + 0.02,0.8],"dashbarback",color=(0,0,0),fromstart=1,alpha = 200)
+		um.addrect([1000 - 30 - 20,90 - 30],["maingame"],[-0.5 + 0.017 + 0.02,0.8],"dashbar",color=(50,100,100),fromstart=1,alpha = 200)
 
 
 
@@ -370,9 +376,8 @@ class Game(Gamemananager.GameManager):
 		lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
 		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 17 ],0,32,camera=cam,basecolor=(0,1,0))
 		collisionbox = om.collide("player",0,cam,extra=20)
-		attackbox = om.collide("player",1,cam,extrax=800,extray=400)
-
-		self.println(attackbox["obj"],4)
+		# attackbox = om.collide("player",1,cam,extrax=1000,extray=500)
+		attackbox = om.colliderect(cm.getcam("playercam","pos"),[1000,500],1,cam)
 
 		ground1 = len(collision["botmid"]["inst"]) > 0
 		ground2 = len(collision["botleft"]["inst"]) > 0    and not (len(collision["topleft"]["inst"])  > 0  ) and not (len(collision["midleft"]["inst"])  > 0  )
@@ -432,29 +437,41 @@ class Game(Gamemananager.GameManager):
 		axis[1] = round(axis[1],2)
 
 		
-
+		vec = None
 		if len(attackbox["obj"]):
-			# enaxis = pygame.math.Vector2(axis[0],axis[1])
-			# if enaxis.length()> 0:
-			# 	enaxis.normalize()
-			# else:
-			# 	enaxis = pygame.math.Vector2(-1,0)
+			om.objects["enemyzoom"]["rendercond"] = 1
+			if pygame.math.Vector2(self.key["x"],self.key["y"] ).length() > 0:
+				self.joyaxis = pygame.math.Vector2(-1 *self.key["x"],1 *self.key["y"] )
+				self.joyaxis.normalize()
+			self.println(self.joyaxis,4)
+			enaxis = self.joyaxis
 			vec = None
 			closeness = None
 			playervec = pygame.math.Vector2(om.objects["player"]["pos"])
-			for obj in attackbox["obj"]:
+			for obj in attackbox["obj"]:	
 				emvec = pygame.math.Vector2(obj.info["pos"])
-				distvec = emvec - playervec 
-				if vec == None:
-					vec = obj.name
-					closeness = abs(distvec.length())
-				else:
-					if abs(distvec.length()) > closeness:
-						vec = obj.name
-						closeness = abs(distvec.length())
+				distvec = playervec - emvec
+				if distvec.length() > 0:
+					distvec.normalize()
+					if obj.info["type"] == "enemy-L":
+						if vec == None:
+							vec = obj
+							closeness = 1 - distvec.dot(enaxis) 
+						else:
+							if 1-distvec.dot(enaxis) < closeness:
+								vec = obj
+								closeness = 1 - distvec.dot(enaxis) 
+			if vec == None:
+				om.objects["enemyzoom"]["rendercond"] = 0
+			else:
+				om.objects["enemyzoom"]["pos"] = vec.info["pos"]
 
-			self.println(vec,5)
-				
+
+
+
+		else:
+			om.objects["enemyzoom"]["rendercond"] = 0
+
 
 
 
@@ -628,6 +645,35 @@ class Game(Gamemananager.GameManager):
 								self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
 								self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
 
+						if self.key["attack"]:
+							if not vec == None:
+								if not self.isthere("homecooldown"):
+									if not self.lastkey["attack"]:
+										self.wait("homecooldown",0.2)
+										ground = 0
+										enposvec = pygame.math.Vector2(vec.info["pos"])
+										playerposvec = pygame.math.Vector2(om.objects["player"]["pos"])
+
+										envec = enposvec - playerposvec
+										# envec.normalize()
+										envec = [envec.x,envec.y * -1]
+
+										actmult = [1,1]
+										actvel = [  envec[0] * actmult[0] , envec[1] * actmult[1] ]
+										desmult = [1,1]
+										desvel = [  envec[0] * desmult[0] , envec[1] * desmult[1] ]
+										self.spin(21,0.4,0.1)
+
+										# self.sp("dashav",self.listdiv(actvel,80))
+										# self.sp("dashdv",self.listdiv(desvel,80))
+
+										self.sp("act_vel",0,1)
+										self.sp("des_vel",0,1)
+										self.sp("act_vel",0,0)
+										self.sp("des_vel",0,0)
+										self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
+										self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
+
 						#jumping
 						if self.key["jump"]:
 							self.sp("fss",16)
@@ -729,7 +775,6 @@ class Game(Gamemananager.GameManager):
 
 						
 						self.sp("lastframeswing",self.gp("slinging"))	
-						self.println(self.gp("lastframeswing"),1)
 
 						
 
@@ -786,7 +831,6 @@ class Game(Gamemananager.GameManager):
 								om.objects["player"]["pos"][1] = (320 * self.publicvariables["waterh"]) + 780 + (math.sin(fm.frame/10) * 15)
 								self.sp("jumpable",1)
 								self.sp("candj",0)
-						self.println(self.actualwaterheight,2)
 
 
 				else:
