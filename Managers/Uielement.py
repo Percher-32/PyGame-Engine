@@ -32,7 +32,7 @@ class Ui(pygame.sprite.Sprite):
                 self.states = elements[self.name]["states"]
 
 
-                realscale = [int(round(elements[self.name]["dimensions"][0])),int(round(elements[self.name]["dimensions"][1]))]
+                realscale = [int(round(elements[self.name]["dimensions"][0] * ((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983)),int(round(elements[self.name]["dimensions"][1] * ((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983))]
                 if not str([realscale,elements[self.name]["alpha"]]) in elements[self.name]["cache"]:
                     self.baseimg.set_alpha(elements[self.name]["alpha"])
                     baseimg1 = pygame.transform.scale(self.baseimg,   realscale   )

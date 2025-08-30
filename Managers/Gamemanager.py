@@ -178,9 +178,9 @@ class GameManager():
 
 	def blit(self,surf,rect,rot,camera):
 		a = surf
-		a = pygame.transform.scale_by(a,abs(camera.size))
+		a = pygame.transform.scale_by(a,abs(camera.size)* (((((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983)) * 1980))
 		a = pygame.transform.rotate(a,rot)
-		univars.screen.blit(a,((rect.x - camera.x) * camera.size + univars.screen.get_width()//2 ,(rect.y - camera.y) * camera.size + univars.screen.get_height()//2 ))
+		univars.screen.blit(a,((rect.x - camera.x) * camera.size + univars.screen.get_width()//2 (((((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983)) * 1980) ,(rect.y - camera.y) * camera.size + univars.screen.get_height()//2 ))
 
 	def blitsurf(self,surf,pos,rot,camera):
 		a = surf
@@ -202,7 +202,7 @@ class GameManager():
 
 	def blitui(self,surf,pos,size):
 		a = surf
-		a = pygame.transform.scale(a,(abs(size[0]),abs(size[1])))
+		a = pygame.transform.scale(a,(abs(size[0])  ,abs(size[1])))
 		univars.realscreeen.blit(a,(pos[0]  * univars.realscreeen.get_width()//2 - (a.get_width()/2)  + univars.realscreeen.get_width()//2  ,-1 * pos[1]  * univars.realscreeen.get_width()//2 - (a.get_height()/2)  + univars.realscreeen.get_height()//2 ))
 
 	def blitui2(self,surf,pos):
@@ -211,7 +211,7 @@ class GameManager():
 
 	def blituis(self,surf,pos,size,rot,alpha):
 		a = surf
-		a = pygame.transform.scale(a,(abs(size[0]),abs(size[1])))
+		a = pygame.transform.scale(a,(round(abs(size[0]) * ((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983),round(abs(size[1])) * ((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983))
 		a = pygame.transform.rotate(a,rot)
 		a.set_alpha(alpha)
 		univars.realscreeen.blit(a,(pos[0]  * univars.realscreeen.get_width()//2 - (a.get_width()/2)  + univars.realscreeen.get_width()//2  ,-1 * pos[1]  * univars.realscreeen.get_height()//2 - (a.get_height()/2)  + univars.realscreeen.get_height()//2 ))
@@ -219,13 +219,16 @@ class GameManager():
 	def blituis2(self,surf,pos,size,rot,alpha):
 		
 		a = surf
-		a = pygame.transform.scale(a,(abs(size[0]),abs(size[1])))
+		a = pygame.transform.scale(a,(abs(size[0])  * round(((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983),abs(size[1])) * round(((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983))
 		a = pygame.transform.rotate(a,rot)
 		a.set_alpha(alpha)
 		univars.realscreeen.blit(a,(pos[0],pos[1]))
 
 	def uibox(self,wh,pos,col,alpha):
-		a = pygame.Surface((wh[0],wh[1]))
+		wh = list(wh)
+		wh[0] *= ((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983
+		wh[1] *= ((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983
+		a = pygame.Surface((round(wh[0]),round(wh[1])))
 		a.fill(col)
 		a.set_alpha(alpha)
 		univars.realscreeen.blit(a,(pos[0] * univars.realscreeen.get_width()//2 - (wh[0]/2) + univars.realscreeen.get_width()//2 ,-1 * pos[1] * univars.realscreeen.get_height()//2 -  (wh[1]/2)  + univars.realscreeen.get_height()//2 ))
@@ -416,11 +419,14 @@ class GameManager():
 
 		
 		#render onto screen
-		renderwid = max([univars.screen_w,univars.screen_h])
-		
+		renderwid = (((((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983)) * 1980) + 200
+		# renderwid = min([univars.realscreeen.width,univars.realscreeen.height])
+		# renderwid = 1980
+		# realwid = round(renderwid)
+		# renderwid /= 2
 		# univars.screen.blit(pm.screen,(univars.screen_w/2,univars.screen_h/2))
 		pm.updateparticles(self.dt)
-		univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid ,renderwid )),(0,-1 * renderwid//4))
+		univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid ,renderwid )),(univars.realscreeen.width//2 - renderwid//2,univars.realscreeen.height//2 - renderwid//2))
 		
 
 		#runs editor
@@ -473,12 +479,12 @@ class GameManager():
 		pass
 				
 	def end(self):
-		renderwid = max([univars.screen_w,univars.screen_h])
+		renderwid = (((((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983)) * 1980) + 200
 		
 		self.clock.tick(self.publicvariables["maxfps"])
 		# univars.screen.blit(pm.screen,(univars.screen_w/2,univars.screen_h/2))
 		pm.updateparticles(self.dt)
-		univars.realscreeen.blit(pygame.transform.scale(univars.fakescreen,(renderwid ,renderwid )),(0,-1 * renderwid//4))
+		univars.realscreeen.blit(pygame.transform.scale(univars.fakescreen,(renderwid ,renderwid )),(univars.realscreeen.width//2 - renderwid//2,univars.realscreeen.height//2 - renderwid//2))
 		univars.fakescreen.fill((0,0,0))
 
 

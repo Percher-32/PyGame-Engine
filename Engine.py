@@ -28,7 +28,7 @@ class Game(Gamemananager.GameManager):
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
 		self.ingametime = 0
-		self.publicvariables["mood"] = "daybreak"
+		self.publicvariables["mood"] = "afternoon"
 		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = 0.9
 		self.lookaheady = 0
@@ -384,7 +384,7 @@ class Game(Gamemananager.GameManager):
 		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 17 ],0,32,camera=cam,basecolor=(0,1,0))
 		collisionbox = om.collide("player",0,cam,extra=20)
 		# attackbox = om.collide("player",1,cam,extrax=1000,extray=500)
-		attackbox = om.colliderect(cm.getcam("playercam","pos"),[1000,500],1,cam)
+		attackbox = om.colliderect(cm.getcam("playercam","pos"),[1300,550],0,cam)
 
 		ground1 = len(collision["botmid"]["inst"]) > 0
 		ground2 = len(collision["botleft"]["inst"]) > 0    and not (len(collision["topleft"]["inst"])  > 0  ) and not (len(collision["midleft"]["inst"])  > 0  )
@@ -663,7 +663,8 @@ class Game(Gamemananager.GameManager):
 											self.wait("homecooldown",0.2)
 											self.sp("homing",1)
 											self.sp("target",vec)
-											self.sp("act_vel",200,1)
+											if ground:
+												self.key["jump"] = 1
 
 						if self.gp("homing") == 1:
 							enposvec = pygame.math.Vector2(self.gp("target").info["pos"])
@@ -673,7 +674,7 @@ class Game(Gamemananager.GameManager):
 							if envec.length() > 0:
 								nenvec = envec.normalize()
 								nenvec = [nenvec.x,nenvec.y * -1]
-							
+								ground = 0
 								if self.gp("target").info["type"] == "enemy-L":
 									if envec.length() > 40:
 										a = (380 + (abs(envec.length()/3)))/2
@@ -701,14 +702,41 @@ class Game(Gamemananager.GameManager):
 										if "#Throwing" in timer:
 											od.pop(timer)
 									self.timers = od
-									self.wait("#Throwing" + self.gp("target").name,20,0)
-									self.sp("throwaxis",[100,100])
+
+									
+									if round(axis[0]) == 0:
+										if round(axis[1]) == 0:
+											actmult = [0,100]
+									actmult = [axis[0] * 70,axis[1] * 70 - 30]
+
+
+									om.set_value(self.gp("target").name,"throwvel",actmult)
+									self.wait("#Throwing" + self.gp("target").name,1,0)
+
+
+									self.wait("dashrem",2)
+									# cm.setcond("playercam","shake",6)
+									actmult = [100,100]
+									actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
+									desmult = [100,100]
+									desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
+									self.spin(21,0.4,0.1)
+
+									self.sp("dashav",self.listdiv(actvel,80))
+									self.sp("dashdv",self.listdiv(desvel,80))
+
+									self.sp("act_vel",0,1)
+									self.sp("des_vel",0,1)
+									self.sp("act_vel",0,0)
+									self.sp("des_vel",0,0)
+									self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
+									self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
 								else:
 									self.wait("dashrem",2)
 									# cm.setcond("playercam","shake",6)
-									actmult = [160,160]
+									actmult = [50,50]
 									actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
-									desmult = [160,160]
+									desmult = [50,50]
 									desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
 									self.spin(21,0.4,0.1)
 
@@ -722,7 +750,6 @@ class Game(Gamemananager.GameManager):
 									self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
 									self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
 
-						self.println(self.timers,7)
 
 								
 
@@ -870,20 +897,20 @@ class Game(Gamemananager.GameManager):
 							self.sp("jumpable",False)
 
 						
-						#water skid
-						if 0.7 > self.actualwaterheight > 0.5 and not (self.key["jump"] and self.gp("act_vel")[1] >= 0) :
-							if abs(self.gp("act_vel")[0]) >= 120:
-								if self.gp("act_vel")[0] > 100:
-									parts = [om.objects["player"]["pos"][0] -5,om.objects["player"]["pos"][1] + 9]
-								else:
-									parts = [om.objects["player"]["pos"][0] -5,om.objects["player"]["pos"][1] + 9]
-								vel = [self.gp("act_vel")[0]/self.dim * 4,4]
-								pm.particlespawnbluprint(parts,"water",initvel= vel)
-								self.sp("act_vel",[   self.gp("act_vel")[0] , 0  ]  ) 
-								self.sp("des_vel",[   self.gp("des_vel")[0] , 0  ]  ) 
-								om.objects["player"]["pos"][1] = (320 * self.publicvariables["waterh"]) + 780 + (math.sin(fm.frame/10) * 15)
-								self.sp("jumpable",1)
-								self.sp("candj",0)
+						# #water skid
+						# if 0.7 > self.actualwaterheight > 0.5 and not (self.key["jump"] and self.gp("act_vel")[1] >= 0) :
+						# 	if abs(self.gp("act_vel")[0]) >= 120:
+						# 		if self.gp("act_vel")[0] > 100:
+						# 			parts = [om.objects["player"]["pos"][0] -5,om.objects["player"]["pos"][1] + 9]
+						# 		else:
+						# 			parts = [om.objects["player"]["pos"][0] -5,om.objects["player"]["pos"][1] + 9]
+						# 		vel = [self.gp("act_vel")[0]/self.dim * 4,4]
+						# 		pm.particlespawnbluprint(parts,"water",initvel= vel)
+						# 		self.sp("act_vel",[   self.gp("act_vel")[0] , 0  ]  ) 
+						# 		self.sp("des_vel",[   self.gp("des_vel")[0] , 0  ]  ) 
+						# 		om.objects["player"]["pos"][1] = (320 * self.publicvariables["waterh"]) + 780 + (math.sin(fm.frame/10) * 15)
+						# 		self.sp("jumpable",1)
+						# 		self.sp("candj",0)
 
 
 				else:
@@ -1208,6 +1235,10 @@ class Game(Gamemananager.GameManager):
 			if self.gp("slinging"):
 				self.lookaheady = self.unilerp(self.lookaheady,self.key["y"] * -20,4,roundto=2,useigt=0)
 				self.lookahead = self.unilerp(self.lookahead,self.key["x"] * 20,4,roundto=2,useigt=0)
+			elif self.gp("homing") == 2:
+				self.lookaheady = self.unilerp(self.lookaheady,self.key["y"] * -200,4,roundto=2,useigt=0)
+				self.lookahead = self.unilerp(self.lookahead,self.key["x"] * 200,4,roundto=2,useigt=0)
+				# self.print("REXTRCTVBIUN")
 			else:
 				
 				if self.gp("leftwall") or self.gp("rightwall"):
@@ -1347,24 +1378,37 @@ class Game(Gamemananager.GameManager):
 	def oncreate(self,id,info):
 		if info["name"] == "target":
 			om.objects[id]["type"] = "enemy-L"
-			om.set_value(id,"vel",[0,0])
-			om.set_value(id,"tarvel",[0,0])
-			om.set_value(id,"clipspeed",5)
+			info["type"] = "enemy-L"
+			# om.set_value(id,"vel",[0,0])
+			# om.set_value(id,"tarvel",[0,0])
+			# om.set_value(id,"clipspeed",5)
 
 		if info["type"] == "enemy-L":
 			om.set_value(id,"vel",[0,0])
 			om.set_value(id,"tarvel",[0,0])
 			om.set_value(id,"clipspeed",5)
+
+
+		# if info["type"] == "enemy":
+		# 	om.set_value(id,"vel",[0,0])
+		# 	om.set_value(id,"tarvel",[0,0])
+		# 	om.set_value(id,"clipspeed",5)
 
 
 	def cond(self,id,info):
 		"""id -> the id   info -> the info for the id"""
 		if info["type"] == "enemy-L":
-			om.set_value(id,"vel",self.unilerp(om.get_value(id,"vel"),om.get_value(id,"tarvel"),om.get_value(id,"clipspeed")))
+			# om.set_value(id,"vel",self.unilerp(om.get_value(id,"vel"),om.get_value(id,"tarvel"),om.get_value(id,"clipspeed")))
 			if self.isthere("#Throwing" + str(id)):
-				print("still here")
-				om.set_value(id,"vel",self.gp("throwaxis"))
-			om.translate(self,id,om.get_value(id,"vel"),usedt=1)
+				if not om.get_value(id,"throwvel") == 0:
+					# print(self.gp("throwaxis"))
+					om.set_value(id,"vel",om.get_value(id,"throwvel"))
+					om.translate(self,id,om.get_value(id,"throwvel"),usedt=1)
+					if len(om.collide(id,0,cam,0,0)["inst"]) > 0:
+						om.translate(self,id,[om.get_value(id,"throwvel")[0]*2,om.get_value(id,"throwvel")[1]*-2],usedt=1)
+						om.set_value(id,"throwvel",[0,0])
+
+			# om.translate(self,id,om.get_value(id,"vel"),usedt=1)
 
 
 

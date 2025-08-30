@@ -108,7 +108,7 @@ class TiledSoftwre:
 				self.allsize.append(i[2])
 
 	def commandline(self,GameManager,dostring,precursur):
-		GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
+		GameManager.uibox((pygame.display.get_desktop_sizes()[0][0],200),(0,-1),univars.theme["dark"],200)
 		if not GameManager.event_manager.key[pygame.K_RETURN]:
 			if GameManager.event_manager.key[pygame.K_BACKSPACE]:
 						dostring = dostring[:-1]
@@ -124,7 +124,7 @@ class TiledSoftwre:
 				return dostring
 
 	def textline(self,GameManager,dostring,precursur,col = univars.theme["dark"]):
-		GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),col,600)
+		GameManager.uibox((pygame.display.get_desktop_sizes()[0][0],200),(0,-1),col,600)
 		if not GameManager.event_manager.key[pygame.K_RETURN]:
 			if GameManager.event_manager.key[pygame.K_BACKSPACE]:
 						dostring = dostring[:-1]
@@ -256,12 +256,16 @@ class TiledSoftwre:
 
 
 					#some math
-					upscale = self.realscreeen.get_width() / self.screen.get_width()
-					upscaley = self.realscreeen.get_height() / self.screen.get_height()
-					translation = self.realscreeen.get_width()//4
+					upscale = pygame.display.get_desktop_sizes()[0][0] / self.screen.get_width()
+					upscaley = pygame.display.get_desktop_sizes()[0][1] / self.screen.get_height()
+					renderwid = (((((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983)) * 1980) + 200
+					translationy = (univars.realscreeen.height//2 - renderwid//2)
+					translationx = univars.realscreeen.width//2 - renderwid//2
 					# translation = 0
-					a1 = (((   (GameManager.event_manager.mousepos[0])/upscale  - self.screen.get_width()//2) / camera.size) + camera.x)
-					a2 = (((   (GameManager.event_manager.mousepos[1] + translation)/upscale  - self.screen.get_height()//2) / camera.size) + camera.y)
+					a1 = (((   (GameManager.event_manager.mousepos[0] + translationx)/upscale  - self.screen.get_width()//2)  / camera.size) + camera.x)
+					a2 = (((   (GameManager.event_manager.mousepos[1] + translationy)/upscaley  - self.screen.get_height()//2) / camera.size) + camera.y)
+				
+
 					mousepos = (a1,a2)
 					thingtogo = self.func.getsprites(self.spritelooks[self.sprite])[self.sn]
 					thingtogo = pygame.transform.scale_by(thingtogo,self.allsize[self.sprite])
@@ -618,7 +622,7 @@ class TiledSoftwre:
 			#mode to name save-file
 			elif self.mode == 1:
 				movecam = 0
-				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
+				GameManager.uibox((pygame.display.get_desktop_sizes()[0][0],pygame.display.get_desktop_sizes()[0][1]),(0,0),(0,0,0),100)
 				if not GameManager.event_manager.key[pygame.K_RETURN]:
 					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
 						self.savestring = self.savestring[:-1]
@@ -636,7 +640,7 @@ class TiledSoftwre:
 			#mode to force-save
 			elif self.mode == 2:
 				movecam = 0
-				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
+				GameManager.uibox((pygame.display.get_desktop_sizes()[0][0],pygame.display.get_desktop_sizes()[0][1]),(0,0),(0,0,0),100)
 				self.tm.drawtext2(f"{self.savestring.rstrip()} already exists do you want to replace it Y/N","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
 				if GameManager.event_manager.keyb:
 					if GameManager.event_manager.code == "y":
@@ -648,7 +652,7 @@ class TiledSoftwre:
 			#save mode for loading
 			elif self.mode == 3:
 				movecam = 0
-				GameManager.uibox((self.realscreeen.get_width(),self.realscreeen.get_height()),(0,0),(0,0,0),100)
+				GameManager.uibox((pygame.display.get_desktop_sizes()[0][0],pygame.display.get_desktop_sizes()[0][1]),(0,0),(0,0,0),100)
 				if not GameManager.event_manager.key[pygame.K_RETURN]:
 					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
 						self.savestring = self.savestring[:-1]
@@ -664,7 +668,7 @@ class TiledSoftwre:
 
 			elif self.mode == "command":
 				movecam = 0
-				GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
+				GameManager.uibox((pygame.display.get_desktop_sizes()[0][0],200),(0,-1),univars.theme["dark"],200)
 				if not GameManager.event_manager.key[pygame.K_RETURN]:
 					if GameManager.event_manager.key[pygame.K_BACKSPACE]:
 						self.commmandtring = self.commmandtring[:-1]
@@ -724,7 +728,7 @@ class TiledSoftwre:
 								
 			elif self.mode == "alterobj":
 				movecam = 0
-				GameManager.uibox((400,self.realscreeen.get_height() - 200),(-0.75,0.15),self.theme["dark"] ,400)
+				GameManager.uibox((400,pygame.display.get_desktop_sizes()[0][1] ),(-0.75,0.15),self.theme["dark"] ,400)
 				b = self.dostring
 				Cammanager.camager.setcond("def","pos",   univars.func.lerp(Cammanager.camager.getcam("def","pos")   ,b.info["pos"],4,roundto=8)    )
 				Cammanager.camager.setcond("def","size",   univars.func.lerp(Cammanager.camager.getcam("def","size"),1/b.info["sizen"][0],4,roundto=8)    )
@@ -836,7 +840,7 @@ class TiledSoftwre:
 				self.snts = ""
 
 
-				um.addrect((self.realscreeen.get_width() + 1000,200),["newanim","animplaying"],(0,-1),"commandtextbox",color=univars.theme["accent"])
+				um.addrect((pygame.display.get_desktop_sizes()[0][0] + 1000,200),["newanim","animplaying"],(0,-1),"commandtextbox",color=univars.theme["accent"])
 				um.addtext("commandtext","","pixel2.ttf",(-0.95,-0.9),univars.theme["bright"],40,["newanim","animplaying"],center = False)
 
 				self.textsfornewanim = []
@@ -865,7 +869,7 @@ class TiledSoftwre:
 				um.elements["animspriteui"]["surf"] = univars.func.getsprites(self.animobj["name"])[self.animobj["sn"]]
 				um.elements["animspriteui"]["cache"] = {}
 				um.elements["spritenames"]["text"] = f"sprite-num:{self.animobj['sn']} \ncurrent anim:{self.curanim}"
-				um.elements["frame bar"]["dimensions"][0] = univars.screen_w
+				um.elements["frame bar"]["dimensions"][0] = pygame.display.get_desktop_sizes()[0][0]
 
 
 
@@ -1218,14 +1222,14 @@ class TiledSoftwre:
 
 			elif self.commmandtring.rstrip() in ["particle","part","particle-edit","particle-editor"]:
 				self.mode = "Particle-edit"
-				um.addrect((univars.screen_w + 500,200),["particle-edit"],[0,-1],"particle_edit_hud",color = univars.theme["dark"])
+				um.addrect((pygame.display.get_desktop_sizes()[0][0]+ 500,200),["particle-edit"],[0,-1],"particle_edit_hud",color = univars.theme["dark"])
 				um.addrect((500,2000),["particle-edit"],[-0.9,0],"particle_edit_side_bar",color = univars.theme["dark"])
 				um.addtext("loadedbluprint","Loaded:None",univars.defont,[-0.97,0.8],univars.theme["semibright"],30,["particle-edit"],center=False)
 				um.addtext("particledata","",univars.defont,[-0.97,0.75],univars.theme["semibright"],30,["particle-edit"],center=False)
 				um.addtext("particlecommandtext","",univars.defont,[-0.98,-0.9],univars.theme["bright"],40,["particle-edit"],center = False)
 			elif self.commmandtring.rstrip() in ["ui","ui-edit","ui-editor"]:
 				self.mode = "Ui-edit"
-				um.addrect((univars.screen_w + 500,200),"all",[0,-1],"ui_edit_hud",color = univars.theme["dark"])
+				um.addrect((pygame.display.get_desktop_sizes()[0][0] + 500,200),"all",[0,-1],"ui_edit_hud",color = univars.theme["dark"])
 				um.addrect((500,2000),["ui-edit"],[-0.9,0],"ui_edit_side_bar",color = univars.theme["dark"])
 				um.addtext("uistatetext",f"state:{um.state}",univars.defont,[-0.97,0.8],univars.theme["semibright"],30,"all",center=False)
 			
@@ -1258,8 +1262,8 @@ class TiledSoftwre:
 					cam[1] += (camera.size)/speed * GameManager.frame_manager.dt 
 				if GameManager.event_manager.key[pygame.K_e] or GameManager.event_manager.controller["R1"]:
 					cam[1] -= (camera.size)/speed * GameManager.frame_manager.dt 
-				cam[0][0] += speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/self.realscreeen.get_width() * GameManager.key["x"]
-				cam[0][1] -= speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/self.realscreeen.get_width()* GameManager.key["y"]
+				cam[0][0] += speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/pygame.display.get_desktop_sizes()[0][0] * GameManager.key["x"]
+				cam[0][1] -= speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/pygame.display.get_desktop_sizes()[0][0]* GameManager.key["y"]
 			
 
 
@@ -1270,7 +1274,7 @@ class TiledSoftwre:
 			if self.showdata and self.mode == 0:
 				# print(self.spritelooks)
 				fulllist = self.spritelooks + self.spritelooks
-				GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
+				GameManager.uibox((pygame.display.get_desktop_sizes()[0][0],200),(0,-1),univars.theme["dark"],200)
 				self.tm.drawtext(f"Camera-name : {cm.currentcam}"                        ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],0.6,-0.9)
 				self.tm.drawtext2(f"Camera size: { round(1 / camera.size,2)}"            ,"pixel2.ttf",40,0,0,0,univars.theme["semibright"],0,-0.9)
 				self.tm.drawtext2(f"Camera pos: {[round(camera.x),-1 * round(camera.y)]}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.6,-0.9)
@@ -1325,7 +1329,7 @@ class TiledSoftwre:
 
 	def showconsole(self,GM):
 		if self.showconsolebool:
-			um.addrect([1000,univars.screen_h],"all",[-1,0],"#debugrect",color = univars.theme["dark"],alpha=200)
+			um.addrect([1000,pygame.display.get_desktop_sizes()[0][1]],"all",[-1,0],"#debugrect",color = univars.theme["dark"],alpha=200)
 			um.addtext("#debugtext",GM.console(),univars.defont,[-1,self.consoletextscoll],univars.theme["semibright"],35,"all",center=False)
 			um.elements["#debugtext"]["text"] = GM.console()
 			um.elements["#debugtext"]["pos"][1] = self.consoletextscoll
@@ -1337,7 +1341,7 @@ class TiledSoftwre:
 	def showinput(self,GameManager):
 		GameManager.uibox((190,190),(-0.8,-0.5),univars.theme["dark"],200)
 		GameManager.uibox((50,50),[-0.8 + GameManager.key["x"]/18,-0.5 + GameManager.key["y"]/12],univars.theme["accent"],200)
-		GameManager.uibox((self.realscreeen.get_width(),200),(0,-1),univars.theme["dark"],200)
+		GameManager.uibox((pygame.display.get_desktop_sizes()[0][0],200),(0,-1),univars.theme["dark"],200)
 
 		# GameManager.uibox((190,190),(-0.5,-0.5),univars.theme["dark"],200)
 

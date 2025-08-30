@@ -149,7 +149,7 @@ class obj(pygame.sprite.Sprite):
 		if self.info["rendercond"] or showall:
 			g = [round(self.info["pos"][0]),round(self.info["pos"][1])]
 			h = [round(camera.x),round(camera.y)]
-			if univars.func.dist(g,h) < 700:
+			if univars.func.dist(g,h) < 1000:
 
 				# realestsize = [math.ceil((self.size[0] * abs(camera.size))/2)*2                                 , 
 				#    			  math.ceil((self.size[1] * abs(camera.size))/2)*2]
