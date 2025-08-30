@@ -52,9 +52,16 @@ class Ghost(pygame.sprite.Sprite):
 class ObjGhost(pygame.sprite.Sprite):
 	def __init__(self,obj):
 		pygame.sprite.Sprite.__init__(self)
-		self.obj = obj
+		self.id = obj.name
 		self.rect = obj.fakerect
 		self.image = pygame.Surface((0,0))
+
+
+	def update(self,objects):
+		if self.id in objects.keys():
+			self.rect = pygame.Rect(objects[self.id]["pos"][0] - objects[self.id]["size"][0]//2,objects[self.id]["pos"][1] - objects[self.id]["size"][1]//2,objects[self.id]["size"][0],objects[self.id]["size"][1])
+		else:
+			self.kill()
 
 
 
@@ -452,7 +459,7 @@ class object_manager:
 					a = pygame.sprite.spritecollide(ghcolsprite,self.ghostinstances[campos],dokill=False)
 					a = [i.inst for i in a]
 				inst += a
-			noninst = [ghost.obj for ghost in noninst]
+			noninst = [self.objfromid(ghost.id) for ghost in noninst]
 			#render the collbox
 			if show:
 				if len(inst) > 0 and len(noninst) > 0:
@@ -479,7 +486,10 @@ class object_manager:
 		ghcolsprite =  Ghostcollinst(r1.x,r1.y,r1.width,r1.height)
 		noninst = pygame.sprite.spritecollide(ghcolsprite,self.objghostgroup,dokill=False)
 
-		noninst = [ghost.obj for ghost in noninst]
+		noninst = [self.objfromid(ghost.id) for ghost in noninst]
+		
+		# if len(noninst) > 0:
+		# 	print(noninst[0].info["pos"])
 		#coll for inst
 		#coll for inst
 		camchunk = [int(round(camera.x/(dim * self.renderdist[0]))),int(round(camera.y/(dim * self.renderdist[1])))]
@@ -518,7 +528,7 @@ class object_manager:
 		# for obj in noninst:
 		# 	if obj.name in ignore or obj.name == ignore_id:
 		# 		noninst.remove(obj)
-		noninst = [ghost.obj for ghost in noninst]
+		noninst = [self.objfromid(ghost.id) for ghost in noninst]
 
 		#coll for inst
 		camchunk = [int(round(pos[0]/(dim * self.renderdist[0]))),int(round(pos[1]/(dim * self.renderdist[1])))]
@@ -559,7 +569,7 @@ class object_manager:
 		r1 = pygame.Rect(pos[0],pos[1],10,10)
 		ghcolsprite =  Ghostcollinst(r1.x,r1.y,r1.width,r1.height)
 		noninst = pygame.sprite.spritecollide(ghcolsprite,self.objghostgroup,dokill=False)
-		noninst = [ghost.obj for ghost in noninst]
+		noninst = [self.objfromid(ghost.id) for ghost in noninst]
 		for obj in noninst:
 			if obj.name in ignore or obj.name == ignore_id:
 				noninst.remove(obj)
@@ -648,6 +658,9 @@ class object_manager:
 					if obj.layer == layer or layer == "all":
 						self.objgroup.remove(obj)
 						self.objects.pop(postodel[0])
+						for ghost in self.objghostgroup:
+							if ghost.id == obj.name:
+								self.objghostgroup.remove(ghost)
 
 		#deleting noncolinstances
 		for a in self.noncolinstances.keys():
@@ -856,6 +869,7 @@ class object_manager:
 
 		#rendering the non-instanciates
 		self.objgroup.update(camera,self,dim,showall,GameManager.fm.frame)
+		self.objghostgroup.update(self.objects)
 		self.objgroup.draw(univars.screen)
 
 

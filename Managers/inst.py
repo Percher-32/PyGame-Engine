@@ -110,6 +110,14 @@ class inst(pygame.sprite.Sprite):
 
 objcache = {}
 
+class ObjGhost(pygame.sprite.Sprite):
+	def __init__(self,obj):
+		pygame.sprite.Sprite.__init__(self)
+		self.obj = obj
+		self.rect = obj.fakerect
+		self.image = pygame.Surface((0,0))
+
+
 class obj(pygame.sprite.Sprite):
 	def __init__(self,name:str,info:dict,sprites):
 		pygame.sprite.Sprite.__init__(self)
@@ -121,6 +129,7 @@ class obj(pygame.sprite.Sprite):
 		self.image = pygame.Surface((0,0))
 		self.name = name
 		self.layer = self.info["layer"]
+		# self.ghost = ObjGhost(self)
 
 	def supvar(self,lg,lh):
 		lst = [(0,0),(0,1),(1,0),(1,1),(0,-1),(-1,0),(-1,-1),(-1,1),(1,-1),]	

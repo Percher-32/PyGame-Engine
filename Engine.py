@@ -331,6 +331,11 @@ class Game(Gamemananager.GameManager):
 		self.sp("thickness",1)
 
 
+
+
+		self.sp("homing",0)
+		self.sp("target",None)
+
 		self.joyaxis = pygame.math.Vector2(self.key["x"],self.key["y"])
 		if self.joyaxis.length()> 0:
 			self.joyaxis.normalize()
@@ -645,6 +650,9 @@ class Game(Gamemananager.GameManager):
 								self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
 								self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
 
+
+
+						#INITIATE HOMING ATTACK
 						if self.key["attack"]:
 							if not vec == None:
 								if not self.isthere("homecooldown"):
@@ -658,21 +666,13 @@ class Game(Gamemananager.GameManager):
 										# envec.normalize()
 										envec = [envec.x,envec.y * -1]
 
-										actmult = [1,1]
-										actvel = [  envec[0] * actmult[0] , envec[1] * actmult[1] ]
-										desmult = [1,1]
-										desvel = [  envec[0] * desmult[0] , envec[1] * desmult[1] ]
-										self.spin(21,0.4,0.1)
+										
+										self.sp("homing",1)
+										self.sp("target",vec)
 
-										# self.sp("dashav",self.listdiv(actvel,80))
-										# self.sp("dashdv",self.listdiv(desvel,80))
 
-										self.sp("act_vel",0,1)
-										self.sp("des_vel",0,1)
-										self.sp("act_vel",0,0)
-										self.sp("des_vel",0,0)
-										self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
-										self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
+						if self.gp("homing")
+
 
 						#jumping
 						if self.key["jump"]:
@@ -1293,10 +1293,6 @@ class Game(Gamemananager.GameManager):
 
 	def cond(self,id,info):
 		"""id -> the id   info -> the info for the id"""
-		# if info["name"] == "enemy":
-		# 	env = pygame.math.Vector2(info["pos"])
-		# 	plv = pygame.math.Vector2(om.objects["player"]["pos"])
-		# 	distvec = env - plv
 		# 	if 100 < distvec.length():
 		# 		if distvec.length() > 0:
 		# 			distvec.normalize()
