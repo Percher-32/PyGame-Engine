@@ -11,7 +11,7 @@ startdims = (screen_w,screen_h)
 
 camchange = True
 
-pixelscale = 15
+pixelscale = 14
 
 
 grandim = 32
@@ -19,7 +19,7 @@ grandim = 32
 
 name = "Project ender"
 
-maxfps = 2000
+maxfps = 60
 
 
 (40, 41, 83)
@@ -64,12 +64,11 @@ func = funcs.func(grandim)
 
 
 
-lumptype = {"grass":"ground","dirt":"ground","slantl":"slantl","slantr":"slantr","slantdecor":"ground"}
+lumptype = {"grass":"ground","dirt":"ground","slantl":"slantl","slantr":"slantr","slantdecor":"ground","rail":"rail","rail-diag":"rail"}
 
-# sizeoffsets = {"grass":[0.1,0.1],"dirt":[0.1,0.1],"slantr":[0.1,0.1],"slantl":[0.1,0.1]}
 sizeoffsets = {}
 
-instables = ["dirt","grass","def","slantl","slantr","slantlbot","slantrbot"]
+instables = ["dirt","grass","def","slantl","slantr","slantlbot","slantrbot","rail","rail-diag"]
 
 extras = [["def","camz",[20,20]]]
 """
@@ -98,19 +97,28 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "demo1"
-
-startstate = "debugame"
 
 
 
-#opt to optimise
-mode = "norm"
 
 
+map = "fight"
+startstate = "edit"
+startshaderstate = 0
+bakeonreload = 0
+showdebugonstart = 0
+profile = 0
+safemode = 1
 startuistate = "def"
+showinput = 0
 
-screencol = (110,189,234)
+
+
+
+
+
+
+screencol = (110 ,189 ,234 )
 
 
 camspeeed = 45
@@ -120,11 +128,14 @@ poschange = 0
 
 defont = "pixel2.ttf"
 
-renderdist = 25
+renderdist = [12,12]
 
-showinput = 0
+
 
 maxfpsbuffersize = 5
+
+
+
 
 def update():
     global screen_w
@@ -133,5 +144,28 @@ def update():
     screen_h = pygame.display.get_window_size()[1]
     # realscreeen = pygame.transform.scale(realscreeen,[screen_w,screen_h])
     # print(realscreeen.get_size())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

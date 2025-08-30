@@ -25,7 +25,7 @@ class Cammanager:
 			univars.poschange = True
 		self.cam.x = self.cameras[name][0][0]
 		self.cam.y = self.cameras[name][0][1]
-		self.cam.size = self.cameras[name][1]
+		self.cam.givensize = self.cameras[name][1]
 		self.cam.screenshakevalue = self.cameras[name][2]
 		self.currentcam = name
 
@@ -42,7 +42,8 @@ class Cammanager:
 			return self.cameras[cam][toch]
 
 	def setcond(self,cam,item,val):
-		"""to set the conditions for a camera , cam : camera-name  ,  item : [ pos ,size or shake ]  ,  val :  what to set it to  """
+		"""to set the conditions for a camera , cam : camera-name  ,  item : [ pos ,size or shake ]  ,  val :  what to set it to \n
+			["pos","size","shake"] """
 		index = {"pos":0,"size":1,"shake":2}
 		if item == "posx":
 			self.cameras[cam][0][0] = val

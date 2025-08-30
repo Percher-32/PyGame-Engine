@@ -1,10 +1,12 @@
 #version 330 core
 uniform sampler2D tex;
 uniform float time;
+uniform float pacify;
 uniform int state;
 uniform vec2 sunpos;
 uniform float illuminace;
 uniform float waterlevel;
+uniform float camx;
 
 
 
@@ -55,6 +57,7 @@ vec2 quintic(vec2 p) {
 float perlin() {
   // part 0 - basic shader setup
   vec2 uv = uvs;
+  uv.x += camx;
 
 
   vec3 black = vec3(0.0);
@@ -138,10 +141,21 @@ float perlin() {
   return perlin;
 }
 
+float coldist(vec2 uv){
+  vec3 map = texture(tex, uv).rgb;
+  return distance(vec3(0,0,0),map);
+}
+
 
 void main() {
-    
+    float pixelscale = 0.0001;
     vec2 sample_pos = uvs;
+    sample_pos = round(sample_pos /vec2(pixelscale)) * vec2(pixelscale);
+    sample_pos.x = clamp(sample_pos.x ,0,1);
+    vec3 map = texture(tex, sample_pos).rgb;
+    
+    
+
     if (state == 0){
         
         vec2 fakeuvs = vec2(uvs.x-0.5 ,uvs.y-0.5 );
@@ -151,30 +165,85 @@ void main() {
 
         //1 on outside  , 0 on inside
         float dist = abs(distance(vec2(0,0),fakeuvs));
-        dist = 0;
-
+        // dist = 0;
         // 0 near sun   1 away from sun
         vec2 sunposoff = vec2(sunpos.x + 0.5,sunpos.y + 0.5);
         float sundist = abs(distance(uvs,sunposoff));
 
 
         float twistsiist = abs(distance(uvs,slighttwist));
-
         //0 on outside  , 1 on inside
-        float dark = 1 - ((sundist/(illuminace * 2)) + dist/2)/2;
-        // float bumpshift = 1 - ((twistsiist/twistval) + dist/2)/2;
-        if (uvs.y > (1-waterlevel)){
+        float dark = 1 - ((sundist/(illuminace * 2)) + dist/2)/2 - pacify;
+        float hurt = 0;
+        vec2 sampling = vec2(sample_pos.x + 0.01,sample_pos.y);
+        float vigb = mix((1 - dist/3),dark,hurt);
+        float vigr = mix(dark,(1 - dist/5),hurt);
+        float offsetsine =  sin(sin((uvs.x + camx) + time/1000)*20 + time/100  + 2*sin( time/1000)/25     + sin( sin(time/300) + (uvs.x + camx))/20                )/50;
+        offsetsine = perlin()/20;
 
-          sample_pos = vec2(uvs.x  + sin(time/10 + (uvs.y) * 50)/70,(1-waterlevel) - abs((1-waterlevel)- uvs.y) );
-          dark *= 0.5 + perlin()/5;
+
+
+        if (uvs.y > (1-waterlevel) + offsetsine || map == vec3(255,0,0)) {
+            float fwl = waterlevel;
+            if (fwl > 0.5){
+              fwl = 0.5;
+            }
+            vec2 reflec_sample_pos = vec2(uvs.x  + sin(time/10 + (uvs.y) * 50)/800+ perlin()/50,(1-fwl) - abs((1-fwl)- uvs.y)- perlin()/50 );
+            vec2 underwater_sample_pos = vec2(uvs.x  + sin(time/10 + (uvs.y) * 50)/800,uvs.y+ cos(time/20 + (uvs.x) * 50)/800);
+
+
+
+            float reflec_dark = dark * (0.5 + perlin()/5);
+            float underwater_dark = dark * (0.7 + perlin()/4) + (1-uvs.y)/10 ;
+            if (distance(map,vec3(0,0,0)) > 20){
+              underwater_dark = 1;
+            }
+
+
+
+            underwater_sample_pos.x = clamp(underwater_sample_pos.x + perlin()/60,0,0.99);
+            underwater_sample_pos.y = clamp(underwater_sample_pos.y + perlin()/60,0,0.99);
+
+
+            reflec_sample_pos.x = clamp(reflec_sample_pos.x ,0,1);
+            // reflec_sample_pos.y = clamp(reflec_sample_pos.y ,0,1);
+
+            underwater_sample_pos = round(underwater_sample_pos /vec2(pixelscale)) * vec2(pixelscale);
+            reflec_sample_pos = round(reflec_sample_pos /vec2(pixelscale)) * vec2(pixelscale);
+
+
+            float scalar = 2*(1- waterlevel) +0.2;
+
+            if (scalar < 0){
+              scalar = 0;
+            }
+            if (scalar > 1){
+              scalar = 1;
+            }
+            
+            scalar = pow(scalar,3);
+
+            // scalar = mix(0,scalar,scalar);
+
+            dark = mix(reflec_dark,underwater_dark,1-scalar);
+            map = mix(  texture(tex, underwater_sample_pos).rgb   ,  texture(tex, reflec_sample_pos).rgb  ,  scalar  );
+            vigb = mix((1 - dist/5),dark,hurt);
+            vigr = mix(dark,dark*2,hurt);
+
+            
         }
-        
 
-        sample_pos = vec2(clamp(sample_pos.x,0,0.9999),
-                          sample_pos.y);
+        // if ( texture(tex,uvs).rgb * vec3(255,255,255) == vec3(0,0.,255)){
+        //   float fwl = 0.5;
+        //   vec2 sample_pos = vec2(uvs.x  + sin(time/10 + (uvs.y) * 50)/8+ perlin(),(1-fwl) - abs((1-fwl)- uvs.y)- perlin() );
+        //   dark *= (0.5 + perlin()/5)/10;
+        //   vigb = mix((1 - dist/5),dark,hurt);
+        //   vigr = mix(dark,dark*2,hurt);
+        //   map = texture(tex, sample_pos).rgb;
+        // }
 
-        vec3 map = texture(tex, sample_pos).rgb;
-        f_color = vec4(map.r  * dark ,map.g * dark,map.b * (1 - dist/5)   , 0 + (time*0));
+        f_color = vec4(map.r  * vigr ,map.g * dark,map.b * vigb   , 0 + (time*0));
+
     }
     else{
         f_color = vec4(texture(tex, uvs).rgb, 1.0);

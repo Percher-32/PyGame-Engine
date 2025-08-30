@@ -36,7 +36,7 @@ class Uimanager:
 		self.elements[name] = {"name":name,"pos":pos,"type":type,"cache":{}}
 		self.sprites.add(ui)
 		
-	def addrect(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = 0,usesprite = False):
+	def addrect(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = 0,usesprite = False,fromstart = False):
 		key = [dimensions,states,pos,name,color,alpha,surf,sn,usesprite]
 		if key in self.metadata["rect"]:
 			self.metadata["rect"].remove(key)
@@ -47,7 +47,7 @@ class Uimanager:
 					surf = pygame.image.load(f"Graphics/ui/{surf}.png").convert_alpha()
 				else:
 					surf = univars.func.getsprites(surf)[sn]
-			ui = Uielement.Uirect(dimensions,states,pos,name,surf = surf)
+			ui = Uielement.Uirect(dimensions,states,pos,name,surf = surf,fromstart = fromstart)
 			self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"pos":pos,"states":states,"surf":surf,"type":"rect","cache":{}}
 			self.sprites.add(ui)
 
