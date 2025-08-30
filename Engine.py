@@ -367,6 +367,8 @@ class Game(Gamemananager.GameManager):
 		# om.speed = 0.4
 		# self.println(self.gp("dashmeter"),2)
 		cm.setcond("playercam","shake",0)
+		
+		self.sp("wantime",1)
 		self.sp("dashmeter",min([100,self.gp("dashmeter")]))
 		self.sp("dashmeter",max([0,self.gp("dashmeter")]))
 
@@ -653,25 +655,76 @@ class Game(Gamemananager.GameManager):
 
 
 						#INITIATE HOMING ATTACK
-						if self.key["attack"]:
-							if not vec == None:
-								if not self.isthere("homecooldown"):
-									if not self.lastkey["attack"]:
-										self.wait("homecooldown",0.2)
-										ground = 0
-										enposvec = pygame.math.Vector2(vec.info["pos"])
-										playerposvec = pygame.math.Vector2(om.objects["player"]["pos"])
+						if not self.gp("homing") == 1:
+							if self.key["attack"]:
+								if not vec == None:
+									if not self.isthere("homecooldown"):
+										if not self.lastkey["attack"]:
+											self.wait("homecooldown",0.2)
+											self.sp("homing",1)
+											self.sp("target",vec)
+											self.sp("act_vel",200,1)
 
-										envec = enposvec - playerposvec
-										# envec.normalize()
-										envec = [envec.x,envec.y * -1]
+						if self.gp("homing") == 1:
+							enposvec = pygame.math.Vector2(self.gp("target").info["pos"])
+							playerposvec = pygame.math.Vector2(om.objects["player"]["pos"])
 
-										
-										self.sp("homing",1)
-										self.sp("target",vec)
+							envec = enposvec - playerposvec
+							if envec.length() > 0:
+								nenvec = envec.normalize()
+								nenvec = [nenvec.x,nenvec.y * -1]
+							
+								if self.gp("target").info["type"] == "enemy-L":
+									if envec.length() > 40:
+										a = (380 + (abs(envec.length()/3)))/2
+										d = (380 + (abs(envec.length()/3)))/2
+										av = [a * nenvec[0] , a * nenvec[1]]
+										dv = [d * nenvec[0] , d * nenvec[1]]
+										self.sp("act_vel",av)
+										self.sp("act_vel",dv)
+									else:
+										self.sp("homing",2)
+										# om.objects["player"]["pos"] = self.gp("target").info["pos"]
+										self.sp("HOLD",self.gp("target").info["pos"])
+										self.sp("act_vel",200,1)
 
+						if self.gp("homing") == 2:
+							if self.key["attack"]:
+								# self.sp("des_vel",[0,0])
+								self.sp("wantime",0.1)
+								self.gp("target").info["pos"] = om.objects["player"]["pos"]
+							else:
+								self.sp("homing",0)
+								if self.lastkey["attack"]:
+									od = self.timers.copy()
+									for timer in self.timers.keys():
+										if "#Throwing" in timer:
+											od.pop(timer)
+									self.timers = od
+									self.wait("#Throwing" + self.gp("target").name,20,0)
+									self.sp("throwaxis",[100,100])
+								else:
+									self.wait("dashrem",2)
+									# cm.setcond("playercam","shake",6)
+									actmult = [160,160]
+									actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
+									desmult = [160,160]
+									desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
+									self.spin(21,0.4,0.1)
 
-						if self.gp("homing")
+									self.sp("dashav",self.listdiv(actvel,80))
+									self.sp("dashdv",self.listdiv(desvel,80))
+
+									self.sp("act_vel",0,1)
+									self.sp("des_vel",0,1)
+									self.sp("act_vel",0,0)
+									self.sp("des_vel",0,0)
+									self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
+									self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
+
+						self.println(self.timers,7)
+
+								
 
 
 						#jumping
@@ -745,11 +798,11 @@ class Game(Gamemananager.GameManager):
 						#slingshot
 						if self.key["secondary"] and self.gp("dashmeter") > 0 and not ground:
 							self.sp("slinging",1)
+							self.sp("wantime",0.1)
 							self.sp("dashmeter",self.gp("dashmeter") - self.dt/10)
 							om.speed = self.unilerp(om.speed,0.1,5,roundto=2,useigt=0) 
 							self.sp("slomorot",vecaxis.angle)
 						else:
-							om.speed = univars.func.lerp(om.speed,1,5,roundto=2)
 							self.sp("slinging",0)
 
 
@@ -1187,6 +1240,7 @@ class Game(Gamemananager.GameManager):
 		
 		self.lastrail = rail
 		self.sp("lastframewall",self.gp("leftwall") or self.gp("rightwall"))
+		om.speed = univars.func.lerp(om.speed,self.gp("wantime"),5,roundto=2)
 
 
 	def spin(self,angle,time,spindec = 0):
@@ -1218,6 +1272,10 @@ class Game(Gamemananager.GameManager):
 		"""
 			a lerp function that incorperates IN-GAME time and DELTA-TIME into its incorperation.  sm -> float or int
 		"""
+		if om.speed == 0:
+			om.speed = 0.1
+		if self.dt == 0:
+			self.dt = 1
 		if useigt:
 			return univars.func.lerp(val,max,              (  (sm/om.speed) / self.dt)*1.5              ,roundto = roundto)
 		else:
@@ -1289,24 +1347,24 @@ class Game(Gamemananager.GameManager):
 	def oncreate(self,id,info):
 		if info["name"] == "target":
 			om.objects[id]["type"] = "enemy-L"
-			# self.print(om.objects[id]["type"])
+			om.set_value(id,"vel",[0,0])
+			om.set_value(id,"tarvel",[0,0])
+			om.set_value(id,"clipspeed",5)
+
+		if info["type"] == "enemy-L":
+			om.set_value(id,"vel",[0,0])
+			om.set_value(id,"tarvel",[0,0])
+			om.set_value(id,"clipspeed",5)
+
 
 	def cond(self,id,info):
 		"""id -> the id   info -> the info for the id"""
-		# 	if 100 < distvec.length():
-		# 		if distvec.length() > 0:
-		# 			distvec.normalize()
-		# 		distvec.scale_to_length(-10)
-		# 		distl = [distvec[0],distvec[1] * -1]
-		# 		om.translate(self,id,distl,1)
-		# 	om.set_value(id,"rot",distvec.angle_rad)
-		# else:
-		# 	om.set_value(id,"rot",om.get_value(id,"rot") + (5/180 * math.pi) )
-		# 	om.objects[id]["pos"] = [
-		# 		om.objects["player"]["pos"][0] * math.sin(om.get_value(id,"rot")) * 100,
-		# 		om.objects["player"]["pos"][1] * math.cos(om.get_value(id,"rot")) * 100
-		# 	]
-
+		if info["type"] == "enemy-L":
+			om.set_value(id,"vel",self.unilerp(om.get_value(id,"vel"),om.get_value(id,"tarvel"),om.get_value(id,"clipspeed")))
+			if self.isthere("#Throwing" + str(id)):
+				print("still here")
+				om.set_value(id,"vel",self.gp("throwaxis"))
+			om.translate(self,id,om.get_value(id,"vel"),usedt=1)
 
 
 
