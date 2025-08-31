@@ -5,14 +5,14 @@ import Managers.statemanager as sm
 
 
 pygame.display.init()
-screen_w = pygame.display.get_desktop_sizes()[0][0]/2
-screen_h = pygame.display.get_desktop_sizes()[0][1]/2
+screen_w = pygame.display.get_desktop_sizes()[0][0]/1
+screen_h = pygame.display.get_desktop_sizes()[0][1]/1
 # print((pygame.display.get_desktop_sizes()[0][0] **2 + pygame.display.get_desktop_sizes()[0][1] **2  ) ** 0.5)
 startdims = (screen_w,screen_h)
 
 camchange = True
 
-pixelscale = 14
+pixelscale = 13
 
 
 grandim = 32
@@ -106,7 +106,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 map = "fight"
 startstate = "debugame"
 startshaderstate = 0
-bakeonreload = 1
+bakeonreload = 0
 showdebugonstart = 0
 profile = 0
 safemode = 1
@@ -129,7 +129,7 @@ poschange = 0
 
 defont = "pixel2.ttf"
 
-renderdist = [12,14]
+renderdist = [8,8]
 
 
 

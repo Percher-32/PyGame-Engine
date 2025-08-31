@@ -233,11 +233,12 @@ class object_manager:
 		"""
 			optimises rendering for all noncolliding instanciates by baking them all into one sprite for each chunk
 		"""
-		self.baked = 1
-		for chunk in self.noncolghostinstances.keys():
-			self.grouptosprite(chunk)
-		for chunk in self.ghostinstances.keys():
-			self.grouptosprite(chunk)
+		if not self.baked:
+			self.baked = 1
+			for chunk in self.noncolghostinstances.keys():
+				self.grouptosprite(chunk)
+			for chunk in self.ghostinstances.keys():
+				self.grouptosprite(chunk)
 
 		
 

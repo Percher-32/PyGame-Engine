@@ -256,14 +256,24 @@ class TiledSoftwre:
 
 
 					#some math
-					upscale = pygame.display.get_desktop_sizes()[0][0] / self.screen.get_width()
-					upscaley = pygame.display.get_desktop_sizes()[0][1] / self.screen.get_height()
 					renderwid = (((((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983)) * 1980) + 200
-					translationy = (univars.realscreeen.height//2 - renderwid//2)
-					translationx = univars.realscreeen.width//2 - renderwid//2
+					upscale =  renderwid /( univars.screen.get_width())
+					upscaley =  renderwid / (univars.screen.get_height())
+
+
+					# upscale = renderwid/ univars.screen.get_width()
+					# print(upscale)
+
+
+					# upscale *= 
+					translationy = 0
+					translationx = 0
 					# translation = 0
-					a1 = (((   (GameManager.event_manager.mousepos[0] + translationx)/upscale  - self.screen.get_width()//2)  / camera.size) + camera.x)
-					a2 = (((   (GameManager.event_manager.mousepos[1] + translationy)/upscaley  - self.screen.get_height()//2) / camera.size) + camera.y)
+					# print(upscale)
+					# print(1/upscale)
+					# print()
+					a1 = (((   (GameManager.event_manager.mousepos[0] -  univars.realscreeen.get_width()//2 )/upscale   )  / camera.size) + camera.x)
+					a2 = (((   (GameManager.event_manager.mousepos[1] -  univars.realscreeen.get_height()//2 )/upscaley  )  / camera.size) + camera.y)
 				
 
 					mousepos = (a1,a2)
