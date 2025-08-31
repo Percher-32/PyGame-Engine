@@ -872,6 +872,10 @@ class object_manager:
 		self.objgroup.update(camera,self,dim,showall,GameManager.fm.frame)
 		self.objghostgroup.update(self.objects)
 		self.objgroup.draw(univars.screen)
+		for obj in self.objgroup:
+			if obj.indist:
+				univars.screen.blit(obj.image,obj.rect)
+
 
 
 

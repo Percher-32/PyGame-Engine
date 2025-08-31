@@ -122,6 +122,7 @@ class obj(pygame.sprite.Sprite):
 	def __init__(self,name:str,info:dict,sprites):
 		pygame.sprite.Sprite.__init__(self)
 		self.fliped = 0
+		self.indist = 0
 		self.info = info
 		self.sprites = sprites
 		self.fakerect = pygame.Rect(info["pos"][0] - info["size"][0]//2,info["pos"][1] - info["size"][1]//2,info["size"][0],info["size"][1])
@@ -147,6 +148,7 @@ class obj(pygame.sprite.Sprite):
 		self.info["pos"] = pos
 		self.fakerect = pygame.Rect(self.info["pos"][0] - self.info["size"][0]//2,self.info["pos"][1] - self.info["size"][1]//2,self.info["size"][0],self.info["size"][1])
 		if self.info["rendercond"] or showall:
+			self.indist = 1
 			g = [round(self.info["pos"][0]),round(self.info["pos"][1])]
 			h = [round(camera.x),round(camera.y)]
 			if univars.func.dist(g,h) < 1000:
@@ -182,6 +184,7 @@ class obj(pygame.sprite.Sprite):
 				self.image = pygame.Surface((0,0))
 				self.rect = pygame.Rect(0,0,0,0)
 		else:
+			self.indist = 0
 			self.image = pygame.Surface((0,0))
 			self.rect = pygame.Rect(0,0,0,0)
 

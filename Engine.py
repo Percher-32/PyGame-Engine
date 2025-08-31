@@ -38,7 +38,7 @@ class Game(Gamemananager.GameManager):
 
 	def onreload(self):
 		self.a = 0
-		
+
 		# bg.addbackground("test2")
 		# bg.addbackgrounditem("black2","test2",[0,-40]                ,surf = "mount",dimensions=[500*5,250*5],layer = 0.15,infiniscroll=True)
 		# bg.savebg()
@@ -1425,7 +1425,7 @@ class Game(Gamemananager.GameManager):
 
 rm = Game(univars.screencol,fm)
 
-if univars.profile == "opt":
+if univars.profile == 1:
 	def main():
 		rm = Game(univars.screencol,fm)
 		if univars.safemode:
