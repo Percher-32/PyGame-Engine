@@ -189,10 +189,11 @@ class Game(Gamemananager.GameManager):
 
 
 
+
 			if not self.gp("slinging"):
-				cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.4 )
+				cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.4)
 			else:
-				cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.35 )
+				cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.35)
 
 
 			
@@ -1411,6 +1412,7 @@ class Game(Gamemananager.GameManager):
 						om.set_value(id,"throwvel",[0,0])
 
 			# om.translate(self,id,om.get_value(id,"vel"),usedt=1)
+
 
 
 

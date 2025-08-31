@@ -233,12 +233,16 @@ class object_manager:
 		"""
 			optimises rendering for all noncolliding instanciates by baking them all into one sprite for each chunk
 		"""
-		if not self.baked:
-			self.baked = 1
-			for chunk in self.noncolghostinstances.keys():
-				self.grouptosprite(chunk)
-			for chunk in self.ghostinstances.keys():
-				self.grouptosprite(chunk)
+		if self.baked:
+			self.instables = {}
+			self.noncolinstances = {}
+			self.noncolghostinstances = {}
+			self.ghostinstances = {}
+		for chunk in self.noncolghostinstances.keys():
+			self.grouptosprite(chunk)
+		for chunk in self.ghostinstances.keys():
+			self.grouptosprite(chunk)
+		self.baked = 1
 
 		
 
@@ -321,6 +325,9 @@ class object_manager:
 			for inst in allinst[0]:
 				self.datatoinst(inst[1],inst[0])
 		self.tracker = allinst[1] + 1
+		
+		if univars.bakeonreload:
+			om.BAKE()
 		
 	def decodeobj(self):
 		with open(f"Saved/tilemaps/{self.loadedmap}/non-inst.json","r") as file:
@@ -875,6 +882,8 @@ class object_manager:
 		for obj in self.objgroup:
 			if obj.indist:
 				univars.screen.blit(obj.image,obj.rect)
+
+
 
 
 

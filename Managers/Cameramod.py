@@ -1,4 +1,5 @@
 import random
+import pygame
 import Managers.univars as univars
 class camera:
 	def __init__(self,pos,size):
@@ -18,7 +19,10 @@ class camera:
 		self.b = self.y
 		self.x = self.a
 		self.y = self.b
-		self.size = self.givensize 
+		self.size = self.givensize * ((univars.screen_w/pygame.display.get_desktop_sizes()[0][0]) ** 0.25)
+		# self.size = self.givensize
+		# print((1- (univars.screen_w/pygame.display.get_desktop_sizes()[0][0])))
+		# print((univars.screen_w/pygame.display.get_desktop_sizes()[0][0]))
 		self.x += random.randint(-1 * self.screenshakevalue,self.screenshakevalue)
 		self.y += random.randint(-1 * self.screenshakevalue,self.screenshakevalue)
 

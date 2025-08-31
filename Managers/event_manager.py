@@ -91,7 +91,7 @@ class event_manager:
 	def next(self):
 		self.key = pygame.key.get_pressed()
 		self.mouse = pygame.mouse.get_pressed()
-		self.mousepos = pygame.mouse.get_pos()
+		self.mousepos = [pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1]]
 		self.Mouseb = False
 		self.Mouser = False
 		self.scroll = 0
