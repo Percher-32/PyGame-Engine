@@ -116,9 +116,9 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 map = "maindemo"
-startstate = "debugame"
+startstate = "edit"
 startshaderstate = 0
-bakeonreload = 0
+bakeonreload = 1
 showdebugonstart = 0
 profile = 0
 safemode = 1

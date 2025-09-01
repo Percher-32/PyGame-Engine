@@ -192,7 +192,7 @@ class object_manager:
 
 	def grouptosprite(self,chunk):
 		
-		if chunk in self.noncolinstances.keys() and len(self.noncolinstances[chunk]) > 1:
+		if chunk in self.noncolinstances.keys() and not "#BAKEDINST" in self.noncolinstances[chunk].sprites()[0].name:
 			size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
 			chunksprite = pygame.Surface(size)
 			chunksprite.fill((random.randint(0,255),random.randint(0,255),random.randint(0,255)))
@@ -207,11 +207,11 @@ class object_manager:
 				chunksprite.blit(instance.bart,relativepos)
 			self.noncolinstances[chunk] = pygame.sprite.LayeredUpdates()
 			self.noncolghostinstances[chunk] = pygame.sprite.Group()
-			newt = inst.inst("UNOS",univars.grandim,str(chunk) + "noncol" + "#BAKEDINST",(chunk[0] * univars.grandim * univars.renderdist[0]) + univars.grandim/2,(chunk[1] * univars.grandim * univars.renderdist[1]) + univars.grandim/2,0,[1,1],"unot",255,[chunksprite],size,0,0,0)
+			newt = inst.inst("UNOS",univars.grandim,str(chunk) + "noncol" + "#BAKEDINST" + self.loadedmap,(chunk[0] * univars.grandim * univars.renderdist[0]) + univars.grandim/2,(chunk[1] * univars.grandim * univars.renderdist[1]) + univars.grandim/2,0,[1,1],"unot",255,[chunksprite],size,0,0,0)
 			self.noncolinstances[chunk].add(newt)
 
 		
-		if chunk in self.instances.keys() and len(self.instances[chunk]) > 1:
+		if chunk in self.instances.keys() and not  "#BAKEDINST" in self.instances[chunk].sprites()[0].name:
 			size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
 			chunksprite = pygame.Surface(size)
 			chunksprite.fill((random.randint(0,255),random.randint(0,255),random.randint(0,255)))
@@ -226,18 +226,19 @@ class object_manager:
 				
 				chunksprite.blit(instance.bart,relativepos)
 			self.instances[chunk] = pygame.sprite.LayeredUpdates()
-			newt = inst.inst("UNOS",univars.grandim,str(chunk) + "col" + "#BAKEDINST",(chunk[0] * univars.grandim * univars.renderdist[0]) + univars.grandim/2,(chunk[1] * univars.grandim * univars.renderdist[1]) + univars.grandim/2,0,[1,1],"unot",255,[chunksprite],size,-1,0,0)
+			newt = inst.inst("UNOS",univars.grandim,str(chunk) + "col" + "#BAKEDINST" + self.loadedmap,(chunk[0] * univars.grandim * univars.renderdist[0]) + univars.grandim/2,(chunk[1] * univars.grandim * univars.renderdist[1]) + univars.grandim/2,0,[1,1],"unot",255,[chunksprite],size,-1,0,0)
 			self.instances[chunk].add(newt)
 			
 	def BAKE(self):
 		"""
 			optimises rendering for all noncolliding instanciates by baking them all into one sprite for each chunk
 		"""
-		if self.baked:
-			self.instables = {}
-			self.noncolinstances = {}
-			self.noncolghostinstances = {}
-			self.ghostinstances = {}
+		# if self.baked:
+		# 	print("AB")
+		# 	self.instables = {}
+		# 	self.noncolinstances = {}
+		# 	self.noncolghostinstances = {}
+		# 	self.ghostinstances = {}
 		for chunk in self.noncolghostinstances.keys():
 			self.grouptosprite(chunk)
 		for chunk in self.ghostinstances.keys():
