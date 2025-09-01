@@ -58,7 +58,10 @@ fakescreen.set_colorkey((0,0,0))
 
 
 uiscreen = pygame.Surface((screen_w,screen_h))
-finalscreen = pygame.display.set_mode((screen_w,screen_h),pygame.OPENGL|pygame.DOUBLEBUF|pygame.SCALED|pygame.FULLSCREEN,vsync=1)
+try:
+    finalscreen = pygame.display.set_mode((screen_w,screen_h),pygame.OPENGL|pygame.DOUBLEBUF|pygame.SCALED|pygame.FULLSCREEN,vsync=1)
+except:
+    finalscreen = pygame.display.set_mode((screen_w,screen_h),pygame.OPENGL|pygame.DOUBLEBUF|pygame.SCALED|pygame.FULLSCREEN,vsync=0)
 realscreeen = pygame.Surface((screen_w,screen_h))
 pygame.display.set_caption(name)
 
@@ -112,7 +115,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 map = "maindemo"
 startstate = "debugame"
 startshaderstate = 0
-bakeonreload = 1
+bakeonreload = 0
 showdebugonstart = 0
 profile = 0
 safemode = 1
