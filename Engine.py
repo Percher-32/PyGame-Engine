@@ -931,11 +931,37 @@ class Game(Gamemananager.GameManager):
 						railrot = railpiece.rot + 45
 					if not self.lastrail  == rail or not self.lastdirrail == railrot:
 						self.sp("entervel",univars.func.dist([0,0],self.gp("act_vel")) )
-						self.sp("dirforrail",self.lastdirslant)
-						if self.gp("dirforrail") == "l":
+
+
+						
+
+						axisvec = pygame.math.Vector2(self.key["x"],self.key["y"])
+						if axisvec.length() == 0:
+							axisvec = pygame.math.Vector2(self.gp("des_vel",0),self.gp("des_vel",1))
+						if axisvec.length() == 0:
+							axisvec = pygame.math.Vector2(1,0)
+						# print(axisvec.length())
+						axisvec = axisvec.normalize()
+
+						railvec = pygame.Vector2()
+						railvec.from_polar((1,railrot))
+						# print(railvec)
+						# Vector2.from_polar((r, phi))
+
+						if axisvec.dot(railvec) > 0:
 							raildir = 1
+							self.sp("dirforrail","l")
 						else:
 							raildir = -1
+							self.sp("dirforrail","r")
+
+
+
+						# self.sp("dirforrail",self.lastdirslant)
+						# if self.gp("dirforrail") == "l":
+						# 	raildir = 1
+						# else:
+						# 	raildir = -1
 
 
 
@@ -954,7 +980,6 @@ class Game(Gamemananager.GameManager):
 						# if self.gp("entervel") < 1:
 						# 	self.sp("entervel",1)
 
-
 					
 					if abs(self.key["x"]) > 0.5 and not self.key["jump"]:
 						if self.key["x"] > 0:
@@ -963,6 +988,27 @@ class Game(Gamemananager.GameManager):
 						else:
 							self.sp("dirforrail","r")
 							self.sp("entervel",self.gp("entervel") + abs(self.key["x"] * 2 ))
+							
+					axisvec = pygame.math.Vector2(self.key["x"],self.key["y"])
+					if axisvec.length() == 0:
+						axisvec = pygame.math.Vector2(self.gp("des_vel",0),self.gp("des_vel",1))
+					if axisvec.length() == 0:
+						axisvec = pygame.math.Vector2(1,0)
+					# print(axisvec.length())
+					axisvec = axisvec.normalize()
+
+					railvec = pygame.Vector2()
+					railvec.from_polar((1,railrot))
+					# print(railvec)
+					# Vector2.from_polar((r, phi))
+
+					if axisvec.dot(railvec) > 0:
+						raildir = 1
+						self.sp("dirforrail","l")
+					else:
+						raildir = -1
+						self.sp("dirforrail","r")
+
 
 					if self.gp("entervel") > 160:
 						self.sp("entervel",160)
@@ -971,11 +1017,7 @@ class Game(Gamemananager.GameManager):
 	
 
 
-					if self.gp("dirforrail") == "l":
-						raildir = 1
-					else:
-						raildir = -1
-
+				
 					self.sp("desrot",railrot)
 					
 					railvel = [  self.gp("entervel") * math.cos((railrot/180) * math.pi) * raildir, self.gp("entervel")  * math.sin((railrot/180) * math.pi) * raildir ]

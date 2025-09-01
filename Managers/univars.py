@@ -80,6 +80,9 @@ sizeoffsets = {}
 
 instables = ["dirt","grass","def","slantl","slantr","slantlbot","slantrbot","rail","rail-diag"]
 
+domainexpansions = {}
+
+
 extras = [["def","camz",[20,20]]]
 """
     [Original sprite  ,  new sprite type  ,  size scale]
