@@ -1524,6 +1524,7 @@ class Game(Gamemananager.GameManager):
 
 
 
+
 rm = Game(univars.screencol,fm)
 
 if univars.profile == 1:
