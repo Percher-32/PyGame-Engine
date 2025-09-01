@@ -1220,6 +1220,10 @@ class TiledSoftwre:
 			elif self.commmandtring.rstrip() == "bake":
 				object_manager.BAKE()
 				self.commmandtring = ""
+			elif self.commmandtring.rstrip() == "baked":
+				GameManager.print(object_manager.baked)
+				self.showconsolebool = 1
+				self.commmandtring = ""
 			elif   "print:" in self.commmandtring.rstrip():
 				self.cht = self.commmandtring.rstrip().split(":")[1]
 				GameManager.print(self.cht)

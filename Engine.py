@@ -30,7 +30,7 @@ class Game(Gamemananager.GameManager):
 		self.ingametime = 0
 		self.publicvariables["mood"] = "daybreak"
 		self.publicvariables["showater"] = 1
-		self.publicvariables["waterh"] = 0.9
+		self.publicvariables["waterh"] = 0.8
 		self.lookaheady = 0
 		self.lookahead = 100
 		self.actualwaterheight = 0
@@ -155,7 +155,7 @@ class Game(Gamemananager.GameManager):
 
 
 
-		self.actualwaterheight = (cam.y/univars.screen.get_height() * 1.7  * cam.size)-( + self.publicvariables["waterh"]) + ((1-cam.size * univars.pixelscale/10)* 1.46)
+		self.actualwaterheight = (cam.y/univars.screen.get_height() * 2.4  * cam.size)-( + self.publicvariables["waterh"]) + ((1-cam.size * univars.pixelscale/10)* 1.46)
 		if self.publicvariables["showater"]:
 			sd.program["waterlevel"] = self.actualwaterheight
 		else:
@@ -163,7 +163,7 @@ class Game(Gamemananager.GameManager):
 		
 
 		
-		sd.program["camx"] = cam.x/univars.startdims[0]
+		sd.program["camx"] = cam.x/(univars.startdims[0] * univars.scaledown)
 
 
 			
@@ -359,8 +359,8 @@ class Game(Gamemananager.GameManager):
 
 		#UI
 		um.changestate("maingame",None)
-		um.addrect([1000 -19,100 + 30 - 30],["maingame"],[-0.5 + 0.02,0.8],"dashbarback",color=(0,0,0),fromstart=1,alpha = 200)
-		um.addrect([1000 - 30 - 20,90 - 30],["maingame"],[-0.5 + 0.017 + 0.02,0.8],"dashbar",color=(50,100,100),fromstart=1,alpha = 200)
+		um.addrect([(1000 -19)/2 + 20,100 + 30 - 30],["maingame"],[(-0.5 + 0.02) - 0.5,0.8],"dashbarback",color=(0,0,0),fromstart=1,alpha = 200)
+		um.addrect([1000 - 30 - 20,90 - 30],["maingame"],[(-0.5 + 0.04/2 + 0.02) - 0.5,0.8],"dashbar",color=(225,100,100),fromstart=1,alpha = 200)
 
 
 
@@ -373,14 +373,16 @@ class Game(Gamemananager.GameManager):
 		cm.setcond("playercam","shake",0)
 		
 		self.sp("wantime",1)
+		# self.sp("dashmeter",abs(math.sin(fm.frame/100) * 100))
 		self.sp("dashmeter",min([100,self.gp("dashmeter")]))
 		self.sp("dashmeter",max([0,self.gp("dashmeter")]))
+		# print(self.gp("dashmeter"))
 
 
-		um.elements["dashbar"]["dimensions"][0] = abs((self.gp("dashmeter") * 10) - 50)
+		um.elements["dashbar"]["dimensions"][0] = max([((self.gp("dashmeter") * 10) - 50)/2,0])
 		if self.gp("dashmeter") <= 0:
 			um.elements["dashbar"]["dimensions"][0] = 0
-		um.elements["dashbar"]["color"] = (um.elements["dashbar"]["color"][0], um.elements["dashbar"]["color"][1] ,min([self.gp("dashmeter") / 100 * 225 + 100,255]))
+		um.elements["dashbar"]["color"] = (min([(self.gp("dashmeter") / 100 * 225 + 100)/10,255]), min([(self.gp("dashmeter") / 100 * 225 + 100)/2,255]) ,min([self.gp("dashmeter") / 100 * 225 + 100,255]))
 		# um.elements["dashbar"]["pos"][0] = self.gp("dashmeter")
 		# um.showvar("pos",om.objects["player"]["pos"],[0,0])
 		collision = om.collide9("player",0,cam,self.dim,ignore= ["playersprite","skateboard"])
@@ -494,6 +496,9 @@ class Game(Gamemananager.GameManager):
 				if not rail:
 					if not (collision["topmid"]["inst"] and collision["botmid"]["inst"] and collision["midright"]["inst"] and collision["midleft"]["inst"] ):
 						#IN HERE IS EITHER [NO MIDMID] OR [Yes MIDMID AND GROUND]
+
+						if self.lastrail:
+							self.spin(21,0.4,0.1)
 
 						#x dir movement
 						if abs(self.key["x"]) > 0:
@@ -944,20 +949,22 @@ class Game(Gamemananager.GameManager):
 							self.sp("jumpable",False)
 
 						
-						# #water skid
-						# if 0.7 > self.actualwaterheight > 0.5 and not (self.key["jump"] and self.gp("act_vel")[1] >= 0) :
-						# 	if abs(self.gp("act_vel")[0]) >= 120:
-						# 		if self.gp("act_vel")[0] > 100:
-						# 			parts = [om.objects["player"]["pos"][0] -5,om.objects["player"]["pos"][1] + 9]
-						# 		else:
-						# 			parts = [om.objects["player"]["pos"][0] -5,om.objects["player"]["pos"][1] + 9]
-						# 		vel = [self.gp("act_vel")[0]/self.dim * 4,4]
-						# 		pm.particlespawnbluprint(parts,"water",initvel= vel)
-						# 		self.sp("act_vel",[   self.gp("act_vel")[0] , 0  ]  ) 
-						# 		self.sp("des_vel",[   self.gp("des_vel")[0] , 0  ]  ) 
-						# 		om.objects["player"]["pos"][1] = (320 * self.publicvariables["waterh"]) + 780 + (math.sin(fm.frame/10) * 15)
-						# 		self.sp("jumpable",1)
-						# 		self.sp("candj",0)
+						#water skid
+						self.println(self.actualwaterheight,2)
+						if 0.7 > self.actualwaterheight > 0.3 and not (self.key["jump"] and self.gp("act_vel")[1] >= 0) :
+							if abs(self.gp("act_vel")[0]) >= 120:
+								if self.gp("act_vel")[0] > 100:
+									parts = [om.objects["player"]["pos"][0] -5,om.objects["player"]["pos"][1] + 9]
+								else:
+									parts = [om.objects["player"]["pos"][0] -5,om.objects["player"]["pos"][1] + 9]
+								vel = [self.gp("act_vel")[0]/self.dim * 4,4]
+								pm.particlespawnbluprint(parts,"water",initvel= vel)
+								self.sp("act_vel",[   self.gp("act_vel")[0] , 0  ]  ) 
+								self.sp("des_vel",[   self.gp("des_vel")[0] , 0  ]  ) 
+								om.objects["player"]["pos"][1] = 768 + 0 + (math.sin(fm.frame/10) * 10)
+
+								self.sp("jumpable",1)
+								self.sp("candj",0)
 
 
 				else:
