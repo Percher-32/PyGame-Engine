@@ -453,7 +453,6 @@ class Game(Gamemananager.GameManager):
 			if pygame.math.Vector2(self.key["x"],self.key["y"] ).length() > 0:
 				self.joyaxis = pygame.math.Vector2(-1 *self.key["x"],1 *self.key["y"] )
 				self.joyaxis.normalize()
-			self.println(self.joyaxis,4)
 			enaxis = self.joyaxis
 			vec = None
 			closeness = None
@@ -463,7 +462,7 @@ class Game(Gamemananager.GameManager):
 				distvec = playervec - emvec
 				if distvec.length() > 0:
 					distvec.normalize()
-					if obj.info["type"] == "enemy-L":
+					if obj.info["type"] in ["enemy-L"] and om.get_value(obj.name,"canhome"):
 						if vec == None:
 							vec = obj
 							closeness = 1 - distvec.dot(enaxis) 
@@ -659,10 +658,10 @@ class Game(Gamemananager.GameManager):
 
 						#INITIATE HOMING ATTACK
 						if not self.gp("homing") == 1:
-							if self.key["attack"]:
+							if self.key["secondary"]:
 								if not vec == None:
 									if not self.isthere("homecooldown"):
-										if not self.lastkey["attack"]:
+										if not self.lastkey["secondary"]:
 											self.wait("homecooldown",0.2)
 											self.sp("homing",1)
 											self.sp("target",vec)
@@ -693,13 +692,13 @@ class Game(Gamemananager.GameManager):
 										self.sp("act_vel",200,1)
 
 						if self.gp("homing") == 2:
-							if self.key["attack"]:
+							if self.key["secondary"]:
 								# self.sp("des_vel",[0,0])
 								self.sp("wantime",0.1)
 								self.gp("target").info["pos"] = om.objects["player"]["pos"]
 							else:
 								self.sp("homing",0)
-								if self.lastkey["attack"]:
+								if self.lastkey["secondary"]:
 									od = self.timers.copy()
 									for timer in self.timers.keys():
 										if "#Throwing" in timer:
@@ -719,9 +718,9 @@ class Game(Gamemananager.GameManager):
 
 									self.wait("dashrem",2)
 									# cm.setcond("playercam","shake",6)
-									actmult = [100,100]
+									actmult = [30,30]
 									actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
-									desmult = [100,100]
+									desmult = [30,30]
 									desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
 									self.spin(21,0.4,0.1)
 
@@ -737,10 +736,14 @@ class Game(Gamemananager.GameManager):
 								else:
 									self.wait("dashrem",2)
 									# cm.setcond("playercam","shake",6)
-									actmult = [50,50]
+									actmult = [160,160]
 									actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
-									desmult = [50,50]
+									desmult = [160,160]
 									desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
+
+									if actmult == [0,0]:
+										actmult = [160,50]
+										desmult = [160,50]
 									self.spin(21,0.4,0.1)
 
 									self.sp("dashav",self.listdiv(actvel,80))
@@ -825,15 +828,15 @@ class Game(Gamemananager.GameManager):
 
 						
 
-						#slingshot
-						if self.key["secondary"] and self.gp("dashmeter") > 0 and not ground:
-							self.sp("slinging",1)
-							self.sp("wantime",0.1)
-							self.sp("dashmeter",self.gp("dashmeter") - self.dt/10)
-							om.speed = self.unilerp(om.speed,0.1,5,roundto=2,useigt=0) 
-							self.sp("slomorot",vecaxis.angle)
-						else:
-							self.sp("slinging",0)
+						# #slingshot
+						# if self.key["secondary"] and self.gp("dashmeter") > 0 and not ground:
+						# 	self.sp("slinging",1)
+						# 	self.sp("wantime",0.1)
+						# 	self.sp("dashmeter",self.gp("dashmeter") - self.dt/10)
+						# 	om.speed = self.unilerp(om.speed,0.1,5,roundto=2,useigt=0) 
+						# 	self.sp("slomorot",vecaxis.angle)
+						# else:
+						# 	self.sp("slinging",0)
 
 
 							if self.gp("lastframeswing"):
@@ -918,6 +921,7 @@ class Game(Gamemananager.GameManager):
 
 				else:
 					#RAIL
+					self.sp("homing",0)
 					om.speed = univars.func.lerp(om.speed,1,5,roundto=2)
 					self.sp("slinging",0)
 					self.sp("jumpable",True)
@@ -988,7 +992,7 @@ class Game(Gamemananager.GameManager):
 						else:
 							self.sp("dirforrail","r")
 							self.sp("entervel",self.gp("entervel") + abs(self.key["x"] * 2 ))
-							
+
 					axisvec = pygame.math.Vector2(self.key["x"],self.key["y"])
 					if axisvec.length() == 0:
 						axisvec = pygame.math.Vector2(self.gp("des_vel",0),self.gp("des_vel",1))
@@ -1429,6 +1433,7 @@ class Game(Gamemananager.GameManager):
 			# om.set_value(id,"clipspeed",5)
 
 		if info["type"] == "enemy-L":
+			om.set_value(id,"canhome",1)
 			om.set_value(id,"vel",[0,0])
 			om.set_value(id,"tarvel",[0,0])
 			om.set_value(id,"clipspeed",5)
@@ -1445,6 +1450,7 @@ class Game(Gamemananager.GameManager):
 		if info["type"] == "enemy-L":
 			# om.set_value(id,"vel",self.unilerp(om.get_value(id,"vel"),om.get_value(id,"tarvel"),om.get_value(id,"clipspeed")))
 			if self.isthere("#Throwing" + str(id)):
+				om.set_value(id,"canhome",0)
 				if not om.get_value(id,"throwvel") == 0:
 					# print(self.gp("throwaxis"))
 					om.set_value(id,"vel",om.get_value(id,"throwvel"))
@@ -1452,6 +1458,8 @@ class Game(Gamemananager.GameManager):
 					if len(om.collide(id,0,cam,0,0)["inst"]) > 0:
 						om.translate(self,id,[om.get_value(id,"throwvel")[0]*2,om.get_value(id,"throwvel")[1]*-2],usedt=1)
 						om.set_value(id,"throwvel",[0,0])
+			else:
+				om.set_value(id,"canhome",1)
 
 			# om.translate(self,id,om.get_value(id,"vel"),usedt=1)
 
