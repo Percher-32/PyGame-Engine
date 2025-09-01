@@ -753,7 +753,7 @@ class object_manager:
 				self.noncolghostinstances[name] = pygame.sprite.Group()
 				self.noncolghostinstances[name].add(newtg)
 
-	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int , keepprev = False,stagename = None,layer = 0,colforinst=True,sn = 0):
+	def add(self,GM,pos:tuple,sprites:str,rot:int,type,sizen,dim:int , keepprev = False,stagename = None,layer = 0,colforinst=True,sn = 0):
 		"""adds an object to the manager  , gives an id of type str"""
 		if stagename == None:
 			stagename = sprites
@@ -789,6 +789,8 @@ class object_manager:
 			finalobj = inst.obj(str(self.tracker),add,spritelist)
 			self.objgroup.add(finalobj,layer = layer)
 			self.objghostgroup.add(ObjGhost(finalobj))
+			GM.oncreate(str(self.tracker),add)
+
 		else:
 			self.addinst(pos,sprites,dim,rot,type,sizen,stagename,layer,colforinst,sn,keepprev=keepprev)
 
@@ -798,7 +800,7 @@ class object_manager:
 		
 
 
-	def adds(self,name,pos,sprites,type,rot,sizen,alpha,layer):
+	def adds(self,GM,name,pos,sprites,type,rot,sizen,alpha,layer):
 		"""add special for more unique items"""
 		dummy  = univars.func.getsprites(sprites)[0]
 		size = dummy.get_size()
@@ -813,6 +815,7 @@ class object_manager:
 		self.objects.update({str(name):add})
 		finalobj = inst.obj(str(name),add,spritelist)
 		self.objgroup.add(finalobj,layer=layer)
+		GM.oncreate(name,self.objects[name])
 
 	def tile(self):
 		speed = self.speed

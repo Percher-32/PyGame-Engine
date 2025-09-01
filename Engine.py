@@ -62,7 +62,7 @@ class Game(Gamemananager.GameManager):
 
 
 		if self.states == "test":
-			om.add((0,0),"player",0,"green",[1,1],self.dim)
+			om.add(self,(0,0),"player",0,"green",[1,1],self.dim)
 
 		if sm.state == "game":
 			om.BAKE()
@@ -246,7 +246,7 @@ class Game(Gamemananager.GameManager):
 
 		#create player
 		
-		om.adds("player",startpos,"player","player",0,[1,1],400,5)
+		om.adds(self,"player",startpos,"player","player",0,[1,1],400,5)
 		om.objects["player"]["rendercond"] = False
 
 		self.sp("dashmeter",100)
@@ -255,12 +255,12 @@ class Game(Gamemananager.GameManager):
 		self.sp("deshrem",0)
 
 		#creates the player sprite you actually see
-		om.adds("playersprite",[-1400,400],"player","player",0,[1,1],400,5)
+		om.adds(self,"playersprite",[-1400,400],"player","player",0,[1,1],400,5)
 		om.objects["playersprite"]["rendercond"] = True
 		om.includeflipping("playersprite")
 
 		#creates the skateboard
-		om.adds("skateboard",[-1400,400],"skateboard","skateboard",0,[1,1],400,5)
+		om.adds(self,"skateboard",[-1400,400],"skateboard","skateboard",0,[1,1],400,5)
 		om.objects["skateboard"]["rendercond"] = True
 
 		#desired velocity
@@ -349,7 +349,7 @@ class Game(Gamemananager.GameManager):
 
 
 		#In_game_UI
-		om.adds("enemyzoom",[0,0],"enemyzoom","In_Game_UI",0,[1.6,1.6],255,5)
+		om.adds(self,"enemyzoom",[0,0],"enemyzoom","In_Game_UI",0,[1.6,1.6],255,5)
 		om.objects["enemyzoom"]["rendercond"] = 0
 
 
@@ -462,7 +462,7 @@ class Game(Gamemananager.GameManager):
 				distvec = playervec - emvec
 				if distvec.length() > 0:
 					distvec.normalize()
-					if obj.info["type"] in ["enemy-L"] and om.get_value(obj.name,"canhome"):
+					if obj.info["type"] in ["enemy-L","omnispring"] and om.get_value(obj.name,"canhome"):
 						if vec == None:
 							vec = obj
 							closeness = 1 - distvec.dot(enaxis) 
@@ -677,7 +677,7 @@ class Game(Gamemananager.GameManager):
 								nenvec = envec.normalize()
 								nenvec = [nenvec.x,nenvec.y * -1]
 								ground = 0
-								if self.gp("target").info["type"] == "enemy-L":
+								if self.gp("target").info["type"] in ["enemy-L","omnispring"]:
 									if envec.length() > 40:
 										a = (380 + (abs(envec.length()/3)))/2
 										d = (380 + (abs(envec.length()/3)))/2
@@ -692,62 +692,93 @@ class Game(Gamemananager.GameManager):
 										self.sp("act_vel",200,1)
 
 						if self.gp("homing") == 2:
-							if self.key["secondary"]:
-								# self.sp("des_vel",[0,0])
-								self.sp("wantime",0.1)
-								self.gp("target").info["pos"] = om.objects["player"]["pos"]
-							else:
-								self.sp("homing",0)
-								if self.lastkey["secondary"]:
-									od = self.timers.copy()
-									for timer in self.timers.keys():
-										if "#Throwing" in timer:
-											od.pop(timer)
-									self.timers = od
-
-									
-									if round(axis[0]) == 0:
-										if round(axis[1]) == 0:
-											actmult = [0,100]
-									actmult = [axis[0] * 70,axis[1] * 70 - 30]
-
-
-									om.set_value(self.gp("target").name,"throwvel",actmult)
-									self.wait("#Throwing" + self.gp("target").name,1,0)
-
-
-									self.wait("dashrem",2)
-									# cm.setcond("playercam","shake",6)
-									actmult = [30,30]
-									actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
-									desmult = [30,30]
-									desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
-									self.spin(21,0.4,0.1)
-
-									self.sp("dashav",self.listdiv(actvel,80))
-									self.sp("dashdv",self.listdiv(desvel,80))
-
-									self.sp("act_vel",0,1)
-									self.sp("des_vel",0,1)
-									self.sp("act_vel",0,0)
-									self.sp("des_vel",0,0)
-									self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
-									self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
+							if self.gp("target").info["type"] == "enemy-L":
+								if self.key["secondary"]:
+									# self.sp("des_vel",[0,0])
+									self.sp("wantime",0.1)
+									self.gp("target").info["pos"] = om.objects["player"]["pos"]
 								else:
-									self.wait("dashrem",2)
+									self.sp("homing",0)
+									if self.lastkey["secondary"]:
+										od = self.timers.copy()
+										for timer in self.timers.keys():
+											if "#Throwing" in timer:
+												od.pop(timer)
+										self.timers = od
+
+										
+										if round(axis[0]) == 0:
+											if round(axis[1]) == 0:
+												actmult = [0,100]
+										actmult = [axis[0] * 70,axis[1] * 70 - 30]
+
+
+										om.set_value(self.gp("target").name,"throwvel",actmult)
+										self.wait("#Throwing" + self.gp("target").name,1,0)
+
+
+										self.wait("dashrem",2)
+										# cm.setcond("playercam","shake",6)
+										actmult = [30,30]
+										actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
+										desmult = [30,30]
+										desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
+										self.spin(21,0.4,0.1)
+
+										self.sp("dashav",self.listdiv(actvel,80))
+										self.sp("dashdv",self.listdiv(desvel,80))
+
+										self.sp("act_vel",0,1)
+										self.sp("des_vel",0,1)
+										self.sp("act_vel",0,0)
+										self.sp("des_vel",0,0)
+										self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
+										self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
+									else:
+										self.wait("dashrem",2)
+										# cm.setcond("playercam","shake",6)
+										actmult = [160,160]
+										actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
+										desmult = [160,160]
+										desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
+
+										if actmult == [0,0]:
+											actmult = [160,50]
+											desmult = [160,50]
+										self.spin(21,0.4,0.1)
+
+										self.sp("dashav",self.listdiv(actvel,80))
+										self.sp("dashdv",self.listdiv(desvel,80))
+
+										self.sp("act_vel",0,1)
+										self.sp("des_vel",0,1)
+										self.sp("act_vel",0,0)
+										self.sp("des_vel",0,0)
+										self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
+										self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
+							if self.gp("target").info["type"] == "omnispring":
+								if self.key["secondary"]:
+									self.sp("des_vel",[0,0])
+									self.sp("act_vel",[0,0])
+									self.sp("wantime",0.5)
+									om.objects["player"]["pos"] = self.gp("HOLD")
+								else:
+									self.sp("jumpable",1)
+									self.sp("homing",0)
+									self.wait("bouncerem",3)
 									# cm.setcond("playercam","shake",6)
-									actmult = [160,160]
+									actmult = [150,150]
 									actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
-									desmult = [160,160]
+									desmult = [150,150]
 									desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
 
 									if actmult == [0,0]:
 										actmult = [160,50]
 										desmult = [160,50]
-									self.spin(21,0.4,0.1)
+									self.spin(23,0.4,0.1)
 
-									self.sp("dashav",self.listdiv(actvel,80))
-									self.sp("dashdv",self.listdiv(desvel,80))
+									self.sp("dashav",self.listdiv(actvel,16))
+									self.sp("dashdv",self.listdiv(desvel,16))
 
 									self.sp("act_vel",0,1)
 									self.sp("des_vel",0,1)
@@ -755,6 +786,7 @@ class Game(Gamemananager.GameManager):
 									self.sp("des_vel",0,0)
 									self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
 									self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
+
 
 
 								
@@ -876,6 +908,13 @@ class Game(Gamemananager.GameManager):
 							
 							# cm.setcond("playercam","shake",0)
 
+						if self.isthere("bouncerem"):
+							self.unilerp(self.gp("dashav"),[0,0],7)
+							self.unilerp(self.gp("dashdv"),[0,0],7)
+							self.sp("act_vel",self.listadd((self.gp("act_vel"),self.gp("dashav"))))
+							self.sp("des_vel",self.listadd((self.gp("des_vel"),self.gp("dashdv"))))
+							
+							# cm.setcond("playercam","shake",0)
 
 
 
@@ -1426,8 +1465,8 @@ class Game(Gamemananager.GameManager):
 
 	def oncreate(self,id,info):
 		if info["name"] == "target":
-			om.objects[id]["type"] = "enemy-L"
-			info["type"] = "enemy-L"
+			om.objects[id]["type"] = "omnispring"
+			info["type"] = "omnispring"
 			# om.set_value(id,"vel",[0,0])
 			# om.set_value(id,"tarvel",[0,0])
 			# om.set_value(id,"clipspeed",5)
@@ -1437,6 +1476,10 @@ class Game(Gamemananager.GameManager):
 			om.set_value(id,"vel",[0,0])
 			om.set_value(id,"tarvel",[0,0])
 			om.set_value(id,"clipspeed",5)
+
+
+		if info["type"] == "omnispring":
+			om.set_value(id,"canhome",1)
 
 
 		# if info["type"] == "enemy":

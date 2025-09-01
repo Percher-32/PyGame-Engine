@@ -420,7 +420,7 @@ class TiledSoftwre:
 											# 		self.sn = 1
 
 										if not already or bevel or bevelsleek:
-											self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer,colforinst=self.coll,sn = self.sn)
+											self.om.add(GameManager,(x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer,colforinst=self.coll,sn = self.sn)
 
 								self.coll = savedcol
 								self.sn = savedsn
@@ -469,7 +469,7 @@ class TiledSoftwre:
 									x = self.pos1[0] - univars.grandim
 								for y in range(self.pos1[1],self.pos2[1],yinc):
 									x += xinc
-									self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer,colforinst=self.coll,sn = self.sn)
+									self.om.add(GameManager,(x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer,colforinst=self.coll,sn = self.sn)
 							if GameManager.event_manager.key[pygame.K_g]:
 								self.pos2 = list(gridpos)
 								self.grip = 0
@@ -514,7 +514,7 @@ class TiledSoftwre:
 
 					#to place
 					if GameManager.event_manager.mouse[0]:
-						object_manager.add(gridpos,self.spritelooks[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],stagename=self.spritenames[self.sprite],layer = self.layer,colforinst=self.coll,sn = self.sn)
+						object_manager.add(GameManager,gridpos,self.spritelooks[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],stagename=self.spritenames[self.sprite],layer = self.layer,colforinst=self.coll,sn = self.sn)
 
 					#to remove
 					if GameManager.event_manager.mouse[2]:
