@@ -3,6 +3,7 @@ import pygame
 import json
 import Managers.inst as inst
 import os
+import Managers.univars as univars
 pygame.joystick.init()
 joysticks = [pygame.joystick.Joystick(i) for i in range (pygame.joystick.get_count())] 
 for joystick in joysticks:
@@ -91,7 +92,7 @@ class event_manager:
 	def next(self):
 		self.key = pygame.key.get_pressed()
 		self.mouse = pygame.mouse.get_pressed()
-		self.mousepos = [pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1]]
+		self.mousepos = [pygame.mouse.get_pos()[0]/univars.scaledown,pygame.mouse.get_pos()[1]/univars.scaledown]
 		self.Mouseb = False
 		self.Mouser = False
 		self.scroll = 0

@@ -66,7 +66,7 @@ class GameManager():
 		self.smstate = sm.state
 		self.boxes = []
 		Tiled.extra(univars.extras)
-		om.loadtilemap(univars.map)
+		om.loadtilemap(self,univars.map)
 		self.clock = pygame.time.Clock()
 
 

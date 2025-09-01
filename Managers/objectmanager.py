@@ -157,16 +157,17 @@ class object_manager:
 	# 	self.showall = False
 	# 	self.speed = 0
 
-	def loadtilemap(self,name):
+	def loadtilemap(self,GM,name):
 		if not name == "null" and os.path.exists(f"Saved/tilemaps/{name}"):
 			self.__init__(self.realscreen,self.screen,univars.grandim,self.aplhainst,self.renderinst)
 			self.loadedmap = name
 			self.decodeinst()
 			self.decodeobj()
+			GM.roster()
 		else:
 			self.__init__(self.realscreen,self.screen,univars.grandim,self.aplhainst,self.renderinst)
 
-	def savetilemap(self,name,check = False):
+	def savetilemap(self,GM,name,check = False):
 		if not self.baked:
 			if os.path.exists(f"Saved/tilemaps/{name}") and not check:
 				return "No"
@@ -179,12 +180,12 @@ class object_manager:
 				with open(f"Saved/tilemaps/{name}/non-inst.json","w") as file:
 					todump = self.objects
 					json.dump(todump,file)
-				self.loadtilemap(name)
+				self.loadtilemap(GM,name)
 				return "True"
 		else:
 			pass
-	def forcesavetilemap(self,name):
-		self.savetilemap(name,check=True)
+	def forcesavetilemap(self,GM,name):
+		self.savetilemap(GM,name,check=True)
 		
 
 	def getcull(self,pos,grid_size,dim,ignore = []) -> list:
@@ -192,7 +193,7 @@ class object_manager:
 
 	def grouptosprite(self,chunk):
 		
-		if chunk in self.noncolinstances.keys() and not "#BAKEDINST" in self.noncolinstances[chunk].sprites()[0].name:
+		if chunk in self.noncolinstances.keys() and len(self.noncolinstances[chunk]) > 1:
 			size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
 			chunksprite = pygame.Surface(size)
 			chunksprite.fill((random.randint(0,255),random.randint(0,255),random.randint(0,255)))
@@ -211,7 +212,7 @@ class object_manager:
 			self.noncolinstances[chunk].add(newt)
 
 		
-		if chunk in self.instances.keys() and not  "#BAKEDINST" in self.instances[chunk].sprites()[0].name:
+		if chunk in self.instances.keys() and len(self.instables[chunk]) > 1:
 			size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
 			chunksprite = pygame.Surface(size)
 			chunksprite.fill((random.randint(0,255),random.randint(0,255),random.randint(0,255)))
@@ -233,12 +234,6 @@ class object_manager:
 		"""
 			optimises rendering for all noncolliding instanciates by baking them all into one sprite for each chunk
 		"""
-		# if self.baked:
-		# 	print("AB")
-		# 	self.instables = {}
-		# 	self.noncolinstances = {}
-		# 	self.noncolghostinstances = {}
-		# 	self.ghostinstances = {}
 		for chunk in self.noncolghostinstances.keys():
 			self.grouptosprite(chunk)
 		for chunk in self.ghostinstances.keys():

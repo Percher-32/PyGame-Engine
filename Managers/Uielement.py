@@ -87,7 +87,7 @@ class Uibutton(Uirect):
 
     def extra(self,em,elements,state):
         if em.controller["x"] or em.mouse:
-            if self.rect.collidepoint(pygame.mouse.get_pos()):
+            if self.rect.collidepoint([pygame.mouse.get_pos()[0]/univars.scaledown,pygame.mouse.get_pos()[1]/univars.scaledown]):
                 self.hover = True
                 if em.mouse[0] or em.controller["x"]:
                     self.click = True
@@ -122,7 +122,9 @@ class Uitext(pygame.sprite.Sprite):
                 pos = self.pos
                 self.text = element[self.name]["text"]
                 self.bart = self.realfont.render(self.text, 1, self.col)
-                self.image = pygame.transform.scale_by(self.bart,[element[self.name]["size"]/100,element[self.name]["size"]/100])
+                sc =   element[self.name]["size"]/100 * ((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983 
+                # print(sc)
+                self.image = pygame.transform.scale_by(self.bart,[sc,sc])
                 if self.center:
                     self.rect = self.image.get_rect(center = (pos[0] * univars.realscreeen.get_width()//2 + univars.realscreeen.get_width()//2 ,-1 * pos[1] * univars.realscreeen.get_height()//2   + univars.realscreeen.get_height()//2 ))
                 else:

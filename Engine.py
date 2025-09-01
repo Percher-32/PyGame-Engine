@@ -1319,6 +1319,7 @@ class Game(Gamemananager.GameManager):
 
 
 		#LOOK AHEAD
+
 		if not rail:
 			if self.gp("slinging"):
 				self.lookaheady = self.unilerp(self.lookaheady,self.key["y"] * -20,4,roundto=2,useigt=0)
