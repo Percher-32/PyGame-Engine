@@ -28,7 +28,7 @@ class Game(Gamemananager.GameManager):
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
 		self.ingametime = 0
-		self.publicvariables["mood"] = "afternoon"
+		self.publicvariables["mood"] = "daybreak"
 		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = 0.9
 		self.lookaheady = 0
@@ -71,6 +71,7 @@ class Game(Gamemananager.GameManager):
 		if "game" == self.states:
 			self.initialiseplayer(cm.getcam("def","pos"))
 		if "Editor" == self.states:
+			om.removeid("enemyzoom")
 			cm.setcond("def","pos",cm.getcam("playercam","pos"))
 			cm.setcond("def","size",cm.getcam("playercam","size"))
 
@@ -383,7 +384,7 @@ class Game(Gamemananager.GameManager):
 		# um.elements["dashbar"]["pos"][0] = self.gp("dashmeter")
 		# um.showvar("pos",om.objects["player"]["pos"],[0,0])
 		collision = om.collide9("player",0,cam,self.dim,ignore= ["playersprite","skateboard"])
-		lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 50,om.objects["player"]["pos"][1] + 10 ],0,32,camera=cam,basecolor=(0,1,0))
+		lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 60,om.objects["player"]["pos"][1] + 17 ],0,32,camera=cam,basecolor=(0,1,0))
 		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 17 ],0,32,camera=cam,basecolor=(0,1,0))
 		collisionbox = om.collide("player",0,cam,extra=20)
 		# attackbox = om.collide("player",1,cam,extrax=1000,extray=500)
@@ -858,6 +859,7 @@ class Game(Gamemananager.GameManager):
 										self.sp("rotoffset",self.rotlerp(self.gp("rotoffset"),0,5))
 										self.sp("desrot",self.rotlerp(self.gp("desrot"),self.gp("act_vel")[0]/4,5) )
 
+
 						
 
 						# #slingshot
@@ -1024,13 +1026,9 @@ class Game(Gamemananager.GameManager):
 						# 	self.sp("entervel",1)
 
 					
-					if abs(self.key["x"]) > 0.5 and not self.key["jump"]:
-						if self.key["x"] > 0:
-							self.sp("dirforrail","l")
-							self.sp("entervel",self.gp("entervel") + abs(self.key["x"] * 2 ))
-						else:
-							self.sp("dirforrail","r")
-							self.sp("entervel",self.gp("entervel") + abs(self.key["x"] * 2 ))
+					if abs(self.key["x"]) > 0.5 or abs(self.key["y"]) > 0.5 and not self.key["jump"]:
+						self.sp("entervel",self.gp("entervel") + abs(self.key["x"] * 2 ))
+						self.sp("entervel",self.gp("entervel") + abs(self.key["y"] * 2 ))
 
 					axisvec = pygame.math.Vector2(self.key["x"],self.key["y"])
 					if axisvec.length() == 0:

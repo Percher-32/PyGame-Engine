@@ -212,7 +212,7 @@ class object_manager:
 			self.noncolinstances[chunk].add(newt)
 
 		
-		if chunk in self.instances.keys() and len(self.instables[chunk]) > 1:
+		if chunk in self.instances.keys() and len(self.instances[chunk]) > 1:
 			size = (univars.renderdist[0] * univars.grandim,univars.renderdist[1] * univars.grandim)
 			chunksprite = pygame.Surface(size)
 			chunksprite.fill((random.randint(0,255),random.randint(0,255),random.randint(0,255)))
