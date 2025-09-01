@@ -48,6 +48,9 @@ class inst(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect(topleft = ( (int(round(self.realpos[0] - camera.x) * camera.size + univars.screen.get_width()//2 - self.image.get_width()/2)),int(round((self.realpos[1] - camera.y) * camera.size + univars.screen.get_height()//2 - self.image.get_height()/2))))
 		self.alpha = alpha
 		self.layer = layer
+		if self.name in univars.domainexpansions.keys():
+			self.fakerect.width = univars.domainexpansions[self.name][0]
+			self.fakerect.height = univars.domainexpansions[self.name][1]
 
 
 	def update(self,showall):

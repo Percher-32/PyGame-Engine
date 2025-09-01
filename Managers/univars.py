@@ -13,7 +13,8 @@ scaledown = 3
 
 screen_w = pygame.display.get_desktop_sizes()[0][0]/scaledown
 screen_h = pygame.display.get_desktop_sizes()[0][1]/scaledown
-# print((pygame.display.get_desktop_sizes()[0][0] **2 + pygame.display.get_desktop_sizes()[0][1] **2  ) ** 0.5)
+# print()
+rw = (((((screen_w**2 +  screen_h**2)**0.5)/2202.9071700822983)))
 startdims = (screen_w,screen_h)
 
 camchange = True
@@ -80,6 +81,9 @@ sizeoffsets = {}
 
 instables = ["dirt","grass","def","slantl","slantr","slantlbot","slantrbot","rail","rail-diag"]
 
+domainexpansions = {}
+
+
 extras = [["def","camz",[20,20]]]
 """
     [Original sprite  ,  new sprite type  ,  size scale]
@@ -112,7 +116,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "maindemo"
+map = "demo5"
 startstate = "debugame"
 startshaderstate = 0
 bakeonreload = 0

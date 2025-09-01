@@ -272,8 +272,8 @@ class TiledSoftwre:
 					# print(upscale)
 					# print(1/upscale)
 					# print()
-					a1 = (((   (GameManager.event_manager.mousepos[0]/univars.scaledown -  univars.realscreeen.get_width()//2 )/upscale   )  / camera.size) + camera.x)
-					a2 = (((   (GameManager.event_manager.mousepos[1]/univars.scaledown -  univars.realscreeen.get_height()//2 )/upscaley  )  / camera.size) + camera.y)
+					a1 = (((   (GameManager.event_manager.mousepos[0] -  univars.realscreeen.get_width()//2 )/upscale   )  / camera.size) + camera.x)
+					a2 = (((   (GameManager.event_manager.mousepos[1] -  univars.realscreeen.get_height()//2 )/upscaley  )  / camera.size) + camera.y)
 				
 
 					mousepos = (a1,a2)
@@ -420,7 +420,7 @@ class TiledSoftwre:
 											# 		self.sn = 1
 
 										if not already or bevel or bevelsleek:
-											self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer,colforinst=self.coll,sn = self.sn)
+											self.om.add(GameManager,(x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer,colforinst=self.coll,sn = self.sn)
 
 								self.coll = savedcol
 								self.sn = savedsn
@@ -469,7 +469,7 @@ class TiledSoftwre:
 									x = self.pos1[0] - univars.grandim
 								for y in range(self.pos1[1],self.pos2[1],yinc):
 									x += xinc
-									self.om.add((x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer,colforinst=self.coll,sn = self.sn)
+									self.om.add(GameManager,(x,y),self.spritenames[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],layer = self.layer,colforinst=self.coll,sn = self.sn)
 							if GameManager.event_manager.key[pygame.K_g]:
 								self.pos2 = list(gridpos)
 								self.grip = 0
@@ -514,7 +514,7 @@ class TiledSoftwre:
 
 					#to place
 					if GameManager.event_manager.mouse[0]:
-						object_manager.add(gridpos,self.spritelooks[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],stagename=self.spritenames[self.sprite],layer = self.layer,colforinst=self.coll,sn = self.sn)
+						object_manager.add(GameManager,gridpos,self.spritelooks[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],stagename=self.spritenames[self.sprite],layer = self.layer,colforinst=self.coll,sn = self.sn)
 
 					#to remove
 					if GameManager.event_manager.mouse[2]:
@@ -642,7 +642,7 @@ class TiledSoftwre:
 					self.tm.drawtext2(f"What do you want to name your file: {self.savestring}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
 				else:
 					if not self.savestring == "":
-						if object_manager.savetilemap(self.savestring.rstrip()) == "No":
+						if object_manager.savetilemap(GameManager,self.savestring.rstrip()) == "No":
 							self.mode = 2
 						else:
 							self.mode = 0
@@ -654,7 +654,7 @@ class TiledSoftwre:
 				self.tm.drawtext2(f"{self.savestring.rstrip()} already exists do you want to replace it Y/N","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
 				if GameManager.event_manager.keyb:
 					if GameManager.event_manager.code == "y":
-						object_manager.forcesavetilemap(self.savestring.rstrip())
+						object_manager.forcesavetilemap(GameManager,self.savestring.rstrip())
 						self.mode = 0
 					else:
 						self.mode = 1
@@ -671,7 +671,7 @@ class TiledSoftwre:
 							self.savestring += GameManager.event_manager.code
 					self.tm.drawtext2(f"What file do you want to load: {self.savestring}","pixel2.ttf",60,0,0,0,(0,0,0),-0.8,0)
 				else:
-					object_manager.loadtilemap(self.savestring.rstrip())
+					object_manager.loadtilemap(GameManager,self.savestring.rstrip())
 					self.loadingmap = True
 					self.mode = 0
 
@@ -1219,6 +1219,10 @@ class TiledSoftwre:
 				self.commmandtring = ""
 			elif self.commmandtring.rstrip() == "bake":
 				object_manager.BAKE()
+				self.commmandtring = ""
+			elif self.commmandtring.rstrip() == "baked":
+				GameManager.print(object_manager.baked)
+				self.showconsolebool = 1
 				self.commmandtring = ""
 			elif   "print:" in self.commmandtring.rstrip():
 				self.cht = self.commmandtring.rstrip().split(":")[1]

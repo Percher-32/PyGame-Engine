@@ -157,16 +157,17 @@ class object_manager:
 	# 	self.showall = False
 	# 	self.speed = 0
 
-	def loadtilemap(self,name):
+	def loadtilemap(self,GM,name):
 		if not name == "null" and os.path.exists(f"Saved/tilemaps/{name}"):
 			self.__init__(self.realscreen,self.screen,univars.grandim,self.aplhainst,self.renderinst)
 			self.loadedmap = name
 			self.decodeinst()
 			self.decodeobj()
+			GM.roster()
 		else:
 			self.__init__(self.realscreen,self.screen,univars.grandim,self.aplhainst,self.renderinst)
 
-	def savetilemap(self,name,check = False):
+	def savetilemap(self,GM,name,check = False):
 		if not self.baked:
 			if os.path.exists(f"Saved/tilemaps/{name}") and not check:
 				return "No"
@@ -179,12 +180,12 @@ class object_manager:
 				with open(f"Saved/tilemaps/{name}/non-inst.json","w") as file:
 					todump = self.objects
 					json.dump(todump,file)
-				self.loadtilemap(name)
+				self.loadtilemap(GM,name)
 				return "True"
 		else:
 			pass
-	def forcesavetilemap(self,name):
-		self.savetilemap(name,check=True)
+	def forcesavetilemap(self,GM,name):
+		self.savetilemap(GM,name,check=True)
 		
 
 	def getcull(self,pos,grid_size,dim,ignore = []) -> list:
@@ -207,7 +208,7 @@ class object_manager:
 				chunksprite.blit(instance.bart,relativepos)
 			self.noncolinstances[chunk] = pygame.sprite.LayeredUpdates()
 			self.noncolghostinstances[chunk] = pygame.sprite.Group()
-			newt = inst.inst("UNOS",univars.grandim,str(chunk) + "noncol" + "#BAKEDINST",(chunk[0] * univars.grandim * univars.renderdist[0]) + univars.grandim/2,(chunk[1] * univars.grandim * univars.renderdist[1]) + univars.grandim/2,0,[1,1],"unot",255,[chunksprite],size,0,0,0)
+			newt = inst.inst("UNOS",univars.grandim,str(chunk) + "noncol" + "#BAKEDINST" + self.loadedmap,(chunk[0] * univars.grandim * univars.renderdist[0]) + univars.grandim/2,(chunk[1] * univars.grandim * univars.renderdist[1]) + univars.grandim/2,0,[1,1],"unot",255,[chunksprite],size,0,0,0)
 			self.noncolinstances[chunk].add(newt)
 
 		
@@ -226,18 +227,13 @@ class object_manager:
 				
 				chunksprite.blit(instance.bart,relativepos)
 			self.instances[chunk] = pygame.sprite.LayeredUpdates()
-			newt = inst.inst("UNOS",univars.grandim,str(chunk) + "col" + "#BAKEDINST",(chunk[0] * univars.grandim * univars.renderdist[0]) + univars.grandim/2,(chunk[1] * univars.grandim * univars.renderdist[1]) + univars.grandim/2,0,[1,1],"unot",255,[chunksprite],size,-1,0,0)
+			newt = inst.inst("UNOS",univars.grandim,str(chunk) + "col" + "#BAKEDINST" + self.loadedmap,(chunk[0] * univars.grandim * univars.renderdist[0]) + univars.grandim/2,(chunk[1] * univars.grandim * univars.renderdist[1]) + univars.grandim/2,0,[1,1],"unot",255,[chunksprite],size,-1,0,0)
 			self.instances[chunk].add(newt)
 			
 	def BAKE(self):
 		"""
 			optimises rendering for all noncolliding instanciates by baking them all into one sprite for each chunk
 		"""
-		if self.baked:
-			self.instables = {}
-			self.noncolinstances = {}
-			self.noncolghostinstances = {}
-			self.ghostinstances = {}
 		for chunk in self.noncolghostinstances.keys():
 			self.grouptosprite(chunk)
 		for chunk in self.ghostinstances.keys():
@@ -753,7 +749,7 @@ class object_manager:
 				self.noncolghostinstances[name] = pygame.sprite.Group()
 				self.noncolghostinstances[name].add(newtg)
 
-	def add(self,pos:tuple,sprites:str,rot:int,type,sizen,dim:int , keepprev = False,stagename = None,layer = 0,colforinst=True,sn = 0):
+	def add(self,GM,pos:tuple,sprites:str,rot:int,type,sizen,dim:int , keepprev = False,stagename = None,layer = 0,colforinst=True,sn = 0):
 		"""adds an object to the manager  , gives an id of type str"""
 		if stagename == None:
 			stagename = sprites
@@ -789,6 +785,8 @@ class object_manager:
 			finalobj = inst.obj(str(self.tracker),add,spritelist)
 			self.objgroup.add(finalobj,layer = layer)
 			self.objghostgroup.add(ObjGhost(finalobj))
+			GM.oncreate(str(self.tracker),add)
+
 		else:
 			self.addinst(pos,sprites,dim,rot,type,sizen,stagename,layer,colforinst,sn,keepprev=keepprev)
 
@@ -798,7 +796,7 @@ class object_manager:
 		
 
 
-	def adds(self,name,pos,sprites,type,rot,sizen,alpha,layer):
+	def adds(self,GM,name,pos,sprites,type,rot,sizen,alpha,layer):
 		"""add special for more unique items"""
 		dummy  = univars.func.getsprites(sprites)[0]
 		size = dummy.get_size()
@@ -813,6 +811,7 @@ class object_manager:
 		self.objects.update({str(name):add})
 		finalobj = inst.obj(str(name),add,spritelist)
 		self.objgroup.add(finalobj,layer=layer)
+		GM.oncreate(name,self.objects[name])
 
 	def tile(self):
 		speed = self.speed
