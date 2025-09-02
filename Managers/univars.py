@@ -6,7 +6,7 @@ import Managers.statemanager as sm
 
 pygame.display.init()
 
-scaledown = 3
+scaledown = 2
 
 
 
@@ -119,7 +119,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 map = "demo5"
 startstate = "debugame"
 startshaderstate = 0
-bakeonreload = 0
+bakeonreload = 1
 showdebugonstart = 0
 profile = 0
 safemode = 1

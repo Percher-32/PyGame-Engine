@@ -113,7 +113,7 @@ class GameManager():
 			self.key["jump"] = True
 		else:
 			self.key["jump"] = False
-		if em.controller["triangle"] or em.key[pygame.K_z] or em.key[pygame.K_p]:
+		if em.controller["triangle"] or em.controller["R1"] or em.key[pygame.K_z] or em.key[pygame.K_p]:
 			self.key["secondary"] = True
 		else:
 			self.key["secondary"] = False

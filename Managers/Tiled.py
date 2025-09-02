@@ -804,8 +804,15 @@ class TiledSoftwre:
 						self.mode = "alterobj"
 						self.dostring2 = ""
 				except:
-					self.mode = "alterobj"
-					self.dostring2 = ""
+					try:
+						if st[0] in object_manager.objects[self.dostring.name].keys():
+							object_manager.objects[self.dostring.name][st[0]] = str(st[1])
+							self.mode = "alterobj"
+							self.dostring2 = ""
+					except:
+						self.mode = "alterobj"
+						self.dostring2 = ""
+
 
 
 

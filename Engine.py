@@ -28,10 +28,13 @@ class Game(Gamemananager.GameManager):
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
 		self.ingametime = 0
-		self.publicvariables["mood"] = "daybreak"
+		self.publicvariables["gamespeed"] = 1
+		self.publicvariables["mood"] = "afternoon"
 		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = 0.8
 		self.lookaheady = 0
+		self.timesdone = 1
+		self.scores = {}
 		self.lookahead = 100
 		self.actualwaterheight = 0
 
@@ -47,8 +50,9 @@ class Game(Gamemananager.GameManager):
 
 			
 
-			#initialise player and all its variables
-			self.initialiseplayer([0,0])
+			# initialise player and all its variables
+			# self.initialiseplayer([0,60])
+			self.initialiseplayer([0,60])
 
 
 		if "veiw" == self.states:
@@ -129,9 +133,9 @@ class Game(Gamemananager.GameManager):
 
 		if mood == "sunset":
 			self.publicvariables["screencol"] = (110 ,189 ,234 )
-			sd.program["illuminace"] = 0.24
-			sd.program["sunpos"] = [0,-1 * self.actualwaterheight/10 + 0.5]
-			sd.program["pacify"] = -0.65
+			sd.program["illuminace"] = 0.34
+			sd.program["sunpos"] = [0,-1 * self.actualwaterheight/20 + 0.5]
+			sd.program["pacify"] = -0.4
 
 
 		if mood == "daybreak":
@@ -178,6 +182,9 @@ class Game(Gamemananager.GameManager):
 			#move player
 			self.moveplayer()
 
+			if em.controller["options"]:
+				self.initialiseplayer([0,60])
+
 			#move camera
 			campos = [om.objects["player"]["pos"][0],om.objects["player"]["pos"][1]]
 				
@@ -191,10 +198,8 @@ class Game(Gamemananager.GameManager):
 
 
 
-			if not self.gp("slinging"):
-				cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.4)
-			else:
-				cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.35)
+			# if not self.gp("homing") > 0:
+			cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.4)
 
 
 			
@@ -240,7 +245,7 @@ class Game(Gamemananager.GameManager):
 		"""
 		#create the cameras
 		startpos = pos
-		cm.addcam("playercam",startpos,0.4)
+		cm.addcam("playercam",startpos,univars.pixelscale/7 * 0.35)
 		cm.setcam("playercam")  
 
 		om.speed = 1
@@ -359,8 +364,16 @@ class Game(Gamemananager.GameManager):
 
 		#UI
 		um.changestate("maingame",None)
+		um.addrect([6000,100 + 30 - 30],["maingame"],[(-0.5 + 0.02) - 0.5,0.8],"dashbarback",color=(0,0,0),fromstart=0,alpha = 200)
 		um.addrect([(1000 -19)/2 + 20,100 + 30 - 30],["maingame"],[(-0.5 + 0.02) - 0.5,0.8],"dashbarback",color=(0,0,0),fromstart=1,alpha = 200)
 		um.addrect([1000 - 30 - 20,90 - 30],["maingame"],[(-0.5 + 0.04/2 + 0.02) - 0.5,0.8],"dashbar",color=(225,100,100),fromstart=1,alpha = 200)
+
+		um.addtext("Speed-timer","0",univars.defont,[0,0.8],univars.theme["accent"],60,["maingame"])
+		um.elements["Speed-timer"]["text"]  = str(0)
+
+		um.addtext("attemps","0",univars.defont,[0.5,0.8],univars.theme["accent"],60,["maingame"])
+		um.elements["attemps"]["text"]  = str(0)
+
 
 
 
@@ -370,13 +383,18 @@ class Game(Gamemananager.GameManager):
 		# self.println(self.key["axis"],5)
 		# om.speed = 0.4
 		# self.println(self.gp("dashmeter"),2)
+		# self.println(em.controller,10)
+		# self.println(em.analog_keys[5],10)
+		um.elements["Speed-timer"]["text"]  = str(round(float(um.elements["Speed-timer"]["text"]) + (self.dt/60 *self.publicvariables["gamespeed"] ),2))
+		um.elements["attemps"]["text"]  = str(self.timesdone)
 		cm.setcond("playercam","shake",0)
 		
-		self.sp("wantime",1)
+		self.sp("wantime",self.publicvariables["gamespeed"])
 		# self.sp("dashmeter",abs(math.sin(fm.frame/100) * 100))
 		self.sp("dashmeter",min([100,self.gp("dashmeter")]))
 		self.sp("dashmeter",max([0,self.gp("dashmeter")]))
 		# print(self.gp("dashmeter"))
+
 
 
 		um.elements["dashbar"]["dimensions"][0] = max([((self.gp("dashmeter") * 10) - 50)/2,0])
@@ -390,7 +408,7 @@ class Game(Gamemananager.GameManager):
 		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 17 ],0,32,camera=cam,basecolor=(0,1,0))
 		collisionbox = om.collide("player",0,cam,extra=20)
 		# attackbox = om.collide("player",1,cam,extrax=1000,extray=500)
-		attackbox = om.colliderect(cm.getcam("playercam","pos"),[1300,550],0,cam)
+		attackbox = om.colliderect([cm.getcam("playercam","pos")[0] +(self.lookahead*0.4),cm.getcam("playercam","pos")[1] + (self.lookaheady*0.4)],[1300,550],0,cam)
 
 		ground1 = len(collision["botmid"]["inst"]) > 0
 		ground2 = len(collision["botleft"]["inst"]) > 0    and not (len(collision["topleft"]["inst"])  > 0  ) and not (len(collision["midleft"]["inst"])  > 0  )
@@ -465,7 +483,7 @@ class Game(Gamemananager.GameManager):
 				distvec = playervec - emvec
 				if distvec.length() > 0:
 					distvec.normalize()
-					if obj.info["type"] in ["enemy-L","omnispring"] and om.get_value(obj.name,"canhome"):
+					if obj.info["type"] in ["enemy-L","omnispring","goal"] and om.get_value(obj.name,"canhome"):
 						if vec == None:
 							vec = obj
 							closeness = 1 - distvec.dot(enaxis) 
@@ -683,7 +701,7 @@ class Game(Gamemananager.GameManager):
 								nenvec = envec.normalize()
 								nenvec = [nenvec.x,nenvec.y * -1]
 								ground = 0
-								if self.gp("target").info["type"] in ["enemy-L","omnispring"]:
+								if self.gp("target").info["type"] in ["enemy-L","omnispring","goal"]:
 									if envec.length() > 40:
 										a = (380 + (abs(envec.length()/3)))/2
 										d = (380 + (abs(envec.length()/3)))/2
@@ -762,6 +780,23 @@ class Game(Gamemananager.GameManager):
 										self.sp("des_vel",0,0)
 										self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
 										self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
+							if self.gp("target").info["type"] == "goal":
+								if not self.isthere("show-score"):
+									# self.print(    "attempt" + str(self.timesdone) + ":" + um.elements["Speed-timer"]["text"]     )
+									self.storedscore = "attempt" + " "+str(self.timesdone) +  " =" + " "+ um.elements["Speed-timer"]["text"] 
+									self.scores[self.timesdone] = float(um.elements["Speed-timer"]["text"])
+									self.timesdone += 1
+
+									self.highest = 10000000000000000
+									self.highestatt = 0
+									for i in self.scores.keys():
+										if self.scores[i] < self.highest:
+											self.highest = self.scores[i]
+											self.highestatt = i
+									# print(self.highestatt)
+
+									self.wait("show-score",7)
+								self.sp("homing",0)
 							if self.gp("target").info["type"] == "omnispring":
 								if self.key["secondary"]:
 									self.sp("des_vel",[0,0])
@@ -793,6 +828,18 @@ class Game(Gamemananager.GameManager):
 									self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
 									self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
 
+
+
+						if self.isthere("show-score"):
+							um.state = "vic"
+							um.addrect([6000,6000],["vic"],[(-0.5 + 0.02) - 0.5,0.8],"atnum",color=(0,0,0),fromstart=0,alpha = 200)
+							um.addtext("Victory-lap","",univars.defont,[0,0],univars.theme["accent"],100,"vic")
+							um.elements["Victory-lap"]["text"] = self.storedscore + "    " + str(int(self.timers["show-score"]/60) + 1) + "\n\n"  + f"Lowest - time:{self.highest}  on-attempt:{self.highestatt}"
+
+
+					
+
+						
 
 
 								
@@ -840,7 +887,7 @@ class Game(Gamemananager.GameManager):
 							self.sp("fss",8)
 
 							if self.gp("leftwall") or self.gp("rightwall"):
-								self.sp("des_vel",[self.gp("des_vel")[0],self.key["y"] * 100])
+								self.sp("des_vel",[self.gp("des_vel")[0],self.key["y"] * 200])
 
 							if not ground:
 								if self.gp("leftwall"):
@@ -1033,9 +1080,9 @@ class Game(Gamemananager.GameManager):
 						# 	self.sp("entervel",1)
 
 					
-					if abs(self.key["x"]) > 0.5 or abs(self.key["y"]) > 0.5 and not self.key["jump"]:
-						self.sp("entervel",self.gp("entervel") + abs(self.key["x"] * 2 ))
-						self.sp("entervel",self.gp("entervel") + abs(self.key["y"] * 2 ))
+					# if abs(self.key["x"]) > 0.5 or abs(self.key["y"]) > 0.5 and not self.key["jump"]:
+					self.sp("entervel",self.gp("entervel") + 2 )
+					self.sp("entervel",self.gp("entervel") + 2 )
 
 					axisvec = pygame.math.Vector2(self.key["x"],self.key["y"])
 					if axisvec.length() == 0:
@@ -1058,10 +1105,10 @@ class Game(Gamemananager.GameManager):
 						self.sp("dirforrail","r")
 
 
-					if self.gp("entervel") > 160:
-						self.sp("entervel",160)
-					if self.gp("entervel") < -160:
-						self.sp("entervel",-160)
+					if self.gp("entervel") > 200:
+						self.sp("entervel",200)
+					if self.gp("entervel") < -200:
+						self.sp("entervel",-200)
 	
 
 
@@ -1366,6 +1413,10 @@ class Game(Gamemananager.GameManager):
 		self.lastrail = rail
 		self.sp("lastframewall",self.gp("leftwall") or self.gp("rightwall"))
 		om.speed = univars.func.lerp(om.speed,self.gp("wantime"),5,roundto=2)
+		if self.ondone("show-score"):
+			um.state = "maingame"
+			# self.wait()
+			self.initialiseplayer([0,60])
 
 
 	def spin(self,angle,time,spindec = 0):
@@ -1487,6 +1538,10 @@ class Game(Gamemananager.GameManager):
 		if info["type"] == "omnispring":
 			om.set_value(id,"canhome",1)
 
+		if info["type"] == "goal":
+			om.set_value(id,"canhome",1)
+			om.translate(self,id,[0,20],0)
+			om.objects[id]["sizen"] = [1.4,1.4]
 
 		# if info["type"] == "enemy":
 		# 	om.set_value(id,"vel",[0,0])
@@ -1511,6 +1566,7 @@ class Game(Gamemananager.GameManager):
 				om.set_value(id,"canhome",1)
 
 			# om.translate(self,id,om.get_value(id,"vel"),usedt=1)
+
 
 
 
