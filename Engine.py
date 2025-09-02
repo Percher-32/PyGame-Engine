@@ -29,7 +29,7 @@ class Game(Gamemananager.GameManager):
 		super().__init__(screen,fm)
 		self.ingametime = 0
 		self.publicvariables["gamespeed"] = 1
-		self.publicvariables["mood"] = "daybreak"
+		self.publicvariables["mood"] = "afternoon"
 		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = 0.8
 		self.lookaheady = 0
@@ -52,7 +52,7 @@ class Game(Gamemananager.GameManager):
 
 			# initialise player and all its variables
 			# self.initialiseplayer([0,60])
-			self.initialiseplayer([62720,-2800])
+			self.initialiseplayer([0,60])
 
 
 		if "veiw" == self.states:
@@ -133,9 +133,9 @@ class Game(Gamemananager.GameManager):
 
 		if mood == "sunset":
 			self.publicvariables["screencol"] = (110 ,189 ,234 )
-			sd.program["illuminace"] = 0.24
+			sd.program["illuminace"] = 0.34
 			sd.program["sunpos"] = [0,-1 * self.actualwaterheight/20 + 0.5]
-			sd.program["pacify"] = -0.65
+			sd.program["pacify"] = -0.4
 
 
 		if mood == "daybreak":
@@ -198,10 +198,8 @@ class Game(Gamemananager.GameManager):
 
 
 
-			if not self.gp("slinging"):
-				cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.4)
-			else:
-				cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.35)
+			# if not self.gp("homing") > 0:
+			cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.4)
 
 
 			
@@ -410,7 +408,7 @@ class Game(Gamemananager.GameManager):
 		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 17 ],0,32,camera=cam,basecolor=(0,1,0))
 		collisionbox = om.collide("player",0,cam,extra=20)
 		# attackbox = om.collide("player",1,cam,extrax=1000,extray=500)
-		attackbox = om.colliderect(cm.getcam("playercam","pos"),[1300,550],0,cam)
+		attackbox = om.colliderect([cm.getcam("playercam","pos")[0] +(self.lookahead*0.4),cm.getcam("playercam","pos")[1] + (self.lookaheady*0.4)],[1300,550],0,cam)
 
 		ground1 = len(collision["botmid"]["inst"]) > 0
 		ground2 = len(collision["botleft"]["inst"]) > 0    and not (len(collision["topleft"]["inst"])  > 0  ) and not (len(collision["midleft"]["inst"])  > 0  )
@@ -786,15 +784,16 @@ class Game(Gamemananager.GameManager):
 								if not self.isthere("show-score"):
 									# self.print(    "attempt" + str(self.timesdone) + ":" + um.elements["Speed-timer"]["text"]     )
 									self.storedscore = "attempt" + " "+str(self.timesdone) +  " =" + " "+ um.elements["Speed-timer"]["text"] 
+									self.scores[self.timesdone] = float(um.elements["Speed-timer"]["text"])
 									self.timesdone += 1
-									self.scores[self.timesdone] = um.elements["Speed-timer"]["text"]
 
-									self.highest = 0
+									self.highest = 10000000000000000
 									self.highestatt = 0
 									for i in self.scores.keys():
-										if self.scores[i] > self.highest:
+										if self.scores[i] < self.highest:
 											self.highest = self.scores[i]
 											self.highestatt = i
+									# print(self.highestatt)
 
 									self.wait("show-score",7)
 								self.sp("homing",0)
@@ -835,7 +834,7 @@ class Game(Gamemananager.GameManager):
 							um.state = "vic"
 							um.addrect([6000,6000],["vic"],[(-0.5 + 0.02) - 0.5,0.8],"atnum",color=(0,0,0),fromstart=0,alpha = 200)
 							um.addtext("Victory-lap","",univars.defont,[0,0],univars.theme["accent"],100,"vic")
-							um.elements["Victory-lap"]["text"] = self.storedscore + "    " + str(int(self.timers["show-score"]/60) + 1) + "\n"  + f"Highest-Score:{self.highest}  attempt:{self.highestatt}"
+							um.elements["Victory-lap"]["text"] = self.storedscore + "    " + str(int(self.timers["show-score"]/60) + 1) + "\n\n"  + f"Lowest - time:{self.highest}  on-attempt:{self.highestatt}"
 
 
 					
@@ -1081,9 +1080,9 @@ class Game(Gamemananager.GameManager):
 						# 	self.sp("entervel",1)
 
 					
-					if abs(self.key["x"]) > 0.5 or abs(self.key["y"]) > 0.5 and not self.key["jump"]:
-						self.sp("entervel",self.gp("entervel") + abs(self.key["x"] * 2 ))
-						self.sp("entervel",self.gp("entervel") + abs(self.key["y"] * 2 ))
+					# if abs(self.key["x"]) > 0.5 or abs(self.key["y"]) > 0.5 and not self.key["jump"]:
+					self.sp("entervel",self.gp("entervel") + 2 )
+					self.sp("entervel",self.gp("entervel") + 2 )
 
 					axisvec = pygame.math.Vector2(self.key["x"],self.key["y"])
 					if axisvec.length() == 0:
@@ -1106,10 +1105,10 @@ class Game(Gamemananager.GameManager):
 						self.sp("dirforrail","r")
 
 
-					if self.gp("entervel") > 160:
-						self.sp("entervel",160)
-					if self.gp("entervel") < -160:
-						self.sp("entervel",-160)
+					if self.gp("entervel") > 200:
+						self.sp("entervel",200)
+					if self.gp("entervel") < -200:
+						self.sp("entervel",-200)
 	
 
 
