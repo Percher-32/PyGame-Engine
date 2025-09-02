@@ -33,6 +33,8 @@ class Game(Gamemananager.GameManager):
 		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = 0.8
 		self.lookaheady = 0
+		self.timesdone = 1
+		self.scores = {}
 		self.lookahead = 100
 		self.actualwaterheight = 0
 
@@ -48,8 +50,9 @@ class Game(Gamemananager.GameManager):
 
 			
 
-			#initialise player and all its variables
-			self.initialiseplayer([0,0])
+			# initialise player and all its variables
+			# self.initialiseplayer([0,60])
+			self.initialiseplayer([62720,-2800])
 
 
 		if "veiw" == self.states:
@@ -179,6 +182,9 @@ class Game(Gamemananager.GameManager):
 			#move player
 			self.moveplayer()
 
+			if em.controller["options"]:
+				self.initialiseplayer([0,60])
+
 			#move camera
 			campos = [om.objects["player"]["pos"][0],om.objects["player"]["pos"][1]]
 				
@@ -241,7 +247,7 @@ class Game(Gamemananager.GameManager):
 		"""
 		#create the cameras
 		startpos = pos
-		cm.addcam("playercam",startpos,0.4)
+		cm.addcam("playercam",startpos,univars.pixelscale/7 * 0.35)
 		cm.setcam("playercam")  
 
 		om.speed = 1
@@ -360,11 +366,15 @@ class Game(Gamemananager.GameManager):
 
 		#UI
 		um.changestate("maingame",None)
+		um.addrect([6000,100 + 30 - 30],["maingame"],[(-0.5 + 0.02) - 0.5,0.8],"dashbarback",color=(0,0,0),fromstart=0,alpha = 200)
 		um.addrect([(1000 -19)/2 + 20,100 + 30 - 30],["maingame"],[(-0.5 + 0.02) - 0.5,0.8],"dashbarback",color=(0,0,0),fromstart=1,alpha = 200)
 		um.addrect([1000 - 30 - 20,90 - 30],["maingame"],[(-0.5 + 0.04/2 + 0.02) - 0.5,0.8],"dashbar",color=(225,100,100),fromstart=1,alpha = 200)
 
-		um.addtext("Speed-timer","0",univars.defont,[0,0.8],univars.theme["dark"],60,["maingame"])
+		um.addtext("Speed-timer","0",univars.defont,[0,0.8],univars.theme["accent"],60,["maingame"])
 		um.elements["Speed-timer"]["text"]  = str(0)
+
+		um.addtext("attemps","0",univars.defont,[0.5,0.8],univars.theme["accent"],60,["maingame"])
+		um.elements["attemps"]["text"]  = str(0)
 
 
 
@@ -378,6 +388,7 @@ class Game(Gamemananager.GameManager):
 		# self.println(em.controller,10)
 		# self.println(em.analog_keys[5],10)
 		um.elements["Speed-timer"]["text"]  = str(round(float(um.elements["Speed-timer"]["text"]) + (self.dt/60 *self.publicvariables["gamespeed"] ),2))
+		um.elements["attemps"]["text"]  = str(self.timesdone)
 		cm.setcond("playercam","shake",0)
 		
 		self.sp("wantime",self.publicvariables["gamespeed"])
@@ -474,7 +485,7 @@ class Game(Gamemananager.GameManager):
 				distvec = playervec - emvec
 				if distvec.length() > 0:
 					distvec.normalize()
-					if obj.info["type"] in ["enemy-L","omnispring"] and om.get_value(obj.name,"canhome"):
+					if obj.info["type"] in ["enemy-L","omnispring","goal"] and om.get_value(obj.name,"canhome"):
 						if vec == None:
 							vec = obj
 							closeness = 1 - distvec.dot(enaxis) 
@@ -692,7 +703,7 @@ class Game(Gamemananager.GameManager):
 								nenvec = envec.normalize()
 								nenvec = [nenvec.x,nenvec.y * -1]
 								ground = 0
-								if self.gp("target").info["type"] in ["enemy-L","omnispring"]:
+								if self.gp("target").info["type"] in ["enemy-L","omnispring","goal"]:
 									if envec.length() > 40:
 										a = (380 + (abs(envec.length()/3)))/2
 										d = (380 + (abs(envec.length()/3)))/2
@@ -771,6 +782,22 @@ class Game(Gamemananager.GameManager):
 										self.sp("des_vel",0,0)
 										self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
 										self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
+							if self.gp("target").info["type"] == "goal":
+								if not self.isthere("show-score"):
+									# self.print(    "attempt" + str(self.timesdone) + ":" + um.elements["Speed-timer"]["text"]     )
+									self.storedscore = "attempt" + " "+str(self.timesdone) +  " =" + " "+ um.elements["Speed-timer"]["text"] 
+									self.timesdone += 1
+									self.scores[self.timesdone] = um.elements["Speed-timer"]["text"]
+
+									self.highest = 0
+									self.highestatt = 0
+									for i in self.scores.keys():
+										if self.scores[i] > self.highest:
+											self.highest = self.scores[i]
+											self.highestatt = i
+
+									self.wait("show-score",7)
+								self.sp("homing",0)
 							if self.gp("target").info["type"] == "omnispring":
 								if self.key["secondary"]:
 									self.sp("des_vel",[0,0])
@@ -802,6 +829,18 @@ class Game(Gamemananager.GameManager):
 									self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
 									self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
 
+
+
+						if self.isthere("show-score"):
+							um.state = "vic"
+							um.addrect([6000,6000],["vic"],[(-0.5 + 0.02) - 0.5,0.8],"atnum",color=(0,0,0),fromstart=0,alpha = 200)
+							um.addtext("Victory-lap","",univars.defont,[0,0],univars.theme["accent"],100,"vic")
+							um.elements["Victory-lap"]["text"] = self.storedscore + "    " + str(int(self.timers["show-score"]/60) + 1) + "\n"  + f"Highest-Score:{self.highest}  attempt:{self.highestatt}"
+
+
+					
+
+						
 
 
 								
@@ -1375,6 +1414,10 @@ class Game(Gamemananager.GameManager):
 		self.lastrail = rail
 		self.sp("lastframewall",self.gp("leftwall") or self.gp("rightwall"))
 		om.speed = univars.func.lerp(om.speed,self.gp("wantime"),5,roundto=2)
+		if self.ondone("show-score"):
+			um.state = "maingame"
+			# self.wait()
+			self.initialiseplayer([0,60])
 
 
 	def spin(self,angle,time,spindec = 0):
@@ -1496,6 +1539,10 @@ class Game(Gamemananager.GameManager):
 		if info["type"] == "omnispring":
 			om.set_value(id,"canhome",1)
 
+		if info["type"] == "goal":
+			om.set_value(id,"canhome",1)
+			om.translate(self,id,[0,20],0)
+			om.objects[id]["sizen"] = [1.4,1.4]
 
 		# if info["type"] == "enemy":
 		# 	om.set_value(id,"vel",[0,0])
