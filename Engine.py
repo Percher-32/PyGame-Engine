@@ -28,6 +28,7 @@ class Game(Gamemananager.GameManager):
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
 		self.ingametime = 0
+		self.publicvariables["gamespeed"] = 1
 		self.publicvariables["mood"] = "daybreak"
 		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = 0.8
@@ -130,7 +131,7 @@ class Game(Gamemananager.GameManager):
 		if mood == "sunset":
 			self.publicvariables["screencol"] = (110 ,189 ,234 )
 			sd.program["illuminace"] = 0.24
-			sd.program["sunpos"] = [0,-1 * self.actualwaterheight/10 + 0.5]
+			sd.program["sunpos"] = [0,-1 * self.actualwaterheight/20 + 0.5]
 			sd.program["pacify"] = -0.65
 
 
@@ -362,6 +363,10 @@ class Game(Gamemananager.GameManager):
 		um.addrect([(1000 -19)/2 + 20,100 + 30 - 30],["maingame"],[(-0.5 + 0.02) - 0.5,0.8],"dashbarback",color=(0,0,0),fromstart=1,alpha = 200)
 		um.addrect([1000 - 30 - 20,90 - 30],["maingame"],[(-0.5 + 0.04/2 + 0.02) - 0.5,0.8],"dashbar",color=(225,100,100),fromstart=1,alpha = 200)
 
+		um.addtext("Speed-timer","0",univars.defont,[0,0.8],univars.theme["dark"],60,["maingame"])
+		um.elements["Speed-timer"]["text"]  = str(0)
+
+
 
 
 
@@ -370,13 +375,17 @@ class Game(Gamemananager.GameManager):
 		# self.println(self.key["axis"],5)
 		# om.speed = 0.4
 		# self.println(self.gp("dashmeter"),2)
+		# self.println(em.controller,10)
+		# self.println(em.analog_keys[5],10)
+		um.elements["Speed-timer"]["text"]  = str(round(float(um.elements["Speed-timer"]["text"]) + (self.dt/60 *self.publicvariables["gamespeed"] ),2))
 		cm.setcond("playercam","shake",0)
 		
-		self.sp("wantime",1)
+		self.sp("wantime",self.publicvariables["gamespeed"])
 		# self.sp("dashmeter",abs(math.sin(fm.frame/100) * 100))
 		self.sp("dashmeter",min([100,self.gp("dashmeter")]))
 		self.sp("dashmeter",max([0,self.gp("dashmeter")]))
 		# print(self.gp("dashmeter"))
+
 
 
 		um.elements["dashbar"]["dimensions"][0] = max([((self.gp("dashmeter") * 10) - 50)/2,0])
@@ -840,7 +849,7 @@ class Game(Gamemananager.GameManager):
 							self.sp("fss",8)
 
 							if self.gp("leftwall") or self.gp("rightwall"):
-								self.sp("des_vel",[self.gp("des_vel")[0],self.key["y"] * 100])
+								self.sp("des_vel",[self.gp("des_vel")[0],self.key["y"] * 200])
 
 							if not ground:
 								if self.gp("leftwall"):

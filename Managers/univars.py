@@ -6,7 +6,7 @@ import Managers.statemanager as sm
 
 pygame.display.init()
 
-scaledown = 3
+scaledown = 2
 
 
 
@@ -122,7 +122,7 @@ startshaderstate = 0
 bakeonreload = 0
 showdebugonstart = 0
 profile = 0
-safemode = 1
+safemode = 0
 startuistate = "def"
 showinput = 0
 
