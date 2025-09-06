@@ -6,6 +6,8 @@ import os
 
 tol = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]
 
+
+
 class Item(pygame.sprite.Sprite):
     def __init__(self,name,pos,alpha = 400,surf=None,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h),layer = 1,infiniscroll = 0):
         pygame.sprite.Sprite.__init__(self)
@@ -47,6 +49,7 @@ class Item(pygame.sprite.Sprite):
         camera = Cameramod.cam
         self.size = 1
         self.lastcampos = [0,0]
+        self.bd = {}
         self.lastcamsize = 1
         
         self.load()
@@ -62,28 +65,27 @@ class Item(pygame.sprite.Sprite):
         
         camera = Cameramod.cam
         realestsize = abs(round(self.size * 0.01,2)/0.01)
-        if univars.camchange or univars.poschange:
-            if univars.poschange:
-                self.pos[0] -= (camera.x - self.lastcampos[0])*(self.layer)*camera.size
-                self.pos[1] -= (camera.y - self.lastcampos[1])*(self.layer)*camera.size
-                
-            if univars.camchange:
-                self.size += (camera.size - self.lastcamsize)*self.layer *(univars.scaledown)
-                # pass
-
-            self.lastcampos = [camera.x,camera.y]
-            self.lastcamsize = camera.size
+        self.pos[0] -= (camera.x - self.lastcampos[0])*(self.layer)*camera.size
+        self.pos[1] -= (camera.y - self.lastcampos[1])*(self.layer)*camera.size
+        
+        self.size += (camera.size - self.lastcamsize)*self.layer *(univars.scaledown)
 
 
-            if not str(realestsize) in self.cache.keys():
-                self.image =  pygame.transform.scale_by(self.baseimg,  realestsize )
-                self.cache[str(realestsize)] = self.image
-            else:
-                self.image = self.cache[str(realestsize)]
+        # if self.layer == 0.1:
+        #     self.bd[(int(camera.x/16) * 16,int(camera.y/16) * 16,round(camera.size,2))] = (             (round(self.pos[0]) * realestsize + univars.screen.get_width()//2   )     ,      round((self.pos[1]) * realestsize + univars.screen.get_height()//2   )  )
+        #     for a in [ str(i) + ":" +  str(self.bd[i]) for i in self.bd.keys()]:
+        #         print(a)
+        #     print("///////////////")
+
+
+
+        if not str(realestsize) in self.cache.keys():
+            self.image =  pygame.transform.scale_by(self.baseimg,  realestsize )
+            self.cache[str(realestsize)] = self.image
         else:
-            self.image = self.lastframe
-
-
+            self.image = self.cache[str(realestsize)]
+        self.lastcampos = [camera.x,camera.y]
+        self.lastcamsize = camera.size
 
         if abs((self.pos[0])) > self.dimensions[0] and self.infiniscroll:
             self.pos[0] = 0

@@ -257,8 +257,8 @@ class TiledSoftwre:
 
 					#some math
 					renderwid = (((((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983)) * 1980) + 200
-					upscale =  renderwid /( univars.screen.get_width())
-					upscaley =  renderwid / (univars.screen.get_height())
+					upscale = 1
+					upscaley =  1
 
 
 					# upscale = renderwid/ univars.screen.get_width()

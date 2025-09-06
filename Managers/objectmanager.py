@@ -846,7 +846,7 @@ class object_manager:
 
 				]
 		
-		ranges = [ chunk for chunk in ranges  if univars.func.dist([0,0],chunk) < 1/camera.size * 2.2  ]
+		ranges = [ chunk for chunk in ranges  if univars.func.dist([0,0],chunk) < 1/camera.size * 2.5  ]
 		#the instanciate chunks to be rendered
 		lof = [  b   for b in self.instances.keys() for i in ranges   if b == ( i[0]  + camposdim[0],i[1] + camposdim[1]   )]
 		noncollof = [  b   for b in self.noncolinstances.keys() for i in ranges   if b == ( i[0]  + camposdim[0],i[1] + camposdim[1]   )]

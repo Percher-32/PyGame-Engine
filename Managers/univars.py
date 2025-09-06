@@ -30,11 +30,6 @@ name = "Project ender"
 maxfps = 60
 
 
-(40, 41, 83)
-(75, 63, 114)
-(220, 214, 247)
-(163, 173, 225)
-(169, 117, 145)
 
 
 theme = {
@@ -53,8 +48,11 @@ sizes = {
     "largebutton": (300,150),
 }
 
-screen = pygame.Surface((64 * pixelscale,64 * pixelscale))
-fakescreen = pygame.Surface((64 * pixelscale,64 * pixelscale))
+
+minsize = (screen_w,screen_h)
+
+screen = pygame.Surface(minsize)
+fakescreen = pygame.Surface(minsize)
 fakescreen.set_colorkey((0,0,0))
 
 
@@ -119,7 +117,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 map = "demo5"
 startstate = "debugame"
 startshaderstate = 0
-bakeonreload = 1
+bakeonreload = 0
 showdebugonstart = 0
 profile = 0
 safemode = 1
@@ -144,12 +142,33 @@ defont = "pixel2.ttf"
 
 renderdist = [12,12]
 
+output = []
 
+buffersize = 50
 
 maxfpsbuffersize = 5
 
 
+def print(string):
+    global output
+    """
+        prints a string in game in the debug menu
+    """
+    output.append(str(string))
+    if len(output) > buffersize:
+        output.pop(0)
 
+def println(string,line):
+    global output
+    """
+        prints onto a specific line if it exists\n
+        if not it just adds it on the next line
+    """
+    while len(output) <= line:
+        output.append("")
+    output[line] = str(string)
+    
+	
 
 def update():
     pass

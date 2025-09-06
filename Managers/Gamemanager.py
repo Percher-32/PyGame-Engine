@@ -74,18 +74,18 @@ class GameManager():
 		"""
 			prints a string in game in the debug menu
 		"""
-		self.output.append(str(string))
-		if len(self.output) > 200:
-			self.output.pop(0)
+		univars.output.append(str(string))
+		if len(univars.output) > univars.buffersize:
+			univars.output.pop(0)
 
 	def println(self,string,line):
 		"""
 			prints onto a specific line if it exists\n
 			if not it just adds it on the next line
 		"""
-		while len(self.output) <= line:
-			self.output.append("")
-		self.output[line] = str(string)
+		while len(univars.output) <= line:
+			univars.output.append("")
+		univars.output[line] = str(string)
 		
 	
 
@@ -94,7 +94,7 @@ class GameManager():
 			returns a string all printed items
 		"""
 		out = ""
-		for i in self.output:
+		for i in univars.output:
 			out += i + "\n"
 		return out
 
@@ -419,13 +419,14 @@ class GameManager():
 		
 		#render onto screen
 		renderwid = (((((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983)) * 1980) + 200
+		renderwid = 0
 		# renderwid = min([univars.realscreeen.width,univars.realscreeen.height])
 		# renderwid = 1980
 		# realwid = round(renderwid)
 		# renderwid /= 2
 		# univars.screen.blit(pm.screen,(univars.screen_w/2,univars.screen_h/2))
 		pm.updateparticles(self.dt)
-		univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid ,renderwid )),(univars.realscreeen.width//2 - renderwid//2,univars.realscreeen.height//2 - renderwid//2))
+		univars.realscreeen.blit(univars.screen,(univars.realscreeen.width//2 - univars.screen.size[0]//2,univars.realscreeen.height//2 - univars.screen.size[1]//2))
 		
 
 		#runs editor
@@ -454,13 +455,13 @@ class GameManager():
 		cam.update()
 		univars.update()
 
-	# def loadanims(self):
-	# 	for filename in os.listdir("Saved/animations"):
-	# 		if  not filename ==  "None":
-	# 			objfile = "Saved/animations" + "/" + filename
-	# 			for anim in os.listdir(objfile):
-	# 				anim = anim.replace(".json","")
-	# 				om.loadanim(filename,anim)
+	def loadanims(self):
+		for filename in os.listdir("Saved/animations"):
+			if  not filename ==  "None":
+				objfile = "Saved/animations" + "/" + filename
+				for anim in os.listdir(objfile):
+					anim = anim.replace(".json","")
+					om.loadanim(filename,anim)
 	def oncreate(self,id,info):
 		pass
 
