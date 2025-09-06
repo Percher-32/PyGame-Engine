@@ -269,17 +269,18 @@ class GameManager():
 			return False
 
 	def inum(self):
+		pfps = 0
 		while em.running:
-			if len(om.objects.keys()) > 0:
-				stabledict = om.objects
-				for obj in stabledict.keys():
-					range =  2000
-					if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
-						self.cond(obj,stabledict[obj])
-			
+			# if len(om.objects.keys()) > 0:
+			# 	stabledict = om.objects
+			# 	for obj in stabledict.keys():
+			# 		range =  2000
+			# 		if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
+			# 			self.cond(obj,stabledict[obj])
+			pass
 
 
-			time.sleep(0.01)
+			time.sleep(0.001)
 
 	def cond(self,obj,info):
 		pass
@@ -397,6 +398,13 @@ class GameManager():
 			self.initial()
 
 		#render background
+		if len(om.objects.keys()) > 0:
+			stabledict = om.objects
+			for obj in stabledict.keys():
+				range =  2000
+				if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
+					self.cond(obj,stabledict[obj])
+		
 			
 		bg.update(self.publicvariables["screencol"])
 		univars.screen.blit(bg.backlayer,(0,0))
