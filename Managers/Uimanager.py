@@ -18,7 +18,7 @@ class Uimanager:
 		self.binds = []
 		self.glidens = []
 		self.addedcounter = 0
-		self.sprites = pygame.sprite.Group()
+		self.sprites = pygame.sprite.LayeredUpdates()
 		self.state = "default"
 		self.selectedbutton = None
 		self.selectedbuttonclass = None
@@ -30,13 +30,13 @@ class Uimanager:
 		self.toroute = None
 		self.timetillnextswap = 1
 
-	def addelement(self,surf,states,pos,name,type=None):
+	def addelement(self,surf,states,pos,name,type=None,layer = 0):
 		self.metadata["element"].append([surf,states,pos,name,type])
 		ui = self.Uielement.Ui(surf,states,pos,name)
 		self.elements[name] = {"name":name,"pos":pos,"type":type,"cache":{}}
-		self.sprites.add(ui)
+		self.sprites.add(ui,layer = layer)
 		
-	def addrect(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = 0,usesprite = False,fromstart = False):
+	def addrect(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = 0,usesprite = False,fromstart = False,layer = 0):
 		key = [dimensions,states,pos,name,color,alpha,surf,sn,usesprite]
 		if key in self.metadata["rect"]:
 			self.metadata["rect"].remove(key)
@@ -49,9 +49,9 @@ class Uimanager:
 					surf = univars.func.getsprites(surf)[sn]
 			ui = Uielement.Uirect(dimensions,states,pos,name,surf = surf,fromstart = fromstart)
 			self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"pos":pos,"states":states,"surf":surf,"type":"rect","cache":{}}
-			self.sprites.add(ui)
+			self.sprites.add(ui,layer = layer)
 
-	def addbutton(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = 0,usesprite = False):
+	def addbutton(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = 0,usesprite = False,layer = 0):
 		key = [dimensions,states,pos,name,color,alpha,surf,sn,usesprite]
 		if key in self.metadata["button"]:
 			self.metadata["button"].remove(key)
@@ -64,9 +64,9 @@ class Uimanager:
 					surf = univars.func.getsprites(surf)[sn]
 			ui = Uielement.Uibutton(dimensions,states,pos,name,surf = surf)
 			self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"click":0,"hover":0,"command":[],"pos":pos,"states":states,"surf":surf,"type":"button","dir":{"up":None,"down":None,"left":None,"right":None},"cache":{}}
-			self.sprites.add(ui)
+			self.sprites.add(ui,layer = layer)
 
-	def addtext(self,name, text, font, pos, col, size,states,center = True):
+	def addtext(self,name, text, font, pos, col, size,states,center = True,layer = 0):
 		key = [name,text,font,pos,col,size,states,center]
 		if key in self.metadata["text"]:
 			self.metadata["text"].remove(key)
@@ -74,7 +74,7 @@ class Uimanager:
 		if not name in self.elements.keys():
 			ui = Uielement.Uitext(name,text,font,pos,col,size,states,center=center)
 			self.elements[name] = {"name":name,"text":text,"color":col,"size":size,"command":[],"pos":pos,"states":states,"type":"text"}
-			self.sprites.add(ui)
+			self.sprites.add(ui,layer = layer)
 
 	
 	def deleleelem(self,name):
@@ -208,32 +208,32 @@ class Uimanager:
 				text["glidenorm"] = base
 				text["glidehov"] = rbase
 
-	def savealluielements(self):
-		# todump = [self.elements[i].pop("surf").pop("cache") for i in self.elements.keys()  ]
-		with open("Saved/Ui.json","w") as file:
-			json.dump({"metadata":self.metadata,"binds":self.binds,"glidens":self.glidens},file)
+	# def savealluielements(self):
+	# 	# todump = [self.elements[i].pop("surf").pop("cache") for i in self.elements.keys()  ]
+	# 	with open("Saved/Ui.json","w") as file:
+	# 		json.dump({"metadata":self.metadata,"binds":self.binds,"glidens":self.glidens},file)
 			
 		
 
 
-	def loadalluielements(self):
-		with open("Saved/Ui.json","r") as file:
-			elements = json.load(file)
-		self.metadata = {"element":[],"rect":[],"button":[],"text":[]}
-		self.binds = []
-		self.glidens = []
-		for i in elements["metadata"]["element"]:
-			self.addelement(i[0],i[1],i[2],i[3],i[4])
-		for i in elements["metadata"]["rect"]:
-			self.addrect(i[0],i[1],i[2],i[3],color = i[4],alpha=i[5],surf = i[6],sn = i[7],usesprite=i[8])
-		for i in elements["metadata"]["button"]:
-			self.addbutton(i[0],i[1],i[2],i[3],color = i[4],alpha=i[5],surf = i[6],sn = i[7],usesprite=i[8])
-		for i in elements["metadata"]["text"]:
-			self.addtext(i[0],i[1],i[2],i[3],i[4],i[5],i[6],center=i[7])
-		for i in elements["binds"]:
-			self.bindtobutton(i[0],i[1])
-		for i in elements["glidens"]:
-			self.addglide(i[0],i[1],i[2])
+	# def loadalluielements(self):
+	# 	with open("Saved/Ui.json","r") as file:
+	# 		elements = json.load(file)
+	# 	self.metadata = {"element":[],"rect":[],"button":[],"text":[]}
+	# 	self.binds = []
+	# 	self.glidens = []
+	# 	for i in elements["metadata"]["element"]:
+	# 		self.addelement(i[0],i[1],i[2],i[3],i[4])
+	# 	for i in elements["metadata"]["rect"]:
+	# 		self.addrect(i[0],i[1],i[2],i[3],color = i[4],alpha=i[5],surf = i[6],sn = i[7],usesprite=i[8])
+	# 	for i in elements["metadata"]["button"]:
+	# 		self.addbutton(i[0],i[1],i[2],i[3],color = i[4],alpha=i[5],surf = i[6],sn = i[7],usesprite=i[8])
+	# 	for i in elements["metadata"]["text"]:
+	# 		self.addtext(i[0],i[1],i[2],i[3],i[4],i[5],i[6],center=i[7])
+	# 	for i in elements["binds"]:
+	# 		self.bindtobutton(i[0],i[1])
+	# 	for i in elements["glidens"]:
+	# 		self.addglide(i[0],i[1],i[2])
 		
 
 

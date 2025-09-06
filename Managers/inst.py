@@ -154,7 +154,7 @@ class obj(pygame.sprite.Sprite):
 			self.indist = 1
 			g = [round(self.info["pos"][0]),round(self.info["pos"][1])]
 			h = [round(camera.x),round(camera.y)]
-			if univars.func.dist(g,h) < 1000:
+			if univars.func.dist(g,h) < 2000:
 
 				# realestsize = [math.ceil((self.size[0] * abs(camera.size))/2)*2                                 , 
 				#    			  math.ceil((self.size[1] * abs(camera.size))/2)*2]
@@ -184,6 +184,7 @@ class obj(pygame.sprite.Sprite):
 													)
 												)
 			else:
+				self.indist = 0
 				self.image = pygame.Surface((0,0))
 				self.rect = pygame.Rect(0,0,0,0)
 		else:

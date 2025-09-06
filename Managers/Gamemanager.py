@@ -362,7 +362,7 @@ class GameManager():
 		cm.setcond(cm.currentcam,"size",1)
 		# self.loadanims()
 		self.roster()
-		um.loadalluielements()
+		# um.loadalluielements()
 		pm.loadallbluprints()
 
 	def setbosh(self,state):

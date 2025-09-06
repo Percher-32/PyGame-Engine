@@ -29,9 +29,9 @@ class Game(Gamemananager.GameManager):
 		super().__init__(screen,fm)
 		self.ingametime = 0
 		self.publicvariables["gamespeed"] = 1
-		self.publicvariables["mood"] = "afternoon"
+		self.publicvariables["mood"] = "daybreak"
 		self.publicvariables["showater"] = 1
-		self.publicvariables["waterh"] = 0.8
+		self.publicvariables["waterh"] = -(64 * 2.4)
 		self.lookaheady = 0
 		self.timesdone = 1
 		self.scores = {}
@@ -86,6 +86,7 @@ class Game(Gamemananager.GameManager):
 
 	def update(self):
 		bg.background = "test2"
+		self.println(self.actualwaterheight,2)
 		# om.speed = 0.8
 		# pm.particlespawn("circle",[0,0],[[-5,5],[-5,5]],(0,100,255),[0,0],[0,-1],5,0.001,alpha=300,alphadec=4,divergencepos=[[-1000,1000],[0,0]],ntimes=1)
 
@@ -159,8 +160,9 @@ class Game(Gamemananager.GameManager):
 
 
 
+		self.println(cam.size,1)
+		self.actualwaterheight =(self.publicvariables["waterh"] - cam.y)/(univars.realscreeen.height / cam.size) * -1 - cam.size
 
-		self.actualwaterheight = (cam.y/univars.screen.get_height() * 2.4  * cam.size)-( + self.publicvariables["waterh"]) + ((1-cam.size * univars.pixelscale/10)* 1.46)
 		if self.publicvariables["showater"]:
 			sd.program["waterlevel"] = self.actualwaterheight
 		else:
@@ -170,8 +172,6 @@ class Game(Gamemananager.GameManager):
 		
 		sd.program["camx"] = cam.x/(univars.startdims[0] * univars.scaledown)
 
-
-			
 	def playercode(self):
 		"""
 			contins all the code that the player needs to function
@@ -200,7 +200,7 @@ class Game(Gamemananager.GameManager):
 
 
 			# if not self.gp("homing") > 0:
-			cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.4)
+			cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.37)
 
 
 			
@@ -246,7 +246,7 @@ class Game(Gamemananager.GameManager):
 		"""
 		#create the cameras
 		startpos = pos
-		cm.addcam("playercam",startpos,univars.pixelscale/7 * 0.35)
+		cm.addcam("playercam",startpos,univars.pixelscale/7 * 0.4)
 		cm.setcam("playercam")  
 
 		om.speed = 1
@@ -391,7 +391,7 @@ class Game(Gamemananager.GameManager):
 		cm.setcond("playercam","shake",0)
 		
 		self.sp("wantime",self.publicvariables["gamespeed"])
-		# self.sp("dashmeter",abs(math.sin(fm.frame/100) * 100))
+		# self.sp("dashmeter",abs(math.sin(fm.frame/100) * 100)
 		self.sp("dashmeter",min([100,self.gp("dashmeter")]))
 		self.sp("dashmeter",max([0,self.gp("dashmeter")]))
 		# print(self.gp("dashmeter"))
@@ -409,7 +409,7 @@ class Game(Gamemananager.GameManager):
 		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 17 ],0,32,camera=cam,basecolor=(0,1,0))
 		collisionbox = om.collide("player",0,cam,extra=20)
 		# attackbox = om.collide("player",1,cam,extrax=1000,extray=500)
-		attackbox = om.colliderect([cm.getcam("playercam","pos")[0] +(self.lookahead*0.4),cm.getcam("playercam","pos")[1] + (self.lookaheady*0.4)],[1300,550],0,cam)
+		attackbox = om.colliderect([cm.getcam("playercam","pos")[0] +(self.lookahead*0),cm.getcam("playercam","pos")[1] + (self.lookaheady*0)],[1300,700],0,cam)
 
 		ground1 = len(collision["botmid"]["inst"]) > 0
 		ground2 = len(collision["botleft"]["inst"]) > 0    and not (len(collision["topleft"]["inst"])  > 0  ) and not (len(collision["midleft"]["inst"])  > 0  )
@@ -998,8 +998,7 @@ class Game(Gamemananager.GameManager):
 
 						
 						#water skid
-						self.println(self.actualwaterheight,2)
-						if 0.7 > self.actualwaterheight > 0.3 and not (self.key["jump"] and self.gp("act_vel")[1] >= 0) :
+						if  800 > om.objects["player"]["pos"][1] > 700 and not (self.key["jump"] and self.gp("act_vel")[1] >= 0) :
 							if abs(self.gp("act_vel")[0]) >= 120:
 								if self.gp("act_vel")[0] > 100:
 									parts = [om.objects["player"]["pos"][0] -5,om.objects["player"]["pos"][1] + 9]
@@ -1009,7 +1008,7 @@ class Game(Gamemananager.GameManager):
 								pm.particlespawnbluprint(parts,"water",initvel= vel)
 								self.sp("act_vel",[   self.gp("act_vel")[0] , 0  ]  ) 
 								self.sp("des_vel",[   self.gp("des_vel")[0] , 0  ]  ) 
-								om.objects["player"]["pos"][1] = 768 + 0 + (math.sin(fm.frame/10) * 10)
+								om.objects["player"]["pos"][1] = 768
 
 								self.sp("jumpable",1)
 								self.sp("candj",0)
@@ -1128,26 +1127,11 @@ class Game(Gamemananager.GameManager):
 
 					if self.key["jump"]:
 						if self.gp("jumpable"):
-							if railrot in [0] :
-								self.sp("act_vel",[self.gp("act_vel")[0],40])
-								self.sp("des_vel",[  self.gp("des_vel")[0] , 150     ])
-								self.sp("mode","in-air")
-							if railrot in [45,-45] :
-								# if raildir == -1:
-								if not self.valsign(self.gp("act_vel")[0]) == self.valsign(railrot):
-									self.sp("act_vel",[  self.gp("act_vel")[0]   ,   40      ])
-									self.sp("des_vel",[  self.gp("des_vel")[0]   ,   60     ])
-								else:
-									self.sp("act_vel",[  self.gp("act_vel")[0]   ,   150      ])
-									self.sp("des_vel",[  self.gp("des_vel")[0]   ,   300     ])
-								# else:
-								# 	self.sp("act_vel",[  self.gp("act_vel")[0] *   self.valsign(railrot)  * 1   ,   150      ])
-								# 	self.sp("des_vel",[  self.gp("des_vel")[0] *   self.valsign(railrot)  * 1   ,   300     ])
-							elif railrot in [90,-90] :
-								self.sp("act_vel",[  self.valsign(railrot) * self.gp("entervel")* -1 ,self.gp("act_vel")[1]   ] )
-								self.sp("des_vel",[  self.valsign(railrot) * self.gp("entervel")* -1,self.gp("des_vel")[1]   ])
-								self.sp("mode","in-air")
-
+							newvec = railvec.rotate(90)
+							# newvec = newvec + axisvec
+							newvec.scale_to_length(100)
+							self.sp("des_vel",[newvec.x + self.gp("des_vel",0),newvec.y + self.gp("des_vel",1)])
+							self.sp("act_vel",[newvec.x + self.gp("act_vel",0),newvec.y + self.gp("act_vel",1)])
 					parts = om.objects["player"]["pos"]
 					vel = [self.gp("act_vel")[0]/7,self.gp("act_vel")[1]/7]
 					pm.particlespawnbluprint(parts,"grind",initvel= vel)
