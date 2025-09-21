@@ -430,7 +430,7 @@ class object_manager:
 			if str(b.name) == str(id):
 				return b
 
-	def collide(self,id,show,camera,extrax= 0,extray = 0,extra = 0) -> dict:
+	def collide(self,id,show,camera,extrax= 0,extray = 0,extra = 0,offx = 0,offy=0) -> dict:
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		if not self.objfromid(id) == None:
 			#coll for non-inst
@@ -440,8 +440,8 @@ class object_manager:
 			r1.width = r1.width + (extrax + extra)
 			r1.height = r1.height + (extray + extra)
 
-			r1.x -= (extrax + extra)/2
-			r1.y -= (extray + extra)/2
+			r1.x -= (extrax + extra)/2 - offx
+			r1.y -= (extray + extra)/2 + offy
 
 			# typel = self.getcull(self.objects[id]["pos"],extra + 1,dim)
 			# typel.remove(id)

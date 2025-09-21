@@ -681,8 +681,10 @@ class Game(Gamemananager.GameManager):
 								self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
 
 						# self.println(collisionlisttype,4)
-						if "ground" in collisionlisttype:							
-							self.sp("homing",0)
+						if not self.gp("homing") == 0:
+							if "ground" in [ i.type for i in om.collide(self.gp("target").name,0,cam,extrax=-20,extray=-20,offy = 50,offx = -2 * self.gp("act_vel")[0])["inst"]]:							
+								self.sp("homing",0)
+
 
 
 
@@ -729,7 +731,9 @@ class Game(Gamemananager.GameManager):
 								if self.key["secondary"]:
 									# self.sp("des_vel",[0,0])
 									self.sp("wantime",0.1)
-									self.gp("target").info["pos"] = om.objects["player"]["pos"]
+									om.set_value(self.gp("target").name,"act_vel",[0,0])
+									om.set_value(self.gp("target").name,"des_vel",[0,0])
+									self.gp("target").info["pos"] = self.listadd((om.objects["player"]["pos"],[  self.valsign(self.gp("des_vel")[0]) * 40  ,  -30   ]))
 								else:
 									self.sp("homing",0)
 									if self.lastkey["secondary"]:
@@ -1549,7 +1553,7 @@ class Game(Gamemananager.GameManager):
 			om.set_value(id,"speed",random.randint(10 + 20,15 + 20))
 			om.set_value(id,"superspeed",random.randint(10,10))
 			om.set_value(id,"yfac",random.randint(-100,0))
-			om.set_value(id,"spacing",random.randint(100,250))
+			om.set_value(id,"spacing",random.randint(200,200))
 			om.set_value(id,"orbitrot",0)
 			om.set_value(id,"lasttogoto",info["pos"])
 			om.set_value(id,"act_vel",[0,0])
@@ -1600,8 +1604,10 @@ class Game(Gamemananager.GameManager):
 				playerpos = om.objects["player"]["pos"]
 				togoto=  [ playerpos[0] + (self.gp("act_vel")[0]*om.get_value(id,"superspeed")) + rotvec.x , playerpos[1]  - (self.gp("act_vel")[1]*om.get_value(id,"superspeed")) + rotvec.y   ]
 				ltogoto = om.get_value(id,"lasttogoto")
+				# togoto[0] /= 2
+				# togoto[1] /= 2
 				# togoto[0]
-				newvel = [ (togoto[0] - info["pos"][0])/10 , (togoto[1] - info["pos"][1])/-10    ]
+				newvel = [ (togoto[0] - info["pos"][0])/5 , (togoto[1] - info["pos"][1])/-5    ]
 
 
 
@@ -1648,18 +1654,20 @@ class Game(Gamemananager.GameManager):
 			
 			
 			# om.translate(self,id,[0,20*st],usedt=0)
-
 			om.set_value(id,"act_vel",self.customunilerp(om.get_value(id,"act_vel"),om.get_value(id,"des_vel"),om.get_value(id,"speed"),om.speed,st))
-			if om.get_value(id,"pl0") > pygame.math.Vector2( om.get_value(id,"act_vel")).length() < om.get_value(id,"pl1"):
-				a = pygame.math.Vector2( om.get_value(id,"act_vel"))
-				a.scale_to_length(self.valsign(a.length()) * om.get_value(id,"pl0"))
-				om.set_value(id,"act_vel",list(a))
-			elif om.get_value(id,"pl1") < pygame.math.Vector2( om.get_value(id,"act_vel")).length():
-				a = pygame.math.Vector2( om.get_value(id,"act_vel"))
-				a.scale_to_length(self.valsign(a.length()) * om.get_value(id,"pl1"))
-				om.set_value(id,"act_vel",list(a))
 			
-			om.translate(self,id,[om.get_value(id,"act_vel")[0]*st,om.get_value(id,"act_vel")[1]*st],usedt=0)
+			a = pygame.math.Vector2( om.get_value(id,"act_vel"))
+			if a.length() > 0:
+				if om.get_value(id,"pl0") > pygame.math.Vector2( om.get_value(id,"act_vel")).length() < om.get_value(id,"pl1"):
+					a = pygame.math.Vector2( om.get_value(id,"act_vel"))
+					a.scale_to_length(self.valsign(a.length()) * om.get_value(id,"pl0"))
+					om.set_value(id,"act_vel",list(a))
+				elif om.get_value(id,"pl1") < pygame.math.Vector2( om.get_value(id,"act_vel")).length():
+					a = pygame.math.Vector2( om.get_value(id,"act_vel"))
+					a.scale_to_length(self.valsign(a.length()) * om.get_value(id,"pl1"))
+					om.set_value(id,"act_vel",list(a))
+			
+			om.translate(self,id,[om.get_value(id,"act_vel")[0]*st * om.speed,om.get_value(id,"act_vel")[1]*st * om.speed],usedt=0)
 
 
 		
