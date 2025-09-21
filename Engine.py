@@ -498,6 +498,8 @@ class Game(Gamemananager.GameManager):
 			else:
 				om.objects["enemyzoom"]["pos"] = vec.info["pos"]
 
+			if self.gp("homing") == 2:
+				vec = self.gp("target")
 
 
 
@@ -747,7 +749,7 @@ class Game(Gamemananager.GameManager):
 										if round(axis[0]) == 0:
 											if round(axis[1]) == 0:
 												actmult = [0,100]
-										actmult = [axis[0] * 50,axis[1] * 50 - 30]
+										actmult = [axis[0] * 70,axis[1] * 70]
 
 
 										om.set_value(self.gp("target").name,"throwvel",actmult)
@@ -1634,7 +1636,7 @@ class Game(Gamemananager.GameManager):
 
 
 
-					om.set_value(id,"throwvel",[om.get_value(id,"throwvel")[0]/1.0005,om.get_value(id,"throwvel")[1]/1.0005])
+					om.set_value(id,"throwvel",[om.get_value(id,"throwvel")[0]/1.000005,om.get_value(id,"throwvel")[1]/1.000005])
 					
 
 				
@@ -1657,7 +1659,7 @@ class Game(Gamemananager.GameManager):
 			om.set_value(id,"act_vel",self.customunilerp(om.get_value(id,"act_vel"),om.get_value(id,"des_vel"),om.get_value(id,"speed"),om.speed,st))
 			
 			a = pygame.math.Vector2( om.get_value(id,"act_vel"))
-			if a.length() > 0:
+			if a.length() > 0 and not self.isthere("#Throwing" + str(id)):
 				if om.get_value(id,"pl0") > pygame.math.Vector2( om.get_value(id,"act_vel")).length() < om.get_value(id,"pl1"):
 					a = pygame.math.Vector2( om.get_value(id,"act_vel"))
 					a.scale_to_length(self.valsign(a.length()) * om.get_value(id,"pl0"))
