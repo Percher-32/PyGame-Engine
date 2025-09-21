@@ -6,7 +6,7 @@ import Managers.statemanager as sm
 
 pygame.display.init()
 
-scaledown = 2
+scaledown = 2.5
 
 
 
@@ -102,6 +102,7 @@ aplhatypes = {}
 
 with open(f"Saved/sizeoffsets.json","w") as file:
     json.dump(sizeoffsets,file)
+
 
 
 

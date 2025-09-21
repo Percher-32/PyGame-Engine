@@ -77,6 +77,7 @@ class object_manager:
 		self.anims = {}
 		self.forceplay = {}
 		self.func = funcs.func(grandim)
+		self.nfs = {}
 		self.screen = screen
 		self.realscreen = realscreeen
 		self.grandim = univars.grandim
@@ -790,6 +791,9 @@ class object_manager:
 		else:
 			self.addinst(pos,sprites,dim,rot,type,sizen,stagename,layer,colforinst,sn,keepprev=keepprev)
 
+	def rescale(self,id,size = None,sizen = None):
+		self.nfs[id] = [size,sizen]
+		
 
 	def atpoint(self,pos):
 		return self.collidep(pos,0,1)["if"]
@@ -877,11 +881,19 @@ class object_manager:
 		#rendering the non-instanciates
 		self.objgroup.update(camera,self,dim,showall,GameManager.fm.frame)
 		self.objghostgroup.update(self.objects)
-		self.objgroup.draw(univars.screen)
+		# self.objgroup.draw(univars.screen)
 		for obj in self.objgroup:
 			if obj.indist:
+				if obj.name in self.nfs.keys():
+					# print(self.nfs[id])
+					if not self.nfs[obj.name][0] == None:
+						self.objects[obj.name]["size"] = self.nfs[obj.name][0]
+					if not self.nfs[obj.name][1] == None:
+						self.objects[obj.name]["sizen"] = self.nfs[obj.name][1]
+					
 				univars.screen.blit(obj.image,obj.rect)
 
+		self.nfs = {}
 
 
 

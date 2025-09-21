@@ -269,18 +269,21 @@ class GameManager():
 			return False
 
 	def inum(self):
-		pfps = 0
+		lastime = 1
 		while em.running:
-			# if len(om.objects.keys()) > 0:
-			# 	stabledict = om.objects
-			# 	for obj in stabledict.keys():
-			# 		range =  2000
-			# 		if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
-			# 			self.cond(obj,stabledict[obj])
-			pass
+			dt = (time.time() - lastime) * 60
+			lastime = time.time()
+			if len(om.objects.keys()) > 0:
+				stabledict = om.objects.copy()
+				for obj in stabledict.keys():
+					range =  2000
+					if om.speed > 0:
+						if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
+							self.cond(obj,stabledict[obj],dt)
+			# pass
 
 
-			time.sleep(0.001)
+			time.sleep(0.0001)
 
 	def cond(self,obj,info):
 		pass
@@ -398,12 +401,12 @@ class GameManager():
 			self.initial()
 
 		#render background
-		if len(om.objects.keys()) > 0:
-			stabledict = om.objects
-			for obj in stabledict.keys():
-				range =  2000
-				if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
-					self.cond(obj,stabledict[obj])
+		# if len(om.objects.keys()) > 0:
+		# 	stabledict = om.objects
+		# 	for obj in stabledict.keys():
+		# 		range =  2000
+		# 		if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
+		# 			self.cond(obj,stabledict[obj])
 		
 			
 		bg.update(self.publicvariables["screencol"])

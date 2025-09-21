@@ -419,7 +419,7 @@ class Game(Gamemananager.GameManager):
 		instlist = collision["botmid"]["inst"] + collision["botleft"]["inst"] + collision["botright"]["inst"]
 		collisionlisttype = [i.type for i in instlist]
 		collisionboxtype = [i.type for i in collisionbox["inst"]] 
-		collisionlisttype.append("ground")
+		# collisionlisttype.append("ground")
 
 		
 
@@ -680,6 +680,10 @@ class Game(Gamemananager.GameManager):
 								self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
 								self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
 
+						# self.println(collisionlisttype,4)
+						if "ground" in collisionlisttype:							
+							self.sp("homing",0)
+
 
 
 						#INITIATE HOMING ATTACK
@@ -739,7 +743,7 @@ class Game(Gamemananager.GameManager):
 										if round(axis[0]) == 0:
 											if round(axis[1]) == 0:
 												actmult = [0,100]
-										actmult = [axis[0] * 200,axis[1] * 200 - 30]
+										actmult = [axis[0] * 50,axis[1] * 50 - 30]
 
 
 										om.set_value(self.gp("target").name,"throwvel",actmult)
@@ -1441,11 +1445,19 @@ class Game(Gamemananager.GameManager):
 			om.speed = 0.1
 		if self.dt == 0:
 			self.dt = 1
+
 		if useigt:
 			return univars.func.lerp(val,max,              (  (sm/om.speed) / self.dt)*1.5              ,roundto = roundto)
 		else:
 			return univars.func.lerp(val,max,              (  (sm) / self.dt)*1.5              ,roundto = roundto)
 		
+	def customunilerp(self,val,max,sm,gamespeed,deltatime,roundto = 2):
+		"""
+			a lerp function that incorperates IN-GAME time and DELTA-TIME into its incorperation.  sm -> float or int
+		"""
+		return univars.func.lerp(val,max,              (  (sm/gamespeed) / deltatime)*1.5              ,roundto = roundto)
+
+
 	def sign(self,value):
 		"""
 		 	returns + or -
@@ -1522,13 +1534,22 @@ class Game(Gamemananager.GameManager):
 			info["type"] = "enemy-L"
 
 		if info["type"] == "enemy-L":
+			# om.objects["sizen"] = 0.5
+			# om.rescale(id,sizen=[0.5,0.5])
+			om.objects[id]["sizen"] = [0.8,0.8]
 			om.set_value(id,"canhome",1)
 			om.set_value(id,"state","idle")
 			om.set_value(id,"des_vel",[0,0])
+			om.set_value(id,"act_vel",[0,0])
 			om.set_value(id,"rotspeed",random.randint(1,30))
-			om.set_value(id,"speed",random.randint(3,15))
-			om.set_value(id,"superspeed",random.randint(6,12))
-			om.set_value(id,"spacing",random.randint(200,500))
+			pl0 = random.randint(15,30)
+			om.set_value(id,"pl0",pl0) 
+			om.set_value(id,"pl1",pl0 + random.randint(40,40) ) 
+			om.set_value(id,"level",0 )
+			om.set_value(id,"speed",random.randint(10 + 20,15 + 20))
+			om.set_value(id,"superspeed",random.randint(10,10))
+			om.set_value(id,"yfac",random.randint(-100,0))
+			om.set_value(id,"spacing",random.randint(100,250))
 			om.set_value(id,"orbitrot",0)
 			om.set_value(id,"lasttogoto",info["pos"])
 			om.set_value(id,"act_vel",[0,0])
@@ -1551,69 +1572,97 @@ class Game(Gamemananager.GameManager):
 		# 	om.set_value(id,"clipspeed",5)
 
 
-	def cond(self,id,info):
+	def cond(self,id,info,st):
 		"""id -> the id   info -> the info for the id"""
 		if info["type"] == "enemy-L" and "player" in om.values.keys():
-			if univars.func.dist(om.objects[id]["pos"],om.objects["player"]["pos"]) < 6000:
-				if univars.func.dist(om.objects[id]["pos"],om.objects["player"]["pos"]) < 6000:
-					om.set_value(id,"state","hover")
-					rotvec = pygame.Vector2()
-					om.set_value(id,"orbitrot",om.get_value(id,"orbitrot") + om.get_value(id,"rotspeed")/20)
-					rotvec.from_polar((om.get_value(id,"spacing"),om.get_value(id,"orbitrot")))
-					# rotvec = pygame.Vector2((0,0))
-
-
-					playerpos = om.objects["player"]["pos"]
-					togoto=  [ playerpos[0] + (self.gp("act_vel")[0]*om.get_value(id,"superspeed")) + rotvec.x , playerpos[1]  - (self.gp("act_vel")[1]*om.get_value(id,"superspeed")) + rotvec.y   ]
-					ltogoto = om.get_value(id,"lasttogoto")
-					newvel = [ (togoto[0] - info["pos"][0])/10 , (togoto[1] - info["pos"][1])/-10    ]
-
-
-
-					om.set_value(id,"des_vel",newvel)
-
-
-					om.set_value(id,"lasttogoto",togoto)
-
-
-
-				else:
-					om.set_value(id,"state","sprint")
-				self.updateposenemyl(id,info)
-			else:
-				om.set_value(id,"state","idle")
+			self.trianglebot(id,info,st)
+			# pass
 
 		
 			# om.translate(self,id,om.get_value(id,"vel"),usedt=1)
 
+	def trianglebot(self,id,info,st):
+		if id in om.values.keys() and "act_vel" in om.values["player"].keys():
+			# print(om.values[id])
+			# collide = om.collide(id,0,cam,0,0)["inst"]
+			if univars.func.dist(om.objects[id]["pos"],om.objects["player"]["pos"]) < 6000:
+				rotvec = pygame.Vector2()
+				om.set_value(id,"orbitrot",om.get_value(id,"orbitrot") + om.get_value(id,"rotspeed")/20)
+				rotvec.from_polar((om.get_value(id,"spacing"),om.get_value(id,"orbitrot")))
+				# rotvec.y -= om.get_value(id,"spacing")/2
+				# rotvec.y *= 0.3
+				# rotvec.x *= 1.4
+				# rotvec.y = abs(rotvec.y)* -1 * om.get_value(id,"yfac")/100
+				# rotvec.y -=  om.get_value(id,"yfac")
+				# rotvec = pygame.Vector2((0,0))
+
+
+				playerpos = om.objects["player"]["pos"]
+				togoto=  [ playerpos[0] + (self.gp("act_vel")[0]*om.get_value(id,"superspeed")) + rotvec.x , playerpos[1]  - (self.gp("act_vel")[1]*om.get_value(id,"superspeed")) + rotvec.y   ]
+				ltogoto = om.get_value(id,"lasttogoto")
+				# togoto[0]
+				newvel = [ (togoto[0] - info["pos"][0])/10 , (togoto[1] - info["pos"][1])/-10    ]
 
 
 
-	def updateposenemyl(self,id,info):
-		if self.isthere("#Throwing" + str(id)):
-			om.set_value(id,"canhome",0)
-			if not om.get_value(id,"throwvel") == 0:
-				# print(self.gp("throwaxis"))
-				om.set_value(id,"act_vel",om.get_value(id,"throwvel"))
-				om.set_value(id,"des_vel",om.get_value(id,"throwvel"))
+				om.set_value(id,"des_vel",newvel)
+
+
+				om.set_value(id,"lasttogoto",togoto)
+				if univars.func.dist(om.objects[id]["pos"],om.objects["player"]["pos"]) < 6000:
+					om.set_value(id,"state","hover")
+
+				else:
+					om.set_value(id,"state","sprint")
+			else:
+				om.set_value(id,"state","idle")
 
 
 
-				om.set_value(id,"throwvel",[om.get_value(id,"throwvel")[0]/1.05,om.get_value(id,"throwvel")[1]/1.05])
+			if self.isthere("#Throwing" + str(id)):
+				om.set_value(id,"canhome",0)
+				if not om.get_value(id,"throwvel") == 0:
+					# print(self.gp("throwaxis"))
+					om.set_value(id,"act_vel",om.get_value(id,"throwvel"))
+					om.set_value(id,"des_vel",om.get_value(id,"throwvel"))
 
+
+
+					om.set_value(id,"throwvel",[om.get_value(id,"throwvel")[0]/1.0005,om.get_value(id,"throwvel")[1]/1.0005])
+					
+
+				
+			else:
+				om.set_value(id,"canhome",1)
+				# if len(collide) > 0:
+				# 	om.set_value(id,"rotspeed",om.get_value(id,"rotspeed") * -1)
+
+
+			# if len(collide) > 0:
+			# 	lt = om.get_value(id,"des_vel")
+			# 	lt[0] *= -1
+			# 	lt[1] *= -1
+			# 	om.set_value(id,"act_vel",lt)
+			# 	om.set_value(id,"des_vel",[0,0])
+			# 	om.set_value(id,"throwvel",0)
 			
-		else:
-			om.set_value(id,"canhome",1)
-		if len(om.collide(id,0,cam,0,0)["inst"]) > 0:
-			lt = om.get_value(id,"des_vel")
-			lt[0] *= -1
-			lt[1] *= -1
-			om.set_value(id,"act_vel",lt)
-			om.set_value(id,"des_vel",[0,0])
-			om.set_value(id,"throwvel",0)
-		om.set_value(id,"act_vel",self.unilerp(om.get_value(id,"act_vel"),om.get_value(id,"des_vel"),om.get_value(id,"speed")))
-		om.translate(self,id,om.get_value(id,"act_vel"),usedt=1)
+			
+			# om.translate(self,id,[0,20*st],usedt=0)
 
+			om.set_value(id,"act_vel",self.customunilerp(om.get_value(id,"act_vel"),om.get_value(id,"des_vel"),om.get_value(id,"speed"),om.speed,st))
+			if om.get_value(id,"pl0") > pygame.math.Vector2( om.get_value(id,"act_vel")).length() < om.get_value(id,"pl1"):
+				a = pygame.math.Vector2( om.get_value(id,"act_vel"))
+				a.scale_to_length(self.valsign(a.length()) * om.get_value(id,"pl0"))
+				om.set_value(id,"act_vel",list(a))
+			elif om.get_value(id,"pl1") < pygame.math.Vector2( om.get_value(id,"act_vel")).length():
+				a = pygame.math.Vector2( om.get_value(id,"act_vel"))
+				a.scale_to_length(self.valsign(a.length()) * om.get_value(id,"pl1"))
+				om.set_value(id,"act_vel",list(a))
+			
+			om.translate(self,id,[om.get_value(id,"act_vel")[0]*st,om.get_value(id,"act_vel")[1]*st],usedt=0)
+
+
+		
 
 
 
