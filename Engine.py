@@ -84,7 +84,7 @@ class Game(Gamemananager.GameManager):
 	def commence(self):
 		pass
 
-	def update(self):
+	def update(self): 
 		bg.background = "test2"
 		self.println(self.actualwaterheight,2)
 		# om.speed = 0.8
@@ -125,6 +125,8 @@ class Game(Gamemananager.GameManager):
 		# self.publicvariables["waterh"] -= 0.002
 		sd.program['time'] = fm.frame
 		sd.program['state'] = self.publicvariables["shaderstate"]
+		# univars.pixelscale = abs(math.sin(fm.frame/100) * 3) + 1
+
 
 
 		if mood == "afternoon":
@@ -200,7 +202,7 @@ class Game(Gamemananager.GameManager):
 
 
 			# if not self.gp("homing") > 0:
-			cm.cam_focus_size("playercam",campos,4,univars.pixelscale/7 * 0.37)
+			cm.cam_focus_size("playercam",campos,4,0.3 / (univars.scaledown/2.5) * 15/7 )
 
 
 			
@@ -481,18 +483,19 @@ class Game(Gamemananager.GameManager):
 			closeness = None
 			playervec = pygame.math.Vector2(om.objects["player"]["pos"])
 			for obj in attackbox["obj"]:	
-				emvec = pygame.math.Vector2(obj.info["pos"])
-				distvec = playervec - emvec
-				if distvec.length() > 0:
-					distvec.normalize()
-					if obj.info["type"] in ["enemy-L","omnispring","goal"] and om.get_value(obj.name,"canhome"):
-						if vec == None:
-							vec = obj
-							closeness = 1 - distvec.dot(enaxis) 
-						else:
-							if 1-distvec.dot(enaxis) < closeness:
+				if not obj == None:
+					emvec = pygame.math.Vector2(obj.info["pos"])
+					distvec = playervec - emvec
+					if distvec.length() > 0:
+						distvec.normalize()
+						if obj.info["type"] in ["enemy-L","omnispring","goal"] and om.get_value(obj.name,"canhome"):
+							if vec == None:
 								vec = obj
 								closeness = 1 - distvec.dot(enaxis) 
+							else:
+								if 1-distvec.dot(enaxis) < closeness:
+									vec = obj
+									closeness = 1 - distvec.dot(enaxis) 
 			if vec == None:
 				om.objects["enemyzoom"]["rendercond"] = 0
 			else:
@@ -1193,7 +1196,6 @@ class Game(Gamemananager.GameManager):
 					# max_value = 180
 					# range_size = max_value - min_value
 					# self.sp("rotoffset", ((self.gp("rotoffset") - min_value) % range_size) + min_value)
-					# if self.gp("rotoffset") > 180:
 					# 	self.sp("rotoffset",self.gp("rotoffset") - 360)
 					# if self.gp("rotoffset") < -180:
 					# 	self.sp("rotoffset",self.gp("rotoffset") + 360)
@@ -1545,12 +1547,14 @@ class Game(Gamemananager.GameManager):
 			om.objects[id]["sizen"] = [0.8,0.8]
 			om.set_value(id,"canhome",1)
 			om.set_value(id,"state","idle")
+			om.set_value(id,"health",100)
 			om.set_value(id,"des_vel",[0,0])
 			om.set_value(id,"act_vel",[0,0])
 			om.set_value(id,"rotspeed",random.randint(1,30))
 			pl0 = random.randint(15,30)
 			om.set_value(id,"pl0",pl0) 
-			om.set_value(id,"pl1",pl0 + random.randint(40,40) ) 
+
+			om.set_value(id,"pl1",pl0 + random.randint(40,80) ) 
 			om.set_value(id,"level",0 )
 			om.set_value(id,"speed",random.randint(10 + 20,15 + 20))
 			om.set_value(id,"superspeed",random.randint(10,10))
@@ -1562,6 +1566,10 @@ class Game(Gamemananager.GameManager):
 			om.set_value(id,"vel",[0,0])
 			om.set_value(id,"tarvel",[0,0])
 			om.set_value(id,"clipspeed",5)
+			om.set_value(id,"timer",5)
+			om.set_value(id,"maxtimer",random.randint(10 * 2,15 * 2))
+			
+
 
 
 		if info["type"] == "omnispring":
@@ -1582,15 +1590,46 @@ class Game(Gamemananager.GameManager):
 		"""id -> the id   info -> the info for the id"""
 		if info["type"] == "enemy-L" and "player" in om.values.keys():
 			self.trianglebot(id,info,st)
-			# pass
 
-		
-			# om.translate(self,id,om.get_value(id,"vel"),usedt=1)
+		if info["type"] == "HURT:laser":
+			self.laserbeam(id,info,st)
+
+
+	def spawnlaser(self,pos,speed,dir,time,extraspeed=[0,0]):
+		id = om.add(self,pos,"laser",dir,"HURT:laser",[1,1],univars.grandim,keepprev=1)
+		om.objects[id]["type"] = "HURT:laser"
+		movec = pygame.Vector2()
+		movec.from_polar((speed,dir))
+		movec +=  pygame.Vector2(extraspeed[0],extraspeed[1])
+		om.set_value(id,"movec",movec)
+		om.set_value(id,"speed",speed)
+		om.set_value(id,"damage",5)
+		om.set_value(id,"extraspeed",extraspeed)
+		om.set_value(id,"time",time)
+
+			
+
+	def laserbeam(self,id,info,st):
+		om.set_value(id,"time",om.get_value(id,"time") - st/60)
+		# speed = om.get_value(id,"speed")
+
+		# movec = pygame.Vector2()
+		# movec.from_polar((speed,dir))
+
+
+		if om.get_value(id,"time") < 0:
+			om.removeid(id)
+		else:
+			movec = om.get_value(id,"movec")
+			
+			movecst = [movec.x*st * om.speed,movec.y*st * om.speed]
+			om.translate(self,id,movecst,usedt=0)
+
 
 	def trianglebot(self,id,info,st):
 		if id in om.values.keys() and "act_vel" in om.values["player"].keys():
-			# print(om.values[id])
-			# collide = om.collide(id,0,cam,0,0)["inst"]
+	
+
 			if univars.func.dist(om.objects[id]["pos"],om.objects["player"]["pos"]) < 6000:
 				rotvec = pygame.Vector2()
 				om.set_value(id,"orbitrot",om.get_value(id,"orbitrot") + om.get_value(id,"rotspeed")/20)
@@ -1671,6 +1710,23 @@ class Game(Gamemananager.GameManager):
 			
 			om.translate(self,id,[om.get_value(id,"act_vel")[0]*st * om.speed,om.get_value(id,"act_vel")[1]*st * om.speed],usedt=0)
 
+
+
+			
+			om.set_value(id,"timer",om.get_value(id,"timer") - (st * self.gp("wantime"))/10)
+
+
+			playervec = pygame.Vector2(om.objects["player"]["pos"])
+			selfpos =  pygame.Vector2(info["pos"])
+			
+
+			vectoplayer = playervec-selfpos
+
+			if  abs(vectoplayer.length()) > 300:
+				if om.get_value(id,"timer") < 0 :
+					rot = vectoplayer.angle * -1 + random.randint(-1 * abs(int(self.gp("des_vel")[0]/10)),1 * abs(int(self.gp("des_vel")[0]/10)))
+					self.spawnlaser(om.objects[id]["pos"],40,rot,3,extraspeed=self.listdiv(om.get_value("player","act_vel"),2))
+					om.set_value(id,"timer",om.get_value(id,"maxtimer"))
 
 		
 

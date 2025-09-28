@@ -9,6 +9,7 @@ pygame.display.init()
 scaledown = 2.5
 
 
+pixelscale = 1
 
 
 screen_w = pygame.display.get_desktop_sizes()[0][0]/scaledown
@@ -19,7 +20,6 @@ startdims = (screen_w,screen_h)
 
 camchange = True
 
-pixelscale = 15
 
 
 grandim = 32
@@ -49,9 +49,9 @@ sizes = {
 }
 
 
-minsize = (screen_w,screen_h)
+minsize = (screen_w/pixelscale,screen_h/pixelscale)
 
-screen = pygame.Surface(minsize)
+screen = pygame.Surface(minsize,pygame.SCALED)
 fakescreen = pygame.Surface(minsize)
 fakescreen.set_colorkey((0,0,0))
 

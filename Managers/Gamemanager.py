@@ -8,6 +8,7 @@ import math
 import Managers.framemanager as framemanager
 import Managers.objectmanager as objectmanager
 import Managers.Tiled as Tiled
+import copy
 import Managers.univars as univars
 import Managers.statemanager as statemanager
 import Managers.Uimanager as Uimanager
@@ -274,16 +275,17 @@ class GameManager():
 			dt = (time.time() - lastime) * 60
 			lastime = time.time()
 			if len(om.objects.keys()) > 0:
-				stabledict = om.objects.copy()
+				stabledict = copy.copy(om.objects)
 				for obj in stabledict.keys():
 					range =  2000
 					if om.speed > 0:
 						if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
+							
 							self.cond(obj,stabledict[obj],dt)
 			# pass
 
 
-			time.sleep(0.0001)
+			time.sleep(0.0000001)
 
 	def cond(self,obj,info):
 		pass
@@ -437,7 +439,7 @@ class GameManager():
 		# renderwid /= 2
 		# univars.screen.blit(pm.screen,(univars.screen_w/2,univars.screen_h/2))
 		pm.updateparticles(self.dt)
-		univars.realscreeen.blit(univars.screen,(univars.realscreeen.width//2 - univars.screen.size[0]//2,univars.realscreeen.height//2 - univars.screen.size[1]//2))
+		univars.realscreeen.blit(pygame.transform.scale_by(univars.screen,univars.pixelscale),(univars.realscreeen.width//2 - (univars.pixelscale * univars.screen.size[0])//2,univars.realscreeen.height//2 - (univars.pixelscale * univars.screen.size[1])//2))
 		
 
 		#runs editor
@@ -481,7 +483,7 @@ class GameManager():
 			goes through all sprites on reload
 		"""
 		if len(om.objects.keys()) > 0:
-			stabledict = om.objects
+			stabledict = copy.deepcopy(om.objects)
 			for obj in stabledict.keys():
 				self.oncreate(obj,stabledict[obj])
 			

@@ -103,7 +103,6 @@ class object_manager:
 		self.baked = 0
 		self.renderdist = univars.renderdist
 		self.dodist = 128
-		self.tracker = 0
 		self.tileup = 1
 		self.showmap = 0
 		self.loadedchunk = 0
@@ -787,10 +786,13 @@ class object_manager:
 			self.objgroup.add(finalobj,layer = layer)
 			self.objghostgroup.add(ObjGhost(finalobj))
 			GM.oncreate(str(self.tracker),add)
+			
+			a = str(self.tracker)
+			return a
 
 		else:
 			self.addinst(pos,sprites,dim,rot,type,sizen,stagename,layer,colforinst,sn,keepprev=keepprev)
-
+		
 	def rescale(self,id,size = None,sizen = None):
 		self.nfs[id] = [size,sizen]
 		
@@ -900,3 +902,5 @@ class object_manager:
 
 
 om = object_manager(univars.realscreeen,univars.screen,univars.grandim,univars.aplhatypes,univars.hideentypes)
+
+om.tracker = 0
