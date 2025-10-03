@@ -705,6 +705,8 @@ class Game(Gamemananager.GameManager):
 											if ground:
 												self.key["jump"] = 1
 
+
+						#GOTO TARGET
 						if self.gp("homing") == 1:
 							enposvec = pygame.math.Vector2(self.gp("target").info["pos"])
 							playerposvec = pygame.math.Vector2(om.objects["player"]["pos"])
@@ -731,6 +733,7 @@ class Game(Gamemananager.GameManager):
 										self.sp("HOLD",self.gp("target").info["pos"])
 										self.sp("act_vel",200,1)
 
+						#DISMOUNT
 						if self.gp("homing") == 2:
 							if self.gp("target").info["type"] == "enemy-L":
 								if self.key["secondary"]:
@@ -752,7 +755,9 @@ class Game(Gamemananager.GameManager):
 										if round(axis[0]) == 0:
 											if round(axis[1]) == 0:
 												actmult = [0,100]
-										actmult = [axis[0] * 70,axis[1] * 70]
+										actmult = [axis[0] * 100,axis[1] * 100]
+										if actmult == [0,0]:
+											actmult = [0,-100]
 
 
 										om.set_value(self.gp("target").name,"throwvel",actmult)
@@ -761,9 +766,9 @@ class Game(Gamemananager.GameManager):
 
 										self.wait("dashrem",2)
 										# cm.setcond("playercam","shake",6)
-										actmult = [30,30]
+										actmult = [160,160]
 										actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
-										desmult = [30,30]
+										desmult = [160,160]
 										desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
 										self.spin(21,0.4,0.1)
 
@@ -1547,7 +1552,7 @@ class Game(Gamemananager.GameManager):
 			om.objects[id]["sizen"] = [0.8,0.8]
 			om.set_value(id,"canhome",1)
 			om.set_value(id,"state","idle")
-			om.set_value(id,"health",100)
+			om.set_value(id,"HP",100)
 			om.set_value(id,"des_vel",[0,0])
 			om.set_value(id,"act_vel",[0,0])
 			om.set_value(id,"rotspeed",random.randint(1,30))
@@ -1568,6 +1573,9 @@ class Game(Gamemananager.GameManager):
 			om.set_value(id,"clipspeed",5)
 			om.set_value(id,"timer",5)
 			om.set_value(id,"maxtimer",random.randint(10 * 2,15 * 2))
+
+
+			self.createhpbar(id,1,[0,30])
 			
 
 
@@ -1586,6 +1594,7 @@ class Game(Gamemananager.GameManager):
 		# 	om.set_value(id,"clipspeed",5)
 
 
+
 	def cond(self,id,info,st):
 		"""id -> the id   info -> the info for the id"""
 		if info["type"] == "enemy-L" and "player" in om.values.keys():
@@ -1594,6 +1603,8 @@ class Game(Gamemananager.GameManager):
 		if info["type"] == "HURT:laser":
 			self.laserbeam(id,info,st)
 
+		if info["type"] == "HPBAR":
+			self.hpbar(id,info)
 
 	def spawnlaser(self,pos,speed,dir,time,extraspeed=[0,0]):
 		id = om.add(self,pos,"laser",dir,"HURT:laser",[1,1],univars.grandim,keepprev=1)
@@ -1607,7 +1618,26 @@ class Game(Gamemananager.GameManager):
 		om.set_value(id,"extraspeed",extraspeed)
 		om.set_value(id,"time",time)
 
-			
+	def createhpbar(self,id,size,offset):
+		"""
+			offset has y up = +\n
+			Y axis FIXED
+		"""
+		hpid = om.add(self,(0,0),"laser",0,"HPBAR",[size,size],univars.grandim,keepprev=1,layer=5)
+		om.objects[hpid]["type"] = "HPBAR"
+		om.set_value(hpid,"obj-id",id)
+		om.set_value(hpid,"size",size)
+		om.set_value(hpid,"offset",offset)
+		self.print(om.objects[hpid]["type"])
+
+	def hpbar(self,id,info):
+		try:
+			om.objects[id]["sizen"][0] = abs(om.get_value(om.get_value(id,"obj-id"),"HP")/100 * om.get_value(id,"size"))
+			om.objects[id]["pos"] = self.listadd((om.objects[om.get_value(id,"obj-id")]["pos"],[om.get_value(id,"offset")[0],om.get_value(id,"offset")[1] * -1]))
+		except:
+			om.removeid(id)
+
+
 
 	def laserbeam(self,id,info,st):
 		om.set_value(id,"time",om.get_value(id,"time") - st/60)
@@ -1668,6 +1698,8 @@ class Game(Gamemananager.GameManager):
 
 			if self.isthere("#Throwing" + str(id)):
 				om.set_value(id,"canhome",0)
+				if fm.frame%2 == 0:
+					pm.particlespawnbluprint(om.objects[id]["pos"],"exp")
 				if not om.get_value(id,"throwvel") == 0:
 					# print(self.gp("throwaxis"))
 					om.set_value(id,"act_vel",om.get_value(id,"throwvel"))
@@ -1675,7 +1707,7 @@ class Game(Gamemananager.GameManager):
 
 
 
-					om.set_value(id,"throwvel",[om.get_value(id,"throwvel")[0]/1.000005,om.get_value(id,"throwvel")[1]/1.000005])
+					om.set_value(id,"throwvel",[om.get_value(id,"throwvel")[0]/1.0000005,om.get_value(id,"throwvel")[1]/1.0000005])
 					
 
 				
@@ -1684,7 +1716,8 @@ class Game(Gamemananager.GameManager):
 				# if len(collide) > 0:
 				# 	om.set_value(id,"rotspeed",om.get_value(id,"rotspeed") * -1)
 
-
+			
+			# om.set_value(id,"HP",abs(math.sin(fm.frame/100) * 100))
 			# if len(collide) > 0:
 			# 	lt = om.get_value(id,"des_vel")
 			# 	lt[0] *= -1
