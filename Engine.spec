@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['ENgine.py'],
+    ['Engine.py'],
     pathex=[],
     binaries=[],
     datas=[],
@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='ENgine',
+    name='Engine',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
