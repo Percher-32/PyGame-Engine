@@ -6,7 +6,7 @@ import Managers.statemanager as sm
 
 pygame.display.init()
 
-scaledown = 2.5
+scaledown = 3
 
 
 pixelscale = 1

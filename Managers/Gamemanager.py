@@ -19,6 +19,7 @@ import Managers.backgroundmanager as backgroundmanager
 import os
 import Managers.Shader as shader
 import threading
+import multiprocessing
 import json
 import time
 import random
@@ -271,21 +272,20 @@ class GameManager():
 
 	def inum(self):
 		lastime = 1
-		while em.running:
-			dt = (time.time() - lastime) * 60
-			lastime = time.time()
-			if len(om.objects.keys()) > 0:
-				stabledict = copy.copy(om.objects)
-				for obj in stabledict.keys():
-					range =  2000
-					if om.speed > 0:
-						if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
-							
-							self.cond(obj,stabledict[obj],dt)
+		dt = self.dt
+		lastime = time.time()
+		if len(om.objects.keys()) > 0:
+			stabledict = copy.copy(om.objects)
+			for obj in stabledict.keys():
+				range =  2000
+				if om.speed > 0:
+					if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
+						
+						self.cond(obj,stabledict[obj],dt)
 			# pass
 
 
-			time.sleep(0.0000001)
+			# time.sleep(0.0000001)
 
 	def cond(self,obj,info):
 		pass
@@ -339,13 +339,14 @@ class GameManager():
 	def Run(self):
 		self.commence()
 		self.initial()
-		inumthread = threading.Thread(target=self.inum)
+		# inumthread = threading.Process(target=self.inum)
 		# backgroundthread = threading.Thread(target=self.backgroundupdate)
 		# uithread = threading.Thread(target=self.uiunpdate)
-		inumthread.start()
 		# backgroundthread.start()
 		# uithread.start()
 		self.dt = 1
+		
+		# inumthread.start()
 		while em.running: 
 			self.start()   
 			if not Tiled.loadingmap:
@@ -395,6 +396,7 @@ class GameManager():
 		"""run at the start of every frame"""
 		if self.dt == 0:
 			self.dt = 1
+		self.inum()
 		self.fps = round(60/ self.dt,3)
 		if Tiled.comm:
 			sm.state = Tiled.cht

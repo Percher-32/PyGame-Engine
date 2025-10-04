@@ -29,7 +29,7 @@ class Game(Gamemananager.GameManager):
 		super().__init__(screen,fm)
 		self.ingametime = 0
 		self.publicvariables["gamespeed"] = 1
-		self.publicvariables["mood"] = "daybreak"
+		self.publicvariables["mood"] = "sunset"
 		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = -(64 * 2.4)
 		self.lookaheady = 0
@@ -757,11 +757,11 @@ class Game(Gamemananager.GameManager):
 												actmult = [0,100]
 										actmult = [axis[0] * 100,axis[1] * 100]
 										if actmult == [0,0]:
-											actmult = [0,-100]
+											actmult = [100,0]
 
 
 										om.set_value(self.gp("target").name,"throwvel",actmult)
-										self.wait("#Throwing" + self.gp("target").name,1,0)
+										self.wait("#Throwing" + self.gp("target").name,3,0)
 
 
 										self.wait("dashrem",2)
@@ -780,6 +780,7 @@ class Game(Gamemananager.GameManager):
 										self.sp("act_vel",0,0)
 										self.sp("des_vel",0,0)
 										self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
+
 										self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
 									else:
 										self.wait("dashrem",2)
@@ -1573,6 +1574,7 @@ class Game(Gamemananager.GameManager):
 			om.set_value(id,"clipspeed",5)
 			om.set_value(id,"timer",5)
 			om.set_value(id,"maxtimer",random.randint(10 * 2,15 * 2))
+			om.set_value(id,"flashtimer",0)
 
 
 			self.createhpbar(id,1,[0,30])
@@ -1628,7 +1630,6 @@ class Game(Gamemananager.GameManager):
 		om.set_value(hpid,"obj-id",id)
 		om.set_value(hpid,"size",size)
 		om.set_value(hpid,"offset",offset)
-		self.print(om.objects[hpid]["type"])
 
 	def hpbar(self,id,info):
 		try:
@@ -1661,6 +1662,7 @@ class Game(Gamemananager.GameManager):
 	
 
 			if univars.func.dist(om.objects[id]["pos"],om.objects["player"]["pos"]) < 6000:
+				
 				rotvec = pygame.Vector2()
 				om.set_value(id,"orbitrot",om.get_value(id,"orbitrot") + om.get_value(id,"rotspeed")/20)
 				rotvec.from_polar((om.get_value(id,"spacing"),om.get_value(id,"orbitrot")))
@@ -1697,22 +1699,31 @@ class Game(Gamemananager.GameManager):
 
 
 			if self.isthere("#Throwing" + str(id)):
+				om.set_value(id,"fireball",1)
 				om.set_value(id,"canhome",0)
-				if fm.frame%2 == 0:
-					pm.particlespawnbluprint(om.objects[id]["pos"],"exp")
 				if not om.get_value(id,"throwvel") == 0:
 					# print(self.gp("throwaxis"))
 					om.set_value(id,"act_vel",om.get_value(id,"throwvel"))
+					om.set_value(id,"HP",om.get_value(id,"HP") - (1*st))
 					om.set_value(id,"des_vel",om.get_value(id,"throwvel"))
 
 
 
-					om.set_value(id,"throwvel",[om.get_value(id,"throwvel")[0]/1.0000005,om.get_value(id,"throwvel")[1]/1.0000005])
+					om.set_value(id,"throwvel",[om.get_value(id,"throwvel")[0]/1.0000005,om.get_value(id,"throwvel")[1]/1.0000005 - 1])
 					
-
+				
+				col = om.collide(id,0,cam,extrax=500,extray=500)["obj"]
+				if not None in col:
+					for obj in col:
+						om.set_value(obj.name,"flashtimer",2)
+						om.set_value(obj.name,"HP",om.get_value(obj.name,"HP") - (3))
+						
+				
 				
 			else:
+				om.set_value(id,"fireball",0)
 				om.set_value(id,"canhome",1)
+				om.objects[id]["rot"] = 0
 				# if len(collide) > 0:
 				# 	om.set_value(id,"rotspeed",om.get_value(id,"rotspeed") * -1)
 
@@ -1742,8 +1753,32 @@ class Game(Gamemananager.GameManager):
 					om.set_value(id,"act_vel",list(a))
 			
 			om.translate(self,id,[om.get_value(id,"act_vel")[0]*st * om.speed,om.get_value(id,"act_vel")[1]*st * om.speed],usedt=0)
+			if self.isthere("#Throwing" + str(id)):
+					
+					om.rotate(self,id,20)
+					pm.particlespawnbluprint(self.listadd((om.objects[id]["pos"],(-32,-32))),"exp")
+
+			# if not None in col["obj"]:
+			# 	if  True in [ om.get_value(obj.name,"fireball") for obj in col["obj"] ]:
+			# 		om.set_value(id,"HP",om.get_value(id,"HP") - (1*st))
+			# 		# pm.particlespawnbluprint(self.listadd((om.objects[id]["pos"],(-32,-32))),"exp")
+			# 		om.set_value(id,"flashtimer",2)
+			# 		om.objects[id]["sn"] = 1
 
 
+			if om.get_value(id,"flashtimer") > 0:
+				om.set_value(id,"flashtimer",om.get_value(id,"flashtimer") - (1*st)/40)
+				if round(om.get_value(id,"flashtimer") * 5)%2 == 0:
+					om.objects[id]["sn"] = 1
+				else:
+					om.objects[id]["sn"] = 0
+			else:
+				om.objects[id]["sn"] = 0
+
+
+
+					
+					
 
 			
 			om.set_value(id,"timer",om.get_value(id,"timer") - (st * self.gp("wantime"))/10)
@@ -1760,6 +1795,17 @@ class Game(Gamemananager.GameManager):
 					rot = vectoplayer.angle * -1 + random.randint(-1 * abs(int(self.gp("des_vel")[0]/10)),1 * abs(int(self.gp("des_vel")[0]/10)))
 					self.spawnlaser(om.objects[id]["pos"],40,rot,3,extraspeed=self.listdiv(om.get_value("player","act_vel"),2))
 					om.set_value(id,"timer",om.get_value(id,"maxtimer"))
+
+
+			
+
+
+
+
+
+
+			if om.get_value(id,"HP") <= 0:
+				om.removeid(id)
 
 		
 
