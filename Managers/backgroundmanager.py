@@ -6,8 +6,10 @@ import os
 
 tol = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]
 
+
+
 class Item(pygame.sprite.Sprite):
-    def __init__(self,name,pos,alpha = 400,surf=None,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h),layer = 1,infiniscroll = 0):
+    def __init__(self,name,pos,alpha = 400,surf=None,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h),layer = 1,infiniscroll = 0,zdep=0):
         pygame.sprite.Sprite.__init__(self)
         self.infiniscroll = infiniscroll
         self.surf = surf
@@ -15,6 +17,8 @@ class Item(pygame.sprite.Sprite):
         self.color = color
         self.alpha = alpha
         self.dimensions = dimensions
+        # pygame.transform.
+        self.zdep = zdep
         if surf == None:
             surf = pygame.Surface(dimensions)
             surf.fill(color)
@@ -41,12 +45,13 @@ class Item(pygame.sprite.Sprite):
         self.image = self.baseimg
 
         self.rect = self.image.get_rect(center = pos)
-        self.layer = layer
+        self.layerip = layer
         self.lastframe = self.image
         self.cache = {}
         camera = Cameramod.cam
         self.size = 1
         self.lastcampos = [0,0]
+        self.bd = {}
         self.lastcamsize = 1
         
         self.load()
@@ -61,29 +66,29 @@ class Item(pygame.sprite.Sprite):
     def update(self):
         
         camera = Cameramod.cam
-        realestsize = abs(round(self.size * 0.01,2)/0.01)
-        if univars.camchange or univars.poschange:
-            if univars.poschange:
-                self.pos[0] -= (camera.x - self.lastcampos[0])*(self.layer)*camera.size
-                self.pos[1] -= (camera.y - self.lastcampos[1])*(self.layer)*camera.size
-                
-            if univars.camchange:
-                self.size += (camera.size - self.lastcamsize)*self.layer *(univars.scaledown)
-                # pass
-
-            self.lastcampos = [camera.x,camera.y]
-            self.lastcamsize = camera.size
+        realestsize = abs(round(self.size * 0.01,2)/0.01 / (univars.scaledown/2.5))
+        self.pos[0] -= (camera.x - self.lastcampos[0])*(self.layerip)*camera.size
+        self.pos[1] -= (camera.y - self.lastcampos[1])*(self.layerip)*camera.size
+        
+        self.size += (camera.size - self.lastcamsize)*self.layerip *(univars.scaledown)
 
 
-            if not str(realestsize) in self.cache.keys():
-                self.image =  pygame.transform.scale_by(self.baseimg,  realestsize )
-                self.cache[str(realestsize)] = self.image
-            else:
-                self.image = self.cache[str(realestsize)]
+        # if self.layer == 0.1:
+        #     self.bd[(int(camera.x/16) * 16,int(camera.y/16) * 16,round(camera.size,2))] = (             (round(self.pos[0]) * realestsize + univars.screen.get_width()//2   )     ,      round((self.pos[1]) * realestsize + univars.screen.get_height()//2   )  )
+        #     for a in [ str(i) + ":" +  str(self.bd[i]) for i in self.bd.keys()]:
+        #         print(a)
+        #     print("///////////////")
+
+
+
+        if not str(realestsize) in self.cache.keys():
+            self.image =  pygame.transform.scale_by(self.baseimg,  realestsize )
+            darken = pygame.Surface(self.image.get_size(), pygame.SRCALPHA)
+            self.cache[str(realestsize)] = self.image
         else:
-            self.image = self.lastframe
-
-
+            self.image = self.cache[str(realestsize)]
+        self.lastcampos = [camera.x,camera.y]
+        self.lastcamsize = camera.size
 
         if abs((self.pos[0])) > self.dimensions[0] and self.infiniscroll:
             self.pos[0] = 0
@@ -107,17 +112,18 @@ class Backgroundmanager:
     def __init__(self):
         self.items = {}
         self.background = None
-        self.backlayer = pygame.Surface((64 * univars.pixelscale,64 * univars.pixelscale))
+        self.backlayer = univars.screen
         self.backlayer.fill(univars.screencol)
         self.infiniscrollers = []
 
 
     def addbackground(self,name):
-        self.items[name] = pygame.sprite.Group()
+        self.items[name] = pygame.sprite.LayeredUpdates()
 
-    def addbackgrounditem(self,name,backgroundname,pos,alpha = 400,layer = 1,surf=None,infiniscroll = False,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h)):
-        item = Item(name,pos,alpha=alpha,surf=surf,color=color,dimensions=dimensions,layer=layer,infiniscroll=infiniscroll)
-        self.items[backgroundname].add(item)
+    def addbackgrounditem(self,name,backgroundname,pos,alpha = 400,layer = 1,surf=None,infiniscroll = False,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h),zdep=0):
+        item = Item(name,pos,alpha=alpha,surf=surf,color=color,dimensions=dimensions,layer=layer,infiniscroll=infiniscroll,zdep = zdep),
+        self.items[backgroundname].add(item,layer =  zdep)
+        # univars.print(zdep)
 
 
     def update(self,screencol):
@@ -133,7 +139,7 @@ class Backgroundmanager:
             saves all backgrounds and items within
         """
         for item in self.items.keys():
-            todump = [  [i.name,i.pos,i.alpha,i.surf,i.color,i.dimensions,i.layer,i.infiniscroll]  for i in self.items[item]]
+            todump = [  [i.name,i.pos,i.alpha,i.surf,i.color,i.dimensions,i.layerip,i.infiniscroll,i.zdep]  for i in self.items[item]]
             with open (f"Saved/backgrounds/{item}.json","w") as file:
                 json.dump(todump,file)
             
@@ -146,7 +152,7 @@ class Backgroundmanager:
             with open ("Saved/backgrounds" + "/" + item,"r") as thing:
                 things = json.load(thing)
                 for elem in things:
-                    self.addbackgrounditem(elem[0],item.replace(".json",""),elem[1],alpha= elem[2],surf=elem[3],color = elem[4],dimensions=elem[5],layer = elem[6],infiniscroll=elem[7])
+                    self.addbackgrounditem(elem[0],item.replace(".json",""),elem[1],alpha= elem[2],surf=elem[3],color = elem[4],dimensions=elem[5],layer = elem[6],infiniscroll=elem[7],zdep=elem[8])
 
 bg = Backgroundmanager()
       

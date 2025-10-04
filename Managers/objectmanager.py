@@ -77,6 +77,7 @@ class object_manager:
 		self.anims = {}
 		self.forceplay = {}
 		self.func = funcs.func(grandim)
+		self.nfs = {}
 		self.screen = screen
 		self.realscreen = realscreeen
 		self.grandim = univars.grandim
@@ -102,7 +103,6 @@ class object_manager:
 		self.baked = 0
 		self.renderdist = univars.renderdist
 		self.dodist = 128
-		self.tracker = 0
 		self.tileup = 1
 		self.showmap = 0
 		self.loadedchunk = 0
@@ -429,7 +429,7 @@ class object_manager:
 			if str(b.name) == str(id):
 				return b
 
-	def collide(self,id,show,camera,extrax= 0,extray = 0,extra = 0) -> dict:
+	def collide(self,id,show,camera,extrax= 0,extray = 0,extra = 0,offx = 0,offy=0) -> dict:
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		if not self.objfromid(id) == None:
 			#coll for non-inst
@@ -439,8 +439,8 @@ class object_manager:
 			r1.width = r1.width + (extrax + extra)
 			r1.height = r1.height + (extray + extra)
 
-			r1.x -= (extrax + extra)/2
-			r1.y -= (extray + extra)/2
+			r1.x -= (extrax + extra)/2 - offx
+			r1.y -= (extray + extra)/2 + offy
 
 			# typel = self.getcull(self.objects[id]["pos"],extra + 1,dim)
 			# typel.remove(id)
@@ -781,15 +781,22 @@ class object_manager:
 				spritelist = univars.func.getspritesscale(sprites,size)
 				self.spritecache[str([sprites,sizen])] = spritelist
 			add = {"pos":list(pos),"name":sprites,"type":sprites,"rot":rot,"sn":sn,"gothru":0,"rendercond":1,"alpha":1000,"layer":layer,"animname":"none","size":size,"sizen":sizen}
+			# print(add)
 			self.objects.update({str(self.tracker):add})
 			finalobj = inst.obj(str(self.tracker),add,spritelist)
 			self.objgroup.add(finalobj,layer = layer)
 			self.objghostgroup.add(ObjGhost(finalobj))
 			GM.oncreate(str(self.tracker),add)
+			
+			a = str(self.tracker)
+			return a
 
 		else:
 			self.addinst(pos,sprites,dim,rot,type,sizen,stagename,layer,colforinst,sn,keepprev=keepprev)
-
+		
+	def rescale(self,id,size = None,sizen = None):
+		self.nfs[id] = [size,sizen]
+		
 
 	def atpoint(self,pos):
 		return self.collidep(pos,0,1)["if"]
@@ -846,7 +853,7 @@ class object_manager:
 
 				]
 		
-		ranges = [ chunk for chunk in ranges  if univars.func.dist([0,0],chunk) < 1/camera.size * 2.2  ]
+		ranges = [ chunk for chunk in ranges  if univars.func.dist([0,0],chunk) < 1/camera.size * 2.5  ]
 		#the instanciate chunks to be rendered
 		lof = [  b   for b in self.instances.keys() for i in ranges   if b == ( i[0]  + camposdim[0],i[1] + camposdim[1]   )]
 		noncollof = [  b   for b in self.noncolinstances.keys() for i in ranges   if b == ( i[0]  + camposdim[0],i[1] + camposdim[1]   )]
@@ -877,14 +884,24 @@ class object_manager:
 		#rendering the non-instanciates
 		self.objgroup.update(camera,self,dim,showall,GameManager.fm.frame)
 		self.objghostgroup.update(self.objects)
-		self.objgroup.draw(univars.screen)
+		# self.objgroup.draw(univars.screen)
 		for obj in self.objgroup:
 			if obj.indist:
+				if obj.name in self.nfs.keys():
+					# print(self.nfs[id])
+					if not self.nfs[obj.name][0] == None:
+						self.objects[obj.name]["size"] = self.nfs[obj.name][0]
+					if not self.nfs[obj.name][1] == None:
+						self.objects[obj.name]["sizen"] = self.nfs[obj.name][1]
+					
 				univars.screen.blit(obj.image,obj.rect)
 
+		self.nfs = {}
 
 
 
 
 
 om = object_manager(univars.realscreeen,univars.screen,univars.grandim,univars.aplhatypes,univars.hideentypes)
+
+om.tracker = 0

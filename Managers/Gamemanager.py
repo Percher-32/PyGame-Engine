@@ -8,6 +8,7 @@ import math
 import Managers.framemanager as framemanager
 import Managers.objectmanager as objectmanager
 import Managers.Tiled as Tiled
+import copy
 import Managers.univars as univars
 import Managers.statemanager as statemanager
 import Managers.Uimanager as Uimanager
@@ -18,6 +19,7 @@ import Managers.backgroundmanager as backgroundmanager
 import os
 import Managers.Shader as shader
 import threading
+import multiprocessing
 import json
 import time
 import random
@@ -74,18 +76,18 @@ class GameManager():
 		"""
 			prints a string in game in the debug menu
 		"""
-		self.output.append(str(string))
-		if len(self.output) > 200:
-			self.output.pop(0)
+		univars.output.append(str(string))
+		if len(univars.output) > univars.buffersize:
+			univars.output.pop(0)
 
 	def println(self,string,line):
 		"""
 			prints onto a specific line if it exists\n
 			if not it just adds it on the next line
 		"""
-		while len(self.output) <= line:
-			self.output.append("")
-		self.output[line] = str(string)
+		while len(univars.output) <= line:
+			univars.output.append("")
+		univars.output[line] = str(string)
 		
 	
 
@@ -94,7 +96,7 @@ class GameManager():
 			returns a string all printed items
 		"""
 		out = ""
-		for i in self.output:
+		for i in univars.output:
 			out += i + "\n"
 		return out
 
@@ -269,17 +271,21 @@ class GameManager():
 			return False
 
 	def inum(self):
-		while em.running:
-			if len(om.objects.keys()) > 0:
-				stabledict = om.objects
-				for obj in stabledict.keys():
-					range =  2000
+		lastime = 1
+		dt = self.dt
+		lastime = time.time()
+		if len(om.objects.keys()) > 0:
+			stabledict = copy.copy(om.objects)
+			for obj in stabledict.keys():
+				range =  2000
+				if om.speed > 0:
 					if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
-						self.cond(obj,stabledict[obj])
-			
+						
+						self.cond(obj,stabledict[obj],dt)
+			# pass
 
 
-			time.sleep(0.01)
+			# time.sleep(0.0000001)
 
 	def cond(self,obj,info):
 		pass
@@ -333,13 +339,14 @@ class GameManager():
 	def Run(self):
 		self.commence()
 		self.initial()
-		inumthread = threading.Thread(target=self.inum)
+		# inumthread = threading.Process(target=self.inum)
 		# backgroundthread = threading.Thread(target=self.backgroundupdate)
 		# uithread = threading.Thread(target=self.uiunpdate)
-		inumthread.start()
 		# backgroundthread.start()
 		# uithread.start()
 		self.dt = 1
+		
+		# inumthread.start()
 		while em.running: 
 			self.start()   
 			if not Tiled.loadingmap:
@@ -362,7 +369,7 @@ class GameManager():
 		cm.setcond(cm.currentcam,"size",1)
 		# self.loadanims()
 		self.roster()
-		um.loadalluielements()
+		# um.loadalluielements()
 		pm.loadallbluprints()
 
 	def setbosh(self,state):
@@ -389,6 +396,7 @@ class GameManager():
 		"""run at the start of every frame"""
 		if self.dt == 0:
 			self.dt = 1
+		self.inum()
 		self.fps = round(60/ self.dt,3)
 		if Tiled.comm:
 			sm.state = Tiled.cht
@@ -397,6 +405,13 @@ class GameManager():
 			self.initial()
 
 		#render background
+		# if len(om.objects.keys()) > 0:
+		# 	stabledict = om.objects
+		# 	for obj in stabledict.keys():
+		# 		range =  2000
+		# 		if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
+		# 			self.cond(obj,stabledict[obj])
+		
 			
 		bg.update(self.publicvariables["screencol"])
 		univars.screen.blit(bg.backlayer,(0,0))
@@ -419,13 +434,14 @@ class GameManager():
 		
 		#render onto screen
 		renderwid = (((((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983)) * 1980) + 200
+		renderwid = 0
 		# renderwid = min([univars.realscreeen.width,univars.realscreeen.height])
 		# renderwid = 1980
 		# realwid = round(renderwid)
 		# renderwid /= 2
 		# univars.screen.blit(pm.screen,(univars.screen_w/2,univars.screen_h/2))
 		pm.updateparticles(self.dt)
-		univars.realscreeen.blit(pygame.transform.scale(univars.screen,(renderwid ,renderwid )),(univars.realscreeen.width//2 - renderwid//2,univars.realscreeen.height//2 - renderwid//2))
+		univars.realscreeen.blit(pygame.transform.scale_by(univars.screen,univars.pixelscale),(univars.realscreeen.width//2 - (univars.pixelscale * univars.screen.size[0])//2,univars.realscreeen.height//2 - (univars.pixelscale * univars.screen.size[1])//2))
 		
 
 		#runs editor
@@ -454,13 +470,13 @@ class GameManager():
 		cam.update()
 		univars.update()
 
-	# def loadanims(self):
-	# 	for filename in os.listdir("Saved/animations"):
-	# 		if  not filename ==  "None":
-	# 			objfile = "Saved/animations" + "/" + filename
-	# 			for anim in os.listdir(objfile):
-	# 				anim = anim.replace(".json","")
-	# 				om.loadanim(filename,anim)
+	def loadanims(self):
+		for filename in os.listdir("Saved/animations"):
+			if  not filename ==  "None":
+				objfile = "Saved/animations" + "/" + filename
+				for anim in os.listdir(objfile):
+					anim = anim.replace(".json","")
+					om.loadanim(filename,anim)
 	def oncreate(self,id,info):
 		pass
 
@@ -469,7 +485,7 @@ class GameManager():
 			goes through all sprites on reload
 		"""
 		if len(om.objects.keys()) > 0:
-			stabledict = om.objects
+			stabledict = copy.deepcopy(om.objects)
 			for obj in stabledict.keys():
 				self.oncreate(obj,stabledict[obj])
 			

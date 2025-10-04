@@ -68,5 +68,4 @@ IN-GAME:
 				* skateboard inclined attacks[]
 
 		[] - Rail-grinding:
-				* fills bar  []
 				* particles  [X]

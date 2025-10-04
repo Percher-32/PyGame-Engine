@@ -6,9 +6,10 @@ import Managers.statemanager as sm
 
 pygame.display.init()
 
-scaledown = 2
+scaledown = 3
 
 
+pixelscale = 1
 
 
 screen_w = pygame.display.get_desktop_sizes()[0][0]/scaledown
@@ -19,7 +20,6 @@ startdims = (screen_w,screen_h)
 
 camchange = True
 
-pixelscale = 15
 
 
 grandim = 32
@@ -30,11 +30,6 @@ name = "Project ender"
 maxfps = 60
 
 
-(40, 41, 83)
-(75, 63, 114)
-(220, 214, 247)
-(163, 173, 225)
-(169, 117, 145)
 
 
 theme = {
@@ -53,16 +48,19 @@ sizes = {
     "largebutton": (300,150),
 }
 
-screen = pygame.Surface((64 * pixelscale,64 * pixelscale))
-fakescreen = pygame.Surface((64 * pixelscale,64 * pixelscale))
+
+minsize = (screen_w/pixelscale,screen_h/pixelscale)
+
+screen = pygame.Surface(minsize,pygame.SCALED)
+fakescreen = pygame.Surface(minsize)
 fakescreen.set_colorkey((0,0,0))
 
 
 uiscreen = pygame.Surface((screen_w,screen_h))
-try:
-    finalscreen = pygame.display.set_mode((screen_w,screen_h),pygame.OPENGL|pygame.DOUBLEBUF|pygame.SCALED|pygame.FULLSCREEN,vsync=1)
-except:
-    finalscreen = pygame.display.set_mode((screen_w,screen_h),pygame.OPENGL|pygame.DOUBLEBUF|pygame.SCALED|pygame.FULLSCREEN,vsync=0)
+# try:
+#     finalscreen = pygame.display.set_mode((screen_w,screen_h),pygame.OPENGL|pygame.DOUBLEBUF|pygame.SCALED|pygame.FULLSCREEN,vsync=1)
+# except:
+finalscreen = pygame.display.set_mode((screen_w,screen_h),pygame.OPENGL|pygame.DOUBLEBUF|pygame.SCALED|pygame.FULLSCREEN,vsync=0)
 realscreeen = pygame.Surface((screen_w,screen_h))
 pygame.display.set_caption(name)
 
@@ -116,13 +114,14 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "demo5"
-startstate = "debugame"
+
+map = "demo5b"
+startstate = "edit"
 startshaderstate = 0
-bakeonreload = 1
+bakeonreload = 0
 showdebugonstart = 0
 profile = 0
-safemode = 1
+safemode = 0
 startuistate = "def"
 showinput = 0
 
@@ -142,14 +141,35 @@ poschange = 0
 
 defont = "pixel2.ttf"
 
-renderdist = [12,12]
+renderdist = [14,14]
 
+output = []
 
+buffersize = 50
 
 maxfpsbuffersize = 5
 
 
+def print(string):
+    global output
+    """
+        prints a string in game in the debug menu
+    """
+    output.append(str(string))
+    if len(output) > buffersize:
+        output.pop(0)
 
+def println(string,line):
+    global output
+    """
+        prints onto a specific line if it exists\n
+        if not it just adds it on the next line
+    """
+    while len(output) <= line:
+        output.append("")
+    output[line] = str(string)
+    
+	
 
 def update():
     pass

@@ -256,9 +256,9 @@ class TiledSoftwre:
 
 
 					#some math
-					renderwid = (((((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983)) * 1980) + 200
-					upscale =  renderwid /( univars.screen.get_width())
-					upscaley =  renderwid / (univars.screen.get_height())
+					renderwid = (univars.rw * 1980) + 200
+					upscale = 1
+					upscaley =  1
 
 
 					# upscale = renderwid/ univars.screen.get_width()
@@ -272,8 +272,8 @@ class TiledSoftwre:
 					# print(upscale)
 					# print(1/upscale)
 					# print()
-					a1 = (((   (GameManager.event_manager.mousepos[0] -  univars.realscreeen.get_width()//2 )/upscale   )  / camera.size) + camera.x)
-					a2 = (((   (GameManager.event_manager.mousepos[1] -  univars.realscreeen.get_height()//2 )/upscaley  )  / camera.size) + camera.y)
+					a1 = (((   (GameManager.event_manager.mousepos[0] -  univars.realscreeen.get_width()//2 )/upscale   )  / camera.size ) + camera.x)
+					a2 = (((   (GameManager.event_manager.mousepos[1] -  univars.realscreeen.get_height()//2 )/upscaley  )  / camera.size ) + camera.y)
 				
 
 					mousepos = (a1,a2)

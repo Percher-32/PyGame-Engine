@@ -54,6 +54,7 @@ class inst(pygame.sprite.Sprite):
 
 
 	def update(self,showall):
+	
 		camera = Cameramod.cam 
 		# print(self.name)
 		# if univars.camchange or univars.poschange or self.newbie:
@@ -61,7 +62,7 @@ class inst(pygame.sprite.Sprite):
 		g = self.realpos
 		h = [camera.x,camera.y]
 		if univars.func.dist(g,h) < (1/camera.size * 580) + univars.func.dist([0,0],self.size):
-			realestsize = [math.ceil((self.size[0] * abs(camera.size))/2)*2,math.ceil((self.size[1] * abs(camera.size))/2)*2]
+			realestsize = [math.ceil((self.size[0] * abs(camera.size/ univars.pixelscale))/2)*2 ,math.ceil((self.size[1] * abs(camera.size/ univars.pixelscale))/2)*2 ]
 			if not str([self.name,realestsize,self.sn]) in spritecache.keys():
 				self.image =  pygame.transform.scale(self.bart,  realestsize )
 				spritecache[str([self.name,realestsize,self.sn])] = self.image
@@ -87,8 +88,8 @@ class inst(pygame.sprite.Sprite):
 			# 										)   
 														
 			# 								)
-			self.rect.x = (  round((self.realpos[0] - camera.x)/1) * camera.size + univars.screen.get_width()//2  - self.image.get_width()//2 )
-			self.rect.y = (  round((self.realpos[1] - camera.y)/1) * camera.size + univars.screen.get_height()//2 - self.image.get_height()//2)
+			self.rect.x = (  round((self.realpos[0] - camera.x)/1) * camera.size/univars.pixelscale + univars.screen.get_width()//2  - self.image.get_width()//2 )
+			self.rect.y = (  round((self.realpos[1] - camera.y)/1) * camera.size/univars.pixelscale + univars.screen.get_height()//2 - self.image.get_height()//2)
 			self.rect.width = realestsize[0]
 			self.rect.height = realestsize[1]
 		else:
@@ -144,56 +145,58 @@ class obj(pygame.sprite.Sprite):
 		return False
 
 	def update(self, camera,om,dim,showall,frame):
-		self.info = om.objects[self.name]
-		sprite = self.sprites[self.info["sn"]]
-		pos = self.info["pos"]
-		pos = [int(round(pos[0])),int(round(pos[1]))]
-		self.info["pos"] = pos
-		self.fakerect = pygame.Rect(self.info["pos"][0] - self.info["size"][0]//2,self.info["pos"][1] - self.info["size"][1]//2,self.info["size"][0],self.info["size"][1])
-		if self.info["rendercond"] or showall:
-			self.indist = 1
-			g = [round(self.info["pos"][0]),round(self.info["pos"][1])]
-			h = [round(camera.x),round(camera.y)]
-			if univars.func.dist(g,h) < 1000:
+		if self.name in om.objects.keys():
+			self.info = om.objects[self.name]
+			sprite = self.sprites[self.info["sn"]]
+			pos = self.info["pos"]
+			pos = [int(round(pos[0])),int(round(pos[1]))]
+			self.info["pos"] = pos
+			self.fakerect = pygame.Rect(self.info["pos"][0] - self.info["size"][0]//2,self.info["pos"][1] - self.info["size"][1]//2,self.info["size"][0],self.info["size"][1])
+			if self.info["rendercond"] or showall:
+				self.indist = 1
+				g = [round(self.info["pos"][0]),round(self.info["pos"][1])]
+				h = [round(camera.x),round(camera.y)]
+				if univars.func.dist(g,h) < 2000:
 
-				# realestsize = [math.ceil((self.size[0] * abs(camera.size))/2)*2                                 , 
-				#    			  math.ceil((self.size[1] * abs(camera.size))/2)*2]
-				scale = [	math.ceil((camera.size * self.info["sizen"][0]* self.info["size"][0])/2) * 2		,
-			 			 	math.ceil((camera.size * self.info["sizen"][1]* self.info["size"][1])/2) * 2		]
-				
+					# realestsize = [math.ceil((self.size[0] * abs(camera.size))/2)*2                                 , 
+					#    			  math.ceil((self.size[1] * abs(camera.size))/2)*2]
+					scale = [	math.ceil((camera.size * self.info["sizen"][0]* self.info["size"][0])/2) * 2		,
+								math.ceil((camera.size * self.info["sizen"][1]* self.info["size"][1])/2) * 2		]
+					
 
-				if not str((self.name,scale,self.info["sn"],self.fliped)) in objcache: 
-					b = sprite
-					b = pygame.transform.scale(b,scale)
-					objcache[str((self.name,scale,self.info["sn"],self.fliped))] = b
+					if not str((self.name,scale,self.info["sn"],self.fliped)) in objcache: 
+						b = sprite
+						b = pygame.transform.scale(b,scale)
+						objcache[str((self.name,scale,self.info["sn"],self.fliped))] = b
 
-				else:
-					b = objcache[str((self.name,scale,self.info["sn"],self.fliped))]
+					else:
+						b = objcache[str((self.name,scale,self.info["sn"],self.fliped))]
 
-				
+					
 
 
-				b.set_alpha(self.info["alpha"])
-				b = pygame.transform.rotate(b,self.info["rot"])
-				self.image = b
-				
-				self.rect = self.image.get_rect(topleft = 
-													( 
-														int(((pos[0] - camera.x) * round(camera.size,2)) + univars.screen.get_width()//2 - b.get_width()/2)            ,
-														int((((pos[1] - camera.y) * round(camera.size,2)))        + univars.screen.get_height()//2 - b.get_height()/2)
+					b.set_alpha(self.info["alpha"])
+					b = pygame.transform.rotate(b,self.info["rot"])
+					self.image = b
+					
+					self.rect = self.image.get_rect(topleft = 
+														( 
+															int(((pos[0] - camera.x) * round(camera.size,2)) + univars.screen.get_width()//2 - b.get_width()/2)            ,
+															int((((pos[1] - camera.y) * round(camera.size,2)))        + univars.screen.get_height()//2 - b.get_height()/2)
+														)
 													)
-												)
+				else:
+					self.indist = 0
+					self.image = pygame.Surface((0,0))
+					self.rect = pygame.Rect(0,0,0,0)
 			else:
+				self.indist = 0
 				self.image = pygame.Surface((0,0))
 				self.rect = pygame.Rect(0,0,0,0)
-		else:
-			self.indist = 0
-			self.image = pygame.Surface((0,0))
-			self.rect = pygame.Rect(0,0,0,0)
 
 
-		if self.name in om.toreinst:
-			self.reinstsprite(om)
+			if self.name in om.toreinst:
+				self.reinstsprite(om)
 
 	def reinstsprite(self,om):
 		info = om.objects[self.name]
