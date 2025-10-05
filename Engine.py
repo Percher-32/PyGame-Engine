@@ -30,7 +30,7 @@ class Game(Gamemananager.GameManager):
 		super().__init__(screen,fm)
 		self.ingametime = 0
 		self.publicvariables["gamespeed"] = 1
-		self.publicvariables["mood"] = "afternoon"
+		self.publicvariables["mood"] = "sunset"
 		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = -(64 * 0.4)
 		self.lookaheady = 0
@@ -1580,7 +1580,7 @@ class Game(Gamemananager.GameManager):
 			om.set_value(id,"timer",5)
 			om.set_value(id,"maxtimer",random.randint(10 * 2,15 * 2))
 			om.set_value(id,"flashtimer",0)
-			om.lighttoenemy(id,"l1",color=(255,0,20),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=20)
+			om.lighttoenemy(id,"l1",color=(255,0,20),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=30)
 
 
 			self.createhpbar(id,1,[0,30])
