@@ -113,8 +113,105 @@ class object_manager:
 		self.spritecache = {"hi":"hello"}
 		self.speed = 0
 		self.animations = {}
+		self.lights = {}
+		"""
+			A dictionary that stores all lights\n
+			Form:\n
+				light-tag : (
+				
+					position,
+					sprite ' rect or circle ',
+					size "starting size",
+					alpha "starting alpha"
+					color "starting color"
+					nits "number of times it echoes",
+					alphadec "decrements in alpha"
+					sizeinc "increments in size"
+					colorinc "how much the color is nudged per iteration"
+					basesurface "the base image of the light"
+					modsurface "the rendered image of the light"
+
+
+				)
+		"""
+
 		self.loadanims()
 		
+
+	def createlight(self,tag,pos = [0,0],sprite = "circle",size = 20,alpha = 30,color = (255,255,255),nits = 20,alphadec = 3,sizeinc = 20,colorinc = (0,0,0)):
+		"""
+			create a new light\n
+			or MODIFY FUNDAMENTAL PARAMETERS
+		"""
+		baseimg = pygame.Surface((size + (nits * sizeinc),size + (nits * sizeinc)))
+		# baseimg.fill((200,200,200))
+		items = []
+		if sprite == "circle" or sprite == "cir" or  sprite == "circ":
+			drawsize = size
+			drawalpha = alpha
+			drawcolor = color
+			for i in range(nits):
+				itimg = pygame.Surface((drawsize,drawsize))
+				pygame.draw.circle(itimg,drawcolor,(drawsize/2,drawsize/2),drawsize/2)
+				itimg.set_alpha(drawalpha)
+				itimg.set_colorkey((0,0,0))
+				baseimg.blit(itimg,(baseimg.get_size()[0]/2 - drawsize/2  ,baseimg.get_size()[0]/2 - drawsize/2  ))
+				items.append(itimg)
+				drawsize += sizeinc
+				drawalpha -= alphadec
+				drawcolor = list(drawcolor)
+				drawcolor[0] += colorinc[0]
+				drawcolor[1] += colorinc[1]
+				drawcolor[2] += colorinc[2]
+				for i in [0,1,2]:
+					if drawcolor[i] > 255:
+						drawcolor[i] = 255
+				drawcolor = tuple(drawcolor)
+			
+			# for i in range(len(items)):
+			# 	itimg = items[i]
+			# 	baseimg.blit(itimg,(size/2,size/2),special_flags = )
+
+
+
+		elif sprite == "rect" or sprite == "r" or  sprite == "rectangle":
+			drawsize = size
+			drawalpha = alpha
+			drawcolor = color
+			for _ in range(nits):
+				itimg = pygame.Surface((drawsize,drawsize))
+				itimg.fill(drawcolor)
+				itimg.set_alpha(drawalpha)
+				itimg.set_colorkey((0,0,0))
+				baseimg.blit(itimg,(size/2,size/2),special_flags = 0)
+				drawsize += sizeinc
+				drawalpha -= alpha
+				drawcolor = list(drawcolor)
+				drawcolor[0] += colorinc[0]
+				drawcolor[1] += colorinc[1]
+				drawcolor[2] += colorinc[2]
+				drawcolor = tuple(drawcolor)
+
+
+
+		self.lights[tag] = [pos,sprite,size,alpha,color,nits,alphadec,sizeinc,colorinc,baseimg,baseimg]
+
+
+	def modifylightpos(self,tag,pos):
+		self.lights[tag][0] = pos
+
+	def modifylightsize(self,tag,size):
+		self.lights[tag][2] = size
+		self.lights[tag][-1] = pygame.transform.scale(self.lights[tag][-2],size)
+
+	def lighttoenemy(self,id,tag,offset = [0,0],sprite = "circle",size = 20,alpha = 30,color = (255,255,255),nits = 20,alphadec = 3,sizeinc = 20,colorinc = (0,0,0)):
+		self.createlight(id + "[obj-light]" + tag,offset,sprite=sprite,size=size,alpha=alpha,color=color,nits=nits,alphadec=alphadec,sizeinc=sizeinc,colorinc=colorinc)
+
+
+
+
+
+
 
 	def loadanims(self):
 		for filename in os.listdir("Saved/animations"):
@@ -479,6 +576,8 @@ class object_manager:
 
 
 			return {"obj":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
+		else:
+			return {"obj":[],"inst":[],"all":[],"if":False}
 
 	def colliderect(self,pos,dimensions,show,camera,ignore = []) -> dict:
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
@@ -689,10 +788,10 @@ class object_manager:
 
 	def removeid(self,id):
 		"""removes an object and its obj"""
-		postodel = id
-		self.objects.pop(postodel)
+		remid = id
+		self.objects.pop(remid)
 		for b in self.objgroup:
-			if b.name == postodel:
+			if b.name == remid:
 				self.objgroup.remove(b)
 
 	def includeflipping(self,id):
@@ -831,6 +930,7 @@ class object_manager:
 
 	def render(self,camera,GameManager,dim:int,showall):
 		#camera-chunk
+		
 		camposdim = [int(round(camera.x/(dim * self.renderdist[0]))),int(round(camera.y/(dim * self.renderdist[1])))]
 		#availabe chunks
 		ranges = [
@@ -884,6 +984,7 @@ class object_manager:
 		#rendering the non-instanciates
 		self.objgroup.update(camera,self,dim,showall,GameManager.fm.frame)
 		self.objghostgroup.update(self.objects)
+		
 		# self.objgroup.draw(univars.screen)
 		for obj in self.objgroup:
 			if obj.indist:
@@ -896,7 +997,37 @@ class object_manager:
 					
 				univars.screen.blit(obj.image,obj.rect)
 
+		self.drawlights(camera)
+
+
 		self.nfs = {}
+
+	def drawlights(self,camera):
+		a = 0
+		dup = self.lights.copy()
+		for lighttag in dup:
+			light = self.lights[lighttag]
+			
+			pos = light[0]
+			if "[obj-light]" in lighttag:
+				offsetid = lighttag.split("[obj-light]")[0]
+			if offsetid in self.objects:
+				pos = self.objects[offsetid]["pos"]
+			else:
+				self.lights.pop(lighttag)
+			if univars.func.dist((camera.x,camera.y),pos) < (800 + light[2]):
+				a += 1
+
+				scalef = light[2] * abs(camera.size/ univars.pixelscale) * univars.grandim
+
+				renderedlight = pygame.transform.scale(light[-1],[scalef,scalef])
+				
+					# pos = [0,0]
+				rpos = [0,0]
+				rpos[0] =  round( (pos[0] - camera.x + (light[2]*univars.grandim)/2) * camera.size/univars.pixelscale + univars.screen.get_width()//2 - scalef )
+				rpos[1] =  round( (pos[1] - camera.y + (light[2]*univars.grandim)/2) * camera.size/univars.pixelscale + univars.screen.get_height()//2 - scalef )
+		
+				univars.screen.blit(renderedlight,rpos,special_flags=pygame.BLEND_RGB_ADD)
 
 
 
