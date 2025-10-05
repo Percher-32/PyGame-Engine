@@ -20,6 +20,7 @@ bg = Gamemananager.bg
 pm = Gamemananager.pm
 
 
+
 class Game(Gamemananager.GameManager):	
 	"""
 		this class handles the actual game code and not the game engine code.\n
@@ -31,7 +32,7 @@ class Game(Gamemananager.GameManager):
 		self.publicvariables["gamespeed"] = 1
 		self.publicvariables["mood"] = "sunset"
 		self.publicvariables["showater"] = 1
-		self.publicvariables["waterh"] = -(64 * 2.4)
+		self.publicvariables["waterh"] = -(64 * 0.4)
 		self.lookaheady = 0
 		self.timesdone = 1
 		self.scores = {}
@@ -79,9 +80,13 @@ class Game(Gamemananager.GameManager):
 			cm.setcond("def","pos",cm.getcam("playercam","pos"))
 			cm.setcond("def","size",cm.getcam("playercam","size"))
 
+
 		
 
 	def commence(self):
+		# for i in range(200):
+	
+			# om.createlight(i,color=(random.randint(0,255),random.randint(0,255),random.randint(0,255)),colorinc=(0,0,0),nits=20,sizeinc=20,size=50,alphadec=2,alpha=30,pos=[i * 64 * 10,0])
 		pass
 
 	def update(self): 
@@ -150,9 +155,9 @@ class Game(Gamemananager.GameManager):
 
 		if mood == "night":
 			self.publicvariables["screencol"] = (0,0,50)
-			sd.program["illuminace"] = 1
+			sd.program["illuminace"] = 0.22
 			sd.program["sunpos"] = [0,0]
-			sd.program["pacify"] = 0.6
+			sd.program["pacify"] = 0.2
 
 
 
@@ -1575,6 +1580,7 @@ class Game(Gamemananager.GameManager):
 			om.set_value(id,"timer",5)
 			om.set_value(id,"maxtimer",random.randint(10 * 2,15 * 2))
 			om.set_value(id,"flashtimer",0)
+			om.lighttoenemy(id,"l1",color=(255,0,20),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=30)
 
 
 			self.createhpbar(id,1,[0,30])
@@ -1699,12 +1705,15 @@ class Game(Gamemananager.GameManager):
 
 
 			if self.isthere("#Throwing" + str(id)):
+				if not id + "[obj-light]"+ "FIREBALL" in om.lights :
+					om.lighttoenemy(id,"FIREBALL",color=(255,0,100),colorinc=(0,0,0),nits=20,sizeinc=5,size=30,alphadec=3,alpha=50)
+
 				om.set_value(id,"fireball",1)
 				om.set_value(id,"canhome",0)
 				if not om.get_value(id,"throwvel") == 0:
 					# print(self.gp("throwaxis"))
 					om.set_value(id,"act_vel",om.get_value(id,"throwvel"))
-					om.set_value(id,"HP",om.get_value(id,"HP") - (1*st))
+					om.set_value(id,"HP",om.get_value(id,"HP") - (1*st)/10)
 					om.set_value(id,"des_vel",om.get_value(id,"throwvel"))
 
 
@@ -1716,11 +1725,13 @@ class Game(Gamemananager.GameManager):
 				if not None in col:
 					for obj in col:
 						om.set_value(obj.name,"flashtimer",2)
-						om.set_value(obj.name,"HP",om.get_value(obj.name,"HP") - (3))
+						om.set_value(obj.name,"HP",om.get_value(obj.name,"HP") - (1))
 						
 				
 				
 			else:
+				if id + "[obj-light]"+ "FIREBALL" in om.lights :
+					om.lights.pop(id + "[obj-light]"+ "FIREBALL")
 				om.set_value(id,"fireball",0)
 				om.set_value(id,"canhome",1)
 				om.objects[id]["rot"] = 0
@@ -1806,6 +1817,8 @@ class Game(Gamemananager.GameManager):
 
 			if om.get_value(id,"HP") <= 0:
 				om.removeid(id)
+				# if self.gp("target") == id:
+
 
 		
 
