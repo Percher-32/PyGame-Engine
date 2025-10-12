@@ -52,7 +52,7 @@ sizes = {
 minsize = (screen_w/pixelscale,screen_h/pixelscale)
 
 screen = pygame.Surface(minsize,pygame.SCALED)
-fakescreen = pygame.Surface(minsize)
+fakescreen = pygame.Surface((screen_w*1,screen_h*1))
 fakescreen.set_colorkey((0,0,0))
 
 
@@ -118,7 +118,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 map = "demo5b"
 startstate = "debugame"
 startshaderstate = 0
-bakeonreload = 1
+bakeonreload = 0
 showdebugonstart = 0
 profile = 0
 safemode = 0

@@ -23,8 +23,8 @@ class camera:
 		# self.size = self.givensize
 		# print((1- (univars.screen_w/pygame.display.get_desktop_sizes()[0][0])))
 		# print((univars.screen_w/pygame.display.get_desktop_sizes()[0][0]))
-		self.x += random.randint(-1 * self.screenshakevalue,self.screenshakevalue)
-		self.y += random.randint(-1 * self.screenshakevalue,self.screenshakevalue)
+		self.x += random.randint(round(-1 * self.screenshakevalue),round(self.screenshakevalue))
+		self.y += random.randint(round(-1 * self.screenshakevalue),round(self.screenshakevalue))
 
 	def endupdate(self):
 		self.cam_focus_size(self.end[0],self.smooth,self.end[1])

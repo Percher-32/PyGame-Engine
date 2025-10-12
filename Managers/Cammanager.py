@@ -58,13 +58,13 @@ class Cammanager:
 		self.cameras.pop(name)
 
 	def cam_focus(self,name,end_pos,smoothing):
-		self.cameras[name][0][0] += (end_pos[0] - self.cameras[name][0][0])/smoothing + random.randint(-1 * self.cameras[name][2],self.cameras[name][2])
-		self.cameras[name][0][1] += (end_pos[1] - self.cameras[name][0][1])/smoothing + random.randint(-1 * self.cameras[name][2],self.cameras[name][2])
+		self.cameras[name][0][0] += (end_pos[0] - self.cameras[name][0][0])/smoothing + random.randint(round(-1 * self.cameras[name][2]),round(self.cameras[name][2]))
+		self.cameras[name][0][1] += (end_pos[1] - self.cameras[name][0][1])/smoothing + random.randint(round(-1 * self.cameras[name][2]),round(self.cameras[name][2]))
 		# self.cameras[name][1] = abs(self.cameras[name][1])
 
 	def cam_focus_size(self,name,end_pos,smoothing,new_size):
-		self.cameras[name][0][0] += (end_pos[0] - self.cameras[name][0][0])/smoothing + random.randint(-1 * self.cameras[name][2],self.cameras[name][2])
-		self.cameras[name][0][1] += (end_pos[1] - self.cameras[name][0][1])/smoothing + random.randint(-1 * self.cameras[name][2],self.cameras[name][2])
+		self.cameras[name][0][0] += (end_pos[0] - self.cameras[name][0][0])/smoothing + random.randint(round(-1 * self.cameras[name][2]),round(self.cameras[name][2]))
+		self.cameras[name][0][1] += (end_pos[1] - self.cameras[name][0][1])/smoothing + random.randint(round(-1 * self.cameras[name][2]),round(self.cameras[name][2]))
 		self.cameras[name][1] += (new_size - self.cameras[name][1])/smoothing
 		self.cameras[name][1] = abs(self.cameras[name][1])
 

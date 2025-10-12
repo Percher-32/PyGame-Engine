@@ -60,7 +60,7 @@ class GameManager():
 		self.states = []
 		self.pausebackground = False
 		self.pauseui = False
-		self.key = {"x":0,"y":0,"jump":0,"secondary":0,"attack":0,"throw":0,"axis":[0,0],"option":0,"alt-x":0}
+		self.key = {"x":0,"y":0,"jump":0,"secondary":0,"attack":0,"throw":0,"axis":[0,0],"option":0,"alt-x":0,"tert":0}
 		self.dim = univars.grandim
 		self.fpsmax = univars.maxfps
 		self.leveledit = True
@@ -131,6 +131,10 @@ class GameManager():
 			self.key["option"] = True
 		else:
 			self.key["option"] = False
+		if em.controller["L1"] or em.key[pygame.K_LCTRL] or em.key[pygame.K_RCTRL]:
+			self.key["tert"] = True
+		else:
+			self.key["tert"] = False
 
 
 		#joyaxis
@@ -392,6 +396,9 @@ class GameManager():
 				um.update(em,self.publicvariables,self.key["axis"],self.dt)
 				time.sleep(0.05)
 
+	# def broadcast(self,message):
+
+
 	def start(self):
 		"""run at the start of every frame"""
 		if self.dt == 0:
@@ -499,7 +506,9 @@ class GameManager():
 		self.clock.tick(self.publicvariables["maxfps"])
 		# univars.screen.blit(pm.screen,(univars.screen_w/2,univars.screen_h/2))
 		pm.updateparticles(self.dt)
-		univars.realscreeen.blit(pygame.transform.scale(univars.fakescreen,(renderwid ,renderwid )),(univars.realscreeen.width//2 - renderwid//2,univars.realscreeen.height//2 - renderwid//2))
+		# univars.realscreeen.blit(pygame.transform.scale(univars.fakescreen,(renderwid ,renderwid )),(univars.realscreeen.width//2 - renderwid//2,univars.realscreeen.height//2 - renderwid//2))
+		univars.realscreeen.blit(pygame.transform.scale_by(univars.fakescreen,univars.pixelscale),(univars.realscreeen.width//2 - (univars.pixelscale * univars.screen.size[0])//2,univars.realscreeen.height//2 - (univars.pixelscale * univars.screen.size[1])//2))
+		
 		univars.fakescreen.fill((0,0,0))
 
 

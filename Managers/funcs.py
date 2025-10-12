@@ -92,8 +92,8 @@ class func:
             else:
                 return val
     
-    def ssblitrect(self,rect,col,camera,thickness,screen):
+    def ssblitrect(self,rect,col,camera,thickness,screen,sd):
         """"blits a rect onto screen space  , (for thinckness -1 means filled)"""
-        rect = pygame.Rect((rect.x - camera.x) * camera.size + screen.get_width()//2,(rect.y - camera.y) * camera.size + screen.get_height()//2 ,rect.width * abs(camera.size),rect.height * abs(camera.size))
+        rect = pygame.Rect( ((  rect.x - camera.x) * (camera.size*1)) + screen.get_width()//2   ,((rect.y - camera.y) * (camera.size*1)) + screen.get_height()//2  ,rect.width * abs(camera.size),rect.height * abs(camera.size))
         # rect  = pygame.Rect(0,0,1000,1000)
         pygame.draw.rect(screen,col,rect,thickness)

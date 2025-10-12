@@ -83,6 +83,7 @@ class object_manager:
 		self.grandim = univars.grandim
 		self.tm = Textmanager.Textmanager(realscreeen)
 		self.loadingmap = False
+		self.currplay = {}
 		#chunk id stored in a tuple "(x,y)"
 		self.instances = {}
 		"""
@@ -359,17 +360,50 @@ class object_manager:
 				if self.objects[id]["gothru"] == 0:
 					self.objects[id]["animname"] = name
 		
+		self.currplay[id]= (1,speed)
 		
-		frame = int(round(self.objects[id]["gothru"]))
-		g = self.animations[self.objects[id]['name']][a].keys()
-		g = [int(i) for i in g]
-		if not frame >= max(g):
-			self.objects[id]["gothru"] += (dt * self.speed * speed)/10
-			if frame in g:
-				self.objects[id]["sn"] = self.animations[self.objects[id]['name']][a][str(frame)]
-		else:
-			self.objects[id]["gothru"] = 0
-		
+		# frame = int(round(self.objects[id]["gothru"]))
+		# g = self.animations[self.objects[id]['name']][a].keys()
+		# g = [int(i) for i in g]
+		# if not frame >= max(g) + 1:
+		# 	self.objects[id]["gothru"] += (dt * self.speed * speed)/10
+		# 	if frame in g:
+		# 		self.objects[id]["sn"] = self.animations[self.objects[id]['name']][a][str(frame)]
+		# else:
+		# 	self.objects[id]["gothru"] = 0
+		# 	self.currplay[id]= (0,0)
+
+
+
+	def animup(self,dt):
+		for id in self.currplay.keys():
+			if self.currplay[id][0]:
+				a = self.objects[id]["animname"]
+
+				if not a == "none":
+					frame = int(round(self.objects[id]["gothru"]))
+					g = self.animations[self.objects[id]['name']][a].keys()
+					g = [int(i) for i in g]
+					if not frame >= max(g) + 1:
+						self.objects[id]["gothru"] += (dt * self.speed * self.currplay[id][1])/10
+						if frame in g:
+							self.objects[id]["sn"] = self.animations[self.objects[id]['name']][a][str(frame)]
+					else:
+						self.objects[id]["gothru"] = 0
+						self.currplay[id]= (0,0)
+
+
+	def endanim(self,id,seto = None):
+		"""
+			stops all animations
+			seto - sets the sprites sn
+			
+		"""
+		self.objects[id]["animname"] = "none"
+		if not seto == None:
+			self.objects[id]["sn"] = seto
+
+			
 
 
 	def saveanim(self,name:str,animname:str,anim:dict):
@@ -572,7 +606,7 @@ class object_manager:
 				else:
 					col = (225,0,0)
 				# self.func.ssblitrect(r1,col,camera,5,univars.fakescreen)
-				self.func.ssblitrect(r1,col,camera,5,univars.fakescreen)
+				self.func.ssblitrect(r1,col,camera,5,univars.fakescreen,univars.scaledown)
 
 
 			return {"obj":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
@@ -930,6 +964,7 @@ class object_manager:
 
 	def render(self,camera,GameManager,dim:int,showall):
 		#camera-chunk
+		self.animup(GameManager.dt)
 		
 		camposdim = [int(round(camera.x/(dim * self.renderdist[0]))),int(round(camera.y/(dim * self.renderdist[1])))]
 		#availabe chunks

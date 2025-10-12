@@ -160,8 +160,8 @@ class obj(pygame.sprite.Sprite):
 
 					# realestsize = [math.ceil((self.size[0] * abs(camera.size))/2)*2                                 , 
 					#    			  math.ceil((self.size[1] * abs(camera.size))/2)*2]
-					scale = [	math.ceil((camera.size * self.info["sizen"][0]* self.info["size"][0])/2) * 2		,
-								math.ceil((camera.size * self.info["sizen"][1]* self.info["size"][1])/2) * 2		]
+					scale = [	math.ceil((camera.size * self.info["sizen"][0]* self.info["size"][0])/2.5) * 2.5		,
+								math.ceil((camera.size * self.info["sizen"][1]* self.info["size"][1])/2.5) * 2.5		]
 					
 
 					if not str((self.name,scale,self.info["sn"],self.fliped)) in objcache: 
