@@ -28,11 +28,12 @@ class Game(Gamemananager.GameManager):
 	"""
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
+		self.typesofhoming = ["enemy-L","omnispring","goal","turret"]
 		self.ingametime = 0
 		self.bailable = 0
 		self.skatedetach = 0
 		self.publicvariables["gamespeed"] = 1
-		self.publicvariables["mood"] = "night"
+		self.publicvariables["mood"] = "sunset"
 		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = -(64 * 0.4)
 		self.lookaheady = 0
@@ -409,6 +410,7 @@ class Game(Gamemananager.GameManager):
 		um.addtext("attemps","0",univars.defont,[0.5,0.8],univars.theme["accent"],60,["maingame"])
 		um.elements["attemps"]["text"]  = str(0)
 
+
 	def moveplayer(self):
 		# self.println(self.key["axis"],5)
 		# om.speed = 0.47
@@ -502,7 +504,7 @@ class Game(Gamemananager.GameManager):
 					self.wait("skatego",0.5,barrier=1)
 					self.spin(30,0.1)
 					
-					self.bailable = 1
+					# self.bailable = 1
 					if not self.key["tert"]:
 						self.skatevel = [
 											(self.key["x"] * 1000 )  + om.objects["player"]["pos"][0],
@@ -527,6 +529,7 @@ class Game(Gamemananager.GameManager):
 
 		
 		vec = None
+		#HOMING ATTACK SELECT
 		if len(attackbox["obj"]):
 			om.objects["enemyzoom"]["rendercond"] = 1
 			if pygame.math.Vector2(self.key["x"],self.key["y"] ).length() > 0:
@@ -542,7 +545,7 @@ class Game(Gamemananager.GameManager):
 					distvec = playervec - emvec
 					if distvec.length() > 0:
 						distvec.normalize()
-						if obj.info["type"] in ["enemy-L","omnispring","goal"] and om.get_value(obj.name,"canhome"):
+						if obj.info["type"] in self.typesofhoming and om.get_value(obj.name,"canhome"):
 							if vec == None:
 								vec = obj
 								closeness = 1 - distvec.dot(enaxis) 
@@ -554,6 +557,9 @@ class Game(Gamemananager.GameManager):
 				om.objects["enemyzoom"]["rendercond"] = 0
 			else:
 				om.objects["enemyzoom"]["pos"] = vec.info["pos"]
+				om.objects["enemyzoom"]["sizen"] = self.listadd((vec.info["sizen"],[0.5,0.5]))
+
+
 
 
 
@@ -580,6 +586,8 @@ class Game(Gamemananager.GameManager):
 
 
 		#Main movement
+		
+		self.println([obj.info["type"] for obj in attackbox["obj"]],7)
 
 		if not slanted:
 			if slanted == self.lastframeslanted or self.key["jump"]:
@@ -1396,15 +1404,26 @@ class Game(Gamemananager.GameManager):
 
 
 			else:
+
 				if self.gp("slantdir") == "r":
 					if self.lastdirslant == "l":
 						om.translate(self,"player",[100,40])
+						if abs(self.gp("act_vel",0)) > 30:
+							self.sp("act_vel",[self.gp("act_vel",0) + (200) ,self.gp("act_vel",0) + (110) ])
+					if self.lastdirslant == "r":
+						om.translate(self,"player",[-100,0])
 				if self.gp("slantdir") == "l":
 					if self.lastdirslant == "r":
+						if abs(self.gp("act_vel",0)) > 30:
+							self.sp("act_vel",[self.gp("act_vel",0) - (200) ,self.gp("act_vel",0) + (110) ])
 						om.translate(self,"player",[-100,40])
+					if self.lastdirslant == "l":
+						om.translate(self,"player",[300,0])
 		else:                                                                                                                               
 			
 			
+			self.sp("candj",1)
+			self.sp("jumpable",1)
 			if "slantr" in collisionboxtype:
 				self.sp("slantdir","r")
 				if not slanted == self.lastframeslanted:
@@ -1434,8 +1453,8 @@ class Game(Gamemananager.GameManager):
 					index = collisionboxtype.index("slantl")
 					# if not ground2:
 					om.objects["player"]["pos"] = [collisionbox["inst"][index].realpos[0] +16,collisionbox["inst"][index].realpos[1] -20]
-					self.sp("act_vel",[  self.gp("act_vel")[0]    ,    -1 * self.gp("act_vel")[0]   ])
-					self.sp("des_vel",[  self.gp("des_vel")[0]    ,    -1 * self.gp("des_vel")[0]   ])
+					self.sp("act_vel",[  self.gp("act_vel")[0] * 1.1    ,    -1 * self.gp("act_vel")[0] * 1.1   ])
+					self.sp("des_vel",[  self.gp("des_vel")[0] * 1.1    ,    -1 * self.gp("des_vel")[0] * 1.1   ])
 						# else:
 						# 	om.objects["player"]["pos"] = [collisionbox["inst"][0].realpos[0] +16,collisionbox["inst"][0].realpos[1] +16]
 				else:
@@ -1450,6 +1469,13 @@ class Game(Gamemananager.GameManager):
 						self.sp("act_vel",[self.gp("act_vel")[0], self.gp("act_vel")[1]])
 					om.translate(self,"player", self.gp("act_vel"),usedt=1)
 					self.sp("desrot",-45)
+
+
+
+		
+
+
+
 
 			if -5 < self.gp("desrot") < 5:
 				om.objects["playersprite"]["rot"]  =  0
@@ -1546,6 +1572,10 @@ class Game(Gamemananager.GameManager):
 		
 
 		cm.setcond("playercam","shake",self.unilerp(cm.getcam("playercam","shake"),0,10)     )
+
+		self.println(self.gp("candj"),4)
+		self.println(self.gp("jumpable"),5)
+
 
 			
 		
@@ -1730,9 +1760,6 @@ class Game(Gamemananager.GameManager):
 
 
 			self.createhpbar(id,1,[0,30])
-			
-
-
 
 		if info["type"] == "omnispring":
 			om.set_value(id,"canhome",1)
@@ -1750,6 +1777,12 @@ class Game(Gamemananager.GameManager):
 				om.set_value(id,"ir",500)
 			if om.get_value(id,"mp") == 0:
 				om.set_value(id,"mp",5)
+		
+		if info["type"] == "turret":
+			om.objects[id]["type"]  = "turret"
+			om.set_value(id,"shotimer",0)
+			om.set_value(id,"maxtimer",20)
+			om.objects[id]["sizen"] = [2,2]
 		
 
 
@@ -1780,7 +1813,10 @@ class Game(Gamemananager.GameManager):
 					# print("nid",nid,om.get_value(nid,"master_pos"))
 				# om.objects[id]["type"] = "HURT:laser"
 				
-
+		if info["type"] == "turret":
+			self.turret(id,info,st)
+			om.set_value(id,"canhome",1)
+		
 
 
 	# def createnemyl(self,pos)
@@ -2026,7 +2062,20 @@ class Game(Gamemananager.GameManager):
 			else:
 				om.objects[id]["pos"] = om.get_value(id,"master_pos")
 
+	def turret(self,id,info,st):
+		om.set_value(id,"shotimer",om.get_value(id,"shotimer") - st/2)
+		if om.get_value(id,"shotimer") < 0:
+			playervec = pygame.Vector2(om.objects["player"]["pos"])
+			selfpos =  pygame.Vector2(info["pos"])
+				
 
+			vectoplayer = playervec-selfpos
+
+			if  abs(vectoplayer.length()) > 20:
+				if om.get_value(id,"shotimer") < 0 :
+					rot = vectoplayer.angle * -1 + random.randint(-1 * abs(int(self.gp("des_vel")[0]/10)),1 * abs(int(self.gp("des_vel")[0]/10)))
+					self.spawnlaser(om.objects[id]["pos"],40,rot,id,3,extraspeed=[self.gp("act_vel",0)/10,self.gp("act_vel",1)/10])
+					om.set_value(id,"shotimer",om.get_value(id,"maxtimer"))
 
 
 
