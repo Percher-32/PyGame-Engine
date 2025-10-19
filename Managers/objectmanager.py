@@ -261,6 +261,12 @@ class object_manager:
 			self.loadedmap = name
 			self.decodeinst()
 			self.decodeobj()
+			if os.path.exists(f"Saved/tilemaps/{name}/vars.pk"):
+				with open(f"Saved/tilemaps/{self.loadedmap}/vars.pk","rb") as file:
+					try:
+						self.values = pk.load(file)
+					except:
+						print("LOAD FAIL")
 			GM.roster()
 		else:
 			self.__init__(self.realscreen,self.screen,univars.grandim,self.aplhainst,self.renderinst)
@@ -278,6 +284,12 @@ class object_manager:
 				with open(f"Saved/tilemaps/{name}/non-inst.json","w") as file:
 					todump = self.objects
 					json.dump(todump,file)
+				with open(f"Saved/tilemaps/{name}/vars.pk","wb") as file:
+					todump = self.values
+					try:
+						pk.dump(todump,file)
+					except:
+						print("VAR FAIL")
 				self.loadtilemap(GM,name)
 				return "True"
 		else:
@@ -1049,25 +1061,29 @@ class object_manager:
 			light = self.lights[lighttag]
 			
 			pos = light[0]
+			do = True
 			if "[obj-light]" in lighttag:
 				offsetid = lighttag.split("[obj-light]")[0]
-			if offsetid in self.objects:
-				pos = self.objects[offsetid]["pos"]
-			else:
-				self.lights.pop(lighttag)
-			if univars.func.dist((camera.x,camera.y),pos) < (800 + light[2]):
-				a += 1
+				if offsetid in self.objects:
+					pos = self.objects[offsetid]["pos"]
+				else:
+					self.lights.pop(lighttag)
+					do = False
 
-				scalef = light[2] * abs(camera.size/ univars.pixelscale) * univars.grandim
+			if do:
+				if univars.func.dist((camera.x,camera.y),pos) < (800 + light[2]):
+					a += 1
 
-				renderedlight = pygame.transform.scale(light[-1],[scalef,scalef])
-				
-					# pos = [0,0]
-				rpos = [0,0]
-				rpos[0] =  round( (pos[0] - camera.x + (light[2]*univars.grandim)/2) * camera.size/univars.pixelscale + univars.screen.get_width()//2 - scalef )
-				rpos[1] =  round( (pos[1] - camera.y + (light[2]*univars.grandim)/2) * camera.size/univars.pixelscale + univars.screen.get_height()//2 - scalef )
-		
-				univars.screen.blit(renderedlight,rpos,special_flags=pygame.BLEND_RGB_ADD)
+					scalef = light[2] * abs(camera.size/ univars.pixelscale) * univars.grandim
+
+					renderedlight = pygame.transform.scale(light[-1],[scalef,scalef])
+					
+						# pos = [0,0]
+					rpos = [0,0]
+					rpos[0] =  round( (pos[0] - camera.x + (light[2]*univars.grandim)/2) * camera.size/univars.pixelscale + univars.screen.get_width()//2 - scalef )
+					rpos[1] =  round( (pos[1] - camera.y + (light[2]*univars.grandim)/2) * camera.size/univars.pixelscale + univars.screen.get_height()//2 - scalef )
+			
+					univars.screen.blit(renderedlight,rpos,special_flags=pygame.BLEND_RGB_ADD)
 
 
 

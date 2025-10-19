@@ -33,7 +33,7 @@ class Game(Gamemananager.GameManager):
 		self.bailable = 0
 		self.skatedetach = 0
 		self.publicvariables["gamespeed"] = 1
-		self.publicvariables["mood"] = "sunset"
+		self.publicvariables["mood"] = "daybreak"
 		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = -(64 * 0.4)
 		self.lookaheady = 0
@@ -366,6 +366,8 @@ class Game(Gamemananager.GameManager):
 		self.sp("desrot",0)
 		self.sp("desmooth",5)
 
+		self.sp("machspeed",150)
+
 		self.sp("lastwall","l")
 
 
@@ -453,6 +455,9 @@ class Game(Gamemananager.GameManager):
 		# collisionlisttype.append("ground")
 
 		
+		# if abs(abs(self.gp("des_vel",0)) - self.gp("machspeed")) < 50:
+
+		
 		if "HURT:laser" in [ i.info["type"] for i in collisionbox["obj"]]:
 			if not self.isthere("dashrem") and not self.isthere("inv"):
 				self.wait("BAIL",2)
@@ -463,7 +468,9 @@ class Game(Gamemananager.GameManager):
 		rail = False
 		if len(collisionboxtype) > 0:
 			rail = collisionboxtype[0] == "rail"
-			
+		
+		if not rail:
+			self.sp("dashmeter",self.gp("dashmeter") + (abs(self.gp("des_vel",0))/150 * self.dt))
 
 		if abs(self.key["x"]) > 0:
 			if self.key["x"] > 0:
@@ -578,9 +585,11 @@ class Game(Gamemananager.GameManager):
 
 
 		if ground and not rail:
-			self.sp("dashmeter",self.gp("dashmeter") - min([((40/(self.gp("dashmeter") + 2))*self.dt),2*self.dt]) - (0.2*self.dt))
+			# self.sp("dashmeter",self.gp("dashmeter") - min([((40/(self.gp("dashmeter") + 2))*self.dt),2*self.dt]) - (0.5*self.dt))
+			self.sp("dashmeter",self.gp("dashmeter") - (1.5 * self.dt * self.gp("dashmeter")/100  ))
 		else:
-			self.sp("dashmeter",self.gp("dashmeter") - min([((5/(self.gp("dashmeter") + 2))*self.dt),2*self.dt])  - (0.2*self.dt))
+			# self.sp("dashmeter",self.gp("dashmeter") - min([((50/(self.gp("dashmeter") + 2))*self.dt),2*self.dt])  - (0.5*self.dt))
+			self.sp("dashmeter",self.gp("dashmeter") - (1.1 * self.dt * self.gp("dashmeter")/100  ))
 
 
 
@@ -644,16 +653,18 @@ class Game(Gamemananager.GameManager):
 							if self.gp("xinit"):
 								self.sp("xinit",False)
 								self.sp("des_vel",[self.key["x"] * 120,self.gp("des_vel")[1]])
+								self.sp("act_vel",[self.key["x"] * 20,self.gp("act_vel")[1]])
 							
 							
 
-
-							self.sp("des_vel",[          self.unilerp(self.gp("des_vel")[0],self.key["x"] * 150,30 )              ,    self.gp("des_vel")[1]   ])
+							self.sp("des_vel",[          self.unilerp(self.gp("des_vel")[0],self.key["x"] * self.gp("machspeed"),30 )              ,    self.gp("des_vel")[1]   ])
 						else:
 							self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
 							self.sp("xinit",True)
 
 
+
+						self.sp("machspeed",150)
 
 						
 
@@ -836,7 +847,7 @@ class Game(Gamemananager.GameManager):
 								nenvec = envec.normalize()
 								nenvec = [nenvec.x,nenvec.y * -1]
 								ground = 0
-								if self.gp("target").info["type"] in ["enemy-L","omnispring","goal"]:
+								if self.gp("target").info["type"] in ["enemy-L","omnispring","goal","turret"]:
 									if envec.length() > 40:
 										a = (380 + (abs(envec.length()/3)))/2
 										d = (380 + (abs(envec.length()/3)))/2
@@ -944,7 +955,7 @@ class Game(Gamemananager.GameManager):
 
 									self.wait("show-score",7)
 								self.sp("homing",0)
-							if self.gp("target").info["type"] == "omnispring":
+							if self.gp("target").info["type"] in ["omnispring","turret"]:
 								if self.key["secondary"]:
 									self.sp("des_vel",[0,0])
 									self.sp("act_vel",[0,0])
@@ -1781,7 +1792,7 @@ class Game(Gamemananager.GameManager):
 		if info["type"] == "turret":
 			om.objects[id]["type"]  = "turret"
 			om.set_value(id,"shotimer",0)
-			om.set_value(id,"maxtimer",20)
+			om.set_value(id,"maxtimer",2)
 			om.objects[id]["sizen"] = [2,2]
 		
 
@@ -2067,14 +2078,21 @@ class Game(Gamemananager.GameManager):
 		if om.get_value(id,"shotimer") < 0:
 			playervec = pygame.Vector2(om.objects["player"]["pos"])
 			selfpos =  pygame.Vector2(info["pos"])
+			om.set_value(id,"maxtimer",5)
 				
 
 			vectoplayer = playervec-selfpos
 
-			if  abs(vectoplayer.length()) > 20:
+			if  600 > abs(vectoplayer.length()) > 20:
 				if om.get_value(id,"shotimer") < 0 :
-					rot = vectoplayer.angle * -1 + random.randint(-1 * abs(int(self.gp("des_vel")[0]/10)),1 * abs(int(self.gp("des_vel")[0]/10)))
-					self.spawnlaser(om.objects[id]["pos"],40,rot,id,3,extraspeed=[self.gp("act_vel",0)/10,self.gp("act_vel",1)/10])
+					rot = vectoplayer.angle * -1 + random.randint(-50,50)
+					om.set_value(id,"rot",om.get_value(id,"rot") - (10*st) ) 
+					# om.translate(self,id,[math.sin(fm.frame/100) * 100,0],usedt=0)
+					# rot = om.get_value(id,"rot")
+					for i in range(1):
+						for i in [0,90,180,-90]:
+							rot = i + random.randint(0,0) + om.get_value(id,"rot")
+							self.spawnlaser(om.objects[id]["pos"],40,rot,id,3,extraspeed=[self.gp("act_vel",0)/10,self.gp("act_vel",1)/10])
 					om.set_value(id,"shotimer",om.get_value(id,"maxtimer"))
 
 
