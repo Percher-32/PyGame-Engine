@@ -175,6 +175,7 @@ def update():
     pass
     # global screen_w
     # global screen_h 
+    # global realscreeen
     # screen_w = pygame.display.get_window_size()[0]
     # screen_h = pygame.display.get_window_size()[1]
     # realscreeen = pygame.transform.scale(realscreeen,[screen_w,screen_h])

@@ -33,7 +33,7 @@ class Game(Gamemananager.GameManager):
 		self.bailable = 0
 		self.skatedetach = 0
 		self.publicvariables["gamespeed"] = 1
-		self.publicvariables["mood"] = "daybreak"
+		self.publicvariables["mood"] = "sunset"
 		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = -(64 * 0.4)
 		self.lookaheady = 0
@@ -95,6 +95,7 @@ class Game(Gamemananager.GameManager):
 
 	def update(self): 
 		bg.background = "test2"
+		# print(self.dt * 60)
 		self.println(self.actualwaterheight,2)
 		# om.speed = 0.8
 		# pm.particlespawn("circle",[0,0],[[-5,5],[-5,5]],(0,100,255),[0,0],[0,-1],5,0.001,alpha=300,alphadec=4,divergencepos=[[-1000,1000],[0,0]],ntimes=1)
@@ -138,21 +139,26 @@ class Game(Gamemananager.GameManager):
 
 
 
+
 		if mood == "afternoon":
 			self.publicvariables["screencol"] = (70 ,189 ,234 )
 			sd.program["illuminace"] = 0.5
+			sd.program["hurt"] = 0
 			sd.program["sunpos"] = [0,0]
 			sd.program["pacify"] = -0.5
 
 		if mood == "sunset":
-			self.publicvariables["screencol"] = (110 ,189 ,234 )
+			self.publicvariables["screencol"] = (174, 99, 142) 
 			sd.program["illuminace"] = 0.34
+			
+			sd.program["hurt"] = 2
 			sd.program["sunpos"] = [0,-1 * self.actualwaterheight/20 + 0.5]
 			sd.program["pacify"] = -0.4
 
 
 		if mood == "daybreak":
 			self.publicvariables["screencol"] = (110 ,189 ,234 )
+			sd.program["hurt"] = 0
 			sd.program["illuminace"] = 0.5
 			sd.program["sunpos"] = [0,0]
 			sd.program["pacify"] = 0
@@ -160,6 +166,8 @@ class Game(Gamemananager.GameManager):
 		if mood == "night":
 			self.publicvariables["screencol"] = (0,0,50)
 			sd.program["illuminace"] = 0.22
+			
+			sd.program["hurt"] = 1
 			sd.program["sunpos"] = [0,0]
 			sd.program["pacify"] = 0.2
 
@@ -471,6 +479,8 @@ class Game(Gamemananager.GameManager):
 		
 		if not rail:
 			self.sp("dashmeter",self.gp("dashmeter") + (abs(self.gp("des_vel",0))/150 * self.dt))
+		else:
+			self.sp("dashmeter",self.gp("dashmeter") + (abs(self.gp("des_vel",0))/150 * self.dt))
 
 		if abs(self.key["x"]) > 0:
 			if self.key["x"] > 0:
@@ -753,6 +763,9 @@ class Game(Gamemananager.GameManager):
 						if self.isthere("skid"):
 							if ground:
 								pm.particlespawnbluprint(om.objects["player"]["pos"],"grind",initvel=[0,0])
+						
+						# if self.gp("dashmeter") > -100:
+							# pm.particlespawnbluprint([om.objects["player"]["pos"][0] + (self.gp("act_vel")[0]/100) - 32/2,om.objects["player"]["pos"][1] + 10],"ultra",initvel=[self.gp("act_vel")[0]/10,self.gp("act_vel")[1]/10])
 
 						#ground detection + falling
 						if ground:
@@ -1032,14 +1045,16 @@ class Game(Gamemananager.GameManager):
 									self.wait("leftjump",0.1)
 									self.sp("jumpable",False)
 									self.sp("des_vel",[  self.gp("des_vel")[0] , a     ])
-									self.sp("act_vel",[  120 , self.gp("act_vel")[1]     ])
+									self.sp("act_vel",[  150 , self.gp("act_vel")[1]     ])
+									self.sp("dashmeter",self.gp("dashmeter") + 15)
 									self.sp("mode","in-air")
 								if self.gp("rightwall") and not  len(collision["botmid"]["inst"]) > 0:
 									self.deltimer("leftjump")
 									self.wait("rightjump",0.1)
 									self.sp("jumpable",False)
 									self.sp("des_vel",[  self.gp("des_vel")[0] , a     ])
-									self.sp("act_vel",[  -120 , self.gp("act_vel")[1]     ])
+									self.sp("act_vel",[  -150 , self.gp("act_vel")[1]     ])
+									self.sp("dashmeter",self.gp("dashmeter") + 15)
 									self.sp("mode","in-air")
 
 						else:
@@ -1048,6 +1063,9 @@ class Game(Gamemananager.GameManager):
 
 							if self.gp("leftwall") or self.gp("rightwall"):
 								self.sp("des_vel",[self.gp("des_vel")[0],self.key["y"] * 200])
+								if self.gp("dashmeter") < 200:
+									if abs(self.key["y"]) > 0:
+										self.sp("dashmeter",self.gp("dashmeter")+ (self.dt * 3 * abs(self.key["y"])))
 
 							if not ground:
 								if self.gp("leftwall"):
@@ -1747,14 +1765,14 @@ class Game(Gamemananager.GameManager):
 			om.set_value(id,"HP",100)
 			om.set_value(id,"des_vel",[0,0])
 			om.set_value(id,"act_vel",[0,0])
-			om.set_value(id,"rotspeed",random.randint(1,30))
-			pl0 = random.randint(15,30)
+			om.set_value(id,"rotspeed",random.randint(30,60))
+			pl0 = random.randint(15,40)
 			om.set_value(id,"pl0",pl0) 
-
+			om.set_value(id,"side",random.randint(0,1))
 			om.set_value(id,"pl1",pl0 + random.randint(40,80) ) 
 			om.set_value(id,"level",0 )
-			om.set_value(id,"speed",random.randint(10 + 20,15 + 20))
-			om.set_value(id,"superspeed",random.randint(10,10))
+			om.set_value(id,"speed",random.randint(2,10))
+			om.set_value(id,"superspeed",random.randint(5,5))
 			om.set_value(id,"yfac",random.randint(-100,0))
 			om.set_value(id,"spacing",random.randint(200,200))
 			om.set_value(id,"orbitrot",0)
@@ -1767,7 +1785,11 @@ class Game(Gamemananager.GameManager):
 			om.set_value(id,"maxtimer",random.randint(10 * 2,15 * 2))
 			om.set_value(id,"flashtimer",0)
 			
-			om.lighttoenemy(id,"l1",color=(255,0,255),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=20)
+
+			if self.publicvariables["mood"] == "night":
+				om.lighttoenemy(id,"l1",color=(255,0,255),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=20)
+			elif self.publicvariables["mood"] == "sunset":
+				om.lighttoenemy(id,"l1",color=(255,0,255),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=10)
 
 
 			self.createhpbar(id,1,[0,30])
@@ -1892,7 +1914,10 @@ class Game(Gamemananager.GameManager):
 
 			# print(om.get_value(id,"master_pos"),om.objects[id]["pos"])
 			if univars.func.dist(om.objects[id]["pos"],om.objects["player"]["pos"]) < 1600:
-				
+				if om.objects[id]["pos"][1] > 64 * 10:
+					om.objects[id]["pos"][1] = 64 * 10
+
+
 				om.translate(self,id,[om.get_value(id,"act_vel")[0]*st * om.speed,om.get_value(id,"act_vel")[1]*st * om.speed],usedt=0)
 				
 				rotvec = pygame.Vector2()
@@ -1907,12 +1932,13 @@ class Game(Gamemananager.GameManager):
 
 
 				playerpos = om.objects["player"]["pos"]
-				togoto=  [ playerpos[0] + (self.gp("act_vel")[0]*om.get_value(id,"superspeed")) + rotvec.x , playerpos[1]  - (self.gp("act_vel")[1]*om.get_value(id,"superspeed")) + rotvec.y   ]
+				togoto=  [ playerpos[0] + (self.gp("act_vel")[0]*om.get_value(id,"superspeed")) + rotvec.x  - (om.get_value(id,"side") * (self.gp("act_vel")[0] + 20) * 3), playerpos[1]  - (self.gp("act_vel")[1]*om.get_value(id,"superspeed")) + rotvec.y   ]
 				ltogoto = om.get_value(id,"lasttogoto")
 				# togoto[0] /= 2
 				# togoto[1] /= 2
 				# togoto[0]
 				newvel = [ (togoto[0] - info["pos"][0])/5 , (togoto[1] - info["pos"][1])/-5    ]
+				# togoto=[0,0]
 
 
 
@@ -2000,16 +2026,16 @@ class Game(Gamemananager.GameManager):
 
 				om.set_value(id,"act_vel",self.customunilerp(om.get_value(id,"act_vel"),om.get_value(id,"des_vel"),om.get_value(id,"speed"),om.speed,st))
 				
-				a = pygame.math.Vector2( om.get_value(id,"act_vel"))
-				if a.length() > 0 and not self.isthere("#Throwing" + str(id)):
-					if om.get_value(id,"pl0") > pygame.math.Vector2( om.get_value(id,"act_vel")).length() < om.get_value(id,"pl1"):
-						a = pygame.math.Vector2( om.get_value(id,"act_vel"))
-						a.scale_to_length(self.valsign(a.length()) * om.get_value(id,"pl0"))
-						om.set_value(id,"act_vel",list(a))
-					elif om.get_value(id,"pl1") < pygame.math.Vector2( om.get_value(id,"act_vel")).length():
-						a = pygame.math.Vector2( om.get_value(id,"act_vel"))
-						a.scale_to_length(self.valsign(a.length()) * om.get_value(id,"pl1"))
-						om.set_value(id,"act_vel",list(a))
+				# a = pygame.math.Vector2( om.get_value(id,"act_vel"))
+				# if a.length() > 0 and not self.isthere("#Throwing" + str(id)):
+				# 	if om.get_value(id,"pl0") > pygame.math.Vector2( om.get_value(id,"act_vel")).length() < om.get_value(id,"pl1"):
+				# 		a = pygame.math.Vector2( om.get_value(id,"act_vel"))
+				# 		a.scale_to_length(self.valsign(a.length()) * om.get_value(id,"pl0"))
+				# 		om.set_value(id,"act_vel",list(a))
+				# 	elif om.get_value(id,"pl1") < pygame.math.Vector2( om.get_value(id,"act_vel")).length():
+				# 		a = pygame.math.Vector2( om.get_value(id,"act_vel"))
+				# 		a.scale_to_length(self.valsign(a.length()) * om.get_value(id,"pl1"))
+				# 		om.set_value(id,"act_vel",list(a))
 				
 				if self.isthere("#Throwing" + str(id)):
 						
@@ -2053,7 +2079,7 @@ class Game(Gamemananager.GameManager):
 
 				if  abs(vectoplayer.length()) > 300:
 					if om.get_value(id,"timer") < 0 :
-						rot = vectoplayer.angle * -1 + random.randint(-1 * abs(int(self.gp("des_vel")[0]/10)),1 * abs(int(self.gp("des_vel")[0]/10)))
+						rot = vectoplayer.angle * -1 + random.randint(-1 * abs(int(self.gp("des_vel")[0]/100)),1 * abs(int(self.gp("des_vel")[0]/100)))
 						self.spawnlaser(om.objects[id]["pos"],40,rot,id,3,extraspeed=self.listdiv(om.get_value("player","act_vel"),2))
 						om.set_value(id,"timer",om.get_value(id,"maxtimer"))
 
