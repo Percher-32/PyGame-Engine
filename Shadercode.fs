@@ -178,9 +178,11 @@ void main() {
         float dark = 1 - ((sundist/(illuminace * 2)) + dist/2)/2 - pacify;
         // float hurt = abs(sin(time/100)) * 2;
         vec2 sampling = vec2(sample_pos.x + 0.01,sample_pos.y);
-        float vigb = mix((1 - dist/3),dark,0);
-        float vigr = mix(dark,(1 - dist/5),hurt);
-        float vigg = mix(dark,(1 - dist/3),hurt);
+        float r = abs(sin(time/100) * 10);
+        r = 200;
+        float vigb = mix((1 - dist/3),dark,0)   ;
+        float vigr = round(mix(dark,(1 - dist/5),hurt) *r)/r;
+        float vigg = round(mix(dark,(1 - dist/3),hurt) *r)/r;
         float offsetsine =  sin(sin((uvs.x + camx) + time/1000)*20 + time/100  + 2*sin( time/1000)/25     + sin( sin(time/300) + (uvs.x + camx))/20                )/50;
         offsetsine = perlin()/20;
 

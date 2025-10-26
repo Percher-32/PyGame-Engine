@@ -121,6 +121,7 @@ class Backgroundmanager:
         self.items[name] = pygame.sprite.LayeredUpdates()
 
     def addbackgrounditem(self,name,backgroundname,pos,alpha = 400,layer = 1,surf=None,infiniscroll = False,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h),zdep=0):
+        print(name)
         item = Item(name,pos,alpha=alpha,surf=surf,color=color,dimensions=dimensions,layer=layer,infiniscroll=infiniscroll,zdep = zdep),
         self.items[backgroundname].add(item,layer =  zdep)
         # univars.print(zdep)

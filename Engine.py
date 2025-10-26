@@ -47,8 +47,9 @@ class Game(Gamemananager.GameManager):
 	def onreload(self):
 		self.a = 0
 
-		# bg.addbackground("test2")
-		# bg.addbackgrounditem("black2","test2",[0,-40]                ,surf = "mount",dimensions=[500*5,250*5],layer = 0.15,infiniscroll=True)
+		# bg.addbackground("")
+		
+		bg.addbackgrounditem("sun","test2",[100,-50]                ,surf = "sun",dimensions=[150,150],layer = 0.015,infiniscroll=False,zdep=-1)
 		# bg.savebg()
 		
 		if "game" == self.states:
@@ -88,6 +89,7 @@ class Game(Gamemananager.GameManager):
 		
 
 	def commence(self):
+		
 		# for i in range(200):
 	
 			# om.createlight(i,color=(random.randint(0,255),random.randint(0,255),random.randint(0,255)),colorinc=(0,0,0),nits=20,sizeinc=20,size=50,alphadec=2,alpha=30,pos=[i * 64 * 10,0])
