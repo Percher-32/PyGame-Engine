@@ -8,6 +8,7 @@ uniform float illuminace;
 uniform float waterlevel;
 uniform float camx;
 uniform float hurt;
+uniform float night;
 
 
 
@@ -154,7 +155,15 @@ void main() {
     vec2 sample_pos = uvs;
     sample_pos = round(sample_pos /vec2(pixelscale)) * vec2(pixelscale);
     sample_pos.x = clamp(sample_pos.x ,0,1);
+    vec3 mapb = texture(tex, sample_pos).rgb; 
+    
+    // if (mapb.r == 0 && mapb.g == 0 && mapb.b > 0){
+    //   sample_pos.y += 0.5;
+      
+    // }
+
     vec3 map = texture(tex, sample_pos).rgb;
+
     
     
 
@@ -166,11 +175,28 @@ void main() {
         float twistval = 0.4;
 
         //1 on outside  , 0 on inside
-        float dist = abs(distance(vec2(0,0),fakeuvs));
+        float dist = 0;
+
+        if (night == 0){
+          dist = abs(distance(vec2(0,0),fakeuvs));
+        }
+        else{
+          dist = abs(distance(vec2(0,-1.3),fakeuvs));
+          // dist = (uvs.y)/2 ;
+        }
         // dist = 0;
         // 0 near sun   1 away from sun
         vec2 sunposoff = vec2(sunpos.x + 0.5,sunpos.y + 0.5);
-        float sundist = abs(distance(uvs,sunposoff));
+        float sundist = 0;
+        if (night == 0){
+            sundist = abs(distance(uvs,sunposoff));
+        }
+        else{
+            sundist = abs(distance(uvs,sunposoff));
+            // sundist = (uvs.y)/2;
+        }
+
+        // sundist
 
 
         float twistsiist = abs(distance(uvs,slighttwist));
@@ -180,9 +206,19 @@ void main() {
         vec2 sampling = vec2(sample_pos.x + 0.01,sample_pos.y);
         float r = abs(sin(time/100) * 10);
         r = 200;
-        float vigb = mix((1 - dist/3),dark,0)   ;
-        float vigr = round(mix(dark,(1 - dist/5),hurt) *r)/r;
-        float vigg = round(mix(dark,(1 - dist/3),hurt) *r)/r;
+        float vigb = 0;
+        float vigg = 0;
+        float vigr = 0;
+        if (night == 0){
+            vigb = mix((1 - dist/3),dark,0) * 1   ;
+            vigr = round(mix(dark,(1 - dist/5),hurt) *r)/r * 1;
+            vigg = round(mix(dark,(1 - dist/2),hurt) *r)/r * 0.8;
+        }
+        else{
+            vigr = (1-dist/2) * 2.6;
+            vigg = dark * 2.5;
+            vigb = (1-dist/3) * 3  ;
+        }
         float offsetsine =  sin(sin((uvs.x + camx) + time/1000)*20 + time/100  + 2*sin( time/1000)/25     + sin( sin(time/300) + (uvs.x + camx))/20                )/50;
         offsetsine = perlin()/20;
 
@@ -232,9 +268,9 @@ void main() {
 
             dark = mix(reflec_dark,underwater_dark,1-scalar);
             map = mix(  texture(tex, underwater_sample_pos).rgb   ,  texture(tex, reflec_sample_pos).rgb  ,  scalar  );
-            vigb = mix((1 - dist/5),dark,0);
-            vigr = mix(dark,dark*2,0);
-            vigg = mix(dark,dark*2,0);
+            vigb = mix(vigb*1.6,vigb*1.6  ,1-scalar);
+            vigr = mix(vigr/1.3,vigr/2  ,1-scalar);
+            vigg = mix(vigg/1.3,vigg/2  ,1-scalar);
 
             
         }

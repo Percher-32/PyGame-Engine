@@ -925,7 +925,11 @@ class object_manager:
 				size = [dummy.get_width() * sizen[0],dummy.get_height() * sizen[1]]
 				spritelist = univars.func.getspritesscale(sprites,size)
 				self.spritecache[str([sprites,sizen])] = spritelist
-			add = {"pos":list(pos),"name":sprites,"type":sprites,"rot":rot,"sn":sn,"gothru":0,"rendercond":1,"alpha":1000,"layer":layer,"animname":"none","size":size,"sizen":sizen}
+
+
+			if type == None:
+				type = sprites
+			add = {"pos":list(pos),"name":sprites,"type":type,"rot":rot,"sn":sn,"gothru":0,"rendercond":1,"alpha":255,"layer":layer,"animname":"none","size":size,"sizen":sizen}
 			# print(add)
 			self.objects.update({str(self.tracker):add})
 			finalobj = inst.obj(str(self.tracker),add,spritelist)

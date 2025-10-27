@@ -47,9 +47,17 @@ class Game(Gamemananager.GameManager):
 	def onreload(self):
 		self.a = 0
 
-		# bg.addbackground("")
-		
-		bg.addbackgrounditem("sun","test2",[100,-50]                ,surf = "sun",dimensions=[150,150],layer = 0.015,infiniscroll=False,zdep=-1)
+		# bg.addbackground("night")
+		# bg.addbackgrounditem("stars","night",[0,-70],layer=0.01,infiniscroll=True,dimensions=[300,300],zdep=-2,surf="stars")
+		# bg.addbackgrounditem("moon","night",[200,-60]                ,surf = "moon",dimensions=[200,200],layer = 0.015,infiniscroll=False,zdep=-1)
+		# bg.addbackgrounditem("mount1","night",[0, -140]                ,surf = "mount",dimensions=[2500, 1250],layer = 0.05,infiniscroll=True,zdep=0)
+		# bg.addbackgrounditem("mount2","night",[0, -20]                ,surf = "mount",dimensions=[2000, 700],layer = 0.1,infiniscroll=True,zdep=1)
+
+
+		# bg.addbackground("day")
+		# bg.addbackgrounditem("sun","day",[200,10]                ,surf = "sun",dimensions=[200,200],layer = 0.015,infiniscroll=False,zdep=-1)
+		# bg.addbackgrounditem("mount1","day",[0, -140]                ,surf = "mount",dimensions=[2500, 1250],layer = 0.05,infiniscroll=True,zdep=0)
+		# bg.addbackgrounditem("mount2","day",[0, -20]                ,surf = "mount",dimensions=[2000, 700],layer = 0.1,infiniscroll=True,zdep=1)
 		# bg.savebg()
 		
 		if "game" == self.states:
@@ -143,35 +151,45 @@ class Game(Gamemananager.GameManager):
 
 
 		if mood == "afternoon":
-			self.publicvariables["screencol"] = (70 ,189 ,234 )
-			sd.program["illuminace"] = 0.5
-			sd.program["hurt"] = 0
+			bg.background = "day"
+			self.publicvariables["screencol"] = (90 ,189 ,234 )
+			sd.program["illuminace"] = 1
+			sd.program["hurt"] = -0.4
 			sd.program["sunpos"] = [0,0]
-			sd.program["pacify"] = -0.5
+			sd.program["pacify"] = -0.7
+			sd.program["night"] = 0
 
 		if mood == "sunset":
+			bg.background = "day"
 			self.publicvariables["screencol"] = (174, 99, 142) 
 			sd.program["illuminace"] = 0.34
 			
-			sd.program["hurt"] = 2
-			sd.program["sunpos"] = [0,-1 * self.actualwaterheight/20 + 0.5]
-			sd.program["pacify"] = -0.4
+			sd.program["hurt"] = 3.4
+			sd.program["sunpos"] = [0,-1 * self.actualwaterheight/20 + 0.5 ]
+			sd.program["pacify"] = -0.2
+			
+			sd.program["night"] = 0
 
 
 		if mood == "daybreak":
+			
+			bg.background = "day"
 			self.publicvariables["screencol"] = (110 ,189 ,234 )
 			sd.program["hurt"] = 0
 			sd.program["illuminace"] = 0.5
 			sd.program["sunpos"] = [0,0]
 			sd.program["pacify"] = 0
+			
+			sd.program["night"] = 0
 
 		if mood == "night":
-			self.publicvariables["screencol"] = (0,0,50)
+			bg.background = "night"
+			self.publicvariables["screencol"] = (20,0,30)
 			sd.program["illuminace"] = 0.22
-			
 			sd.program["hurt"] = 1
 			sd.program["sunpos"] = [0,0]
 			sd.program["pacify"] = 0.2
+			sd.program["night"] = 1
 
 
 
@@ -472,6 +490,34 @@ class Game(Gamemananager.GameManager):
 			if not self.isthere("dashrem") and not self.isthere("inv"):
 				self.wait("BAIL",2)
 			
+
+		#TRAIL
+		if self.gp("dashmeter") > 150:
+			self.wait("dotrail",0.2)
+			if self.ondone("dotrail"):
+				colid = random.randint(6,11)
+				if colid == 6:
+					col = (255, 79, 0)
+				elif colid == 7:
+					col = (255, 225, 0)
+				elif colid == 8:
+					col = (26, 255, 0)
+				elif colid == 9:
+					col = (0, 255, 255)
+				elif colid == 10:
+					col = (0, 8, 255)
+				elif colid == 11:
+					col = (255, 0, 203)
+
+				
+				ltid = om.add(self,om.objects["player"]["pos"],"player",om.objects["playersprite"]["rot"],"RAINBOWTRAIL",[1.1,1.1],self.dim,layer=0,sn = colid ,keepprev=1,info={"col":col})
+
+				
+
+				
+
+
+				om.lighttoenemy(ltid,"l1",color=col,colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=30)
 
 		
 
@@ -775,8 +821,8 @@ class Game(Gamemananager.GameManager):
 								self.wait("BAIL",0.6)
 								self.sp("dashmeter",0)
 								self.bailable = 0
-								for i in range(10):
-									pm.particlespawnbluprint(om.objects["player"]["pos"],"dust",initvel=[0,5])
+								# for i in range(10):
+								# 	pm.particlespawnbluprint(om.objects["player"]["pos"],"dust",initvel=[0,5])
 							self.sp("desrot",0)
 							self.sp("mode","grounded")
 							self.sp("jumpable",True)
@@ -1155,6 +1201,9 @@ class Game(Gamemananager.GameManager):
 
 
 						if ground:
+							if self.isthere("rotate"):
+								self.bailable = 1
+								# self.print("AAAHHH")
 							self.killtimer("rotate")
 							self.sp("rotoffset",0)
 							if not self.lastframejumped and not self.gp("lastframewall"):
@@ -1338,9 +1387,9 @@ class Game(Gamemananager.GameManager):
 					# if self.gp("desrot") < 0:
 					# 	self.sp("desrot",0 - self.gp("desrot"))
 					if self.isthere("rotate"):
-						self.sp("rotoffset",self.gp("rotoffset") + self.gp("rot"))
+						self.sp("rotoffset",self.gp("rotoffset") + (self.gp("rot")*self.dt) )
 
-						self.sp("rot",self.gp("rot") - (self.valsign(self.gp("rot")) * abs(self.gp("rotdes")) ) )
+						self.sp("rot",self.gp("rot") - (self.valsign(self.gp("rot")) * abs(self.gp("rotdes") * self.dt)       ) )
 						
 					# om.objects["playersprite"]["rot"] = a
 					if abs(self.gp("unboundrot")) > 180 and abs(self.gp("rotoffset")) > 180 :
@@ -1852,7 +1901,16 @@ class Game(Gamemananager.GameManager):
 			self.turret(id,info,st)
 			om.set_value(id,"canhome",1)
 		
-
+		if info["type"] == "RAINBOWTRAIL":
+			# om.set_value(id,"canhome",1)
+			# self.print("Dragt")
+			if om.objects[id]["alpha"] < 10:
+				om.removeid(id)
+			else:
+				om.objects[id]["alpha"] -= 5 * st
+				# om.lights.pop(id + "[obj-light]"+ "FIREBALL")
+				om.lighttoenemy(id,"l1",color=om.get_value(id,"col"),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=om.objects[id]["alpha"]/10)
+				
 
 	# def createnemyl(self,pos)
 

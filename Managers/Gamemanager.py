@@ -50,6 +50,7 @@ class GameManager():
 		self.em = em
 		self.publicvariables = {"showinput":univars.showinput,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":univars.screencol   ,"cammove":False  ,"shaderstate":univars.startshaderstate ,"showallhidden":1 }
 		self.timers = {}
+		self.timerswdt = []
 		self.dt = 1
 		self.abttodo = []
 		self.running = True
@@ -294,7 +295,7 @@ class GameManager():
 	def cond(self,obj,info):
 		pass
 
-	def wait(self,name:str,time:float,barrier=True):
+	def wait(self,name:str,time:float,barrier=True,useigt = 1):
 		"""
 			creates a timer that will elapse in (time) seconds.\n
 			check if done with ondone.\n
@@ -303,10 +304,16 @@ class GameManager():
 		if not name in self.timers.keys() or not barrier:
 			self.timers[name] = time * 45
 
+		if useigt == 1:
+			self.timerswdt.append(name)
+
 	def updatetime(self):
 		self.dons = []
 		for i in self.timers.keys():
-			self.timers[i] = self.timers[i] - self.frame_manager.dt
+			if i in self.timerswdt:
+				self.timers[i] = self.timers[i] - (self.frame_manager.dt * om.speed)
+			else:
+				self.timers[i] = self.timers[i] - self.frame_manager.dt
 			if self.timers[i] < 0:
 				self.dons.append(i)
 

@@ -121,10 +121,21 @@ class Backgroundmanager:
         self.items[name] = pygame.sprite.LayeredUpdates()
 
     def addbackgrounditem(self,name,backgroundname,pos,alpha = 400,layer = 1,surf=None,infiniscroll = False,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h),zdep=0):
-        print(name)
+        # print(name)
+        if name in [i.name for i in self.items[backgroundname]]:
+            self.removebg(name,backgroundname)
         item = Item(name,pos,alpha=alpha,surf=surf,color=color,dimensions=dimensions,layer=layer,infiniscroll=infiniscroll,zdep = zdep),
         self.items[backgroundname].add(item,layer =  zdep)
         # univars.print(zdep)
+        univars.print(self.items)
+
+
+    def removebg(self,name,bgname):
+        spr = None
+        for i in self.items[bgname]:
+            if i.name == name:
+                spr = i
+                self.items[bgname].remove(spr)
 
 
     def update(self,screencol):
