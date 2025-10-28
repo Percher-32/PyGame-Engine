@@ -124,6 +124,7 @@ profile = 0
 safemode = 0
 startuistate = "def"
 showinput = 0
+dontsavevar = ["player"]
 
 
 

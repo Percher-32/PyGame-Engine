@@ -61,7 +61,7 @@ class GameManager():
 		self.states = []
 		self.pausebackground = False
 		self.pauseui = False
-		self.key = {"x":0,"y":0,"jump":0,"secondary":0,"attack":0,"throw":0,"axis":[0,0],"option":0,"alt-x":0,"tert":0}
+		self.key = {"x":0,"y":0,"jump":0,"secondary":0,"attack":0,"throw":0,"axis":[0,0],"option":0,"alt-x":0,"tert":0,"trick":0}
 		self.dim = univars.grandim
 		self.fpsmax = univars.maxfps
 		self.leveledit = True
@@ -132,10 +132,14 @@ class GameManager():
 			self.key["option"] = True
 		else:
 			self.key["option"] = False
+		# if em.controller["L1"] or em.key[pygame.K_LCTRL] or em.key[pygame.K_RCTRL]:
+		# 	self.key["tert"] = True
+		# else:
+		# 	self.key["tert"] = False
 		if em.controller["L1"] or em.key[pygame.K_LCTRL] or em.key[pygame.K_RCTRL]:
-			self.key["tert"] = True
+			self.key["trick"] = True
 		else:
-			self.key["tert"] = False
+			self.key["trick"] = False
 
 
 		#joyaxis

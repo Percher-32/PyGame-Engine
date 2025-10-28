@@ -286,6 +286,8 @@ class object_manager:
 					json.dump(todump,file)
 				with open(f"Saved/tilemaps/{name}/vars.pk","wb") as file:
 					todump = self.values
+					for i in univars.dontsavevar:
+						todump.pop(i)
 					try:
 						pk.dump(todump,file)
 					except:
