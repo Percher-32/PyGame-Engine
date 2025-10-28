@@ -265,12 +265,21 @@ void main() {
             scalar = pow(scalar,3);
 
             // scalar = mix(0,scalar,scalar);
+            if (night == 0){
 
-            dark = mix(reflec_dark,underwater_dark,1-scalar);
-            map = mix(  texture(tex, underwater_sample_pos).rgb   ,  texture(tex, reflec_sample_pos).rgb  ,  scalar  );
-            vigb = mix(vigb*1.6,vigb*1.6  ,1-scalar);
-            vigr = mix(vigr/1.3,vigr/2  ,1-scalar);
-            vigg = mix(vigg/1.3,vigg/2  ,1-scalar);
+               dark = mix(reflec_dark,underwater_dark,1-scalar);
+               map = mix(  texture(tex, underwater_sample_pos).rgb   ,  texture(tex, reflec_sample_pos).rgb  ,  scalar  );
+               vigb = mix(vigb*1.6,vigb*1.6  ,1-scalar);
+               vigr = mix(vigr/1.3,vigr/2  ,1-scalar);
+               vigg = mix(vigg/1.3,vigg/2  ,1-scalar);
+            }
+            else{
+               dark = mix(reflec_dark,underwater_dark,1-scalar);
+               map = mix(  texture(tex, underwater_sample_pos).rgb   ,  texture(tex, reflec_sample_pos).rgb  ,  scalar  );
+               vigb = mix(vigb*2,  vigb*1.6  ,1-scalar);
+               vigr = mix(vigr*1.6,vigr/2  ,1-scalar);
+               vigg = mix(vigg*1.6,vigg*2  ,1-scalar);
+            }
 
             
         }

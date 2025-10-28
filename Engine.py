@@ -20,7 +20,7 @@ bg = Gamemananager.bg
 pm = Gamemananager.pm
 
 
-
+	
 class Game(Gamemananager.GameManager):	
 	"""
 		this class handles the actual game code and not the game engine code.\n
@@ -28,8 +28,9 @@ class Game(Gamemananager.GameManager):
 	"""
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
-		self.typesofhoming = ["enemy-L","omnispring","goal","turret"]
+		self.typesofhoming = ["enemy-L","omnispring","goal","turret","rocket"]
 		self.ingametime = 0
+		
 		self.bailable = 0
 		self.skatedetach = 0
 		self.publicvariables["gamespeed"] = 1
@@ -346,6 +347,9 @@ class Game(Gamemananager.GameManager):
 		self.sp("des_vel",[0,0])
 
 		self.sp("candj",0)
+
+		
+		self.sp("exithm",0)
 
 		#actual velocity
 		self.sp("act_vel",[0,0])
@@ -900,6 +904,7 @@ class Game(Gamemananager.GameManager):
 
 						#GOTO TARGET
 						if self.gp("homing") == 1:
+							# self.wait("teltimer",1)
 							enposvec = pygame.math.Vector2(self.gp("target").info["pos"])
 							playerposvec = pygame.math.Vector2(om.objects["player"]["pos"])
 
@@ -908,10 +913,14 @@ class Game(Gamemananager.GameManager):
 								nenvec = envec.normalize()
 								nenvec = [nenvec.x,nenvec.y * -1]
 								ground = 0
-								if self.gp("target").info["type"] in ["enemy-L","omnispring","goal","turret"]:
+								if self.gp("target").info["type"] in ["enemy-L","omnispring","goal","turret","rocket"]:
 									if envec.length() > 40:
 										a = (380 + (abs(envec.length()/3)))/2
 										d = (380 + (abs(envec.length()/3)))/2
+										
+										if self.gp("target").info["type"] == "rocket":
+											a += om.get_value(self.gp("target").name,"vel") * 4
+											d += om.get_value(self.gp("target").name,"vel") * 4
 										av = [a * nenvec[0] , a * nenvec[1]]
 										dv = [d * nenvec[0] , d * nenvec[1]]
 										self.sp("act_vel",av)
@@ -1017,13 +1026,13 @@ class Game(Gamemananager.GameManager):
 									self.wait("show-score",7)
 								self.sp("homing",0)
 							if self.gp("target").info["type"] in ["omnispring","turret"]:
-								if self.key["secondary"]:
+								if self.key["secondary"] and not self.gp("exithm"):
 									self.sp("des_vel",[0,0])
 									self.sp("act_vel",[0,0])
 									self.sp("wantime",0.5)
 									om.objects["player"]["pos"] = self.gp("HOLD")
 								else:
-									
+									self.sp("exithm",1)
 									self.sp("dashmeter",self.gp("dashmeter") + 30)
 									self.sp("jumpable",1)
 									self.sp("homing",0)
@@ -1033,6 +1042,47 @@ class Game(Gamemananager.GameManager):
 									actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
 									desmult = [150,150]
 									desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
+
+									if actmult == [0,0]:
+										actmult = [160,50]
+										desmult = [160,50]
+									# self.spin(23,0.4,0.1)
+
+									self.sp("dashav",self.listdiv(actvel,16))
+									self.sp("dashdv",self.listdiv(desvel,16))
+
+									self.sp("act_vel",0,1)
+									self.sp("des_vel",0,1)
+									self.sp("act_vel",0,0)
+									self.sp("des_vel",0,0)
+									self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
+									self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
+							if self.gp("target").info["type"] in ["rocket"]:
+								if self.key["secondary"] and not self.gp("exithm"):
+									self.sp("des_vel",[0,0])
+									self.sp("act_vel",[0,0])
+									self.sp("wantime",0.5)
+									om.objects["player"]["pos"] = self.gp("target").info["pos"]
+								else:
+									
+									self.sp("exithm",0)
+									self.sp("dashmeter",self.gp("dashmeter") + 70)
+									self.sp("jumpable",1)
+									self.sp("homing",0)
+									self.wait("bouncerem",3)
+									# cm.setcond("playercam","shake",6)
+									actmult = [150,150]
+									# actvel = [  axis[0] * actmult[0], axis[1] * actmult[1]]
+									actvel = [0,0]
+									desmult = [150,150]
+									desvel = [  axis[0] * desmult[0], axis[1] * desmult[1]]
+
+									actvel[0] = math.cos(self.gp("target").info["rot"]/180 * math.pi) * 14 * om.get_value(self.gp("target").name,"vel") + (axis[0]*50)
+									actvel[1] = math.sin(self.gp("target").info["rot"]/180 * math.pi) * 14 * om.get_value(self.gp("target").name,"vel") + (axis[1]*50)
+
+									if self.gp("exithm"):
+										actvel[0] /= 3
+										actvel[1] /= 3
 
 									if actmult == [0,0]:
 										actmult = [160,50]
@@ -1482,7 +1532,6 @@ class Game(Gamemananager.GameManager):
 						else:
 							om.set_value("skateboard","fallvalue",5)
 
-
 			else:
 
 				if self.gp("slantdir") == "r":
@@ -1791,6 +1840,18 @@ class Game(Gamemananager.GameManager):
 		if info["type"] == "HPBAR":
 			om.removeid(id)
 
+		if info["type"] == "rocket":
+			om.objects[id]["pos"] = om.get_value(id,"sp")
+			om.objects[id]["rot"] = om.get_value(id,"sr")
+			om.set_value(id,"vel",1)
+			om.set_value(id,"accel",1)
+			om.set_value(id,"active",0)
+			om.set_value(id,"timeon",0)
+			
+			om.set_value(id,"canhome",1)
+			om.set_value(id,"exp",0)
+			om.objects[id]["rendercond"] = 1
+
 
 
 	def oncreate(self,id,info):
@@ -1868,7 +1929,23 @@ class Game(Gamemananager.GameManager):
 			om.set_value(id,"maxtimer",2)
 			om.objects[id]["sizen"] = [2,2]
 		
+		
+		if info["type"] == "rocket":
+			
+			om.objects[id]["sizen"] = [2,2]
+			om.set_value(id,"canhome",1)
+			om.set_value(id,"vel",1)
+			om.set_value(id,"accel",1)
+			om.set_value(id,"top",40)
+			om.set_value(id,"rad",-0.2)
+			om.set_value(id,"timer",20)
+			om.set_value(id,"timeon",0)
+			om.set_value(id,"active",0)
+			om.set_value(id,"sp",om.objects[id]["pos"])
+			om.set_value(id,"sr",om.objects[id]["rot"])
+			om.set_value(id,"exp",0)
 
+			
 
 
 	def cond(self,id,info,st):
@@ -1911,7 +1988,45 @@ class Game(Gamemananager.GameManager):
 				# om.lights.pop(id + "[obj-light]"+ "FIREBALL")
 				om.lighttoenemy(id,"l1",color=om.get_value(id,"col"),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=om.objects[id]["alpha"]/10)
 				
+		if info["type"] == "rocket":
+			self.rocket(id,info,st)
 
+
+
+	def rocket(self,id,info,st):
+		col = om.collide(id,0,cam,extra=300)
+		if not self.gp("target") == None:
+			if self.gp("target").name == id:
+				om.set_value(id,"active",1)
+		if om.get_value(id,"active") and not  om.get_value(id,"exp"):
+			om.set_value(id,"timeon",om.get_value(id,"timeon") + st)
+			om.set_value(id,"timer",om.get_value(id,"timer") - st/20)
+			addon = [(64 * math.sin(om.objects[id]["rot"]/180 * math.pi)) ,
+					 (64 * math.cos(om.objects[id]["rot"]/180 * math.pi)) ]
+
+			addon = [-40,-40]
+			# self.println(om.objects[id]["rot"],10)
+			pm.particlespawnbluprint([om.objects[id]["pos"][0] + addon[0],om.objects[id]["pos"][1] + addon[1] ],"exp2",initvel=[  math.cos(om.objects[id]["rot"]/180 * math.pi) * om.get_value(id,"vel") * 0 , math.sin(om.objects[id]["rot"]/180 * math.pi) * om.get_value(id,"vel") * 0 ])
+			om.objects[id]["rot"] += om.get_value(id,"rad")
+			om.set_value(id,"vel",om.get_value(id,"vel") + (om.get_value(id,"accel")) * st) 
+			if om.get_value(id,"vel") > om.get_value(id,"top"):
+				om.set_value(id,"vel",om.get_value(id,"top")) 
+			om.objects[id]["pos"][0] += math.cos(om.objects[id]["rot"]/180 * math.pi) * om.get_value(id,"vel") * st
+			om.objects[id]["pos"][1] -= math.sin(om.objects[id]["rot"]/180 * math.pi) * om.get_value(id,"vel") * st
+			
+
+			if len(col["inst"]) > 0 and om.get_value(id,"timeon") > 50 or om.get_value(id,"timer") < 0:
+				om.set_value(id,"exp",1)
+				pm.particlespawnbluprint([om.objects[id]["pos"][0],om.objects[id]["pos"][1] ],"exp3",initvel=[  math.cos(om.objects[id]["rot"]/180 * math.pi) * om.get_value(id,"vel") * 0 , math.sin(om.objects[id]["rot"]/180 * math.pi) * om.get_value(id,"vel") * 0 ])
+				self.sp("exithm",1)
+				om.set_value(id,"canhome",0)
+
+		if om.get_value(id,"exp"):
+			om.objects[id]["rendercond"] = 0
+			om.set_value(id,"canhome",0)
+		
+
+			
 	# def createnemyl(self,pos)
 
 
@@ -1924,7 +2039,7 @@ class Game(Gamemananager.GameManager):
 		om.set_value(id,"movec",movec)
 		om.set_value(id,"speed",speed)
 		om.set_value(id,"damage",5)
-		om.set_value(id,"enid",enid)
+		om.set_value(id,"enid",enid) 
 		om.set_value(id,"extraspeed",extraspeed)
 		om.set_value(id,"time",time)
 		om.lighttoenemy(id,"l1",color=(255,0,20),colorinc=(0,0,0),nits=10,sizeinc=3,size=6,alphadec=6,alpha=60)

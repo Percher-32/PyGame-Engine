@@ -115,7 +115,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "demo10"
+map = "demo10b"
 startstate = "debugame"
 startshaderstate = 0
 bakeonreload = 0
