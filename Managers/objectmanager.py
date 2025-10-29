@@ -392,19 +392,20 @@ class object_manager:
 	def animup(self,dt):
 		for id in self.currplay.keys():
 			if self.currplay[id][0]:
-				a = self.objects[id]["animname"]
+				if id in om.objects:
+					a = self.objects[id]["animname"]
 
-				if not a == "none":
-					frame = int(round(self.objects[id]["gothru"]))
-					g = self.animations[self.objects[id]['name']][a].keys()
-					g = [int(i) for i in g]
-					if not frame >= max(g) + 1:
-						self.objects[id]["gothru"] += (dt * self.speed * self.currplay[id][1])/10
-						if frame in g:
-							self.objects[id]["sn"] = self.animations[self.objects[id]['name']][a][str(frame)]
-					else:
-						self.objects[id]["gothru"] = 0
-						self.currplay[id]= (0,0)
+					if not a == "none":
+						frame = int(round(self.objects[id]["gothru"]))
+						g = self.animations[self.objects[id]['name']][a].keys()
+						g = [int(i) for i in g]
+						if not frame >= max(g) + 1:
+							self.objects[id]["gothru"] += (dt * self.speed * self.currplay[id][1])/10
+							if frame in g:
+								self.objects[id]["sn"] = self.animations[self.objects[id]['name']][a][str(frame)]
+						else:
+							self.objects[id]["gothru"] = 0
+							self.currplay[id]= (0,0)
 
 
 	def endanim(self,id,seto = None):

@@ -35,7 +35,7 @@ class Game(Gamemananager.GameManager):
 		self.bailable = 0
 		self.skatedetach = 0
 		self.publicvariables["gamespeed"] = 1
-		self.publicvariables["mood"] = "night"
+		self.publicvariables["mood"] = "sunset" 
 		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = -(64 * 0.4)
 		self.lookaheady = 0
@@ -253,7 +253,6 @@ class Game(Gamemananager.GameManager):
 			cm.cam_focus_size("playercam",campos,4,0.3 / (univars.scaledown/2.5) * 15/7 )
 
 
-			
 
 			
 			rot = om.objects["playersprite"]["rot"]
@@ -305,25 +304,64 @@ class Game(Gamemananager.GameManager):
 						cm.setcond("playercam","shake",20)
 			
 			
+			# if self.isthere("trick2")and self.isthere("VULNERABLE"):
+			# 	om.objects["playersprite"]["sn"] = 12
+			# 	self.boardoffset[1] = self.unilerp(self.boardoffset[1],100,5)
+			# 	self.playeroffset[1] = self.unilerp(self.playeroffset[1],-100,5)
+			# 	om.objects["skateboard"]["rot"] = 0
+			# 	om.playanim(self.dt,"skateboard","kickflip",1,speed=3)
+
+
+			if self.isthere("BAIL"):
+				om.objects["playersprite"]["sn"] = 0
+				om.objects["skateboard"]["sn"] = 0
+
+
 			if self.isthere("trick2")and self.isthere("VULNERABLE"):
-				om.objects["playersprite"]["sn"] = 12
-				self.boardoffset[1] = self.unilerp(self.boardoffset[1],100,5)
-				om.objects["skateboard"]["rot"] = 0
-				om.playanim(self.dt,"skateboard","kickflip",1,speed=3)
-			if self.isthere("trick3")and self.isthere("VULNERABLE"):
 				om.objects["playersprite"]["sn"] = 0
 				
-				self.playeroffset[1] = self.unilerp(self.playeroffset[1],-30,3)
-				self.boardoffset[0] = self.unilerp(self.boardoffset[0],-10,3)
+				self.playeroffset[1] = self.unilerp(self.playeroffset[1],-40,8)
 				om.objects["playersprite"]["sn"] = 13
-				om.objects["skateboard"]["rot"] = 90
-				om.objects["playersprite"]["rot"] = 180
+				
+				if self.key["x"] > 0:
+					om.objects["skateboard"]["rot"] = 45
+					self.boardoffset[0] = self.unilerp(self.boardoffset[0],10,3)
+				elif self.key["x"] < 0:
+					om.objects["skateboard"]["rot"] = -45
+					self.boardoffset[0] = self.unilerp(self.boardoffset[0],-10,3)
+				else:
+					self.boardoffset[1] = self.unilerp(self.boardoffset[1],10,5)
+					self.playeroffset[1] = self.unilerp(self.playeroffset[1],-10,5)
+
+				om.playanim(self.dt,"skateboard","kickflip",1,speed=3)
+				# om.objects["playersprite"]["rot"] = 180
+			elif self.isthere("trick3")and self.isthere("VULNERABLE"):
+				
+				om.playanim(self.dt,"skateboard","kickflip",1,speed=3)
+				om.objects["playersprite"]["sn"] = 13
+				
+				self.playeroffset[1] = self.unilerp(self.playeroffset[1],-50,8)
+				self.boardoffset[1] = self.unilerp(self.boardoffset[1],50,8)
+				
+				if self.key["x"] > 0:
+					om.objects["skateboard"]["rot"] = 0
+					# self.playeroffset[0] = self.unilerp(self.playeroffset[0],30,3)
+					
+					# self.boardoffset[0] = self.unilerp(self.boardoffset[0],30,3)
+				else :
+					om.objects["skateboard"]["rot"] =0
+					# self.playeroffset[0] = self.unilerp(self.playeroffset[0],-30,3)
+					
+					# self.boardoffset[0] = self.unilerp(self.playeroffset[0],-30,3)
+
+				# om.playanim(self.dt,"skateboard","kickflip",1,speed=3)
+				# om.objects["playersprite"]["rot"] = 180
 			else:
 				
-				self.boardoffset[0] = self.unilerp(self.boardoffset[0],0,2)
-				self.boardoffset[1] = self.unilerp(self.boardoffset[1],0,2)
-				self.playeroffset[0] = self.unilerp(self.playeroffset[0],0,2)
-				self.playeroffset[1] = self.unilerp(self.playeroffset[1],0,2)
+				self.boardoffset[0] = self.unilerp(self.boardoffset[0],0,4)
+				self.boardoffset[1] = self.unilerp(self.boardoffset[1],0,4)
+				self.playeroffset[0] = self.unilerp(self.playeroffset[0],0,4)
+				self.playeroffset[1] = self.unilerp(self.playeroffset[1],0,4)
 
 			
 			om.objects["skateboard"]["pos"][0] += self.boardoffset[0]
@@ -354,7 +392,7 @@ class Game(Gamemananager.GameManager):
 		
 		self.sp("dashcooldown",0)
 		self.sp("deshrem",0)
-		sc = 1.3
+		sc = 1.4
 		#creates the player sprite you actually see
 		om.adds(self,"playersprite",[-1400,400],"player","player",0,[sc,sc],400,5)
 		om.objects["playersprite"]["rendercond"] = True
@@ -481,19 +519,12 @@ class Game(Gamemananager.GameManager):
 
 
 	def moveplayer(self):
-		# self.println(self.key["axis"],5)
-		# om.speed = 0.47
-		# self.println(self.gp("dashmeter"),2)
-		# self.println(em.controller,10)
-		# self.println(em.analog_keys[5],10)
 		um.elements["Speed-timer"]["text"]  = str(round(float(um.elements["Speed-timer"]["text"]) + (self.dt/60 *self.publicvariables["gamespeed"] ),2))
 		um.elements["attemps"]["text"]  = str(self.timesdone)
 		
 		self.sp("wantime",self.publicvariables["gamespeed"])
-		# self.sp("dashmeter",abs(math.sin(fm.frame/100) * 100)
 		self.sp("dashmeter",min([300,self.gp("dashmeter")]))
 		self.sp("dashmeter",max([0,self.gp("dashmeter")]))
-		# print(self.gp("dashmeter"))
 
 
 
@@ -514,14 +545,11 @@ class Game(Gamemananager.GameManager):
 		if self.gp("dashmeter") <= 0:
 			um.elements["dashbar"]["dimensions"][0] = 0
 		um.elements["dashbar"]["color"] = (0,100,255)
-		# um.elements["dashbar"]["pos"][0] = self.gp("dashmeter")
-		# um.showvar("pos",om.objects["player"]["pos"],[0,0])
 		collision = om.collide9("player",0,cam,self.dim,ignore= ["playersprite","skateboard"])
 		lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 60,om.objects["player"]["pos"][1] + 17 ],0,32,camera=cam,basecolor=(0,1,0))
 		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 17 ],0,32,camera=cam,basecolor=(0,1,0))
 		collisionbox = om.collide("player",0,cam,extra=20)
 		bigcollisionbox = om.collide("player",0,cam,extra=600)
-		# attackbox = om.collide("player",1,cam,extrax=1000,extray=500)
 		attackbox = om.colliderect([cm.getcam("playercam","pos")[0] +(self.lookahead*0),cm.getcam("playercam","pos")[1] + (self.lookaheady*0)],[1300,700],0,cam)
 
 		ground1 = len(collision["botmid"]["inst"]) > 0
@@ -531,10 +559,6 @@ class Game(Gamemananager.GameManager):
 		instlist = collision["botmid"]["inst"] + collision["botleft"]["inst"] + collision["botright"]["inst"]
 		collisionlisttype = [i.type for i in instlist]
 		collisionboxtype = [i.type for i in collisionbox["inst"]] 
-		# collisionlisttype.append("ground")
-
-		
-		# if abs(abs(self.gp("des_vel",0)) - self.gp("machspeed")) < 50:
 
 		
 		if "HURT:laser" in [ i.info["type"] for i in collisionbox["obj"]]:
@@ -705,8 +729,6 @@ class Game(Gamemananager.GameManager):
 
 		#MAIN
 		
-		self.println([obj.info["type"] for obj in attackbox["obj"]],7)
-
 		if not slanted:
 			if slanted == self.lastframeslanted or self.key["jump"]:
 				#MAIN
@@ -715,19 +737,20 @@ class Game(Gamemananager.GameManager):
 					if not (collision["topmid"]["inst"] and collision["botmid"]["inst"] and collision["midright"]["inst"] and collision["midleft"]["inst"] ):
 						#IN HERE IS EITHER [NO MIDMID] OR [Yes MIDMID AND GROUND]
 						if self.key["trick"] and not len(collisionbox["inst"] ) >0:
+							times = 0.5
 							if self.key["throw"] and not self.lastkey["throw"]:
-								self.wait("VULNERABLE",0.4,barrier=False)
-								self.wait("trick1",0.4,barrier=False)
+								self.wait("VULNERABLE",times,barrier=False)
+								self.wait("trick1",times,barrier=False)
 								self.spin(21,0.4,0.1)
-								self.wait("inv",0.4)
+								self.wait("inv",times)
 								self.sp("dashmeter",self.gp("dashmeter") + 20)
 							if self.key["secondary"] and not self.lastkey["secondary"]:
-								self.wait("VULNERABLE",0.4,barrier=False)
-								self.wait("trick2",0.4,barrier=False)
+								self.wait("VULNERABLE",times,barrier=False)
+								self.wait("trick2",times,barrier=False)
 								self.sp("dashmeter",self.gp("dashmeter") + 20)
 							if self.key["attack"] and not self.lastkey["attack"]:
-								self.wait("VULNERABLE",0.4,barrier=False)
-								self.wait("trick3",0.4,barrier=False)
+								self.wait("VULNERABLE",times,barrier=False)
+								self.wait("trick3",times,barrier=False)
 								self.sp("dashmeter",self.gp("dashmeter") + 20)
 
 
@@ -1497,6 +1520,12 @@ class Game(Gamemananager.GameManager):
 					if self.isthere("BAIL"):
 						self.sp("desrot",90)
 					
+					if self.isthere("trick3"):
+						if self.key["x"] > 0:
+							self.sp("desrot",-180)
+						else:
+							self.sp("desrot",180)
+
 					# if round(self.gp("desrot")) == 270:
 					# 	self.sp("desrot",-90)
 						# print(self.gp("desrot"))
@@ -1555,10 +1584,13 @@ class Game(Gamemananager.GameManager):
 					# dest = fm.frame* 30
 					# print(dest)
 					# om.objects["playersprite"]["rot"]   +=  30
-					 
+					sm = 5
+					
+					if self.isthere("trick3"):
+						sm = 3
 					# om.objects["playersprite"]["rot"]   =  
 					if not self.gp("slinging"):
-						self.sp("unboundrot",self.unilerp(rot,dest,5,roundto=2))
+						self.sp("unboundrot",self.unilerp(rot,dest,sm,roundto=2))
 						a = self.gp("unboundrot")
 						min_value = -180
 						max_value = 180
@@ -1569,7 +1601,7 @@ class Game(Gamemananager.GameManager):
 						else:
 							om.objects["playersprite"]["rot"] = a
 					else:
-						self.sp("unboundrot",self.unilerp(rot,dest,5,roundto=2,useigt=0))
+						self.sp("unboundrot",self.unilerp(rot,dest,sm,roundto=2,useigt=0))
 						a = self.gp("unboundrot")
 						min_value = -180
 						max_value = 180
@@ -1929,6 +1961,18 @@ class Game(Gamemananager.GameManager):
 			om.set_value(id,"exp",0)
 			om.objects[id]["rendercond"] = 1
 
+		if info["type"] == "bird":
+			om.removeid(id)
+			
+
+
+		if info["type"] == "cluster":
+			birbs = []
+			for i in range(om.get_value(id,"num")):
+				bid = om.add(self,[info["pos"][0] + random.randint(-200,200),info["pos"][1]],"bird",0,"bird",[1.2,1.2],univars.grandim,keepprev=1,info={"master":id})
+				birbs.append(bid)
+
+			om.set_value(id,"birds",birbs)
 
 
 	def oncreate(self,id,info):
@@ -2029,6 +2073,21 @@ class Game(Gamemananager.GameManager):
 			om.set_value(id,"sp",om.objects[id]["pos"])
 			om.set_value(id,"sr",om.objects[id]["rot"])
 
+		if info["type"] == "cluster":
+			
+
+			if not id in om.values.keys():
+				om.set_value(id,"num",5)
+
+
+		
+			
+			
+			
+		if info["type"] == "bird":
+			om.set_value(id,"active",0)
+			om.set_value(id,"vel",[0,0])
+			
 			
 
 
@@ -2076,6 +2135,45 @@ class Game(Gamemananager.GameManager):
 			self.rocket(id,info,st)
 
 
+		if info["type"] == "cluster":
+			self.cluster(id,info,st)
+
+		if info["type"] == "bird":
+			self.bird(id,info,st)
+			# self.print("WERTYUI")
+
+
+	def bird(self,id,info,st):
+		if not om.get_value(id,"master") in om.objects:
+			om.remove(id)
+		else:
+			master = om.get_value(id,"master")
+			
+			self.print(om.get_value(master,"col"))
+			if om.get_value(master,"col") and not om.get_value(id,"active"):
+				om.set_value(id,"active",1)
+				om.set_value(id,"vel",[  self.gp("act_vel")[0]/10 + random.randint(-10,10) + 5 ,  random.randint(2,6)  ])
+				# om.set_value(id,"vel",[  2 + random.randint(-4,4), 2 +   ])
+			if om.get_value(id,"active"):
+				om.playanim(self.dt,id,"fly")
+				om.objects[id]["pos"][0] += om.get_value(id,"vel")[0] * st
+				om.objects[id]["pos"][1] -= om.get_value(id,"vel")[1] * st
+
+
+
+	def cluster(self,id,info,st):
+		om.objects[id]["rendercond"] = 0
+		col = om.collide(id,0,cam,extra=100)
+		bo = 0
+		if len(col["obj"]) > 2:
+			if "player" in [obj.name for obj in col["obj"] if not obj == None]:
+				bo = 1
+				# self.print(bo)
+			else:
+				bo = 0
+		else:
+			bo = 0
+		om.set_value(id,"col",bo)
 
 	def rocket(self,id,info,st):
 		col = om.collide(id,0,cam,extra=300)

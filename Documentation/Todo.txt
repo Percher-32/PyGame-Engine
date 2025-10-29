@@ -1,5 +1,4 @@
 DO TOMORROW:
-	ROCKETS DONT EXPLODE ON DETATCH
-	L1 + Square change trick
 	bird clusters
 	new ui
+	attacks
