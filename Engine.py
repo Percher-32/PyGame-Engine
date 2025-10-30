@@ -41,6 +41,7 @@ class Game(Gamemananager.GameManager):
 		self.lookaheady = 0
 		self.timesdone = 1
 		self.scores = {}
+		self.homingcharge = 0
 		self.lookahead = 100
 		self.lerpshake = 0
 		self.actualwaterheight = 0
@@ -316,7 +317,12 @@ class Game(Gamemananager.GameManager):
 				om.objects["playersprite"]["sn"] = 0
 				om.objects["skateboard"]["sn"] = 0
 
-
+			if self.isthere("trick1")and self.isthere("VULNERABLE"):
+				om.objects["playersprite"]["sn"] = 12
+				# self.boardoffset[0] = self.unilerp(self.boardoffset[0],math.sin((rot/180) * math.pi) * 0,4)
+				self.boardoffset[1] += 10 * self.dt
+				self.playeroffset[1] -= 10 * self.dt
+				om.objects["skateboard"]["rot"] = 0
 			if self.isthere("trick2")and self.isthere("VULNERABLE"):
 				om.objects["playersprite"]["sn"] = 0
 				
@@ -364,6 +370,9 @@ class Game(Gamemananager.GameManager):
 				self.playeroffset[1] = self.unilerp(self.playeroffset[1],0,4)
 
 			
+
+				
+			self.boardoffset[1] = min([self.boardoffset[1],100])
 			om.objects["skateboard"]["pos"][0] += self.boardoffset[0]
 			om.objects["skateboard"]["pos"][1] += self.boardoffset[1]
 
@@ -383,6 +392,7 @@ class Game(Gamemananager.GameManager):
 
 
 		#create player
+		self.prevtricks = []
 		
 		om.adds(self,"player",startpos,"player","player",0,[1,1],400,5)
 		self.sp("#DEBUG","HELLO WOLRD")
@@ -416,6 +426,9 @@ class Game(Gamemananager.GameManager):
 
 		self.sp("candj",0)
 
+		self.dropdashinit = 0
+		self.lastground = 0
+
 		
 		self.sp("exithm",0)
 
@@ -441,6 +454,9 @@ class Game(Gamemananager.GameManager):
 
 		self.lastdirrail = 0
 		self.sp("lastframeswing",0)
+
+
+		self.lastdir = "r"
 
 		self.lastdirslant = "r"
 
@@ -657,7 +673,10 @@ class Game(Gamemananager.GameManager):
 										]	
 					
 					
-
+		if self.key["x"] > 0:
+			self.lastdir = "r"
+		if self.key["x"] < 0:
+			self.lastdir = "l"
 
 		axis = [self.key["x"],self.key["y"] * 1]
 		vecaxis = pygame.math.Vector2(axis[0],axis[1])
@@ -726,6 +745,11 @@ class Game(Gamemananager.GameManager):
 
 
 
+		if len(collisionbox["inst"] ) >0:
+			if self.isthere("VULNERABLE"):
+				self.bailable = 1
+				self.prevtricks = []
+				self.deltimer("VULNERABLE")
 
 		#MAIN
 		
@@ -737,29 +761,43 @@ class Game(Gamemananager.GameManager):
 					if not (collision["topmid"]["inst"] and collision["botmid"]["inst"] and collision["midright"]["inst"] and collision["midleft"]["inst"] ):
 						#IN HERE IS EITHER [NO MIDMID] OR [Yes MIDMID AND GROUND]
 						if self.key["trick"] and not len(collisionbox["inst"] ) >0:
-							times = 0.5
-							if self.key["throw"] and not self.lastkey["throw"]:
-								self.wait("VULNERABLE",times,barrier=False)
-								self.wait("trick1",times,barrier=False)
-								self.spin(21,0.4,0.1)
-								self.wait("inv",times)
-								self.sp("dashmeter",self.gp("dashmeter") + 20)
-							if self.key["secondary"] and not self.lastkey["secondary"]:
-								self.wait("VULNERABLE",times,barrier=False)
-								self.wait("trick2",times,barrier=False)
-								self.sp("dashmeter",self.gp("dashmeter") + 20)
-							if self.key["attack"] and not self.lastkey["attack"]:
-								self.wait("VULNERABLE",times,barrier=False)
-								self.wait("trick3",times,barrier=False)
-								self.sp("dashmeter",self.gp("dashmeter") + 20)
+							times = 0.7
+							self.wait("inv",times)
+							if not self.isthere("tcd"):
+								if self.key["throw"] and not self.lastkey["throw"]:
+									self.prevtricks.append(1)
+									self.wait("tcd",0.2)
+									self.wait("VULNERABLE",times,barrier=False)
+									self.wait("trick1",times,barrier=False)
+									self.spin(12,times,0.1)
+									if self.prevtricks[-1] == 1:
+										self.sp("dashmeter",self.gp("dashmeter") + min([((len(self.prevtricks) + 1) * 4),60]))
+									else:
+										self.sp("dashmeter",self.gp("dashmeter") + min([((len(self.prevtricks) + 1) * 13),100]))
+								elif self.key["secondary"] and not self.lastkey["secondary"]:
+									self.prevtricks.append(2)
+									self.wait("tcd",0.2)
+									self.wait("VULNERABLE",times,barrier=False)
+									self.wait("trick2",times,barrier=False)
+									self.sp("dashmeter",self.gp("dashmeter") + 20)
+									if self.prevtricks[-1] == 2:
+										self.sp("dashmeter",self.gp("dashmeter") + min([((len(self.prevtricks) + 1) * 4),60]))
+									else:
+										self.sp("dashmeter",self.gp("dashmeter") + min([((len(self.prevtricks) + 1) * 13),100]))
+								elif self.key["attack"] and not self.lastkey["attack"]:
+									self.prevtricks.append(3)
+									self.wait("tcd",0.2)
+									self.wait("VULNERABLE",times,barrier=False)
+									self.wait("trick3",times,barrier=False)
+									self.sp("dashmeter",self.gp("dashmeter") + 20)
+									if self.prevtricks[-1] == 3:
+										self.sp("dashmeter",self.gp("dashmeter") + min([((len(self.prevtricks) + 1) * 4),60]))
+									else:
+										self.sp("dashmeter",self.gp("dashmeter") + min([((len(self.prevtricks) + 1) * 13),100]))
 
-
-						if len(collisionbox["inst"] ) >0:
-							if self.isthere("VULNERABLE"):
-								self.bailable = 1
-								self.deltimer("VULNERABLE")
 
 						if self.isthere("BAIL"):
+
 							self.key["x"] = 0
 							self.key["y"] = 0
 							self.key["jump"] = 0
@@ -795,7 +833,13 @@ class Game(Gamemananager.GameManager):
 						
 
 
+						if abs(self.gp("des_vel",0)) > 250:
+							self.sp("des_vel",250 * self.valsign(self.gp("des_vel",0)),0)
+						if abs(self.gp("act_vel",0)) > 250:
+							self.sp("act_vel",250 * self.valsign(self.gp("act_vel",0)),0)
 
+						self.println(self.gp("act_vel"),17)
+						self.println(self.gp("des_vel"),18)
 
 						#x dir movement
 						if abs(self.key["x"]) > 0:
@@ -810,8 +854,22 @@ class Game(Gamemananager.GameManager):
 								self.sp("act_vel",[self.key["x"] * 20,self.gp("act_vel")[1]])
 							
 							
-
-							self.sp("des_vel",[          self.unilerp(self.gp("des_vel")[0],self.key["x"] * self.gp("machspeed"),30 )              ,    self.gp("des_vel")[1]   ])
+							if ground:
+								if self.key["throw"]:
+									self.sp("act_vel",self.gp("des_vel"))
+									self.sp("des_vel",[          self.unilerp(self.gp("des_vel")[0],self.key["x"] * self.gp("machspeed")/20,30 )              ,    self.gp("des_vel")[1]   ])
+								else:
+									if abs(self.gp("des_vel",0)) < self.gp("machspeed"):
+										self.sp("des_vel",[          self.unilerp(self.gp("des_vel")[0],self.key["x"] * self.gp("machspeed"),30 )              ,    self.gp("des_vel")[1]   ])
+									else:
+										# self.print("WOO")
+										pass
+							else:
+								if abs(self.gp("des_vel",0)) < self.gp("machspeed"):
+									self.sp("des_vel",[          self.unilerp(self.gp("des_vel")[0],self.key["x"] * self.gp("machspeed"),30 )              ,    self.gp("des_vel")[1]   ])
+								else:
+									# self.print("WOO")
+									pass
 						else:
 							self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
 							self.sp("xinit",True)
@@ -819,6 +877,54 @@ class Game(Gamemananager.GameManager):
 
 
 						self.sp("machspeed",150)
+
+
+
+						#SPIN/DROP DASH
+						self.println(self.dropdashinit,16)
+						self.println(self.homingcharge,15)
+						if ((not self.key["throw"] and self.lastkey["throw"] and ground) or (ground and self.dropdashinit==1)) and not self.dropdashinit==2:
+								self.wait("dashrem",0.5)
+								self.print("BOOOM")
+								self.wait("spindash",1)
+								# cm.setcond("playercam","shake",10)
+								
+								if self.dropdashinit:
+									self.dropdashinit = 2
+								else:
+									
+									self.dropdashinit = 0
+
+								if self.lastdir == "r":
+									self.sp("des_vel",self.homingcharge,0)
+									self.sp("act_vel",self.homingcharge,0)
+									self.sp("dashav",[self.homingcharge*1/2,0])
+									self.sp("dashdv",[self.homingcharge*1/2,0])
+								else:
+									self.sp("des_vel",self.homingcharge * -1,0)
+									self.sp("act_vel",self.homingcharge * -1,0)
+									
+									self.sp("dashav",[self.homingcharge*-1/2,0])
+									self.sp("dashdv",[self.homingcharge*-1/2,0])
+
+								
+								self.homingcharge = 0
+
+						if (not ground or not self.key["throw"]) and self.dropdashinit == 2:
+							self.dropdashinit = 0
+
+						#BUILD-UP DASH
+						if self.key["throw"] and not self.dropdashinit == 2:
+							
+							# cm.setcond("playercam","shake",3)
+							self.homingcharge += 10 * self.dt * om.speed
+							if self.homingcharge > 260:
+								self.homingcharge = 260
+
+						
+
+						if self.key["throw"] and not self.lastkey["throw"] and not ground:
+							self.dropdashinit = 1
 
 						
 
@@ -874,15 +980,18 @@ class Game(Gamemananager.GameManager):
 								self.sp("mode","in-air")
 								ground = False
 								if not abs(self.key["x"]):
-									if self.gp("lastwall") == "r":
-										# self.spin(16 ,1,spindec = 0.4)
-										self.sp("des_vel",[0,200])
-									else:
-										# self.spin(-16 ,1,spindec = 0.4)
-										self.sp("des_vel",[0,200])
+									if not self.key["jump"]:
+										if self.gp("lastwall") == "r":
+											self.spin(11 ,1,spindec = 0.2)
+											self.sp("des_vel",[0,200])
+										else:
+											self.spin(-11 ,1,spindec = 0.2)
+											self.sp("des_vel",[0,200])
 								else:
-									# self.spin(self.valsign(self.key["x"]) * -23 ,1,spindec = 0.5)
-									self.sp("des_vel",[self.key["x"] * 150,200])
+									
+									if not self.key["jump"]:
+										self.spin(self.valsign(self.key["x"]) * -11 ,1,spindec = 0.2)
+										self.sp("des_vel",[self.key["x"] * 150,200])
 
 
 							
@@ -1225,23 +1334,29 @@ class Game(Gamemananager.GameManager):
 
 
 								#Wall jumping
-								if self.key["y"] > 0.4:
-									a = 200
-								else:
-									a = 120
+								# if self.key["y"] > 0.4:
+								a = 200
+								# else:
+								# 	a = 120
 								if self.gp("leftwall") and not  len(collision["botmid"]["inst"]) > 0:
+									self.sp("dashmeter",self.gp("dashmeter") + (30 * self.dt))
 									self.deltimer("rightjump")
 									self.wait("leftjump",0.1)
+									
+									self.spin(-8 ,0.5,spindec = 0)
 									self.sp("jumpable",False)
-									self.sp("des_vel",[  self.gp("des_vel")[0] , a     ])
+									self.sp("des_vel",[ self.gp("des_vel",0)  , a     ])
 									self.sp("act_vel",[  150 , self.gp("act_vel")[1]     ])
 									self.sp("dashmeter",self.gp("dashmeter") + 15)
 									self.sp("mode","in-air")
 								if self.gp("rightwall") and not  len(collision["botmid"]["inst"]) > 0:
+									self.sp("dashmeter",self.gp("dashmeter") + (30 * self.dt))
 									self.deltimer("leftjump")
+									
+									self.spin(8 ,0.5,spindec = 0)
 									self.wait("rightjump",0.1)
 									self.sp("jumpable",False)
-									self.sp("des_vel",[  self.gp("des_vel")[0] , a     ])
+									self.sp("des_vel",[  self.gp("des_vel",0) , a     ])
 									self.sp("act_vel",[  -150 , self.gp("act_vel")[1]     ])
 									self.sp("dashmeter",self.gp("dashmeter") + 15)
 									self.sp("mode","in-air")
@@ -1252,9 +1367,9 @@ class Game(Gamemananager.GameManager):
 
 							if self.gp("leftwall") or self.gp("rightwall"):
 								self.sp("des_vel",[self.gp("des_vel")[0],self.key["y"] * 200])
-								if self.gp("dashmeter") < 200:
-									if abs(self.key["y"]) > 0:
-										self.sp("dashmeter",self.gp("dashmeter")+ (self.dt * 3 * abs(self.key["y"])))
+								# if self.gp("dashmeter") < 200:
+								# 	if abs(self.key["y"]) > 0:
+								# 		self.sp("dashmeter",self.gp("dashmeter")+ (self.dt * 3 * abs(self.key["y"])))
 
 							if not ground:
 								if self.gp("leftwall"):
@@ -1477,10 +1592,10 @@ class Game(Gamemananager.GameManager):
 						self.sp("dirforrail","r")
 
 
-					if self.gp("entervel") > 200:
-						self.sp("entervel",200)
-					if self.gp("entervel") < -200:
-						self.sp("entervel",-200)
+					if self.gp("entervel") > 220:
+						self.sp("entervel",220)
+					if self.gp("entervel") < -220:
+						self.sp("entervel",-220)
 	
 
 
@@ -1793,14 +1908,23 @@ class Game(Gamemananager.GameManager):
 						self.lookaheady = self.unilerp(self.lookaheady,0,20,roundto=2)
 				else:
 					self.lookaheady = self.unilerp(self.lookaheady,self.key["y"] * -100,4,roundto=2,useigt=1)
-					if self.gp("xinit"):
-						self.lookahead = 0
-					if self.gp("des_vel")[0] > 0:
-						self.lookahead = self.unilerp(self.lookahead,400,8,roundto=2)
-					elif self.gp("des_vel")[0] < 0:
-						self.lookahead = self.unilerp(self.lookahead,-400,8,roundto=2)
+					if abs(self.gp("act_vel")[0]) < 220:
+						if self.gp("xinit"):
+							self.lookahead = 0
+						if self.gp("des_vel")[0] > 0:
+							self.lookahead = self.unilerp(self.lookahead,400,8,roundto=2)
+						elif self.gp("des_vel")[0] < 0:
+							self.lookahead = self.unilerp(self.lookahead,-400,8,roundto=2)
+						else:
+							self.lookahead = self.unilerp(self.lookahead,0,20,roundto=2)
 					else:
-						self.lookahead = self.unilerp(self.lookahead,0,20,roundto=2)
+						if self.gp("des_vel")[0] > 0:
+							self.lookahead = self.unilerp(self.lookahead,600,8,roundto=2)
+						else:
+							self.lookahead = self.unilerp(self.lookahead,-600,8,roundto=2)
+
+
+					
 					
 				
 				# self.println([self.lookahead,self.lookaheady],3)
@@ -1821,6 +1945,7 @@ class Game(Gamemananager.GameManager):
 			
 		
 		self.lastrail = rail
+		self.lastground = ground
 		self.sp("lastframewall",self.gp("leftwall") or self.gp("rightwall"))
 		om.speed = univars.func.lerp(om.speed,self.gp("wantime"),5,roundto=2)
 		if self.ondone("show-score"):
