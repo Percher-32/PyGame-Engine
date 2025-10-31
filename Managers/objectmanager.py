@@ -706,7 +706,7 @@ class object_manager:
 				col = noninstcol
 			else:
 				col = basecolor
-			self.func.ssblitrect(pygame.Rect(pos[0],pos[1],num * pointsize,num * pointsize),col,camera,0,univars.fakescreen)
+			self.func.ssblitrect(pygame.Rect(pos[0],pos[1],num * pointsize,num * pointsize),col,camera,0,univars.fakescreen,univars.scaledown)
 			# self.func.ssblitrect(r1,col,camera,5,univars.fakescreen)
 
 
