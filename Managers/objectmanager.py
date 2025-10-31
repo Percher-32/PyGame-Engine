@@ -282,12 +282,18 @@ class object_manager:
 					todump = self.encodeinst()
 					json.dump(todump,file)
 				with open(f"Saved/tilemaps/{name}/non-inst.json","w") as file:
-					todump = self.objects
+					todump = self.objects.copy()
+					for i in self.objects.keys():
+						if om.objects[i]["type"] in univars.dontsaveobjtype:
+							todump.pop(i)
+
+
 					json.dump(todump,file)
 				with open(f"Saved/tilemaps/{name}/vars.pk","wb") as file:
 					todump = self.values
-					for i in univars.dontsavevar:
-						todump.pop(i)
+					for i in self.objects:
+						if i in todump.keys():
+							todump.pop(i)
 					try:
 						pk.dump(todump,file)
 					except:
@@ -610,6 +616,7 @@ class object_manager:
 					a = [i.inst for i in a]
 				inst += a
 			noninst = [self.objfromid(ghost.id) for ghost in noninst]
+			noninst = [i for i in noninst if not i == None]
 			#render the collbox
 			if show:
 				if len(inst) > 0 and len(noninst) > 0:
@@ -920,6 +927,8 @@ class object_manager:
 
 
 			self.tracker += 1
+			while str(self.tracker) in self.objects.keys():
+				self.tracker == 1
 			if str([sprites,sizen]) in list(self.spritecache.keys()):
 				spritelist = self.spritecache[str([sprites,sizen])]
 				size = [self.spritecache[str([sprites,sizen])][0].get_width() * sizen[0],self.spritecache[str([sprites,sizen])][0].get_height() * sizen[1]]
