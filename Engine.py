@@ -583,7 +583,7 @@ class Game(Gamemananager.GameManager):
 			
 
 		#TRAIL
-		if self.gp("dashmeter") > 150:
+		if self.gp("dashmeter") > 200:
 			self.wait("dotrail",0.2)
 			if self.ondone("dotrail"):
 				colid = random.randint(6,11)
@@ -855,9 +855,9 @@ class Game(Gamemananager.GameManager):
 							
 							
 							if ground:
-								if self.key["throw"]:
-									self.sp("act_vel",self.gp("des_vel"))
-									self.sp("des_vel",[          self.unilerp(self.gp("des_vel")[0],self.key["x"] * self.gp("machspeed")/20,30 )              ,    self.gp("des_vel")[1]   ])
+								if self.key["throw"] and self.dropdashinit == 0:
+									# self.sp("act_vel",self.gp("des_vel"))
+									self.sp("des_vel",[        self.key["x"] * self.gp("machspeed")/10            ,    self.gp("des_vel")[1]   ])
 								else:
 									if abs(self.gp("des_vel",0)) < self.gp("machspeed"):
 										self.sp("des_vel",[          self.unilerp(self.gp("des_vel")[0],self.key["x"] * self.gp("machspeed"),30 )              ,    self.gp("des_vel")[1]   ])
@@ -908,6 +908,7 @@ class Game(Gamemananager.GameManager):
 									self.sp("dashdv",[self.homingcharge*-1/2,0])
 
 								
+								pm.particlespawnbluprint(om.objects["player"]["pos"],"exp4",initvel=[self.gp("des_vel",0)/10,10])
 								self.homingcharge = 0
 
 						if (not ground or not self.key["throw"]) and self.dropdashinit == 2:
@@ -916,11 +917,19 @@ class Game(Gamemananager.GameManager):
 						#BUILD-UP DASH
 						if self.key["throw"] and not self.dropdashinit == 2:
 							
-							# cm.setcond("playercam","shake",3)
+							if ground:
+								cm.setcond("playercam","shake",3)
+							else:
+								
+								cm.setcond("playercam","shake",2)
+
 							self.homingcharge += 10 * self.dt * om.speed
 							if self.homingcharge > 260:
 								self.homingcharge = 260
 
+
+						if not self.key["throw"]:
+							self.homingcharge = 0
 						
 
 						if self.key["throw"] and not self.lastkey["throw"] and not ground:
@@ -1343,7 +1352,7 @@ class Game(Gamemananager.GameManager):
 									self.deltimer("rightjump")
 									self.wait("leftjump",0.1)
 									
-									self.spin(-8 ,0.5,spindec = 0)
+									self.spin(-7 ,1,spindec = 0)
 									self.sp("jumpable",False)
 									self.sp("des_vel",[ self.gp("des_vel",0)  , a     ])
 									self.sp("act_vel",[  150 , self.gp("act_vel")[1]     ])
@@ -1353,7 +1362,7 @@ class Game(Gamemananager.GameManager):
 									self.sp("dashmeter",self.gp("dashmeter") + (30 * self.dt))
 									self.deltimer("leftjump")
 									
-									self.spin(8 ,0.5,spindec = 0)
+									self.spin(7 ,1,spindec = 0)
 									self.wait("rightjump",0.1)
 									self.sp("jumpable",False)
 									self.sp("des_vel",[  self.gp("des_vel",0) , a     ])
@@ -1908,20 +1917,14 @@ class Game(Gamemananager.GameManager):
 						self.lookaheady = self.unilerp(self.lookaheady,0,20,roundto=2)
 				else:
 					self.lookaheady = self.unilerp(self.lookaheady,self.key["y"] * -100,4,roundto=2,useigt=1)
-					if abs(self.gp("act_vel")[0]) < 220:
-						if self.gp("xinit"):
-							self.lookahead = 0
-						if self.gp("des_vel")[0] > 0:
-							self.lookahead = self.unilerp(self.lookahead,400,8,roundto=2)
-						elif self.gp("des_vel")[0] < 0:
-							self.lookahead = self.unilerp(self.lookahead,-400,8,roundto=2)
-						else:
-							self.lookahead = self.unilerp(self.lookahead,0,20,roundto=2)
+					if self.gp("xinit"):
+						self.lookahead = 0
+					if self.gp("des_vel")[0] > 0:
+						self.lookahead = self.unilerp(self.lookahead,400,8,roundto=2)
+					elif self.gp("des_vel")[0] < 0:
+						self.lookahead = self.unilerp(self.lookahead,-400,8,roundto=2)
 					else:
-						if self.gp("des_vel")[0] > 0:
-							self.lookahead = self.unilerp(self.lookahead,600,8,roundto=2)
-						else:
-							self.lookahead = self.unilerp(self.lookahead,-600,8,roundto=2)
+						self.lookahead = self.unilerp(self.lookahead,0,20,roundto=2)
 
 
 					
