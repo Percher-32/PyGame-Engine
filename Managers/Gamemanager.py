@@ -47,6 +47,7 @@ class GameManager():
 		self.screen_colour = screen_colour
 		self.frame_manager = frame_manager
 		self.event_manager = em
+		self.objrange = 2000
 		self.em = em
 		self.publicvariables = {"showinput":univars.showinput,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":univars.screencol   ,"cammove":False  ,"shaderstate":univars.startshaderstate ,"showallhidden":1 }
 		self.timers = {}
@@ -286,7 +287,7 @@ class GameManager():
 		if len(om.objects.keys()) > 0:
 			stabledict = copy.copy(om.objects)
 			for obj in stabledict.keys():
-				range =  2000
+				range =  self.objrange
 				if om.speed > 0:
 					if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
 						

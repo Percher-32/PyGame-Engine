@@ -672,7 +672,7 @@ class object_manager:
 				col = (0,0,255)
 			else:
 				col = (225,0,0)
-			self.func.ssblitrect(r1,col,camera,5,univars.fakescreen)
+			self.func.ssblitrect(r1,col,camera,5,univars.fakescreen,univars.scaledown)
 
 
 		return {"obj":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}

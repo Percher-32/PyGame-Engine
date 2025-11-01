@@ -28,10 +28,12 @@ class Game(Gamemananager.GameManager):
 	"""
 	def __init__(self,screen,fm):
 		super().__init__(screen,fm)
-		self.typesofhoming = ["enemy-L","omnispring","goal","turret","rocket","easybot"]
+		self.attackerbox = {"obj":[]}
+		self.typesofhoming = ["enemy-L","omnispring","goal","turret","rocket","easybot","HURT:biglaser"]
 		self.ingametime = 0
 		self.boardoffset = [0,0]
 		self.playeroffset = [0,0]
+		self.objrange = 6000
 		self.bailable = 0
 		self.skatedetach = 0
 		self.publicvariables["gamespeed"] = 1
@@ -433,6 +435,9 @@ class Game(Gamemananager.GameManager):
 		self.dropdashinit = 0
 		self.lastground = 0
 
+
+
+		self.attackheld = 0
 		
 		self.sp("exithm",0)
 
@@ -569,6 +574,7 @@ class Game(Gamemananager.GameManager):
 		lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 60,om.objects["player"]["pos"][1] + 17 ],0,32,camera=cam,basecolor=(0,1,0))
 		lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 17 ],0,32,camera=cam,basecolor=(0,1,0))
 		collisionbox = om.collide("player",0,cam,extra=20)
+		smallcollisionbox = om.collide("player",1,cam,extra=-60)
 		bigcollisionbox = om.collide("player",0,cam,extra=600)
 		attackbox = om.colliderect([cm.getcam("playercam","pos")[0] +(self.lookahead*0),cm.getcam("playercam","pos")[1] + (self.lookaheady*0)],[1300,700],0,cam)
 
@@ -581,11 +587,6 @@ class Game(Gamemananager.GameManager):
 		collisionboxtype = [i.type for i in collisionbox["inst"]] 
 
 		
-		if "HURT:laser" in [ i.info["type"] for i in collisionbox["obj"]]:
-			if not self.isthere("dashrem") and not self.isthere("inv"):
-				self.wait("BAIL",2)
-			
-
 		#TRAIL
 		if self.gp("dashmeter") > 200:
 			self.wait("dotrail",0.2)
@@ -656,26 +657,41 @@ class Game(Gamemananager.GameManager):
 
 
 		#Board projectile INITIATE THROW
-		if not ground:
-			if self.key["attack"] and not self.key["trick"]:
-				self.sp("wantime",0.2)
+
+
+
+		# if not ground:
+		# 	if self.key["attack"] and not self.key["trick"]:
+				
+
+
+		# 		self.sp("wantime",0.2)
+		# 	else:
+		# 		if self.lastkey["attack"] and not self.lastkey["trick"]:
+		# 			self.wait("skatego",0.5,barrier=1)
+		# 			self.spin(30,0.1)
+					
+		# 			# self.bailable = 1
+		# 			self.skatevel = [
+		# 								(self.key["x"] * -1000 )  + om.objects["player"]["pos"][0],
+		# 								(self.key["y"] * 500 )  + om.objects["player"]["pos"][1]
+		# 							]	
+
+
+		if not self.key["attack"] and self.lastkey["attack"] and not self.isthere("cooldownattack"):
+			if self.attackheld < 10:
+				self.wait("attack",0.4)
+				self.wait("cooldownattack",0.8)
 			else:
-				if self.lastkey["attack"] and not self.lastkey["trick"]:
-					self.wait("skatego",0.5,barrier=1)
-					self.spin(30,0.1)
-					
-					# self.bailable = 1
-					if not self.key["tert"]:
-						self.skatevel = [
-											(self.key["x"] * 1000 )  + om.objects["player"]["pos"][0],
-											(self.key["y"] * -500 )  + om.objects["player"]["pos"][1]
-										]	
-					else:
-						self.skatevel = [
-											(self.key["x"] * -1000 )  + om.objects["player"]["pos"][0],
-											(self.key["y"] * 500 )  + om.objects["player"]["pos"][1]
-										]	
-					
+				self.wait("skatego",0.5,barrier=1)
+				self.spin(30,0.1)
+				
+				# self.bailable = 1
+				self.skatevel = [
+									(self.key["x"] * 1000 )  + om.objects["player"]["pos"][0],
+									(self.key["y"] * -500 )  + om.objects["player"]["pos"][1]
+								]	
+				
 					
 		if self.key["x"] > 0:
 			self.lastdir = "r"
@@ -1017,6 +1033,7 @@ class Game(Gamemananager.GameManager):
 							if not self.isthere("doublejumpcd") and self.gp("candj"):
 								self.bailable = 0
 								self.sp("candj",0)
+								self.wait("inv",1,0)
 								self.sp("dashmeter",self.gp("dashmeter") + 30)
 								self.wait("dashrem",2)
 								# cm.setcond("playercam","shake",6)
@@ -1070,7 +1087,7 @@ class Game(Gamemananager.GameManager):
 								nenvec = envec.normalize()
 								nenvec = [nenvec.x,nenvec.y * -1]
 								ground = 0
-								if self.gp("target").info["type"] in ["enemy-L","omnispring","goal","turret","rocket","easybot"]:
+								if self.gp("target").info["type"] in ["enemy-L","omnispring","goal","turret","rocket","easybot","HURT:biglaser"]:
 									if envec.length() > 40:
 										a = (380 + (abs(envec.length()/3)))/2
 										d = (380 + (abs(envec.length()/3)))/2
@@ -1224,9 +1241,9 @@ class Game(Gamemananager.GameManager):
 
 									self.sp("dashmeter",self.gp("dashmeter") + 30)
 
-									om.set_value(self.gp("target").name,"HP",om.get_value(self.gp("target").name,"HP") - 30)
+									om.set_value(self.gp("target").name,"HP",om.get_value(self.gp("target").name,"HP") - 20)
 									om.set_value(self.gp("target").name,"flashtimer",1)
-									self.print("abcdefghijklmnop")
+									self.spin(14,1,spindec=0.3)
 									self.sp("jumpable",1)
 									self.sp("homing",0)
 									self.wait("bouncerem",3)
@@ -1250,6 +1267,35 @@ class Game(Gamemananager.GameManager):
 									self.sp("des_vel",0,0)
 									self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
 									self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
+
+							if self.gp("target").info["type"] in ["HURT:biglaser"]:
+								om.set_value(self.gp("target").name,"HP",om.get_value(self.gp("target").name,"HP") - 30)
+								om.set_value(self.gp("target").name,"flashtimer",1)
+								self.spin(14,1,spindec=0.3)
+								self.sp("jumpable",1)
+								self.sp("homing",0)
+								self.wait("bouncerem",3)
+								# cm.setcond("playercam","shake",6)
+								actmult = [150,150]
+								actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
+								desmult = [150,150]
+								desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
+
+								if actmult == [0,0]:
+									actmult = [160,50]
+									desmult = [160,50]
+								# self.spin(23,0.4,0.1)
+
+								self.sp("dashav",self.listdiv(actvel,16))
+								self.sp("dashdv",self.listdiv(desvel,16))
+
+								self.sp("act_vel",0,1)
+								self.sp("des_vel",0,1)
+								self.sp("act_vel",0,0)
+								self.sp("des_vel",0,0)
+								self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
+								self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
+
 
 							if self.gp("target").info["type"] in ["rocket"]:
 								if self.key["secondary"] and not self.gp("exithm"):
@@ -1622,6 +1668,15 @@ class Game(Gamemananager.GameManager):
 
 
 
+				for ty in ["HURT:laser","HURT:biglaser"]:
+					if ty in [ i.info["type"] for i in smallcollisionbox["obj"]]:
+						if self.gp("homing") == 0:
+							if not self.isthere("inv"):
+								self.wait("BAIL",0.5)
+							
+							# self.sp("act_vel",[0,0])
+							# self.sp("des_vel",[0,0])
+
 						
 
 				#UPDATE POSITIONS AND ROTATIONS
@@ -1836,10 +1891,11 @@ class Game(Gamemananager.GameManager):
 		supg = len(collisionbox["inst"]) > 0
 
 		#SPIN/DROP DASH
-		if ((not self.key["throw"] and self.lastkey["throw"] and supg) or (supg and self.dropdashinit==1)) and not self.dropdashinit==2:
+		if ((not self.key["throw"] and self.lastkey["throw"] and supg) or (supg and self.dropdashinit==1 and self.key["throw"])) and not self.dropdashinit==2 and not self.key["trick"]:
 			self.wait("dashrem",0.5)
 			self.print("BOOOM")
 			self.wait("spindash",1)
+			self.wait("attack",0.6)
 			self.wait("inv",1)
 			# cm.setcond("playercam","shake",10)
 			
@@ -1865,7 +1921,7 @@ class Game(Gamemananager.GameManager):
 			pm.particlespawnbluprint(om.objects["player"]["pos"],"exp4",initvel=[self.gp("des_vel",0)/10,10])
 			self.homingcharge = 0
 
-		if (not supg or not self.key["throw"]) and self.dropdashinit == 2:
+		if (not supg or not self.key["throw"]) and self.dropdashinit == 2 and not self.key["trick"]:
 			self.dropdashinit = 0
 
 		#BUILD-UP DASH
@@ -1894,6 +1950,10 @@ class Game(Gamemananager.GameManager):
 
 
 
+		if ground and self.isthere("spindash"):
+			self.attackerbox = om.colliderect([om.objects["player"]["pos"][0]+(self.key["x"] * 200),om.objects["player"]["pos"][1] + (0 * -200)],[400,400],1,cam)
+		else:
+			self.attackerbox = om.colliderect([om.objects["player"]["pos"][0]+(self.key["x"] * 200),om.objects["player"]["pos"][1] + (self.key["y"] * -200)],[400,200],1,cam)
 
 
 
@@ -1984,6 +2044,11 @@ class Game(Gamemananager.GameManager):
 		self.println(self.gp("candj"),4)
 		self.println(self.gp("jumpable"),5)
 
+
+		if self.key["attack"] and not self.key["trick"]:
+			self.attackheld += self.dt
+		else:
+			self.attackheld = 0
 
 			
 		
@@ -2106,6 +2171,8 @@ class Game(Gamemananager.GameManager):
 		
 	def qrcond(self, id, info):
 
+		if info["type"] == "HURT:biglaser":
+			om.removeid(id)
 
 		if info["type"] == "spawn-1":
 			if not om.get_value(id,"sid") == 0:
@@ -2154,6 +2221,8 @@ class Game(Gamemananager.GameManager):
 		
 
 	def oncreate(self,id,info):
+
+
 		if info["name"] == "target":
 			om.objects[id]["type"] = "omnispring"
 			info["type"] = "omnispring"
@@ -2284,6 +2353,10 @@ class Game(Gamemananager.GameManager):
 
 		if info["type"] == "HURT:laser":
 			self.laserbeam(id,info,st)
+
+		if info["type"] == "HURT:biglaser":
+			self.biglaserbeam(id,info,st)
+
 
 		if info["type"] == "HPBAR":
 			self.hpbar(id,info)
@@ -2423,6 +2496,20 @@ class Game(Gamemananager.GameManager):
 		om.lighttoenemy(id,"l1",color=(255,0,20),colorinc=(0,0,0),nits=10,sizeinc=3,size=6,alphadec=6,alpha=60)
 
 
+	def spawnbiglaser(self,pos,time,speed,topspeed):
+		id = om.add(self,pos,"rocket",0,"HURT:biglaser",[1.2,1.2],univars.grandim,keepprev=1)
+		om.objects[id]["type"] = "HURT:biglaser"
+		om.set_value(id,"tr",random.randint(30,60)/10)
+
+		om.set_value(id,"maxtimer",time)
+		om.set_value(id,"time",time)
+		om.set_value(id,"canhome",1)
+		om.set_value(id,"speed",speed + random.randint(-20,20))
+		om.set_value(id,"topspeed",topspeed + random.randint(-20,0))
+		om.set_value(id,"rot",0)
+		om.lighttoenemy(id,"l1",color=(255,0,20),colorinc=(0,0,0),nits=10,sizeinc=3,size=6,alphadec=6,alpha=20)
+
+
 	def createhpbar(self,id,size,offset):
 		"""
 			offset has y up = +\n
@@ -2465,8 +2552,85 @@ class Game(Gamemananager.GameManager):
 		else:
 			om.removeid(id)
 
+
+
+	def biglaserbeam(self,id,info,st):
+		rot = om.get_value(id,"rot")
+		speed = om.get_value(id,"speed")
+		timer = om.get_value(id,"time")
+		maxtimer = om.get_value(id,"maxtimer")
+		if speed < om.get_value(id,"topspeed"):
+			speed += 1*st
+		timer -= 0.1*st
+		om.set_value(id,"speed",speed)
+		om.set_value(id,"time",timer)
+
+
+		
+		self.damageable(id,20,range=600)
+
+
+
+
+
+		playervec = pygame.Vector2(om.objects["player"]["pos"])
+		selfpos =  pygame.Vector2(info["pos"])
+		vectoplayer = playervec-selfpos
+		desrot = vectoplayer.angle * -1
+		tr = om.get_value(id,"tr")
+		if univars.func.dist(info["pos"],om.objects["player"]["pos"]) < 50:
+			tr  = 1
+		d1 = desrot
+		d2 = desrot - 360
+		d3 = desrot + 360
+
+		rank = [abs(d-rot) for d in [d1,d2,d3]]
+
+		first = min(rank) 
+
+		desrot = [d1,d2,d3][rank.index(first)]
+
+		rot = self.unilerp(rot,desrot,tr)
+
+
+		# rot = desrot
+		# rot += (20*st)
+		om.set_value(id,"rot",rot)
+
+		vel = [ math.cos(rot/180 * math.pi) *  speed, math.sin(rot/180 * math.pi) *  speed  ]
+
+
+		om.translate(self,id,vel,1)
+		om.objects[id]["rot"] = rot
+
+
+
+		
+		shake = int((maxtimer - timer)/maxtimer * 20)
+
+		om.objects[id]["pos"][0] += random.randint(-1 * shake,shake)
+		om.objects[id]["pos"][1] += random.randint(-1 * shake,shake)
+		addon = [(32 * math.sin(om.objects[id]["rot"]/180 * math.pi)) ,
+				(32 * math.cos(om.objects[id]["rot"]/180 * math.pi)) ]
+		addon = [0,0]
+		# pm.particlespawnbluprint([om.objects[id]["pos"][0] + addon[0],om.objects[id]["pos"][1] + addon[1] ],"exp",initvel=[  math.cos(om.objects[id]["rot"]/180 * math.pi) * om.get_value(id,"vel") * 0 , math.sin(om.objects[id]["rot"]/180 * math.pi) * om.get_value(id,"vel") * 0 ])
+
+
+		
+		if univars.func.dist(info["pos"],om.objects["player"]["pos"]) < 6 or timer < 0 or om.get_value(id,"HP") < 0:
+			for _ in range(3):
+				pm.particlespawnbluprint([om.objects[id]["pos"][0],om.objects[id]["pos"][1] ],"exp2",initvel=[vel[0]/20,vel[1]/20])
+			om.removeid(id)
+
+
+
+
+	
+
 	def trianglebot(self,id,info,st):
 		if id in om.values.keys() and "act_vel" in om.values["player"].keys():
+			
+			self.damageable(id,20)
 
 			# print(om.get_value(id,"master_pos"),om.objects[id]["pos"])
 			if univars.func.dist(om.objects[id]["pos"],om.objects["player"]["pos"]) < 1600:
@@ -2678,14 +2842,7 @@ class Game(Gamemananager.GameManager):
 					om.set_value(id,"shotimer",om.get_value(id,"maxtimer"))
 
 	def easybot(self,id,info,st):
-		if om.get_value(id,"flashtimer") > 0:
-			om.set_value(id,"flashtimer",om.get_value(id,"flashtimer") - (1*st)/40)
-			if round(om.get_value(id,"flashtimer") * 5)%2 == 0:
-				om.objects[id]["sn"] = 1
-			else:
-				om.objects[id]["sn"] = 0
-		else:
-			om.objects[id]["sn"] = 0
+	
 
 
 		if om.get_value(id,"HP") < 0:
@@ -2703,12 +2860,62 @@ class Game(Gamemananager.GameManager):
 				selfpos =  pygame.Vector2(info["pos"])
 				vectoplayer = playervec-selfpos
 				rot = vectoplayer.angle * -1
+				if self.gp("homing") == 0:
+					self.wait("charge" + id,0.5)
+				om.set_value(id,"storedrot",rot)
+				om.playanim(st,id,"charge",speed=2)
+				om.set_value(id,"timer",100)
 
-				self.spawnlaser(om.objects[id]["pos"],80,rot,id,3,extraspeed=[0,0])
-				om.set_value(id,"timer",200)
+		
+		om.objects[id]["pos"] = univars.func.lerp(om.objects[id]["pos"],om.get_value(id,"randpos"),10)
+
+		if self.isthere("charge"+ id):
+			range = int((45 - self.timers["charge" + id])/10)
+			om.objects[id]["pos"][0] += random.randint(range * -1 ,range)
+			om.objects[id]["pos"][1] +=  random.randint(range * -1 ,range)
+			playervec = pygame.Vector2(om.objects["player"]["pos"])
+			selfpos =  pygame.Vector2(info["pos"])
+			vectoplayer = playervec-selfpos
+			rot = vectoplayer.angle * -1
+			om.set_value(id,"storedrot",rot)
+
+		if self.ondone("charge" + id):
+			
+			if self.gp("homing") == 0:
+				self.spawnbiglaser(info["pos"],20,abs(self.gp("act_vel",0)/2),140)
 
 
-			om.objects[id]["pos"] = univars.func.lerp(om.objects[id]["pos"],om.get_value(id,"randpos"),10)
+		if om.get_value(id,"flashtimer") > 0:
+			om.set_value(id,"flashtimer",om.get_value(id,"flashtimer") - (1*st)/40)
+			if round(om.get_value(id,"flashtimer") * 5)%2 == 0:
+				om.objects[id]["sn"] = 5
+			else:
+				if not self.isthere("charge"+ id):
+					om.objects[id]["sn"] = 0
+		else:
+			if not self.isthere("charge"+ id):
+				om.objects[id]["sn"] = 0
+
+		self.damageable(id,10)
+
+
+		
+
+
+
+	def damageable(self,id,dm,range = 200):
+		# if univars.func.dist(om.objects[id]["pos"],om.objects["player"]["pos"]) < range:
+		if len(self.attackerbox.keys()) > 0:
+			if len(self.attackerbox["obj"]) > 0:
+				if id in [i.name for i in self.attackerbox["obj"]]:
+					if self.isthere("attack"):
+						if not self.isthere("damf" + id):
+							om.set_value(id,"HP",om.get_value(id,"HP") - dm)
+							self.wait("damf" + id,1)
+							om.set_value(id,"flashtimer",1)
+
+
+
 
 
 
