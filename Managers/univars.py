@@ -82,12 +82,12 @@ instables = ["dirt","grass","def","slantl","slantr","slantlbot","slantrbot","rai
 domainexpansions = {}
 
 
-extras = [["def","camz",[20,20]]]
+extras = []
 """
     [Original sprite  ,  new sprite type  ,  size scale]
 """
 
-newsprites = {"slantdecor":"slantr"}
+newsprites = {}
 """
     oldspritename :newspritename
 """
@@ -95,7 +95,10 @@ newsprites = {"slantdecor":"slantr"}
 
 offsets = {"tree":[0,-13]}
 
-hideentypes = ["camz"]
+hideentypes = []
+
+sizeaddons = {"camz":[30,30]}
+layeraddons = {"camz":-5}
 
 aplhatypes = {}
 
@@ -143,7 +146,7 @@ poschange = 0
 
 defont = "pixel2.ttf"
 
-renderdist = [30,30]
+renderdist = [20,20]
 
 output = []
 

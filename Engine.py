@@ -33,6 +33,7 @@ class Game(Gamemananager.GameManager):
 		self.ingametime = 0
 		self.boardoffset = [0,0]
 		self.playeroffset = [0,0]
+		self.camzoom = 0.3
 		self.objrange = 6000
 		self.bailable = 0
 		self.skatedetach = 0
@@ -222,7 +223,7 @@ class Game(Gamemananager.GameManager):
 		"""
 		if "player" in om.objects.keys() and "skateboard" in om.objects.keys() and "playersprite" in om.objects.keys():
 
-			self.flowstate =self.gp("dashmeter") > 200
+			self.flowstate =self.gp("dashmeter") > 170
 			# self.println(self.gp("dashmeter") > 0,20)
 			#move player
 
@@ -240,7 +241,7 @@ class Game(Gamemananager.GameManager):
 				self.initialiseplayer([0,60])
 				self.qrcondHL()
 
-			#move camera
+		#move camera
 			campos = [om.objects["player"]["pos"][0],om.objects["player"]["pos"][1]]
 				
 
@@ -254,7 +255,15 @@ class Game(Gamemananager.GameManager):
 
 
 			# if not self.gp("homing") > 0:
-			cm.cam_focus_size("playercam",campos,4,0.3 / (univars.scaledown/2.5) * 15/7 )
+			self.cfcp = om.collide("player",0
+			,cam,extra=3)
+			types = [i.info["type"] for i in self.cfcp["obj"]]
+			if "camz" in types:
+				# print()
+				self.camzoom = om.get_value(    self.cfcp["obj"][types.index("camz")].name                  ,"zoom")
+			else:
+				self.camzoom = 0.3
+			cm.cam_focus_size("playercam",campos,4,self.camzoom / (univars.scaledown/2.5) * 15/7 )
 
 
 
@@ -1259,7 +1268,7 @@ class Game(Gamemananager.GameManager):
 
 									self.sp("dashmeter",self.gp("dashmeter") + 30)
 
-									om.set_value(self.gp("target").name,"HP",om.get_value(self.gp("target").name,"HP") - 20)
+									om.set_value(self.gp("target").name,"HP",om.get_value(self.gp("target").name,"HP") - 200)
 									om.set_value(self.gp("target").name,"flashtimer",1)
 									self.spin(14,1,spindec=0.3)
 									self.sp("jumpable",1)
@@ -1335,7 +1344,7 @@ class Game(Gamemananager.GameManager):
 									actvel = [0,0]
 									desmult = [150,150]
 									desvel = [  axis[0] * desmult[0], axis[1] * desmult[1]]
-									om.set_value(self.gp("target").name,"exp",1)
+									# om.set_value(self.gp("target").name,"exp",1)
 									actvel[0] = math.cos(self.gp("target").info["rot"]/180 * math.pi) * 12 * om.get_value(self.gp("target").name,"vel") + (axis[0]*50)
 									actvel[1] = math.sin(self.gp("target").info["rot"]/180 * math.pi) * 12 * om.get_value(self.gp("target").name,"vel") + (axis[1]*50)
 
@@ -1369,7 +1378,7 @@ class Game(Gamemananager.GameManager):
 						
 
 
-								
+						
 
 
 						#jumping
@@ -1969,7 +1978,7 @@ class Game(Gamemananager.GameManager):
 
 
 
-		diam = [400 + (abs(self.gp("act_vel",0)) + abs(self.gp("act_vel",1)))/2,200 + (abs(self.gp("act_vel",0)) + abs(self.gp("act_vel",1)))/2]
+		diam = [400 + (abs(self.gp("act_vel",0)) + abs(self.gp("act_vel",1)))/2,200 + (abs(self.gp("act_vel",0)) + abs(self.gp("act_vel",1)))/1													]
 		diams = [500,500]
 		if self.flowstate:
 			diam[0] *= 1.5
@@ -1981,9 +1990,9 @@ class Game(Gamemananager.GameManager):
 		else:
 			dtg = -1
 		if ground and self.isthere("spindash"):
-			self.attackerbox = om.colliderect([om.objects["player"]["pos"][0]+(dtg * 200),om.objects["player"]["pos"][1] + (0 * -200)],diams,1,cam)
+			self.attackerbox = om.colliderect([om.objects["player"]["pos"][0]+(dtg * 200),om.objects["player"]["pos"][1] + (0 * -200)],diams,0,cam)
 		else:
-			self.attackerbox = om.colliderect([om.objects["player"]["pos"][0]+(dtg* 200),om.objects["player"]["pos"][1] + (self.key["y"] * -200)],diam,1,cam)
+			self.attackerbox = om.colliderect([om.objects["player"]["pos"][0]+(dtg* 200),om.objects["player"]["pos"][1] + (self.key["y"] * -200)],diam,0,cam)
 
 
 
@@ -2363,14 +2372,27 @@ class Game(Gamemananager.GameManager):
 		
 		if info["type"] == "easybot":
 			om.set_value(id,"canhome",1)
-			om.set_value(id,"HP",100)
+			if not "frq" in om.values[id].keys():
+				om.set_value(id,"frq",100)
+				om.set_value(id,"speed",100)
+				om.set_value(id,"time",20)
+				om.set_value(id,"HP",100)
+			if not "am" in om.values[id].keys():
+				om.set_value(id,"am",1)
+			if not "bs" in om.values[id].keys():
+				om.set_value(id,"bs",40)
+
+
 			om.objects[id]["sizen"] = [2,2]
 			self.createhpbar(id,1.7,[0,80])
 			om.set_value(id,"sp",om.objects[id]["pos"])
 			om.set_value(id,"gotimer",0)
 			om.set_value(id,"randpos",om.objects[id]["pos"])
 			
-			
+		if info["type"] == "camz":
+			om.set_value(id,"COOLGUY",True)
+			if not "zoom" == om.values[id].keys():
+				om.set_value(id,"zoom",0.2)
 			
 		if info["type"] == "bird":
 			om.set_value(id,"active",0)
@@ -2479,8 +2501,8 @@ class Game(Gamemananager.GameManager):
 			self.sp("MISSIILETIME",om.get_value(id,"timer")/om.get_value(id,"maxtimer"))
 			
 			cm.setcond("playercam","shake",20)
-			om.set_value(id,"timeon",om.get_value(id,"timeon") + st)
-			om.set_value(id,"timer",om.get_value(id,"timer") - st/20)
+			om.set_value(id,"timeon",om.get_value(id,"timeon") + (st* om.speed))
+			om.set_value(id,"timer",om.get_value(id,"timer") - (st/20* om.speed))
 			addon = [(64 * math.sin(om.objects[id]["rot"]/180 * math.pi)) ,
 					 (64 * math.cos(om.objects[id]["rot"]/180 * math.pi)) ]
 
@@ -2908,9 +2930,9 @@ class Game(Gamemananager.GameManager):
 					om.set_value(id,"storedrot",rot)
 					om.playanim(st,id,"charge",speed=2)
 					if self.flowstate:
-						om.set_value(id,"timer",50)
+						om.set_value(id,"timer",om.get_value(id,"frq")/2)
 					else:
-						om.set_value(id,"timer",100)
+						om.set_value(id,"timer",om.get_value(id,"frq"))
 
 		
 		om.objects[id]["pos"] = univars.func.lerp(om.objects[id]["pos"],om.get_value(id,"randpos"),10)
@@ -2928,7 +2950,8 @@ class Game(Gamemananager.GameManager):
 		if self.ondone("charge" + id):
 			
 			if self.gp("homing") == 0:
-				self.spawnbiglaser(info["pos"],20,abs(self.gp("act_vel",0)/4),140)
+				for i in [0]*om.get_value(id,"am"):
+					self.spawnbiglaser(info["pos"],om.get_value(id,"time"),om.get_value(id,"bs"),om.get_value(id,"speed"))
 
 
 		if om.get_value(id,"flashtimer") > 0:
@@ -2952,7 +2975,7 @@ class Game(Gamemananager.GameManager):
 			self.wait("easybotmove" + id,0.5)
 
 
-		self.damageable(id,10,func = hit,functhrow=skatehit)
+		self.damageable(id,100,func = hit,functhrow=skatehit)
 
 
 		

@@ -4,6 +4,7 @@ import Managers.funcs as funcs
 import pygame
 import Managers.Textmanager as Textmanager
 import random
+import string
 import itertools
 import Managers.inst as inst
 import time
@@ -467,18 +468,15 @@ class object_manager:
 		for chunk in self.noncolinstances.keys():
 			for inst in self.noncolinstances[chunk]:
 				insts.append([{"pos":inst.realpos,"name":inst.name,"rot":inst.rot,"type":inst.type,"sizen":inst.sizen,"alpha":inst.alpha,"stagename":str(inst.stagename),"usecoll":inst.usecoll,"layer":inst.layer,"sn":inst.sn},chunk])
-		return [insts,int(self.tracker)]
+		return [insts,"0"]
 
 	def decodeinst(self):
 		with open(f"Saved/tilemaps/{self.loadedmap}/inst.json","r") as file:
 			allinst = json.load(file)
 			for inst in allinst[0]:
 				self.datatoinst(inst[1],inst[0])
-		self.tracker = allinst[1] + 2
+		self.tracker = "0"
 
-		for i in range(0,int(self.tracker) + 1):
-			if not str(i) in self.objects.keys():
-				self.freerealestate.append(i)
 		
 		if univars.bakeonreload:
 			om.BAKE()
@@ -943,17 +941,16 @@ class object_manager:
 			self.remove(pos,layer=layer)
 
 		if not sprites in univars.instables:
+			# if len(self.freerealestate) > 0:
+			# 	self.tracker = int(self.freerealestate[0])
+			# 	self.freerealestate.pop(0)
 
-			if len(self.freerealestate) > 0:
-				self.tracker = int(self.freerealestate[0])
-				self.freerealestate.pop(0)
-
-			else:
-				while str(self.tracker) in self.objects.keys():
-					self.tracker = int(self.tracker)
-					self.tracker += 1
+			# else:
+			while str(self.tracker) in self.objects.keys():
+				self.tracker = ''.join(random.choices(string.ascii_letters + string.digits, k=20))
 
 			self.tracker = str(self.tracker)
+
 
 			
 			
@@ -966,6 +963,10 @@ class object_manager:
 				spritelist = univars.func.getspritesscale(sprites,size)
 				self.spritecache[str([sprites,sizen])] = spritelist
 
+			if type in univars.sizeaddons.keys():
+				sizen = univars.sizeaddons[type]
+			if type in univars.layeraddons.keys():
+				layer = univars.layeraddons[type]
 
 			if type == None:
 				type = sprites

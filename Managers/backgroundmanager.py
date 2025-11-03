@@ -67,8 +67,8 @@ class Item(pygame.sprite.Sprite):
         
         camera = Cameramod.cam
         realestsize = abs(round(self.size * 0.01,2)/0.01 / (univars.scaledown/2.5))
-        self.pos[0] -= (camera.x - self.lastcampos[0])*(self.layerip)*camera.size
-        self.pos[1] -= (camera.y - self.lastcampos[1])*(self.layerip)*camera.size
+        self.pos[0] -= (camera.x - self.lastcampos[0])*(self.layerip)
+        self.pos[1] -= (camera.y - self.lastcampos[1])*(self.layerip/2)
         
         self.size += (camera.size - self.lastcamsize)*self.layerip *(univars.scaledown)
 
