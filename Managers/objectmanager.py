@@ -71,6 +71,7 @@ class ObjGhost(pygame.sprite.Sprite):
 class object_manager: 
 	def __init__(self,realscreeen,screen,grandim,alpha,rend):
 		self.objects = {}
+		self.freerealestate = []
 		self.values = {}
 		self.objgroup = pygame.sprite.LayeredUpdates()
 		self.objghostgroup = pygame.sprite.Group()
@@ -259,8 +260,8 @@ class object_manager:
 		if not name == "null" and os.path.exists(f"Saved/tilemaps/{name}"):
 			self.__init__(self.realscreen,self.screen,univars.grandim,self.aplhainst,self.renderinst)
 			self.loadedmap = name
-			self.decodeinst()
 			self.decodeobj()
+			self.decodeinst()
 			if os.path.exists(f"Saved/tilemaps/{name}/vars.pk"):
 				with open(f"Saved/tilemaps/{self.loadedmap}/vars.pk","rb") as file:
 					try:
@@ -293,7 +294,8 @@ class object_manager:
 					todump = self.values
 					for i in self.objects:
 						if i in todump.keys():
-							todump.pop(i)
+							if i in univars.dontsavevar:
+								todump.pop(i)
 					try:
 						pk.dump(todump,file)
 					except:
@@ -465,14 +467,18 @@ class object_manager:
 		for chunk in self.noncolinstances.keys():
 			for inst in self.noncolinstances[chunk]:
 				insts.append([{"pos":inst.realpos,"name":inst.name,"rot":inst.rot,"type":inst.type,"sizen":inst.sizen,"alpha":inst.alpha,"stagename":str(inst.stagename),"usecoll":inst.usecoll,"layer":inst.layer,"sn":inst.sn},chunk])
-		return [insts,self.tracker]
+		return [insts,int(self.tracker)]
 
 	def decodeinst(self):
 		with open(f"Saved/tilemaps/{self.loadedmap}/inst.json","r") as file:
 			allinst = json.load(file)
 			for inst in allinst[0]:
 				self.datatoinst(inst[1],inst[0])
-		self.tracker = allinst[1] + 1
+		self.tracker = allinst[1] + 2
+
+		for i in range(0,int(self.tracker) + 1):
+			if not str(i) in self.objects.keys():
+				self.freerealestate.append(i)
 		
 		if univars.bakeonreload:
 			om.BAKE()
@@ -809,14 +815,22 @@ class object_manager:
 		poscol = self.unopcollidep(pos,0,univars.grandim)
 		postodel = [i.name for i in poscol["obj"]]
 		instpostodel = poscol["inst"]
-
 		#deleting non-instances
 		if not postodel == []:
 			for obj in self.objgroup:
 				if obj.name == postodel[0]:
 					if obj.layer == layer or layer == "all":
 						self.objgroup.remove(obj)
-						self.objects.pop(postodel[0])
+						if postodel[0] in om.objects:
+							self.objects.pop(postodel[0])
+						# print("")
+						if obj in self.values.keys():
+							self.values.pop(postodel)
+						if postodel[0].isdigit():
+							if not postodel[0] in self.freerealestate:
+								self.freerealestate.insert(0,postodel[0])
+
+
 						for ghost in self.objghostgroup:
 							if ghost.id == obj.name:
 								self.objghostgroup.remove(ghost)
@@ -845,10 +859,18 @@ class object_manager:
 	def removeid(self,id):
 		"""removes an object and its obj"""
 		remid = id
+		if id in self.values:
+			self.values.pop(id)
+		if id.isdigit():
+			if not id in self.freerealestate:
+				self.freerealestate.insert(0,id)
 		self.objects.pop(remid)
 		for b in self.objgroup:
 			if b.name == remid:
 				self.objgroup.remove(b)
+		for b in self.objghostgroup:
+			if b.id == remid:
+				self.objghostgroup.remove(b)
 
 	def includeflipping(self,id):
 		"""
@@ -922,13 +944,19 @@ class object_manager:
 
 		if not sprites in univars.instables:
 
+			if len(self.freerealestate) > 0:
+				self.tracker = int(self.freerealestate[0])
+				self.freerealestate.pop(0)
+
+			else:
+				while str(self.tracker) in self.objects.keys():
+					self.tracker = int(self.tracker)
+					self.tracker += 1
+
+			self.tracker = str(self.tracker)
 
 			
-
-
-			self.tracker += 1
-			while str(self.tracker) in self.objects.keys():
-				self.tracker == 1
+			
 			if str([sprites,sizen]) in list(self.spritecache.keys()):
 				spritelist = self.spritecache[str([sprites,sizen])]
 				size = [self.spritecache[str([sprites,sizen])][0].get_width() * sizen[0],self.spritecache[str([sprites,sizen])][0].get_height() * sizen[1]]
@@ -971,6 +999,7 @@ class object_manager:
 
 	def adds(self,GM,name,pos,sprites,type,rot,sizen,alpha,layer):
 		"""add special for more unique items"""
+
 		dummy  = univars.func.getsprites(sprites)[0]
 		size = dummy.get_size()
 		if str([sprites,size]) in list(self.spritecache.keys()):
@@ -981,10 +1010,15 @@ class object_manager:
 		add = {"pos":list(pos),"name":sprites,"type":type,"rot":rot,"sn":0,"gothru":0,"rendercond":1,"alpha":alpha,"layer":layer,"animname":"none","size":size,"sizen":sizen}
 		if name in self.objects.keys():
 			self.removeid(name)
+		
 		self.objects.update({str(name):add})
 		finalobj = inst.obj(str(name),add,spritelist)
 		self.objgroup.add(finalobj,layer=layer)
 		GM.oncreate(name,self.objects[name])
+		
+		# print(name)
+		if name in self.freerealestate:
+			self.freerealestate.remove(name)
 
 	def tile(self):
 		speed = self.speed

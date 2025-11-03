@@ -384,6 +384,7 @@ class GameManager():
 		self.debug = True
 		cm.setcond(cm.currentcam,"size",1)
 		# self.loadanims()
+		
 		self.roster()
 		# um.loadalluielements()
 		pm.loadallbluprints()
@@ -506,6 +507,8 @@ class GameManager():
 				for anim in os.listdir(objfile):
 					anim = anim.replace(".json","")
 					om.loadanim(filename,anim)
+
+
 	def oncreate(self,id,info):
 		pass
 
@@ -515,6 +518,7 @@ class GameManager():
 		"""
 		if len(om.objects.keys()) > 0:
 			stabledict = copy.deepcopy(om.objects)
+			
 			for obj in stabledict.keys():
 				self.oncreate(obj,stabledict[obj])
 			
@@ -570,6 +574,7 @@ class GameManager():
 			calles the in - engine and in game reload funcions
 		"""
 		self.defs()
+		
 		self.onreload()
 		
 	def isthere(self,name):
