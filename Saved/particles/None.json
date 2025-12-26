@@ -1,0 +1,1 @@
+{"type": "circle", "divergence": [[-5, 5], [0, 0]], "color": [200, 0, 200], "initvel": [0, 10], "force": [0, 0], "size": 7, "sizedec": 0.3, "dim": 1, "alpha": 255, "alphadec": 20, "colordec": [0, 0, 0], "quality": 0.7, "divergenceforce": [[0, 0], [0, 0]], "divergencepos": [[0, 0], [0, 0]], "ntimes": 1, "speed": 1}

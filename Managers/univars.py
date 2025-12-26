@@ -82,12 +82,12 @@ instables = ["dirt","grass","def","slantl","slantr","slantlbot","slantrbot","rai
 domainexpansions = {}
 
 
-extras = [["def","camz",[20,20]]]
+extras = []
 """
     [Original sprite  ,  new sprite type  ,  size scale]
 """
 
-newsprites = {"slantdecor":"slantr"}
+newsprites = {}
 """
     oldspritename :newspritename
 """
@@ -95,7 +95,10 @@ newsprites = {"slantdecor":"slantr"}
 
 offsets = {"tree":[0,-13]}
 
-hideentypes = ["camz"]
+hideentypes = []
+
+sizeaddons = {"camz":[30,30]}
+layeraddons = {"camz":-5}
 
 aplhatypes = {}
 
@@ -115,7 +118,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "demo10"
+map = "finale"
 startstate = "debugame"
 startshaderstate = 0
 bakeonreload = 0
@@ -124,6 +127,8 @@ profile = 0
 safemode = 0
 startuistate = "def"
 showinput = 0
+dontsavevar = ["player","easybot","HURT:laser","HURT:biglaser"]
+dontsaveobjtype = ["HPBAR"]
 
 
 
@@ -141,7 +146,7 @@ poschange = 0
 
 defont = "pixel2.ttf"
 
-renderdist = [30,30]
+renderdist = [20,20]
 
 output = []
 
@@ -175,6 +180,7 @@ def update():
     pass
     # global screen_w
     # global screen_h 
+    # global realscreeen
     # screen_w = pygame.display.get_window_size()[0]
     # screen_h = pygame.display.get_window_size()[1]
     # realscreeen = pygame.transform.scale(realscreeen,[screen_w,screen_h])

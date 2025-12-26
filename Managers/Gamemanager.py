@@ -47,9 +47,11 @@ class GameManager():
 		self.screen_colour = screen_colour
 		self.frame_manager = frame_manager
 		self.event_manager = em
+		self.objrange = 2000
 		self.em = em
 		self.publicvariables = {"showinput":univars.showinput,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":univars.screencol   ,"cammove":False  ,"shaderstate":univars.startshaderstate ,"showallhidden":1 }
 		self.timers = {}
+		self.timerswdt = []
 		self.dt = 1
 		self.abttodo = []
 		self.running = True
@@ -60,7 +62,7 @@ class GameManager():
 		self.states = []
 		self.pausebackground = False
 		self.pauseui = False
-		self.key = {"x":0,"y":0,"jump":0,"secondary":0,"attack":0,"throw":0,"axis":[0,0],"option":0,"alt-x":0,"tert":0}
+		self.key = {"x":0,"y":0,"jump":0,"secondary":0,"attack":0,"throw":0,"axis":[0,0],"option":0,"alt-x":0,"tert":0,"trick":0}
 		self.dim = univars.grandim
 		self.fpsmax = univars.maxfps
 		self.leveledit = True
@@ -131,10 +133,14 @@ class GameManager():
 			self.key["option"] = True
 		else:
 			self.key["option"] = False
+		# if em.controller["L1"] or em.key[pygame.K_LCTRL] or em.key[pygame.K_RCTRL]:
+		# 	self.key["tert"] = True
+		# else:
+		# 	self.key["tert"] = False
 		if em.controller["L1"] or em.key[pygame.K_LCTRL] or em.key[pygame.K_RCTRL]:
-			self.key["tert"] = True
+			self.key["trick"] = True
 		else:
-			self.key["tert"] = False
+			self.key["trick"] = False
 
 
 		#joyaxis
@@ -281,7 +287,7 @@ class GameManager():
 		if len(om.objects.keys()) > 0:
 			stabledict = copy.copy(om.objects)
 			for obj in stabledict.keys():
-				range =  2000
+				range =  self.objrange
 				if om.speed > 0:
 					if univars.func.dist(stabledict[obj]["pos"],[Cameramod.cam.x,Cameramod.cam.y]) < range:
 						
@@ -294,7 +300,7 @@ class GameManager():
 	def cond(self,obj,info):
 		pass
 
-	def wait(self,name:str,time:float,barrier=True):
+	def wait(self,name:str,time:float,barrier=True,useigt = 1):
 		"""
 			creates a timer that will elapse in (time) seconds.\n
 			check if done with ondone.\n
@@ -303,10 +309,16 @@ class GameManager():
 		if not name in self.timers.keys() or not barrier:
 			self.timers[name] = time * 45
 
+		if useigt == 1:
+			self.timerswdt.append(name)
+
 	def updatetime(self):
 		self.dons = []
 		for i in self.timers.keys():
-			self.timers[i] = self.timers[i] - self.frame_manager.dt
+			if i in self.timerswdt:
+				self.timers[i] = self.timers[i] - (self.frame_manager.dt * om.speed)
+			else:
+				self.timers[i] = self.timers[i] - self.frame_manager.dt
 			if self.timers[i] < 0:
 				self.dons.append(i)
 
@@ -372,6 +384,7 @@ class GameManager():
 		self.debug = True
 		cm.setcond(cm.currentcam,"size",1)
 		# self.loadanims()
+		
 		self.roster()
 		# um.loadalluielements()
 		pm.loadallbluprints()
@@ -494,6 +507,8 @@ class GameManager():
 				for anim in os.listdir(objfile):
 					anim = anim.replace(".json","")
 					om.loadanim(filename,anim)
+
+
 	def oncreate(self,id,info):
 		pass
 
@@ -503,6 +518,7 @@ class GameManager():
 		"""
 		if len(om.objects.keys()) > 0:
 			stabledict = copy.deepcopy(om.objects)
+			
 			for obj in stabledict.keys():
 				self.oncreate(obj,stabledict[obj])
 			
@@ -558,6 +574,7 @@ class GameManager():
 			calles the in - engine and in game reload funcions
 		"""
 		self.defs()
+		
 		self.onreload()
 		
 	def isthere(self,name):

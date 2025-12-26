@@ -4,11 +4,12 @@ import  Managers.univars as univars
 import random
 import json
 import os
-spritecache = {}
+import json
 
 class Particlemanager:
 	def __init__(self):
 		self.particlelist = []
+		self.cache = {}
 		"""
 			list ot particles\n:
 				particle  = {pos:list,"vel":list,"force":tuple   ...}
@@ -17,6 +18,13 @@ class Particlemanager:
 		"""
 		self.screen = pygame.Surface((univars.screen_w,univars.screen_h))
 		self.bluprints = {}
+
+
+
+	def cachedump(self):
+		print("DUMP")
+		with open("Saved/partcache.json") as file:
+			json.dump(self.cache.keys(),file)
 
 
 
@@ -142,11 +150,17 @@ class Particlemanager:
 		"""
 			allows circles to have alpha
 		"""
-		surf = pygame.Surface((rad * 2,rad * 2))
-		pygame.draw.circle(surf,col,(rad,rad),rad)
-		surf = pygame.transform.scale_by(surf,qual)
-		surf = pygame.transform.scale(surf,(rad * 2,rad * 2))
-		surf.set_colorkey((0,0,0))
+		key = "circle" + str(rad) + str(col) + str(qual)
+		if not key in self.cache.keys():
+			surf = pygame.Surface((rad * 2,rad * 2))
+			pygame.draw.circle(surf,col,(rad,rad),rad)
+			surf = pygame.transform.scale_by(surf,qual)
+			surf = pygame.transform.scale(surf,(rad * 2,rad * 2))
+			surf.set_colorkey((0,0,0))
+
+			self.cache[key] = surf
+		else:
+			surf = self.cache[key]
 		return surf
 
 	def updateparticles(self,dt):
@@ -171,11 +185,17 @@ class Particlemanager:
 				if particle["type"] == "rect":
 					# if particle.get("rect",None) == None:
 					size = [ particle["dim"][0] * particle["size"] * Cameramod.cam.size ,  particle["dim"][1] * particle["size"] * Cameramod.cam.size ]
-					rect = pygame.Rect((postodraw[0],postodraw[1],size[0],size[1]))
-					particle["rect"] = rect
+					surf = pygame.Surface(size)
+					
+
+
+
+					surf.set_alpha(particle["alpha"])
+					surf.fill(particle["color"])
+					particle["rect"] = surf
 					# else:
 					# 	rect = particle["rect"].move(postodraw)
-					pygame.draw.rect(univars.screen,particle["color"],rect)
+					univars.screen.blit(surf,[postodraw[0] * 1,postodraw[1] * 1])
 			else:
 				self.particlelist.remove(particle)
 

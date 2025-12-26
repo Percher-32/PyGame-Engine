@@ -67,8 +67,8 @@ class Item(pygame.sprite.Sprite):
         
         camera = Cameramod.cam
         realestsize = abs(round(self.size * 0.01,2)/0.01 / (univars.scaledown/2.5))
-        self.pos[0] -= (camera.x - self.lastcampos[0])*(self.layerip)*camera.size
-        self.pos[1] -= (camera.y - self.lastcampos[1])*(self.layerip)*camera.size
+        self.pos[0] -= (camera.x - self.lastcampos[0])*(self.layerip)
+        self.pos[1] -= (camera.y - self.lastcampos[1])*(self.layerip/2)
         
         self.size += (camera.size - self.lastcamsize)*self.layerip *(univars.scaledown)
 
@@ -121,9 +121,21 @@ class Backgroundmanager:
         self.items[name] = pygame.sprite.LayeredUpdates()
 
     def addbackgrounditem(self,name,backgroundname,pos,alpha = 400,layer = 1,surf=None,infiniscroll = False,color = univars.screencol,dimensions = (univars.screen_w,univars.screen_h),zdep=0):
+        # print(name)
+        if name in [i.name for i in self.items[backgroundname]]:
+            self.removebg(name,backgroundname)
         item = Item(name,pos,alpha=alpha,surf=surf,color=color,dimensions=dimensions,layer=layer,infiniscroll=infiniscroll,zdep = zdep),
         self.items[backgroundname].add(item,layer =  zdep)
         # univars.print(zdep)
+        univars.print(self.items)
+
+
+    def removebg(self,name,bgname):
+        spr = None
+        for i in self.items[bgname]:
+            if i.name == name:
+                spr = i
+                self.items[bgname].remove(spr)
 
 
     def update(self,screencol):

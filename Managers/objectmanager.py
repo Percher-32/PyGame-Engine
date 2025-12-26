@@ -4,6 +4,7 @@ import Managers.funcs as funcs
 import pygame
 import Managers.Textmanager as Textmanager
 import random
+import string
 import itertools
 import Managers.inst as inst
 import time
@@ -71,6 +72,7 @@ class ObjGhost(pygame.sprite.Sprite):
 class object_manager: 
 	def __init__(self,realscreeen,screen,grandim,alpha,rend):
 		self.objects = {}
+		self.freerealestate = []
 		self.values = {}
 		self.objgroup = pygame.sprite.LayeredUpdates()
 		self.objghostgroup = pygame.sprite.Group()
@@ -259,8 +261,14 @@ class object_manager:
 		if not name == "null" and os.path.exists(f"Saved/tilemaps/{name}"):
 			self.__init__(self.realscreen,self.screen,univars.grandim,self.aplhainst,self.renderinst)
 			self.loadedmap = name
-			self.decodeinst()
 			self.decodeobj()
+			self.decodeinst()
+			if os.path.exists(f"Saved/tilemaps/{name}/vars.pk"):
+				with open(f"Saved/tilemaps/{self.loadedmap}/vars.pk","rb") as file:
+					try:
+						self.values = pk.load(file)
+					except:
+						print("LOAD FAIL")
 			GM.roster()
 		else:
 			self.__init__(self.realscreen,self.screen,univars.grandim,self.aplhainst,self.renderinst)
@@ -276,8 +284,23 @@ class object_manager:
 					todump = self.encodeinst()
 					json.dump(todump,file)
 				with open(f"Saved/tilemaps/{name}/non-inst.json","w") as file:
-					todump = self.objects
+					todump = self.objects.copy()
+					for i in self.objects.keys():
+						if om.objects[i]["type"] in univars.dontsaveobjtype:
+							todump.pop(i)
+
+
 					json.dump(todump,file)
+				with open(f"Saved/tilemaps/{name}/vars.pk","wb") as file:
+					todump = self.values
+					for i in self.objects:
+						if i in todump.keys():
+							if i in univars.dontsavevar:
+								todump.pop(i)
+					try:
+						pk.dump(todump,file)
+					except:
+						print("VAR FAIL")
 				self.loadtilemap(GM,name)
 				return "True"
 		else:
@@ -378,19 +401,20 @@ class object_manager:
 	def animup(self,dt):
 		for id in self.currplay.keys():
 			if self.currplay[id][0]:
-				a = self.objects[id]["animname"]
+				if id in om.objects:
+					a = self.objects[id]["animname"]
 
-				if not a == "none":
-					frame = int(round(self.objects[id]["gothru"]))
-					g = self.animations[self.objects[id]['name']][a].keys()
-					g = [int(i) for i in g]
-					if not frame >= max(g) + 1:
-						self.objects[id]["gothru"] += (dt * self.speed * self.currplay[id][1])/10
-						if frame in g:
-							self.objects[id]["sn"] = self.animations[self.objects[id]['name']][a][str(frame)]
-					else:
-						self.objects[id]["gothru"] = 0
-						self.currplay[id]= (0,0)
+					if not a == "none":
+						frame = int(round(self.objects[id]["gothru"]))
+						g = self.animations[self.objects[id]['name']][a].keys()
+						g = [int(i) for i in g]
+						if not frame >= max(g) + 1:
+							self.objects[id]["gothru"] += (dt * self.speed * self.currplay[id][1])/10
+							if frame in g:
+								self.objects[id]["sn"] = self.animations[self.objects[id]['name']][a][str(frame)]
+						else:
+							self.objects[id]["gothru"] = 0
+							self.currplay[id]= (0,0)
 
 
 	def endanim(self,id,seto = None):
@@ -444,14 +468,15 @@ class object_manager:
 		for chunk in self.noncolinstances.keys():
 			for inst in self.noncolinstances[chunk]:
 				insts.append([{"pos":inst.realpos,"name":inst.name,"rot":inst.rot,"type":inst.type,"sizen":inst.sizen,"alpha":inst.alpha,"stagename":str(inst.stagename),"usecoll":inst.usecoll,"layer":inst.layer,"sn":inst.sn},chunk])
-		return [insts,self.tracker]
+		return [insts,"0"]
 
 	def decodeinst(self):
 		with open(f"Saved/tilemaps/{self.loadedmap}/inst.json","r") as file:
 			allinst = json.load(file)
 			for inst in allinst[0]:
 				self.datatoinst(inst[1],inst[0])
-		self.tracker = allinst[1] + 1
+		self.tracker = "0"
+
 		
 		if univars.bakeonreload:
 			om.BAKE()
@@ -595,6 +620,7 @@ class object_manager:
 					a = [i.inst for i in a]
 				inst += a
 			noninst = [self.objfromid(ghost.id) for ghost in noninst]
+			noninst = [i for i in noninst if not i == None]
 			#render the collbox
 			if show:
 				if len(inst) > 0 and len(noninst) > 0:
@@ -650,7 +676,7 @@ class object_manager:
 				col = (0,0,255)
 			else:
 				col = (225,0,0)
-			self.func.ssblitrect(r1,col,camera,5,univars.fakescreen)
+			self.func.ssblitrect(r1,col,camera,5,univars.fakescreen,univars.scaledown)
 
 
 		return {"obj":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
@@ -691,7 +717,7 @@ class object_manager:
 				col = noninstcol
 			else:
 				col = basecolor
-			self.func.ssblitrect(pygame.Rect(pos[0],pos[1],num * pointsize,num * pointsize),col,camera,0,univars.fakescreen)
+			self.func.ssblitrect(pygame.Rect(pos[0],pos[1],num * pointsize,num * pointsize),col,camera,0,univars.fakescreen,univars.scaledown)
 			# self.func.ssblitrect(r1,col,camera,5,univars.fakescreen)
 
 
@@ -787,14 +813,22 @@ class object_manager:
 		poscol = self.unopcollidep(pos,0,univars.grandim)
 		postodel = [i.name for i in poscol["obj"]]
 		instpostodel = poscol["inst"]
-
 		#deleting non-instances
 		if not postodel == []:
 			for obj in self.objgroup:
 				if obj.name == postodel[0]:
 					if obj.layer == layer or layer == "all":
 						self.objgroup.remove(obj)
-						self.objects.pop(postodel[0])
+						if postodel[0] in om.objects:
+							self.objects.pop(postodel[0])
+						# print("")
+						if obj in self.values.keys():
+							self.values.pop(postodel)
+						if postodel[0].isdigit():
+							if not postodel[0] in self.freerealestate:
+								self.freerealestate.insert(0,postodel[0])
+
+
 						for ghost in self.objghostgroup:
 							if ghost.id == obj.name:
 								self.objghostgroup.remove(ghost)
@@ -823,10 +857,18 @@ class object_manager:
 	def removeid(self,id):
 		"""removes an object and its obj"""
 		remid = id
+		if id in self.values:
+			self.values.pop(id)
+		if id.isdigit():
+			if not id in self.freerealestate:
+				self.freerealestate.insert(0,id)
 		self.objects.pop(remid)
 		for b in self.objgroup:
 			if b.name == remid:
 				self.objgroup.remove(b)
+		for b in self.objghostgroup:
+			if b.id == remid:
+				self.objghostgroup.remove(b)
 
 	def includeflipping(self,id):
 		"""
@@ -899,12 +941,19 @@ class object_manager:
 			self.remove(pos,layer=layer)
 
 		if not sprites in univars.instables:
+			# if len(self.freerealestate) > 0:
+			# 	self.tracker = int(self.freerealestate[0])
+			# 	self.freerealestate.pop(0)
+
+			# else:
+			while str(self.tracker) in self.objects.keys():
+				self.tracker = ''.join(random.choices(string.ascii_letters + string.digits, k=20))
+
+			self.tracker = str(self.tracker)
 
 
 			
-
-
-			self.tracker += 1
+			
 			if str([sprites,sizen]) in list(self.spritecache.keys()):
 				spritelist = self.spritecache[str([sprites,sizen])]
 				size = [self.spritecache[str([sprites,sizen])][0].get_width() * sizen[0],self.spritecache[str([sprites,sizen])][0].get_height() * sizen[1]]
@@ -913,7 +962,15 @@ class object_manager:
 				size = [dummy.get_width() * sizen[0],dummy.get_height() * sizen[1]]
 				spritelist = univars.func.getspritesscale(sprites,size)
 				self.spritecache[str([sprites,sizen])] = spritelist
-			add = {"pos":list(pos),"name":sprites,"type":sprites,"rot":rot,"sn":sn,"gothru":0,"rendercond":1,"alpha":1000,"layer":layer,"animname":"none","size":size,"sizen":sizen}
+
+			if type in univars.sizeaddons.keys():
+				sizen = univars.sizeaddons[type]
+			if type in univars.layeraddons.keys():
+				layer = univars.layeraddons[type]
+
+			if type == None:
+				type = sprites
+			add = {"pos":list(pos),"name":sprites,"type":type,"rot":rot,"sn":sn,"gothru":0,"rendercond":1,"alpha":255,"layer":layer,"animname":"none","size":size,"sizen":sizen}
 			# print(add)
 			self.objects.update({str(self.tracker):add})
 			finalobj = inst.obj(str(self.tracker),add,spritelist)
@@ -943,6 +1000,7 @@ class object_manager:
 
 	def adds(self,GM,name,pos,sprites,type,rot,sizen,alpha,layer):
 		"""add special for more unique items"""
+
 		dummy  = univars.func.getsprites(sprites)[0]
 		size = dummy.get_size()
 		if str([sprites,size]) in list(self.spritecache.keys()):
@@ -953,10 +1011,15 @@ class object_manager:
 		add = {"pos":list(pos),"name":sprites,"type":type,"rot":rot,"sn":0,"gothru":0,"rendercond":1,"alpha":alpha,"layer":layer,"animname":"none","size":size,"sizen":sizen}
 		if name in self.objects.keys():
 			self.removeid(name)
+		
 		self.objects.update({str(name):add})
 		finalobj = inst.obj(str(name),add,spritelist)
 		self.objgroup.add(finalobj,layer=layer)
 		GM.oncreate(name,self.objects[name])
+		
+		# print(name)
+		if name in self.freerealestate:
+			self.freerealestate.remove(name)
 
 	def tile(self):
 		speed = self.speed
@@ -1049,25 +1112,29 @@ class object_manager:
 			light = self.lights[lighttag]
 			
 			pos = light[0]
+			do = True
 			if "[obj-light]" in lighttag:
 				offsetid = lighttag.split("[obj-light]")[0]
-			if offsetid in self.objects:
-				pos = self.objects[offsetid]["pos"]
-			else:
-				self.lights.pop(lighttag)
-			if univars.func.dist((camera.x,camera.y),pos) < (800 + light[2]):
-				a += 1
+				if offsetid in self.objects:
+					pos = self.objects[offsetid]["pos"]
+				else:
+					self.lights.pop(lighttag)
+					do = False
 
-				scalef = light[2] * abs(camera.size/ univars.pixelscale) * univars.grandim
+			if do:
+				if univars.func.dist((camera.x,camera.y),pos) < (800 + light[2]):
+					a += 1
 
-				renderedlight = pygame.transform.scale(light[-1],[scalef,scalef])
-				
-					# pos = [0,0]
-				rpos = [0,0]
-				rpos[0] =  round( (pos[0] - camera.x + (light[2]*univars.grandim)/2) * camera.size/univars.pixelscale + univars.screen.get_width()//2 - scalef )
-				rpos[1] =  round( (pos[1] - camera.y + (light[2]*univars.grandim)/2) * camera.size/univars.pixelscale + univars.screen.get_height()//2 - scalef )
-		
-				univars.screen.blit(renderedlight,rpos,special_flags=pygame.BLEND_RGB_ADD)
+					scalef = light[2] * abs(camera.size/ univars.pixelscale) * univars.grandim
+
+					renderedlight = pygame.transform.scale(light[-1],[scalef,scalef])
+					
+						# pos = [0,0]
+					rpos = [0,0]
+					rpos[0] =  round( (pos[0] - camera.x + (light[2]*univars.grandim)/2) * camera.size/univars.pixelscale + univars.screen.get_width()//2 - scalef )
+					rpos[1] =  round( (pos[1] - camera.y + (light[2]*univars.grandim)/2) * camera.size/univars.pixelscale + univars.screen.get_height()//2 - scalef )
+			
+					univars.screen.blit(renderedlight,rpos,special_flags=pygame.BLEND_RGB_ADD)
 
 
 

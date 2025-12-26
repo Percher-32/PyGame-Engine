@@ -4,6 +4,7 @@ import json
 import Managers.inst as inst
 import os
 import Managers.univars as univars
+import Managers.Particlesytem as particlesystem
 pygame.joystick.init()
 joysticks = [pygame.joystick.Joystick(i) for i in range (pygame.joystick.get_count())] 
 for joystick in joysticks:
@@ -110,10 +111,14 @@ class event_manager:
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
-				pygame.quit()
-				self.running = False
+				print("WERYGYHEXTCYTB")
+				particlesystem.pm.cachedump()
+				
 				with open("Saved/Spritecache.json","w") as file:
 					json.dump(inst.dataspritecache,file)
+				self.running = False
+				pygame.quit()
+				# print("AAA")
 				exit()
 
 

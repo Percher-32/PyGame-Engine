@@ -513,7 +513,7 @@ class TiledSoftwre:
 
 
 					#to place
-					if GameManager.event_manager.mouse[0]:
+					if not GameManager.event_manager.mouse[0] and GameManager.event_manager.lastmouse[0]:
 						object_manager.add(GameManager,gridpos,self.spritelooks[self.sprite],self.rot,self.typelist[self.sprite],self.allsize[self.sprite],dim,keepprev=GameManager.event_manager.key[pygame.K_LCTRL],stagename=self.spritenames[self.sprite],layer = self.layer,colforinst=self.coll,sn = self.sn)
 
 					#to remove

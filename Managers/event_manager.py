@@ -23,6 +23,7 @@ class event_manager:
 		self.scroll = 0
 		self.releasekey = False
 		self.open = True
+		self.lastmouse = False
 		self.keyb = False
 		self.keyr = False
 		self.analog_keys =  {0:0,1:0,2:0,3:0,4:0,5:0}
@@ -90,6 +91,8 @@ class event_manager:
 		"""
 
 	def next(self):
+		
+		self.lastmouse = self.mouse
 		self.key = pygame.key.get_pressed()
 		self.mouse = pygame.mouse.get_pressed()
 		self.mousepos = [pygame.mouse.get_pos()[0]/univars.scaledown,pygame.mouse.get_pos()[1]/univars.scaledown]
@@ -163,6 +166,8 @@ class event_manager:
 			if event.type == pygame.KEYUP:
 				self.keyr = True
 				self.keydown = False
+		
+
 
 	def close(self):
 		pygame.quit()
