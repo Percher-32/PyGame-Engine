@@ -129,7 +129,8 @@ class obj(pygame.sprite.Sprite):
 		self.indist = 0
 		self.info = info
 		self.sprites = sprites
-		self.fakerect = pygame.Rect(info["pos"][0] - info["size"][0]//2,info["pos"][1] - info["size"][1]//2,info["size"][0],info["size"][1])
+		self.fakerect = pygame.Rect(info["pos"][0] - info["size"][0]//2,info["pos"][1] - info["size"][1]//2,info["size"][0] * info["sizen"][0],info["size"][1] * info["sizen"][1])
+
 		self.rect = pygame.Rect(info["pos"][0] - info["size"][0]//2,info["pos"][1] - info["size"][1]//2,info["size"][0],info["size"][1])
 		self.image = pygame.Surface((0,0))
 		self.name = name
@@ -151,7 +152,9 @@ class obj(pygame.sprite.Sprite):
 			pos = self.info["pos"]
 			pos = [int(round(pos[0])),int(round(pos[1]))]
 			self.info["pos"] = pos
-			self.fakerect = pygame.Rect(self.info["pos"][0] - self.info["size"][0]//2,self.info["pos"][1] - self.info["size"][1]//2,self.info["size"][0],self.info["size"][1])
+			self.fakerect = pygame.Rect(self.info["pos"][0] - self.info["size"][0]//2,self.info["pos"][1] - self.info["size"][1]//2,self.info["size"][0] * self.info["sizen"][0] ,self.info["size"][1] * self.info["sizen"][1] )
+			if self.info["type"] == "camz":
+				univars.println(self.fakerect,16)
 			if self.info["rendercond"] or showall:
 				self.indist = 1
 				g = [round(self.info["pos"][0]),round(self.info["pos"][1])]

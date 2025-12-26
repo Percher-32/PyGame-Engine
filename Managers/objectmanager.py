@@ -60,7 +60,7 @@ class ObjGhost(pygame.sprite.Sprite):
 
 	def update(self,objects):
 		if self.id in objects.keys():
-			self.rect = pygame.Rect(objects[self.id]["pos"][0] - objects[self.id]["size"][0]//2,objects[self.id]["pos"][1] - objects[self.id]["size"][1]//2,objects[self.id]["size"][0],objects[self.id]["size"][1])
+			self.rect = pygame.Rect(objects[self.id]["pos"][0] - (objects[self.id]["size"][0]*objects[self.id]["sizen"][0])//2,objects[self.id]["pos"][1] - (objects[self.id]["size"][1]*objects[self.id]["sizen"][1])//2,objects[self.id]["size"][0] * objects[self.id]["sizen"][0],objects[self.id]["size"][1] * objects[self.id]["sizen"][1])
 		else:
 			self.kill()
 
@@ -736,6 +736,7 @@ class object_manager:
 		for obj in noninst:
 			if obj.name in ignore or obj.name == ignore_id:
 				noninst.remove(obj)
+		univars.print(noninst)
 
 		#coll for inst
 		camchunk = [int(round(pos[0]/(dim * self.renderdist[0]))),int(round(pos[1]/(dim * self.renderdist[1])))]
