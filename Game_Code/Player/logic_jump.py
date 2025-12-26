@@ -22,11 +22,11 @@ um = Gamemananager.um
 bg = Gamemananager.bg
 pm = Gamemananager.pm
 
-def main(self):
+def main(self,ground):
     if self.key["jump"]:
         self.sp("fss",16)
         # self.sp("desmooth",5)
-        if self.gp("jumpable"):
+        if self.gp("jumpable") or ground:
             self.sp("jumpable",0)
             self.deltimer("doublejumpcd")
             self.wait("doublejumpcd",0.2)

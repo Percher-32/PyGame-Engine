@@ -274,12 +274,15 @@ class Game(Gamemananager.GameManager):
 
 		#create player
 		self.prevtricks = []
+  
+		self.slanted = 0
 
 		om.adds(self,"player",startpos,"player","player",0,[1,1],400,5)
 		self.sp("#DEBUG","HELLO WOLRD")
 		om.objects["player"]["rendercond"] = False
 
 		self.sp("dashmeter",0)
+		self.lastframejumped = 0
 
 		self.sp("dashcooldown",0)
 		self.sp("deshrem",0)
@@ -316,6 +319,8 @@ class Game(Gamemananager.GameManager):
 
 
 
+  
+		self.println(self.slanted,6)
 		self.attackheld = 0
 
 		self.sp("exithm",0)

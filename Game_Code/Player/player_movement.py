@@ -73,36 +73,6 @@ def main(self):
     collisionboxtype = [i.type for i in collisionbox["inst"]] 
 
     
-    #TRAIL
-    if self.flowstate:
-        self.wait("dotrail",0.2)
-        if self.ondone("dotrail"):
-            colid = random.randint(6,11)
-            if colid == 6:
-                col = (255, 79, 0)
-            elif colid == 7:
-                col = (255, 225, 0)
-            elif colid == 8:
-                col = (26, 255, 0)
-            elif colid == 9:
-                col = (0, 255, 255)
-            elif colid == 10:
-                col = (0, 8, 255)
-            elif colid == 11:
-                col = (255, 0, 203)
-
-            
-            ltid = om.add(self,om.objects["player"]["pos"],"player",om.objects["playersprite"]["rot"],"RAINBOWTRAIL",[1.1,1.1],self.dim,layer=0,sn = colid ,keepprev=1,info={"col":col})
-
-            
-
-            
-
-
-            om.lighttoenemy(ltid,"l1",color=col,colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=30)
-
-    
-
     rail = False
     if len(collisionboxtype) > 0:
         rail = collisionboxtype[0] == "rail"
@@ -112,10 +82,6 @@ def main(self):
     self.railrot = 0
     self.raildir = "r"
     
-    if not rail:
-        self.sp("dashmeter",self.gp("dashmeter") + (abs(self.gp("des_vel",0))/150 * self.dt))
-    else:
-        self.sp("dashmeter",self.gp("dashmeter") + (abs(self.gp("des_vel",0))/150 * self.dt))
 
     if abs(self.key["x"]) > 0:
         if self.key["x"] > 0:

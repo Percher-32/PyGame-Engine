@@ -11,7 +11,11 @@ import Game_Code.Player.logic_homingattack as logic_homingattack
 import Game_Code.Player.logic_wall as logic_wall
 import Game_Code.Player.logic_airdash as logic_airdash
 import Game_Code.Player.logic_x_cont as logic_x_cont
+import Game_Code.Player.logic_fallin as logic_fallin
+import Game_Code.Player.logic_col as logic_col
 import Game_Code.Player.logic_jump as logic_jump
+
+import Game_Code.Player.flare as flare
 
 
 em = Gamemananager.em
@@ -41,105 +45,20 @@ def main(self,slanted,collision,collisionbox,axis,collisionlisttype,vec,instlist
 
 
 
-           
-            #wall ledge spin
-            if self.gp("des_vel",1) > 0:
-                if self.gp("lastframewall") and not self.gp("leftwall") and not self.gp("rightwall") and not (collision["botmid"]["inst"] and collision["botleft"]["inst"] and collision["botright"]["inst"]):
-                    self.sp("xinit",False)
-                    self.sp("mode","in-air")
-                    ground = False
-                    if not abs(self.key["x"]):
-                        if not self.key["jump"]:
-                            if self.gp("lastwall") == "r":
-                                self.spin(11 ,1,spindec = 0.2)
-                                self.sp("des_vel",[0,200])
-                            else:
-                                self.spin(-11 ,1,spindec = 0.2)
-                                self.sp("des_vel",[0,200])
-                    else:
-                        
-                        if not self.key["jump"]:
-                            self.spin(self.valsign(self.key["x"]) * -11 ,1,spindec = 0.2)
-                            self.sp("des_vel",[self.key["x"] * 150,200])
 
-            if self.isthere("skid"):
-                if ground:
-                    pm.particlespawnbluprint(om.objects["player"]["pos"],"grind",initvel=[0,0])
+            flare.main(self,ground,collision)
             
-            #prevent rotation on walls
-            if self.gp("leftwall") or self.gp("rightwall"):
-                self.killtimer("rotate")
-                self.sp("rotoffset",0)
+            
 
-            #tilt when moving
-            if not ground:
-                if not self.gp("leftwall") and not self.gp("rightwall"):
-                    if abs(self.key["x"]) > 0:
-                        if not self.isthere("rotate"):
-                            # if not abs()
-                            
-                            if not self.bailable:
-                                self.sp("rotoffset",self.rotlerp(self.gp("rotoffset"),0,5))
-                                self.sp("desrot",self.rotlerp(self.gp("desrot"),self.gp("act_vel")[0]/4,5) )
 
 
             
             
-            
-            
-            if ground:
-                self.sp("desrot",0)
-                self.sp("mode","grounded")
-                self.sp("jumpable",True)
-                self.sp("onboard",True)
-            else:
-                if self.key["jump"]:
-                    self.sp("onboard",True)
-                if not self.gp("leftwall") or not self.gp("rightwall"):
-                    self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    self.unilerp(self.gp("des_vel")[1],-130,self.gp("fss"),roundto = 0)   ]     )
-                    self.sp("mode","in-air")
-                # else:
-                # 	self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    self.unilerp(self.gp("des_vel")[1],-130,8,roundto = 0)   ]     )
-                # 	self.sp("mode","in-air")
-
-                if not self.key["jump"] and not self.isthere("rotate"):
-                    if  self.gp("leftwall") or  self.gp("rightwall"):
-                        self.sp("onboard",True)
-                    else:
-                        if not self.bailable:
-                            self.sp("desrot",self.key["x"] * 20)
-
-
-
-
-            
-
-
-            #jumping
-
-
-            if not self.key["jump"]:
-                if not ground:
-                    if self.gp("leftwall"):
-                        self.sp("desrot",-90)
-                        self.sp("desmooth",3)
-
-                    elif self.gp("rightwall"):
-                        self.sp("desrot",90)
-                        self.sp("desmooth",3)
-
-                # else:
-                # 	if not ground:
-
+            logic_fallin.main(self,ground)
             logic_airdash.main(self,ground,axis)
-            logic_jump.main(self)
             logic_wall.main(self,collision)
-
-
-
-
-            
-            self.sp("lastframeswing",self.gp("slinging"))	
+            logic_col.main(self,ground,instlist,collision)
+            logic_jump.main(self,ground)
 
             
 
@@ -171,29 +90,9 @@ def main(self,slanted,collision,collisionbox,axis,collisionlisttype,vec,instlist
 
 
 
-            if ground:
-                self.killtimer("rotate")
-                self.sp("rotoffset",0)
-                if not self.lastframejumped and not self.gp("lastframewall"):
-                    if not self.bailable:
-                        self.sp("desrot",0)
-                    self.sp("mode","grounded")
-                    self.sp("jumpable",True)
-                    self.sp("onboard",True)
-                    self.sp("des_vel",[  self.gp("des_vel")[0]    ,    0   ])
-                    self.sp("act_vel",[  self.gp("act_vel")[0]    ,    0   ])
-                    om.objects["player"]["pos"][1] = instlist[0].realpos[1] - 32
-                else:
-                    self.lastframejumped = 0
-
 
         
             
-            if collision["topmid"]["inst"] and not collision["midmid"]["inst"]:
-                self.sp("act_vel",[   self.gp("act_vel")[0] * 1  , -10 ])
-                om.objects["player"]["pos"][1] =  collision["topmid"]["inst"][0].realpos[1] + 40
-                # self.sp("des_vel",[  self.gp("des_vel")[0] * 1   ,  abs(self.gp("des_vel")[1]) * -1 ])
-                self.sp("jumpable",False)
 
             
             #water skid
