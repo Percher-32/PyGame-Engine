@@ -83,6 +83,7 @@ class Game(Gamemananager.GameManager):
 
 
 	def onreload(self):
+     
 		self.a = 0
 
 		# bg.addbackground("night")
@@ -145,6 +146,9 @@ class Game(Gamemananager.GameManager):
 
 	def update(self):
 		bg.background = "test2"
+  
+		if self.dt == 0 or self.dt > 10:
+			self.dt = 1
 		# print/
 		# print(self.dt * 60)
 		# om.speed = 0.8

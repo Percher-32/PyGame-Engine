@@ -42,16 +42,7 @@ def main(self):
 
     um.elements["dashbar"]["dimensions"][0] = self.unilerp( um.elements["dashbar"]["dimensions"][0] ,   max([((self.gp("dashmeter") * 10) - 50)/2,0])/3 ,4  )
 
-    if self.gp("homing"):
-        if self.gp("target").info["type"] == "rocket":
-            um.elements["missiletime"]["dimensions"][0] = 950 * self.gp("MISSIILETIME")
-            um.elements["missiletimeback"]["dimensions"][0] = 950
-        else:
-            um.elements["missiletime"]["dimensions"][0] = 0
-            um.elements["missiletimeback"]["dimensions"][0] = 0
-    else:
-        um.elements["missiletime"]["dimensions"][0] = 0
-        um.elements["missiletimeback"]["dimensions"][0] = 0
+    
 
     if self.gp("dashmeter") <= 0:
         um.elements["dashbar"]["dimensions"][0] = 0
@@ -89,8 +80,6 @@ def main(self):
         else:
             self.lastdirslant = "r"
 
-    if self.dt == 0 or self.dt > 10:
-        self.dt = 1
 
     if len(collisionboxtype) > 0:
         if "slantl"  in collisionboxtype or "slantr" in collisionboxtype:

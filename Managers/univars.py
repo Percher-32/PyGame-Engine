@@ -15,7 +15,8 @@ pixelscale = 1
 screen_w = pygame.display.get_desktop_sizes()[0][0]/scaledown
 screen_h = pygame.display.get_desktop_sizes()[0][1]/scaledown
 # print()
-rw = (((((screen_w**2 +  screen_h**2)**0.5)/2202.9071700822983)))
+oldnum = 2202.9071700822983
+rw = (((((screen_w**2 +  screen_h**2)**0.5)/oldnum)))
 startdims = (screen_w,screen_h)
 
 camchange = True

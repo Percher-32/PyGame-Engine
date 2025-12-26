@@ -46,7 +46,6 @@ def main(self,slanted,collision,collisionbox,axis,collisionlisttype,vec,instlist
 
 
 
-            flare.main(self,ground,collision)
             
             
 
@@ -54,11 +53,13 @@ def main(self,slanted,collision,collisionbox,axis,collisionlisttype,vec,instlist
 
             
             
-            logic_fallin.main(self,ground)
-            logic_airdash.main(self,ground,axis)
-            logic_wall.main(self,collision)
-            logic_col.main(self,ground,instlist,collision)
-            logic_jump.main(self,ground)
+            if not self.rail:
+                logic_wall.main(self,collision)
+                logic_col.main(self,ground,instlist,collision)
+                logic_jump.main(self,ground)
+                flare.main(self,ground,collision)
+                logic_fallin.main(self,ground)
+                logic_airdash.main(self,ground,axis)
 
             
 

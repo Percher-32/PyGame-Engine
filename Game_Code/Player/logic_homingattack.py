@@ -325,3 +325,13 @@ def main(self,collisionlisttype,vec,axis,ground):
                 self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
 
 
+    if self.gp("homing"):
+        if self.gp("target").info["type"] == "rocket":
+            um.elements["missiletime"]["dimensions"][0] = 950 * self.gp("MISSIILETIME")
+            um.elements["missiletimeback"]["dimensions"][0] = 950
+        else:
+            um.elements["missiletime"]["dimensions"][0] = 0
+            um.elements["missiletimeback"]["dimensions"][0] = 0
+    else:
+        um.elements["missiletime"]["dimensions"][0] = 0
+        um.elements["missiletimeback"]["dimensions"][0] = 0
