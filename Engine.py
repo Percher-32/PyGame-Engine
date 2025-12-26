@@ -2334,6 +2334,9 @@ class Game(Gamemananager.GameManager):
 			om.set_value(id,"maxtimer",2)
 			om.objects[id]["sizen"] = [2,2]
 		
+		if info["type"] == "camz":
+			om.objects[id]["layer"] = 0
+			om.objects[id]["alpha"] = 100
 		
 		if info["type"] == "rocket":
 			

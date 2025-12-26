@@ -98,7 +98,7 @@ offsets = {"tree":[0,-13]}
 hideentypes = []
 
 sizeaddons = {"camz":[30,30]}
-layeraddons = {"camz":-5}
+layeraddons = {}
 
 aplhatypes = {}
 
