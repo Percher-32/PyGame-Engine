@@ -8,7 +8,12 @@ import math
 
 
 import Game_Code.Player.player_movement_core as player_movement_core
+import Game_Code.Player.move_spindash as move_spindash
 import Game_Code.Player.state_rail as state_rail
+
+
+
+import Game_Code.Camera.player_cam_cont as player_cam_cont
 
 
 em = Gamemananager.em
@@ -136,29 +141,6 @@ def main(self):
     else: 
         slanted = False
 
-
-    #Board projectile INITIATE THROW
-
-
-
-    # if not ground:
-    # 	if self.key["attack"] and not self.key["trick"]:
-            
-
-
-    # 		self.sp("wantime",0.2)
-    # 	else:
-    # 		if self.lastkey["attack"] and not self.lastkey["trick"]:
-    # 			self.wait("skatego",0.5,barrier=1)
-    # 			self.spin(30,0.1)
-                
-    # 			# self.bailable = 1
-    # 			self.skatevel = [
-    # 								(self.key["x"] * -1000 )  + om.objects["player"]["pos"][0],
-    # 								(self.key["y"] * 500 )  + om.objects["player"]["pos"][1]
-
-
-    # 							]	
     if self.key["attack"] and self.attackheld > 13:
         self.sp("wantime",max([3/self.attackheld,0.4]))
 
@@ -262,82 +244,10 @@ def main(self):
     raildir =  ret_dict_player_movement_core["raildir"]
     railrot =  ret_dict_player_movement_core["railrot"]
 
-    supg = len(collisionbox["inst"]) > 0
     
-    #SPIN/DROP DASH
-    if ((not self.key["throw"] and self.lastkey["throw"] and supg) or (supg and self.dropdashinit==1 and self.key["throw"])) and not self.dropdashinit==2 and not self.key["trick"]:
-        self.wait("dashrem",0.5)
-        self.wait("spindash",1)
-        self.wait("attack",0.6)
-        self.wait("inv",1)
-        # cm.setcond("playercam","shake",10)
-        
-        if self.dropdashinit:
-            self.dropdashinit = 2
-        else:
-            
-            self.dropdashinit = 0
-
-        if self.lastdir == "r":
-            self.sp("des_vel",self.homingcharge,0)
-            self.sp("act_vel",self.homingcharge,0)
-            self.sp("dashav",[self.homingcharge*1/4,0])
-            self.sp("dashdv",[self.homingcharge*1/4,0])
-        else:
-            self.sp("des_vel",self.homingcharge * -1,0)
-            self.sp("act_vel",self.homingcharge * -1,0)
-            
-            self.sp("dashav",[self.homingcharge*-1/4,0])
-            self.sp("dashdv",[self.homingcharge*-1/4,0])
-
-        
-        pm.particlespawnbluprint(om.objects["player"]["pos"],"exp4",initvel=[self.gp("des_vel",0)/10,10])
-        self.homingcharge = 0
-
-    if (not supg or not self.key["throw"]) and self.dropdashinit == 2 and not self.key["trick"]:
-        self.dropdashinit = 0
-
-    #BUILD-UP DASH
-    if self.key["throw"] and not self.dropdashinit == 2 and not self.key["trick"]:
-        
-        if supg:
-            cm.setcond("playercam","shake",3)
-        else:
-            
-            cm.setcond("playercam","shake",2)
-
-        self.homingcharge += 10 * self.dt * om.speed
-        if self.homingcharge > 260:
-            self.homingcharge = 260
-    else:
-        self.homingcharge = 0
-    
-
-    if self.key["throw"] and not self.lastkey["throw"] and not supg:
-        self.dropdashinit = 1
+    move_spindash.main(self,collisionbox["inst"],ground)
 
 
-
-
-
-
-
-
-    diam = [400 + (abs(self.gp("act_vel",0)) + abs(self.gp("act_vel",1)))/2,200 + (abs(self.gp("act_vel",0)) + abs(self.gp("act_vel",1)))/1													]
-    diams = [500,500]
-    if self.flowstate:
-        diam[0] *= 1.5
-        diam[1] *= 1.5
-        diams[0] *= 1.5
-        diams[1] *= 1.5
-    if self.lastdir == "r":
-        dtg = 1
-    else:
-        dtg = -1
-    if ground and self.isthere("spindash"):
-        self.attackerbox = om.colliderect([om.objects["player"]["pos"][0]+(dtg * 200),om.objects["player"]["pos"][1] + (0 * -200)],diams,0,cam)
-    else:
-        self.attackerbox = om.colliderect([om.objects["player"]["pos"][0]+(dtg* 200),om.objects["player"]["pos"][1] + (self.key["y"] * -200)],diam,0,cam)
 
 
 
@@ -381,45 +291,6 @@ def main(self):
 
     #LOOK AHEAD
 
-    if not rail:
-        if self.gp("slinging"):
-            self.lookaheady = self.unilerp(self.lookaheady,self.key["y"] * -20,4,roundto=2,useigt=0)
-            self.lookahead = self.unilerp(self.lookahead,self.key["x"] * 20,4,roundto=2,useigt=0)
-        elif self.gp("homing") == 2:
-            self.lookaheady = self.unilerp(self.lookaheady,self.key["y"] * -200,4,roundto=2,useigt=0)
-            self.lookahead = self.unilerp(self.lookahead,self.key["x"] * 200,4,roundto=2,useigt=0)
-            # self.print("REXTRCTVBIUN")
-        else:
-            
-            if self.gp("leftwall") or self.gp("rightwall"):
-                self.lookahead = self.unilerp(self.lookahead,0,4,roundto=2,useigt=1)
-                if self.key["y"] < 0:
-                    self.lookaheady = self.unilerp(self.lookaheady,200,8,roundto=2)
-                elif self.key["y"] > 0:
-                    self.lookaheady = self.unilerp(self.lookaheady,-200,8,roundto=2)
-                else:
-                    self.lookaheady = self.unilerp(self.lookaheady,0,20,roundto=2)
-            else:
-                self.lookaheady = self.unilerp(self.lookaheady,self.key["y"] * -100,4,roundto=2,useigt=1)
-                if self.gp("xinit"):
-                    self.lookahead = 0
-                if self.gp("des_vel")[0] > 0:
-                    self.lookahead = self.unilerp(self.lookahead,400,8,roundto=2)
-                elif self.gp("des_vel")[0] < 0:
-                    self.lookahead = self.unilerp(self.lookahead,-400,8,roundto=2)
-                else:
-                    self.lookahead = self.unilerp(self.lookahead,0,20,roundto=2)
-
-
-                
-                
-            
-            # self.println([self.lookahead,self.lookaheady],3)
-    else:
-        cm.setcond("playercam","shake",4)
-        self.lookaheady = self.unilerp(self.lookaheady,-300 * math.sin((railrot/180) * math.pi) * raildir ,4,roundto=2,useigt=0)
-        self.lookahead = self.unilerp(self.lookahead,300 * math.cos((railrot/180) * math.pi) * raildir,4,roundto=2,useigt=0)
-
 
     
 
@@ -438,6 +309,8 @@ def main(self):
     self.lastground = ground
     self.sp("lastframewall",self.gp("leftwall") or self.gp("rightwall"))
     om.speed = univars.func.lerp(om.speed,self.gp("wantime"),5,roundto=2)
+    
+    
     if self.ondone("show-score"):
         um.state = "maingame"
         # self.wait()

@@ -20,7 +20,7 @@ um = Gamemananager.um
 bg = Gamemananager.bg
 pm = Gamemananager.pm
 
-def main(self,collisionbox,rail,collisionboxtype)  -> dict:
+def main(self,collisionbox,rail,collisionboxtype) :
     """
     Returns [railrot and raildir]
     """
@@ -145,5 +145,7 @@ def main(self,collisionbox,rail,collisionboxtype)  -> dict:
     vel = [self.gp("act_vel")[0]/7,self.gp("act_vel")[1]/7]
     pm.particlespawnbluprint(parts,"grind",initvel= vel)
     
-    
-    return {"railrot":railrot,"raildir":raildir}
+        
+    self.railrot = railrot
+    self.raildir = raildir
+    self.rail = rail

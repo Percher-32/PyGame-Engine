@@ -25,6 +25,10 @@ pm = Gamemananager.pm
 
 
 
+import Game_Code.Camera.player_cam_cont as player_cam_cont
+
+
+
 
 
 def main(self):
@@ -51,30 +55,7 @@ def main(self):
             self.initialiseplayer([0,60])
             self.qrcondHL()
 
-    #move camera
-        campos = [om.objects["player"]["pos"][0],om.objects["player"]["pos"][1]]
-            
-
-        
-        
-        
-        campos[0] += self.lookahead
-        campos[1] += self.lookaheady
-
-
-
-
-        # if not self.gp("homing") > 0:
-        self.cfcp = om.collide("player",0
-        ,cam,extra=3)
-        types = [i.info["type"] for i in self.cfcp["obj"]]
-        if "camz" in types:
-            # print()
-            self.camzoom = om.get_value(    self.cfcp["obj"][types.index("camz")].name                  ,"zoom")
-        else:
-            self.camzoom = 0.3
-        cm.cam_focus_size("playercam",campos,4,self.camzoom / (univars.scaledown/2.5) * 15/7 )
-
+ 
 
 
         
@@ -188,3 +169,11 @@ def main(self):
 
         om.objects["playersprite"]["pos"][0] += self.playeroffset[0]
         om.objects["playersprite"]["pos"][1] += self.playeroffset[1]			
+        
+        
+        
+        
+        
+        player_cam_cont.main(self)
+        
+        

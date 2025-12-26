@@ -33,8 +33,8 @@ def main(self,collisionbox,slanted,rail,collision,collisionlisttype,axis,vec,ins
         ground = 0
         self.sp("dashmeter",self.gp("dashmeter") + 30)
         self.sp("jumpable",1)
-        self.sp("homing",0)
         self.wait("bouncerem",3)
+        self.sp("homing",0)
         info = collisionbox["obj"][[i.info["type"] for i in collisionbox["obj"]].index("spring")].info
         sid = collisionbox["obj"][[i.info["type"] for i in collisionbox["obj"]].index("spring")].name
         # cm.setcond("playercam","shake",6)
@@ -827,10 +827,12 @@ def main(self,collisionbox,slanted,rail,collision,collisionlisttype,axis,vec,ins
 
             else:
                 #RAIL
-                ret_dict_rail = state_rail.main(self,collisionbox,rail,collisionboxtype)
+                state_rail.main(self,collisionbox,rail,collisionboxtype)
                 
-                railrot = ret_dict_rail["railrot"]
-                raildir = ret_dict_rail["raildir"]
+                railrot = self.railrot
+                raildir = self.raildir
+                rail = self.rail
+            
                 
                 
 
