@@ -22,8 +22,10 @@ um = Gamemananager.um
 bg = Gamemananager.bg
 pm = Gamemananager.pm
 
-def main(self,rail,railrot,raildir):
-    
+def main(self):
+    rail = self.rail
+    railrot = self.railrot
+    raildir = self.raildir
     
     
     #POS

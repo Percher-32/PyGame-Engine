@@ -106,6 +106,11 @@ def main(self):
     rail = False
     if len(collisionboxtype) > 0:
         rail = collisionboxtype[0] == "rail"
+        
+    
+    self.rail = rail
+    self.railrot = 0
+    self.raildir = "r"
     
     if not rail:
         self.sp("dashmeter",self.gp("dashmeter") + (abs(self.gp("des_vel",0))/150 * self.dt))

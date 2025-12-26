@@ -54,7 +54,6 @@ def main(self,collisionbox,slanted,rail,collision,collisionlisttype,axis,vec,ins
         self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
         self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
 
-
     if not slanted:
         if slanted == self.lastframeslanted or self.key["jump"]:
             #MAIN
@@ -111,25 +110,12 @@ def main(self,collisionbox,slanted,rail,collision,collisionlisttype,axis,vec,ins
                         self.sp("des_vel",100,1)
                         
 
-                    self.sp("dashmeter",max([self.gp("dashmeter"),0])) 
-
-                    
-                    
-                    self.sp("dashmeter",max([self.gp("dashmeter"),0])) 
 
 
                     # if self.key["attack"] and not self.lastkey["attack"]:
                     # 	for i in range(int(self.gp("dashmeter"))):
                     # 		pm.particlespawnbluprint(om.objects["player"]["pos"],"star")
                     
-
-
-                    if self.lastrail:
-                        # self.spin(21,0.4,0.1)
-                        pass
-
-
-
 
                     #TRICKS
                     
@@ -831,7 +817,6 @@ def main(self,collisionbox,slanted,rail,collision,collisionlisttype,axis,vec,ins
                 
                 railrot = self.railrot
                 raildir = self.raildir
-                rail = self.rail
             
                 
                 
