@@ -22,7 +22,7 @@ um = Gamemananager.um
 bg = Gamemananager.bg
 pm = Gamemananager.pm
 
-def main(self,collisionbox):
+def main(self,collisionbox,ground):
     
     #styles
     if self.key["trick"] and not len(collisionbox["inst"] ) >0:
@@ -74,7 +74,21 @@ def main(self,collisionbox):
         self.sp("act_vel",100,1)
         self.sp("des_vel",100,1)
         
-        
+    if ground:
+        if self.bailable:
+            self.wait("BAIL",0.6)
+            self.sp("dashmeter",0)
+            self.bailable = 0
+            
+            
+    
+
+    if len(collisionbox["inst"] ) >0:
+        if self.isthere("VULNERABLE"):
+            self.bailable = 1
+            self.prevtricks = []
+            self.deltimer("VULNERABLE")
+
         
     
 

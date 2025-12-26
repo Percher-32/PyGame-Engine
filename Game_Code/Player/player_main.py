@@ -36,10 +36,6 @@ def main(self):
         contins all the code that the player needs to function
     """
     if "player" in om.objects.keys() and "skateboard" in om.objects.keys() and "playersprite" in om.objects.keys():
-        self.flowstate =self.gp("dashmeter") > 170
-        
-        self.sp("dashmeter",max([self.gp("dashmeter"),0])) 
-        self.sp("dashmeter",min([self.gp("dashmeter"),100])) 
     # self.println(self.gp("dashmeter") > 0,20)
         #move player
 

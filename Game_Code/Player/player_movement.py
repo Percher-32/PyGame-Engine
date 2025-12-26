@@ -8,12 +8,12 @@ import math
 
 
 import Game_Code.Player.player_movement_core as player_movement_core
-import Game_Code.Player.move_spindash as move_spindash
-import Game_Code.Player.state_rail as state_rail
+import Game_Code.Player.logic_spindash as logic_spindash
+import Game_Code.Player.logic_homingattack as logic_homingattack
+import Game_Code.Player.logic_trick as logic_trick
+import Game_Code.Player.logic_dashbar as logic_dashbar
 
 
-
-import Game_Code.Camera.player_cam_cont as player_cam_cont
 
 
 em = Gamemananager.em
@@ -222,35 +222,37 @@ def main(self):
         if self.gp("homing") == 2:
             vec = self.gp("target")
 
-
-
     else:
         om.objects["enemyzoom"]["rendercond"] = 0
 
 
 
-    if ground and not rail:
-        # self.sp("dashmeter",self.gp("dashmeter") - min([((40/(self.gp("dashmeter") + 2))*self.dt),2*self.dt]) - (0.5*self.dt))
-        self.sp("dashmeter",self.gp("dashmeter") - (1.5 * self.dt * self.gp("dashmeter")/100  ))
-    else:
-        # self.sp("dashmeter",self.gp("dashmeter") - min([((50/(self.gp("dashmeter") + 2))*self.dt),2*self.dt])  - (0.5*self.dt))
-        self.sp("dashmeter",self.gp("dashmeter") - (1.1 * self.dt * self.gp("dashmeter")/100  ))
 
 
 
-    if len(collisionbox["inst"] ) >0:
-        if self.isthere("VULNERABLE"):
-            self.bailable = 1
-            self.prevtricks = []
-            self.deltimer("VULNERABLE")
+
 
     #MAIN
     ret_dict_player_movement_core =   player_movement_core.main(self,collisionbox,slanted,rail,collision,collisionlisttype,axis,vec,instlist,collisionboxtype,smallcollisionbox,ground)
-    raildir =  ret_dict_player_movement_core["raildir"]
-    railrot =  ret_dict_player_movement_core["railrot"]
+
 
     
-    move_spindash.main(self,collisionbox["inst"],ground)
+    
+    
+    
+    
+    
+    
+    
+    #LOGIC
+    
+    
+    
+    
+    logic_dashbar.main(self,ground,rail)
+    logic_spindash.main(self,collisionbox["inst"],ground)
+    logic_homingattack.main(self,collisionlisttype,vec,axis,ground)
+    logic_trick.main(self,collisionbox,ground)
 
 
 
@@ -299,7 +301,6 @@ def main(self):
 
     
 
-    cm.setcond("playercam","shake",self.unilerp(cm.getcam("playercam","shake"),0,10)     )
 
 
 
