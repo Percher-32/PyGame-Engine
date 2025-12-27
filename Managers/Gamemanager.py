@@ -54,6 +54,7 @@ class GameManager():
 		self.timerswdt = []
 		self.dt = 1
 		self.abttodo = []
+		self.messages = {}
 		self.running = True
 		self.lastkey = {}
 		self.dons = []
@@ -350,6 +351,37 @@ class GameManager():
 		self.publicvariables["showallhidden"] = sm.showall
 		self.smstate = sm.state
 
+	def send(self,header,message):
+		"""
+			sends a message only lasts on that frame
+      	"""
+		self.messages[header] = message
+  
+  
+	def message(self,header):
+		"""
+			returns dict:
+			{
+					"SENT" : BOOL
+					"MESSAGE" : ANY
+	
+			}
+		"""
+
+		message = None
+		sent = False
+		if header in self.messages:
+			sent = True
+
+			message = self.messages[header] 
+   
+   
+   
+		
+		return {sent,message}
+
+
+
 
 
 	def Run(self):
@@ -528,6 +560,7 @@ class GameManager():
 				
 	def end(self):
 		renderwid = (((((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983)) * 1980) + 200
+		self.messages = {}
 		
 		self.clock.tick(self.publicvariables["maxfps"])
 		# univars.screen.blit(pm.screen,(univars.screen_w/2,univars.screen_h/2))

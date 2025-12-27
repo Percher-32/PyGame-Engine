@@ -27,11 +27,16 @@ def main(self,collisionboxinst,ground):
     
     supg = len(collisionboxinst) > 0
     
+    
+    
+    
+    #DASH
     if ((not self.key["throw"] and self.lastkey["throw"] and supg) or (supg and self.dropdashinit==1 and self.key["throw"])) and not self.dropdashinit==2 and not self.key["trick"]:
         self.wait("dashrem",0.5)
         self.wait("spindash",1)
         self.wait("attack",0.6)
         self.wait("inv",1)
+        self.send("")
         # cm.setcond("playercam","shake",10)
         
         if self.dropdashinit:

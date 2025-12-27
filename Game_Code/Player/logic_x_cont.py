@@ -28,10 +28,10 @@ def main(self,ground):
     
     if self.gp("homing") == 0:
         
-        if abs(self.gp("des_vel",0)) > 250:
-            self.sp("des_vel",300 * self.valsign(self.gp("des_vel",0)),0)
-        if abs(self.gp("act_vel",0)) > 250:
-            self.sp("act_vel",300 * self.valsign(self.gp("act_vel",0)),0)
+        if abs(self.gp("des_vel",0)) > 200:
+            self.sp("des_vel",200 * self.valsign(self.gp("des_vel",0)),0)
+        if abs(self.gp("act_vel",0)) > 200:
+            self.sp("act_vel",200 * self.valsign(self.gp("act_vel",0)),0)
 
         if abs(self.key["x"]) > 0:
             if self.isthere("leftjump"):

@@ -122,7 +122,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 map = "slant"
 startstate = "debugame"
 startshaderstate = 0
-bakeonreload = 1
+bakeonreload = 0
 showdebugonstart = 1
 profile = 0
 safemode = 0
