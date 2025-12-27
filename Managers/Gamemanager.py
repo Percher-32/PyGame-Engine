@@ -55,6 +55,7 @@ class GameManager():
 		self.dt = 1
 		self.abttodo = []
 		self.messages = {}
+		self.reactions = {}
 		self.running = True
 		self.lastkey = {}
 		self.dons = []
@@ -356,29 +357,33 @@ class GameManager():
 			sends a message only lasts on that frame
       	"""
 		self.messages[header] = message
+
+  
+		if header in self.reactions.keys():
+			for code in self.reactions[header]:
+				code(self,message)
   
   
-	def message(self,header):
+	def reaction(self,header:str,code:function):
 		"""
-			returns dict:
-			{
-					"SENT" : BOOL
-					"MESSAGE" : ANY
-	
-			}
+			the code will run every time a message with the header is sent
+   
+			code = function takes in (self,message)
 		"""
-
-		message = None
-		sent = False
-		if header in self.messages:
-			sent = True
-
-			message = self.messages[header] 
+		# self.print(code)
+		if header in self.reactions.keys():
+			if not code in self.reactions[header]:
+				self.reactions[header].append(code)
+    
+		else:
+			self.reactions[header] = []
+			
+			self.reactions[header].append(code)
+   
+    
    
    
    
-		
-		return {sent,message}
 
 
 

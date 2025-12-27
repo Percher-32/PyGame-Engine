@@ -172,6 +172,7 @@ class Game(Gamemananager.GameManager):
 		pass
 
 	def update(self):
+		# self.print(self.reactions,20)
 		bg.background = "test2"
   
 		if self.dt == 0 or self.dt > 10:

@@ -36,8 +36,9 @@ def main(self,collisionboxinst,ground):
         self.wait("spindash",1)
         self.wait("attack",0.6)
         self.wait("inv",1)
-        self.send("")
-        # cm.setcond("playercam","shake",10)
+        self.send("gain_arua",50)
+        self.print("SENT")
+        cm.setcond("playercam","shake",20)
         
         if self.dropdashinit:
             self.dropdashinit = 2

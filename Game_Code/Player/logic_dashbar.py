@@ -22,10 +22,19 @@ um = Gamemananager.um
 bg = Gamemananager.bg
 pm = Gamemananager.pm
 
+
+def react_gain_aura(self,message):
+    self.sp("dashmeter",self.gp("dashmeter") + message)
+
+
 def main(self,ground,rail):
     """
         Handeles all the logic for the dashbar.
     """
+    
+    
+    self.reaction("gain_arua",react_gain_aura)
+    
     
  
         
