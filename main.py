@@ -1,6 +1,7 @@
 import Managers.Gamemanager as Gamemananager
 import Managers.univars as univars
 import cProfile
+import os
 import pygame
 import random
 import math
@@ -109,6 +110,24 @@ class Game(Gamemananager.GameManager):
   
 		self.sp = Player.util_sp
 		self.gp = Player.util_gp
+  
+  
+  
+  
+		self.entity_type = os.listdir("Game_Code/Entities")
+		self.entity_type = [entity for entity in self.entity_type if not ".py" in entity]
+  
+		self.entity_codes = {}
+		for entity in self.entity_type:
+			init_code = None
+			main_code = None
+			with open(f"Game_Code/Entities/{entity}/init.py","r") as init:
+				init_code = init.read()
+			with open(f"Game_Code/Entities/{entity}/main.py","r") as main:
+				main_code = main.read()
+
+			self.entity_codes[entity] = {"init":init_code,"main":main_code}
+  
 
 
 
@@ -433,61 +452,62 @@ class Game(Gamemananager.GameManager):
 
 			om.set_value(id,"birds",birbs)
 
+	def parse(self,sr:str,id,info):
+		sr.replace("id",id)
+		sr.replace("info",str(info))
+		return sr
 
+		
 
 	def oncreate(self,id,info):
-
-
 		if info["name"] == "target":
 			om.objects[id]["type"] = "omnispring"
 			info["type"] = "omnispring"
-			# om.set_value(id,"vel",[0,0])
-			# om.set_value(id,"tarvel",[0,0])
-			# om.set_value(id,"clipspeed",5)
+			
 
 		if info["name"] == "enemy":
 			om.objects[id]["type"] = "enemy-L"
 			info["type"] = "enemy-L"
 
-		if info["type"] == "enemy-L":
-			# om.objects["sizen"] = 0.5
-			# om.rescale(id,sizen=[0.5,0.5])
-			om.objects[id]["sizen"] = [0.8,0.8]
+		# if info["type"] == "enemy-L":
+		# 	# om.objects["sizen"] = 0.5
+		# 	# om.rescale(id,sizen=[0.5,0.5])
+		# 	om.objects[id]["sizen"] = [0.8,0.8]
 
-			om.set_value(id,"master_pos",info["pos"])
-			om.set_value(id,"canhome",1)
-			om.set_value(id,"state","idle")
-			om.set_value(id,"HP",100)
-			om.set_value(id,"des_vel",[0,0])
-			om.set_value(id,"act_vel",[0,0])
-			om.set_value(id,"rotspeed",random.randint(30,60))
-			pl0 = random.randint(15,40)
-			om.set_value(id,"pl0",pl0)
-			om.set_value(id,"side",random.randint(0,1))
-			om.set_value(id,"pl1",pl0 + random.randint(40,80) )
-			om.set_value(id,"level",0 )
-			om.set_value(id,"speed",random.randint(2,10))
-			om.set_value(id,"superspeed",random.randint(5,5))
-			om.set_value(id,"yfac",random.randint(-100,0))
-			om.set_value(id,"spacing",random.randint(200,200))
-			om.set_value(id,"orbitrot",0)
-			om.set_value(id,"lasttogoto",info["pos"])
-			om.set_value(id,"act_vel",[0,0])
-			om.set_value(id,"vel",[0,0])
-			om.set_value(id,"tarvel",[0,0])
-			om.set_value(id,"clipspeed",5)
-			om.set_value(id,"timer",5)
-			om.set_value(id,"maxtimer",random.randint(10 * 2,15 * 2))
-			om.set_value(id,"flashtimer",0)
-
-
-			if self.publicvariables["mood"] == "night":
-				om.lighttoenemy(id,"l1",color=(255,0,255),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=20)
-			elif self.publicvariables["mood"] == "sunset":
-				om.lighttoenemy(id,"l1",color=(255,0,255),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=10)
+		# 	om.set_value(id,"master_pos",info["pos"])
+		# 	om.set_value(id,"canhome",1)
+		# 	om.set_value(id,"state","idle")
+		# 	om.set_value(id,"HP",100)
+		# 	om.set_value(id,"des_vel",[0,0])
+		# 	om.set_value(id,"act_vel",[0,0])
+		# 	om.set_value(id,"rotspeed",random.randint(30,60))
+		# 	pl0 = random.randint(15,40)
+		# 	om.set_value(id,"pl0",pl0)
+		# 	om.set_value(id,"side",random.randint(0,1))
+		# 	om.set_value(id,"pl1",pl0 + random.randint(40,80) )
+		# 	om.set_value(id,"level",0 )
+		# 	om.set_value(id,"speed",random.randint(2,10))
+		# 	om.set_value(id,"superspeed",random.randint(5,5))
+		# 	om.set_value(id,"yfac",random.randint(-100,0))
+		# 	om.set_value(id,"spacing",random.randint(200,200))
+		# 	om.set_value(id,"orbitrot",0)
+		# 	om.set_value(id,"lasttogoto",info["pos"])
+		# 	om.set_value(id,"act_vel",[0,0])
+		# 	om.set_value(id,"vel",[0,0])
+		# 	om.set_value(id,"tarvel",[0,0])
+		# 	om.set_value(id,"clipspeed",5)
+		# 	om.set_value(id,"timer",5)
+		# 	om.set_value(id,"maxtimer",random.randint(10 * 2,15 * 2))
+		# 	om.set_value(id,"flashtimer",0)
 
 
-			self.createhpbar(id,1,[0,30])
+		# 	if self.publicvariables["mood"] == "night":
+		# 		om.lighttoenemy(id,"l1",color=(255,0,255),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=20)
+		# 	elif self.publicvariables["mood"] == "sunset":
+		# 		om.lighttoenemy(id,"l1",color=(255,0,255),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=10)
+
+
+		# 	self.createhpbar(id,1,[0,30])
 
 		if info["type"] == "omnispring":
 			om.set_value(id,"canhome",1)
@@ -579,7 +599,11 @@ class Game(Gamemananager.GameManager):
 			om.set_value(id,"active",0)
 			om.set_value(id,"vel",[0,0])
 
-
+		for entity in self.entity_type:
+			parsed = self.parse(self.entity_codes[entity]["init"],id,info)
+			print(parsed)
+			exec(parsed)
+			# main(id,info)
 
 
 	def cond(self,id,info,st):

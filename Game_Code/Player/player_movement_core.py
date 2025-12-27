@@ -1,8 +1,5 @@
 import Managers.Gamemanager as Gamemananager
 import Managers.univars as univars
-import cProfile
-import pygame
-import random
 import math
 
 

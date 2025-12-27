@@ -1,4 +1,1 @@
-DO TOMORROW:
-	bird clusters
-	new ui
-	attacks
+SORT OUT ENTETIES
