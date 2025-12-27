@@ -32,7 +32,7 @@ def main(self,ground,axis):
             self.sp("dashmeter",self.gp("dashmeter") + 30)
             self.wait("dashrem",2)
             # cm.setcond("playercam","shake",6)
-            actmult = [160,160]
+            actmult = [180,180]
             actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
             desmult = [160,160]
             desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]

@@ -1165,7 +1165,9 @@ class TiledSoftwre:
 
 
 
-
+			elif "clear" in self.commmandtring.rstrip():
+				univars.output = []
+				self.commmandtring = ""
 			elif "setbg:" in self.commmandtring.rstrip():
 				bg.background = self.commmandtring.rstrip().replace("setbg:", "")
 			elif "savebg" in self.commmandtring.rstrip():

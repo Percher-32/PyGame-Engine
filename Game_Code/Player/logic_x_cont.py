@@ -24,14 +24,14 @@ pm = Gamemananager.pm
 
 def main(self,ground):
     #x dir movement
-    self.sp("machspeed",150)
+    self.sp("machspeed",200)
     
     if self.gp("homing") == 0:
         
         if abs(self.gp("des_vel",0)) > 250:
-            self.sp("des_vel",250 * self.valsign(self.gp("des_vel",0)),0)
+            self.sp("des_vel",300 * self.valsign(self.gp("des_vel",0)),0)
         if abs(self.gp("act_vel",0)) > 250:
-            self.sp("act_vel",250 * self.valsign(self.gp("act_vel",0)),0)
+            self.sp("act_vel",300 * self.valsign(self.gp("act_vel",0)),0)
 
         if abs(self.key["x"]) > 0:
             if self.isthere("leftjump"):

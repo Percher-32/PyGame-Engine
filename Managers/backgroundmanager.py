@@ -126,8 +126,6 @@ class Backgroundmanager:
             self.removebg(name,backgroundname)
         item = Item(name,pos,alpha=alpha,surf=surf,color=color,dimensions=dimensions,layer=layer,infiniscroll=infiniscroll,zdep = zdep),
         self.items[backgroundname].add(item,layer =  zdep)
-        # univars.print(zdep)
-        univars.print(self.items)
 
 
     def removebg(self,name,bgname):

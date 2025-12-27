@@ -37,6 +37,9 @@ def main(self,ground,rail):
         # self.sp("dashmeter",self.gp("dashmeter") - min([((50/(self.gp("dashmeter") + 2))*self.dt),2*self.dt])  - (0.5*self.dt))
         self.sp("dashmeter",self.gp("dashmeter") - (1.1 * self.dt * self.gp("dashmeter")/100  ))
         
+        
+    
+    self.sp("dashmeter",self.gp("dashmeter") + abs((self.gp("act_vel",0)/150 * self.dt))  )
     
     
     #DETERMINES BAR FOR FLOWSTATE    
@@ -46,7 +49,7 @@ def main(self,ground,rail):
 
     #CLAMPING
     self.sp("dashmeter",max([self.gp("dashmeter"),0])) 
-    self.sp("dashmeter",min([self.gp("dashmeter"),100])) 
+    self.sp("dashmeter",min([self.gp("dashmeter"),250])) 
     
     
     

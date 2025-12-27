@@ -91,6 +91,7 @@ def main(self):
             slanted = False	
     else: 
         slanted = False
+    
 
     if self.key["attack"] and self.attackheld > 13:
         self.sp("wantime",max([3/self.attackheld,0.4]))
@@ -244,5 +245,9 @@ def main(self):
     if self.ondone("show-score"):
         um.state = "maingame"
         # self.wait()
-        player_init.main([0,60])
+        player_init.main(self,[0,60])
+        
+        
+    
+    self.lastframeslanted = slanted
 

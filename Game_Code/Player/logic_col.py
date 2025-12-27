@@ -24,7 +24,7 @@ pm = Gamemananager.pm
 
 def main(self,ground,instlist,collision,collisionlisttype,slanted):
     if not self.rail:
-        if slanted == self.lastframeslanted or self.key["jump"]:
+        if slanted == self.lastframeslanted or self.key["jump"] and not slanted:
             #MAIN
             rail = self.rail
             if not (collision["topmid"]["inst"] and collision["botmid"]["inst"] and collision["midright"]["inst"] and collision["midleft"]["inst"] ):
@@ -76,7 +76,7 @@ def main(self,ground,instlist,collision,collisionlisttype,slanted):
                     
         
         #get out of wall
-        if len(collision["midmid"]["inst"] )> 0 and not slanted and not rail :
+        if len(collision["midmid"]["inst"] )> 0 and not slanted and not self.rail :
             top = collision["topmid"]["inst"] or collision["topleft"]["inst"] or collision["topright"]["inst"]
             bot = collision["botmid"]["inst"] or collision["botleft"]["inst"] or collision["botright"]["inst"]
             left = collision["topleft"]["inst"] or collision["midleft"]["inst"] or collision["botleft"]["inst"]
@@ -95,7 +95,6 @@ def main(self,ground,instlist,collision,collisionlisttype,slanted):
             elif left  and not collision["midright"]["inst"]:
                 om.objects["player"]["pos"][0] = mip[0] + 32
         else:
-            self.lastframeslanted = slanted
             self.sp("prev_act_vel",self.gp("act_vel"))
             self.sp("prev_des_vel",self.gp("des_vel"))
             self.sp("prevprevpos",om.objects["player"]["pos"])

@@ -3,17 +3,23 @@ DONE : RAILS:
         it goes 2 different sppeds
 
 
-TIME SLOW:
+DONE : TIME SLOW:
     happens at the wrong times
 
 
-MISSILES:
+DONE : MISSILES:
     unprdictable
 
 
-FPS:
+DONE : FPS:
     Too SLOW
 
 
 GAME SIZE:
     unprdictable
+
+
+
+
+DONE : SLOPES:
+    wrong

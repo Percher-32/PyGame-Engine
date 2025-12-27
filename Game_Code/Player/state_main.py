@@ -37,6 +37,9 @@ def main(self,slanted,collision,collisionbox,axis,collisionlisttype,selected_obj
             -when the player is iether on ground or in air
             -not on slope or on rails
     """
+    
+    
+    
     if slanted == self.lastframeslanted or self.key["jump"]:
         
         self.sp("ontherail",0)
@@ -46,15 +49,19 @@ def main(self,slanted,collision,collisionbox,axis,collisionlisttype,selected_obj
             #X dir logic
             logic_x_cont.main(self,ground)
             
+            
+            
+            
+            #Gravity logic
+            logic_fallin.main(self,ground)
+            
+            
             #Wall logic
             logic_wall.main(self,collision)
             
             
             #Style logic
             flare.main(self,ground,collision)
-            
-            #Gravity logic
-            logic_fallin.main(self,ground)
             
             
             if self.isthere("dashrem"):
@@ -117,20 +124,24 @@ def main(self,slanted,collision,collisionbox,axis,collisionlisttype,selected_obj
     else:
 
         if self.gp("slantdir") == "r":
-            if self.lastdirslant == "l":
+            if self.gp("act_vel",0) > 0:
                 om.translate(self,"player",[100,40])
-                if abs(self.gp("act_vel",0)) > 30:
-                    self.sp("act_vel",[self.gp("act_vel",0) + (200) ,self.gp("act_vel",0) + (110) ])
-            if self.lastdirslant == "r":
-                om.translate(self,"player",[-100,0])
+                # self.print("UP")
+                if self.gp("des_vel",0) > 30:
+                    self.print(self.gp("des_vel",0))
+                    self.sp("act_vel",[self.gp("act_vel",0)/2 + (100) ,abs(self.gp("act_vel",0))/2 + (100) ])
+            else :
+                om.translate(self,"player",[-100 + self.gp("act_vel",0),0])
+                
         if self.gp("slantdir") == "l":
-            if self.lastdirslant == "r":
-                if abs(self.gp("act_vel",0)) > 30:
-                    self.sp("act_vel",[self.gp("act_vel",0) - (200) ,self.gp("act_vel",0) + (110) ])
+            if self.gp("act_vel",0) < 0:
                 om.translate(self,"player",[-100,40])
-            if self.lastdirslant == "l":
-                om.translate(self,"player",[300,0])
-
+                # self.print("UP")
+                if self.gp("des_vel",0) < -30:
+                    self.print(self.gp("des_vel",0))
+                    self.sp("act_vel",[self.gp("act_vel",0)/2 - (100) ,abs(self.gp("act_vel",0))/2 + (100) ])
+            else :
+                om.translate(self,"player",[100 + self.gp("act_vel",0),0])
 
 
     #Jump logic
@@ -140,3 +151,7 @@ def main(self,slanted,collision,collisionbox,axis,collisionlisttype,selected_obj
     
     #Collision logic
     logic_col.main(self,ground,instlist,collision,collisionlisttype,slanted)
+    
+    
+    
+    

@@ -35,9 +35,11 @@ def main(self,ground,collision):
                     if self.gp("lastwall") == "r":
                         self.spin(11 ,1,spindec = 0.2)
                         self.sp("des_vel",[0,200])
+                        self.print("PRET")
                     else:
                         self.spin(-11 ,1,spindec = 0.2)
                         self.sp("des_vel",[0,200])
+                        self.print("PRET")
             else:
                 
                 if not self.key["jump"]:
@@ -49,7 +51,7 @@ def main(self,ground,collision):
             pm.particlespawnbluprint(om.objects["player"]["pos"],"grind",initvel=[0,0])
     
     #prevent rotation on walls
-    if self.gp("leftwall") or self.gp("rightwall"):
+    if self.gp("leftwall") or self.gp("rightwall") and not self.key["jump"] :
         self.killtimer("rotate")
         self.sp("rotoffset",0)
 
@@ -75,11 +77,13 @@ def main(self,ground,collision):
                 self.sp("desrot",90)
                 self.sp("desmooth",3)
 
-    if not self.key["jump"] and not self.isthere("rotate"):
-        if  not self.gp("leftwall") and not  self.gp("rightwall"):
-            if not self.bailable:
-                self.sp("desrot",self.key["x"] * 20)
-    
+    if not ground:
+        if not self.key["jump"] and not self.isthere("rotate"):
+            if  not self.gp("leftwall") and not  self.gp("rightwall"):
+                if not self.bailable and not self.isthere("rotate"):
+                    self.sp("desrot",self.key["x"] * 20)
+                    # pass
+        
     
     if self.flowstate:
         self.wait("dotrail",0.2)

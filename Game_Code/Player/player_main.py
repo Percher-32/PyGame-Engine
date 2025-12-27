@@ -52,7 +52,7 @@ def main(self):
         player_movement.main(self)
 
         if em.controller["options"]:
-            player_init.main([0,60])
+            player_init.main(self,[0,60])
             self.qrcondHL()
 
  

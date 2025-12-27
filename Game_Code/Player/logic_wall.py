@@ -81,26 +81,45 @@ def main(self,collision):
         
     #Wall jumping
     if self.key["jump"]:
-        a = 200
+        a = 200 + (min(self.key["y"],0.3) * 90)
+        
+        
+        
+        
         if self.gp("leftwall") and not  len(collision["botmid"]["inst"]) > 0:
+            dirt = self.key["x"]
+            if dirt > -0.4:
+                dirt = 1
+
+
+            
+            self.sp("leftwall",0)
             self.sp("dashmeter",self.gp("dashmeter") + (30 * self.dt))
             self.deltimer("rightjump")
             self.wait("leftjump",0.1)
             
             self.spin(-7 ,1,spindec = 0)
             self.sp("jumpable",False)
-            self.sp("des_vel",[ self.key["x"] * self.gp("machspeed")  , a     ])
+            self.sp("des_vel",[ dirt * self.gp("machspeed")  , a     ])
             self.sp("act_vel",[  120 , self.gp("act_vel")[1]     ])
             self.sp("dashmeter",self.gp("dashmeter") + 15)
+            
             self.sp("mode","in-air")
+            
         if self.gp("rightwall") and not  len(collision["botmid"]["inst"]) > 0:
+            dirt = self.key["x"]
+            if dirt < 0.4:
+                dirt = -1
+
+
             self.sp("dashmeter",self.gp("dashmeter") + (30 * self.dt))
             self.deltimer("leftjump")
             
+            self.sp("rightwall",0)
             self.spin(7 ,1,spindec = 0)
             self.wait("rightjump",0.1)
             self.sp("jumpable",False)
-            self.sp("des_vel",[  self.key["x"] * self.gp("machspeed") , a     ])
+            self.sp("des_vel",[  dirt * self.gp("machspeed") , a     ])
             self.sp("act_vel",[  -120 , self.gp("act_vel")[1]     ])
             self.sp("dashmeter",self.gp("dashmeter") + 15)
             self.sp("mode","in-air")

@@ -22,6 +22,10 @@ um = Gamemananager.um
 bg = Gamemananager.bg
 pm = Gamemananager.pm
 
+
+
+
+
 def main(self,collisionboxtype,collisionbox,slanted):
     self.sp("candj",1)
     self.sp("jumpable",1)
@@ -33,13 +37,24 @@ def main(self,collisionboxtype,collisionbox,slanted):
             om.objects["player"]["pos"] = [collisionbox["inst"][index].realpos[0] - 20,collisionbox["inst"][index].realpos[1] - 20]
             self.sp("act_vel",[  self.gp("act_vel")[0]    ,    self.gp("act_vel")[0]   ])
             self.sp("des_vel",[  self.gp("des_vel")[0]    ,    self.gp("des_vel")[0]   ])
+            self.slantspeed = abs(self.gp("des_vel",0))
                 # else:
                 # 	om.objects["player"]["pos"] = [collisionbox["inst"][0].realpos[0] +16,collisionbox["inst"][0].realpos[1] +16]
         else:
             if abs(self.key["x"]) > 0:
-                self.sp("des_vel",[         self.key["x"] * 70             ,    self.gp("des_vel")[1]   ])
-            else:
-                self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
+                self.sp("des_vel",[         self.key["x"] * self.slantspeed             ,    self.gp("des_vel")[1]   ])
+                if  self.slantspeed < 200:
+                    self.slantspeed += (1  * self.dt)
+                
+            elif self.gp("des_vel",0) > -100:
+                self.sp("des_vel",[  self.gp("des_vel",0) - (1*self.dt)    ,    self.gp("des_vel")[1]   ])
+                if  self.slantspeed > 40 :
+                    self.slantspeed -= (0.5  * self.dt)
+                else:
+                    self.slantspeed = 40
+                    
+                
+                
             self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
             if not self.key["jump"]:
                 self.sp("act_vel",[self.gp("act_vel")[0],self.gp("act_vel")[0]])
@@ -56,13 +71,28 @@ def main(self,collisionboxtype,collisionbox,slanted):
             om.objects["player"]["pos"] = [collisionbox["inst"][index].realpos[0] +16,collisionbox["inst"][index].realpos[1] -20]
             self.sp("act_vel",[  self.gp("act_vel")[0] * 1.1    ,    -1 * self.gp("act_vel")[0] * 1.1   ])
             self.sp("des_vel",[  self.gp("des_vel")[0] * 1.1    ,    -1 * self.gp("des_vel")[0] * 1.1   ])
+            self.slantspeed = abs(self.gp("des_vel",0))
                 # else:
                 # 	om.objects["player"]["pos"] = [collisionbox["inst"][0].realpos[0] +16,collisionbox["inst"][0].realpos[1] +16]
         else:
             if abs(self.key["x"]) > 0:
-                self.sp("des_vel",[         self.key["x"] * 70             ,    self.gp("des_vel")[1]   ])
-            else:
-                self.sp("des_vel",[  0    ,    self.gp("des_vel")[1]   ])
+                self.sp("des_vel",[         self.key["x"] * self.slantspeed             ,    self.gp("des_vel")[1]   ])
+                
+                if self.slantspeed < 200:
+                    self.slantspeed += (1  * self.dt)
+                    
+                    
+            elif self.gp("des_vel",0) > -100:
+                self.sp("des_vel",[  self.gp("des_vel",0) + (1*self.dt)    ,    self.gp("des_vel")[1]   ])
+                if  self.slantspeed > 40 :
+                    self.slantspeed -= (0.5  * self.dt)
+                else:
+                    self.slantspeed = 40
+                    
+                    
+                    
+                    
+                    
             self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
             if not self.key["jump"]:
                 self.sp("act_vel",[self.gp("act_vel")[0],-1 * self.gp("act_vel")[0]])

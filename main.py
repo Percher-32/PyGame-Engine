@@ -295,6 +295,7 @@ class Game(Gamemananager.GameManager):
 		"""
 			rotates the player by (angle) for (time) seconds
 		"""
+		self.print(f"SPIN MESSAGE SENT   : TIME = {time}")
 		self.wait(f"rotate",time,barrier=False)
 		self.sp("rotdes",spindec)
 		self.sp("rot",angle)
@@ -379,6 +380,7 @@ class Game(Gamemananager.GameManager):
 
 
 	# def qrcond(self, id, info):
+ 
 	# 	om.set_value(id,"spawned",0)
 
 	def qrcond(self, id, info):
