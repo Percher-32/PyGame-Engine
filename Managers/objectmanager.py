@@ -736,7 +736,6 @@ class object_manager:
 		for obj in noninst:
 			if obj.name in ignore or obj.name == ignore_id:
 				noninst.remove(obj)
-		univars.print(noninst)
 
 		#coll for inst
 		camchunk = [int(round(pos[0]/(dim * self.renderdist[0]))),int(round(pos[1]/(dim * self.renderdist[1])))]

@@ -32,39 +32,28 @@ bg = Gamemananager.bg
 pm = Gamemananager.pm
 
 def main(self,slanted,collision,collisionbox,axis,collisionlisttype,vec,instlist,collisionboxtype,smallcollisionbox,ground):
+    """
+        STATE:
+            -when the player is iether on ground or in air
+            -not on slope or on rails
+    """
     if slanted == self.lastframeslanted or self.key["jump"]:
         #MAIN
         rail = self.rail
         if not rail and not (collision["topmid"]["inst"] and collision["botmid"]["inst"] and collision["midright"]["inst"] and collision["midleft"]["inst"] ):
-            #IN HERE IS EITHER [NO MIDMID] OR [Yes MIDMID AND GROUND]
-
-
+            #X dir logic
             logic_x_cont.main(self,ground)
-
-
-
-
-
-
+            
+            #Wall logic
+            logic_wall.main(self,collision)
             
             
-
-
-
+            #Style logic
+            flare.main(self,ground,collision)
             
+            #Gravity logic
+            logic_fallin.main(self,ground)
             
-            if not self.rail:
-                logic_wall.main(self,collision)
-                logic_col.main(self,ground,instlist,collision)
-                logic_jump.main(self,ground)
-                flare.main(self,ground,collision)
-                logic_fallin.main(self,ground)
-                logic_airdash.main(self,ground,axis)
-
-            
-
-            
-                        
             
             if self.isthere("dashrem"):
                 # print(self.gp("dashav"))
@@ -90,12 +79,6 @@ def main(self,slanted,collision,collisionbox,axis,collisionlisttype,vec,instlist
                 # cm.setcond("playercam","shake",0)
 
 
-
-
-        
-            
-
-            
             #water skid
             if  800 > om.objects["player"]["pos"][1] > 700 and not (self.key["jump"] and self.gp("act_vel")[1] >= 0) :
                 if abs(self.gp("act_vel")[0]) >= 120:
@@ -115,28 +98,14 @@ def main(self,slanted,collision,collisionbox,axis,collisionlisttype,vec,instlist
 
         else:
             #RAIL
-            state_rail.main(self,collisionbox,rail,collisionboxtype)
+            if rail:
+                state_rail.main(self,collisionbox,rail,collisionboxtype)
             
-            
-            
 
 
-
-
-        for ty in ["HURT:laser"]:
-            if ty in [ i.info["type"] for i in smallcollisionbox["obj"]]:
-                if self.gp("homing") == 0:
-                    if not self.isthere("inv"):
-                        self.wait("BAIL",0.5)
-                    
-                    # self.sp("act_vel",[0,0])
-                    # self.sp("des_vel",[0,0])
-
-                
 
         #UPDATE POSITIONS AND ROTATIONS
-        player_update.main(self,collision,collisionlisttype,instlist)
-                    
+        player_update.main(self,collision,collisionlisttype,instlist)           
     else:
 
         if self.gp("slantdir") == "r":
@@ -153,3 +122,11 @@ def main(self,slanted,collision,collisionbox,axis,collisionlisttype,vec,instlist
                 om.translate(self,"player",[-100,40])
             if self.lastdirslant == "l":
                 om.translate(self,"player",[300,0])
+
+
+
+    #Jump logic
+    logic_jump.main(self,ground)
+    
+    #Collision logic
+    logic_col.main(self,ground,instlist,collision,collisionlisttype,slanted)

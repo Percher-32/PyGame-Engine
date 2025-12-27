@@ -38,6 +38,7 @@ def main(self):
     if "player" in om.objects.keys() and "skateboard" in om.objects.keys() and "playersprite" in om.objects.keys():
     # self.println(self.gp("dashmeter") > 0,20)
         #move player
+                    
 
         if not abs(self.key["x"]) > 0:
             om.playanim(self.dt,"playersprite","idle",forceplay=True)

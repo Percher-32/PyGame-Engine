@@ -47,6 +47,24 @@ def main(self,ground,rail):
     #CLAMPING
     self.sp("dashmeter",max([self.gp("dashmeter"),0])) 
     self.sp("dashmeter",min([self.gp("dashmeter"),100])) 
+    
+    
+    
+    
+    #UI
+    self.sp("dashmeter",min([300,self.gp("dashmeter")]))
+    self.sp("dashmeter",max([0,self.gp("dashmeter")]))
+
+
+
+
+    um.elements["dashbar"]["dimensions"][0] = self.unilerp( um.elements["dashbar"]["dimensions"][0] ,   max([((self.gp("dashmeter") * 10) - 50)/2,0])/3 ,4  )
+
+    
+
+    if self.gp("dashmeter") <= 0:
+        um.elements["dashbar"]["dimensions"][0] = 0
+    um.elements["dashbar"]["color"] = (0,100,255)
 
 
 

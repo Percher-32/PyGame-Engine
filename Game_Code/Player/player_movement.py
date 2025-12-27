@@ -12,6 +12,7 @@ import Game_Code.Player.logic_spindash as logic_spindash
 import Game_Code.Player.logic_homingattack as logic_homingattack
 import Game_Code.Player.logic_trick as logic_trick
 import Game_Code.Player.logic_dashbar as logic_dashbar
+import Game_Code.Player.logic_airdash as logic_airdash
 
 
 
@@ -34,19 +35,7 @@ def main(self):
     um.elements["attemps"]["text"]  = str(self.timesdone)
     
     self.sp("wantime",self.publicvariables["gamespeed"])
-    self.sp("dashmeter",min([300,self.gp("dashmeter")]))
-    self.sp("dashmeter",max([0,self.gp("dashmeter")]))
 
-
-
-
-    um.elements["dashbar"]["dimensions"][0] = self.unilerp( um.elements["dashbar"]["dimensions"][0] ,   max([((self.gp("dashmeter") * 10) - 50)/2,0])/3 ,4  )
-
-    
-
-    if self.gp("dashmeter") <= 0:
-        um.elements["dashbar"]["dimensions"][0] = 0
-    um.elements["dashbar"]["color"] = (0,100,255)
     collision = om.collide9("player",0,cam,self.dim,ignore= ["playersprite","skateboard"])
     lonepoint1 = om.collidep([om.objects["player"]["pos"][0] + 60,om.objects["player"]["pos"][1] + 17 ],0,32,camera=cam,basecolor=(0,1,0))
     lonepoint2 = om.collidep([om.objects["player"]["pos"][0] - 50,om.objects["player"]["pos"][1] + 17 ],0,32,camera=cam,basecolor=(0,1,0))
@@ -185,20 +174,6 @@ def main(self):
 
 
 
-
-
-    #MAIN
-    ret_dict_player_movement_core =   player_movement_core.main(self,collisionbox,slanted,rail,collision,collisionlisttype,axis,vec,instlist,collisionboxtype,smallcollisionbox,ground)
-
-
-    
-    
-    
-    
-    
-    
-    
-    
     #LOGIC
     
     
@@ -208,41 +183,34 @@ def main(self):
     logic_spindash.main(self,collisionbox["inst"],ground)
     logic_homingattack.main(self,collisionlisttype,vec,axis,ground)
     logic_trick.main(self,collisionbox,ground)
+    logic_airdash.main(self,ground,axis)
 
 
+    #MAIN
+    player_movement_core.main(self,collisionbox,slanted,rail,collision,collisionlisttype,axis,vec,instlist,collisionboxtype,smallcollisionbox,ground)
 
-
-
-
-
-
-
-    #get out of wall
-    if len(collision["midmid"]["inst"] )> 0 and not slanted and not rail :
-        top = collision["topmid"]["inst"] or collision["topleft"]["inst"] or collision["topright"]["inst"]
-        bot = collision["botmid"]["inst"] or collision["botleft"]["inst"] or collision["botright"]["inst"]
-        left = collision["topleft"]["inst"] or collision["midleft"]["inst"] or collision["botleft"]["inst"]
-        right = collision["topright"]["inst"] or collision["midright"]["inst"] or collision["botright"]["inst"]
-        mip = collision["midmid"]["inst"][0].realpos
-        if collision["topmid"]["inst"] and collision["botmid"]["inst"] and collision["midright"]["inst"] and collision["midleft"]["inst"] :
-            # self.publicvariables["shaderstate"] = not self.publicvariables["shaderstate"]
-            om.translate(self,"player",[self.gp("act_vel")[0] * -1,self.gp("act_vel")[1] * -1],usedt=1)
-            self.sp("des_vel",[0,0])
-        elif top and not collision["botmid"]["inst"]:
-            om.objects["player"]["pos"][1] =  mip[1] + 32
-        elif bot and not collision["topmid"]["inst"]:
-            om.objects["player"]["pos"][1] =  mip[1] - 32
-        elif right and not collision["midleft"]["inst"]:
-            om.objects["player"]["pos"][0] = mip[0] - 32
-        elif left  and not collision["midright"]["inst"]:
-            om.objects["player"]["pos"][0] = mip[0] + 32
-    else:
-        self.lastframeslanted = slanted
-        self.sp("prev_act_vel",self.gp("act_vel"))
-        self.sp("prev_des_vel",self.gp("des_vel"))
-        self.sp("prevprevpos",om.objects["player"]["pos"])
 
     
+    
+    for ty in ["HURT:laser"]:
+        if ty in [ i.info["type"] for i in smallcollisionbox["obj"]]:
+            if self.gp("homing") == 0:
+                if not self.isthere("inv"):
+                    self.wait("BAIL",0.5)
+    
+    
+    
+    
+    
+
+
+
+
+
+
+
+
+
 
 
                                 
@@ -266,7 +234,6 @@ def main(self):
 
         
     
-    self.lastrail = rail
     self.lastground = ground
     self.sp("lastframewall",self.gp("leftwall") or self.gp("rightwall"))
     om.speed = univars.func.lerp(om.speed,self.gp("wantime"),5,roundto=2)

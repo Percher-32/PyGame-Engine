@@ -34,6 +34,10 @@ def main(self,collisionbox,slanted,rail,collision,collisionlisttype,axis,vec,ins
     
     
     
+    self.println(self.rail,10)
+    
+    
+    
     if "spring" in [i.info["type"] for i in collisionbox["obj"]]:
         ground = 0
         self.sp("dashmeter",self.gp("dashmeter") + 30)

@@ -22,10 +22,11 @@ um = Gamemananager.um
 bg = Gamemananager.bg
 pm = Gamemananager.pm
 
-def main(self,ground):
-    if not self.gp("leftwall") or not self.gp("rightwall") and not ground:
-        self.sp("des_vel",    [  self.gp("des_vel")[0]    ,    self.unilerp(self.gp("des_vel")[1],-130,self.gp("fss"),roundto = 0)   ]     )
-        self.sp("mode","in-air")
-        
-    if ground:
-        self.sp("mode","grounded")
+def main(val:str,index=None):
+    """
+    gets the value a players variable
+    """
+    if index == None:
+        return om.get_value("player",val)
+    else:
+        return om.get_value("player",val)[index]

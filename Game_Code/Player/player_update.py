@@ -23,7 +23,11 @@ bg = Gamemananager.bg
 pm = Gamemananager.pm
 
 def main(self,collision,collisionlisttype,instlist):
-     #UPDATE POSITIONS AND ROTATIONS
+    """
+    HANDLES UPDATES:
+        -DOES VELOCITY CALCULATIONS
+        -PREVENTS NO-CLIP
+    """
     rail = self.rail
     if not (collision["topmid"]["inst"] and collision["botmid"]["inst"] and collision["midright"]["inst"] and collision["midleft"]["inst"] ) or rail:
         self.unilerp(self.gp("act_vel"),self.gp("des_vel"),8,roundto = 2)
@@ -125,21 +129,6 @@ def main(self,collision,collisionlisttype,instlist):
     
     
 
-        if not rail:
-            #prevent no-clip
-            if self.gp("mode") == "grounded":
-                if "ground" in collisionlisttype:
-                    self.sp("des_vel",[  self.gp("des_vel")[0]    ,    0   ])
-                    self.sp("act_vel",[  self.gp("act_vel")[0]    ,    0   ])
-                    om.objects["player"]["pos"][1] = instlist[0].realpos[1] - 32
-
-            if not self.gp("onboard"):
-                if om.get_value("skateboard","fallvalue")< 20:
-                    om.set_value("skateboard","fallvalue",om.get_value("skateboard","fallvalue") - 2* self.dt)
-                om.objects["skateboard"]["pos"] = [om.objects["player"]["pos"][0],om.objects["player"]["pos"][1] - 0]
-                om.translate(self,"skateboard",[0,om.get_value("skateboard","fallvalue")])
-            else:
-                om.set_value("skateboard","fallvalue",5)
                     
                     
                     

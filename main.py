@@ -18,6 +18,20 @@ import Game_Code.Player.player_main
 import Game_Code.Player.player_movement
 import Game_Code.Player.logic_trick
 import Game_Code.Player.player_movement_core
+import Game_Code.Player.flare
+import Game_Code.Player.logic_airdash
+import Game_Code.Player.logic_col
+import Game_Code.Player.logic_dashbar
+import Game_Code.Player.logic_fallin
+import Game_Code.Player.logic_homingattack
+import Game_Code.Player.logic_jump
+import Game_Code.Player.logic_wall
+import Game_Code.Player.logic_x_cont
+import Game_Code.Player.player_init
+import Game_Code.Player.util_gp
+import Game_Code.Player.util_sp
+
+
 
 
 
@@ -42,10 +56,22 @@ class PlayerClass:
 		self.state_main              =      Game_Code.Player.state_main.main
 		self.state_slope             =      Game_Code.Player.state_slope.main
 		self.logic_spindash	         =	    Game_Code.Player.logic_spindash.main
-		self.player_main             =      Game_Code.Player.player_main.main
-		self.player_movement         =      Game_Code.Player.player_movement.main
+		self.main                    =      Game_Code.Player.player_main.main
+		self.movement                =      Game_Code.Player.player_movement.main
 		self.logic_trick             =	    Game_Code.Player.logic_trick.main
-		self.player_movement_sore    = 	    Game_Code.Player.player_movement_core.main
+		self.movement_core           = 	    Game_Code.Player.player_movement_core.main
+		self.flare                   = 	    Game_Code.Player.flare.main
+		self.logic_airdash           = 	    Game_Code.Player.logic_airdash.main
+		self.logic_col               = 	    Game_Code.Player.logic_col.main
+		self.logic_dashbar           = 	    Game_Code.Player.logic_dashbar.main
+		self.logic_fallin            = 	    Game_Code.Player.logic_fallin.main
+		self.logic_homingattack      = 	    Game_Code.Player.logic_homingattack.main
+		self.logic_jump              = 	    Game_Code.Player.logic_jump.main
+		self.logic_wall              = 	    Game_Code.Player.logic_wall.main
+		self.logic_x_cont            = 	    Game_Code.Player.logic_x_cont.main
+		self.init                    =      Game_Code.Player.player_init.main
+		self.util_sp 				 = 		Game_Code.Player.util_sp.main
+		self.util_gp 				 = 		Game_Code.Player.util_gp.main
 
 
 Player = PlayerClass()
@@ -78,6 +104,11 @@ class Game(Gamemananager.GameManager):
 		self.lookahead = 100
 		self.lerpshake = 0
 		self.actualwaterheight = 0
+  
+  
+  
+		self.sp = Player.util_sp
+		self.gp = Player.util_gp
 
 
 
@@ -100,12 +131,8 @@ class Game(Gamemananager.GameManager):
 		# bg.savebg()
 
 		if "game" == self.states:
-
-
-
 			# initialise player and all its variables
-			# self.initialiseplayer([0,60])
-			self.initialiseplayer([0,60])
+			Player.init(self,[0,60])
 
 
 		if "veiw" == self.states:
@@ -127,7 +154,7 @@ class Game(Gamemananager.GameManager):
 	def quickrel(self):
 		# self.qrcond()
 		if "game" == self.states:
-			self.initialiseplayer(cm.getcam("def","pos"))
+			Player.init(self,cm.getcam("def","pos"))
 		if "Editor" == self.states:
 			om.removeid("enemyzoom")
 			cm.setcond("def","pos",cm.getcam("playercam","pos"))
@@ -158,7 +185,7 @@ class Game(Gamemananager.GameManager):
 
 
 		if "game" == self.states:
-			Player.player_main(self)
+			Player.main(self)
 			self.publicvariables["showater"] = True
 			
 
@@ -264,173 +291,6 @@ class Game(Gamemananager.GameManager):
 
 		sd.program["camx"] = cam.x/(univars.startdims[0] * univars.scaledown)
 
-	def initialiseplayer(self,pos):
-		"""
-		Initialises the players variables
-		"""
-		#create the cameras
-		startpos = pos
-		cm.addcam("playercam",startpos,univars.pixelscale/7 * 0.4)
-		cm.setcam("playercam")
-
-		om.speed = 1
-
-
-		#create player
-		self.prevtricks = []
-  
-		self.slanted = 0
-
-		om.adds(self,"player",startpos,"player","player",0,[1,1],400,5)
-		self.sp("#DEBUG","HELLO WOLRD")
-		om.objects["player"]["rendercond"] = False
-
-		self.sp("dashmeter",0)
-		self.lastframejumped = 0
-
-		self.sp("dashcooldown",0)
-		self.sp("deshrem",0)
-		sc = 1.4
-		#creates the player sprite you actually see
-		om.adds(self,"playersprite",[-1400,400],"player","player",0,[sc,sc],400,5)
-		om.objects["playersprite"]["rendercond"] = True
-		om.includeflipping("playersprite")
-
-		#creates the skateboard
-		om.adds(self,"skateboard",[-1400,400],"skateboard","skateboard",0,[sc,sc],400,5)
-		om.objects["skateboard"]["rendercond"] = True
-
-		#desired velocity
-
-
-		self.sp("lastframewall",0)
-
-		self.flowstate = 0
-
-		self.sp("slinging",0)
-
-		self.lastrail = 0
-
-		self.sp("des_vel",[0,0])
-
-		self.sp("candj",0)
-
-		self.sp("dashav",[0,0])
-		self.sp("dashdv",[0,0])
-
-		self.dropdashinit = 0
-		self.lastground = 0
-
-
-
-  
-		self.println(self.slanted,6)
-		self.attackheld = 0
-
-		self.sp("exithm",0)
-
-		#actual velocity
-		self.sp("act_vel",[0,0])
-
-		#smoothing
-		self.sp("smoothing",2)
-
-		self.sp("prevprevpos",om.objects["player"]["pos"])
-
-		#modes
-		self.sp("mode","grounded")
-
-		#able to jump?
-		self.sp("jumpamble",False)
-
-		#fall speed smoothing
-		self.sp("fss",8)
-
-		self.lastframeslanted = False
-		self.gate = "r"
-
-		self.lastdirrail = 0
-		self.sp("lastframeswing",0)
-
-
-		self.lastdir = "r"
-
-		self.lastdirslant = "r"
-
-		#previous frames actual velocity
-		self.sp("prev_act_vel",[0,0])
-
-		#shidding?
-		self.sp("skidding",False)
-
-		self.reclock = 1
-
-		self.sp("rot",0)
-
-
-		#on skateboard?
-		self.sp("onboard",True)
-
-		self.sp("unboundrot",0)
-
-		self.sp("rotoffset",0)
-		self.sp("rotdes",0)
-
-		self.sp("desrot",0)
-		self.sp("desmooth",5)
-
-		self.sp("machspeed",150)
-
-		self.sp("lastwall","l")
-
-
-		self.sp("slantdir","r")
-
-		om.set_value("skateboard","fallvalue",5)
-
-		self.sp("thickness",1)
-
-
-
-
-		self.sp("homing",0)
-		self.sp("target",None)
-
-		self.joyaxis = pygame.math.Vector2(self.key["x"],self.key["y"])
-		if self.joyaxis.length()> 0:
-			self.joyaxis.normalize()
-		else:
-			self.joyaxis = pygame.math.Vector2(-1,0)
-
-
-
-
-		#In_game_UI
-		om.adds(self,"enemyzoom",[0,0],"enemyzoom","In_Game_UI",0,[1.6,1.6],255,5)
-		om.objects["enemyzoom"]["rendercond"] = 0
-
-
-
-
-
-		#UI
-		um.changestate("maingame",None)
-		um.addrect([6000,100 + 30 - 30],["maingame"],[(-0.5 + 0.02) - 0.5,0.8],"dashbarback",color=(0,0,0),fromstart=0,alpha = 200)
-		um.addrect([(1000 -19)/2 + 20,100 + 30 - 30],["maingame"],[(-0.5 + 0.02) - 0.5,0.8],"dashbarback",color=(0,0,0),fromstart=1,alpha = 200)
-		um.addrect([1000 - 30 - 20,90 - 30],["maingame"],[(-0.5 + 0.04/2 + 0.02) - 0.5,0.8],"dashbar",color=(225,100,100),fromstart=1,alpha = 200)
-
-
-
-		um.addrect([1000 - 30 - 20 + 30,90 - 30 + 30],["maingame"],[(-0.5 + 0.04/2 + 0.02) - 0.5 -0.02,-0.8],"missiletimeback",color=(0,0,0),fromstart=1,alpha = 200)
-		um.addrect([1000 - 30 - 20,90 - 30],["maingame"],[(-0.5 + 0.04/2 + 0.02) - 0.5,-0.8],"missiletime",color=(225,0,0),fromstart=1,alpha = 200)
-
-		um.addtext("Speed-timer","0",univars.defont,[0,0.8],univars.theme["accent"],60,["maingame"])
-		um.elements["Speed-timer"]["text"]  = str(0)
-
-		um.addtext("attemps","0",univars.defont,[0.5,0.8],univars.theme["accent"],60,["maingame"])
-		um.elements["attemps"]["text"]  = str(0)
-
-
 	def spin(self,angle,time,spindec = 0):
 		"""
 			rotates the player by (angle) for (time) seconds
@@ -511,26 +371,9 @@ class Game(Gamemananager.GameManager):
 		"""
 		return [i/num for i in list]
 
-	def sp(self,val:str,to,index=None):
-		"""
-		changes the value a players variable
-		"""
-		if index == None:
-			om.set_value("player",val,to)
-		else:
-			change = to
-			to = self.gp(val)
-			to[index] = change
-			om.set_value("player",val,to)
+	
 
-	def gp(self,val:str,index=None):
-		"""
-		gets the value a players variable
-		"""
-		if index == None:
-			return om.get_value("player",val)
-		else:
-			return om.get_value("player",val)[index]
+	
 
 
 

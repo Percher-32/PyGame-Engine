@@ -82,7 +82,7 @@ def main(self):
         self.camzoom = om.get_value(    self.cfcp["obj"][types.index("camz")].name                  ,"zoom")
     else:
         self.camzoom = 0.3
-    cm.cam_focus_size("playercam",campos,4,self.camzoom / (univars.scaledown/2.5) * 15/7 * univars.rw )
+    cm.cam_focus_size("playercam",campos,4,self.camzoom / (univars.scaledown/2.5) * 15/7 )
     
     
     

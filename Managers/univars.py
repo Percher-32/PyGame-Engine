@@ -6,7 +6,7 @@ import Managers.statemanager as sm
 
 pygame.display.init()
 
-scaledown = 3
+scaledown = 2
 
 
 pixelscale = 1
@@ -119,11 +119,11 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "finale"
+map = "railworld"
 startstate = "debugame"
 startshaderstate = 0
 bakeonreload = 0
-showdebugonstart = 0
+showdebugonstart = 1
 profile = 0
 safemode = 0
 startuistate = "def"
