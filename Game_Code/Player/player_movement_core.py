@@ -27,7 +27,7 @@ pm = Gamemananager.pm
 
 
 
-def main(self,collisionbox,slanted,rail,collision,collisionlisttype,axis,vec,instlist,collisionboxtype,smallcollisionbox,ground):
+def main(self,collisionbox,slanted,rail,collision,collisionlisttype,axis,selected_obj,instlist,collisionboxtype,smallcollisionbox,ground):
     raildir = None
     railrot = None
     ground = ground
@@ -67,7 +67,7 @@ def main(self,collisionbox,slanted,rail,collision,collisionlisttype,axis,vec,ins
 
 
     if not slanted:
-        state_main.main(self,slanted,collision,collisionbox,axis,collisionlisttype,vec,instlist,collisionboxtype,smallcollisionbox,ground)
+        state_main.main(self,slanted,collision,collisionbox,axis,collisionlisttype,selected_obj,instlist,collisionboxtype,smallcollisionbox,ground)
     else:                                                                                                                               
         state_slope.main(self,collisionboxtype,collisionbox,slanted)
             

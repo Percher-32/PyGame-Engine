@@ -22,7 +22,7 @@ um = Gamemananager.um
 bg = Gamemananager.bg
 pm = Gamemananager.pm
 
-def main(self,collisionlisttype,vec,axis,ground):
+def main(self,collisionlisttype,selected_obj,axis,ground):
     """
     SELF.GP("HOMING"):
         0 - NONE
@@ -45,12 +45,12 @@ def main(self,collisionlisttype,vec,axis,ground):
     #INITIATE HOMING ATTACK
     if not self.gp("homing") == 1:
         if self.key["secondary"] and not self.key["trick"]:
-            if not vec == None:
+            if not selected_obj == None:
                 if not self.isthere("homecooldown"):
                     if not self.lastkey["secondary"]:
                         self.wait("homecooldown",0.2)
                         self.sp("homing",1)
-                        self.sp("target",vec)
+                        self.sp("target",selected_obj)
                         if ground:
                             self.key["jump"] = 1
                             self.sp("act_vel",40,index=1)

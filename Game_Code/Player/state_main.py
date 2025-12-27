@@ -31,13 +31,15 @@ um = Gamemananager.um
 bg = Gamemananager.bg
 pm = Gamemananager.pm
 
-def main(self,slanted,collision,collisionbox,axis,collisionlisttype,vec,instlist,collisionboxtype,smallcollisionbox,ground):
+def main(self,slanted,collision,collisionbox,axis,collisionlisttype,selected_obj,instlist,collisionboxtype,smallcollisionbox,ground):
     """
         STATE:
             -when the player is iether on ground or in air
             -not on slope or on rails
     """
     if slanted == self.lastframeslanted or self.key["jump"]:
+        
+        self.sp("ontherail",0)
         #MAIN
         rail = self.rail
         if not rail and not (collision["topmid"]["inst"] and collision["botmid"]["inst"] and collision["midright"]["inst"] and collision["midleft"]["inst"] ):
@@ -98,8 +100,14 @@ def main(self,slanted,collision,collisionbox,axis,collisionlisttype,vec,instlist
 
         else:
             #RAIL
-            if rail:
-                state_rail.main(self,collisionbox,rail,collisionboxtype)
+            self.sp("ontherail",1)
+            state_rail.main(self,collisionbox,rail,collisionboxtype)
+            
+        self.sp("lastontherail",self.gp("ontherail"))
+        
+                
+        
+        # self.lastrail = rail
             
 
 
@@ -127,6 +135,8 @@ def main(self,slanted,collision,collisionbox,axis,collisionlisttype,vec,instlist
 
     #Jump logic
     logic_jump.main(self,ground)
+    
+    
     
     #Collision logic
     logic_col.main(self,ground,instlist,collision,collisionlisttype,slanted)

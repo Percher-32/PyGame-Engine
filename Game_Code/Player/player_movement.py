@@ -14,6 +14,8 @@ import Game_Code.Player.logic_trick as logic_trick
 import Game_Code.Player.logic_dashbar as logic_dashbar
 import Game_Code.Player.logic_airdash as logic_airdash
 
+import Game_Code.Player.player_init as player_init
+
 
 
 
@@ -124,7 +126,7 @@ def main(self):
     axis[1] = round(axis[1],2)
 
     
-    vec = None
+    selected_obj= None
     #HOMING ATTACK SELECT
     if len(attackbox["obj"]):
         om.objects["enemyzoom"]["rendercond"] = 1
@@ -132,7 +134,7 @@ def main(self):
             self.joyaxis = pygame.math.Vector2(-1 *self.key["x"],1 *self.key["y"] )
             self.joyaxis.normalize()
         enaxis = self.joyaxis
-        vec = None
+        selected_obj= None
         closeness = None
         playervec = pygame.math.Vector2(om.objects["player"]["pos"])
         for obj in attackbox["obj"]:	
@@ -142,18 +144,18 @@ def main(self):
                 if distvec.length() > 0:
                     distvec.normalize()
                     if obj.info["type"] in self.typesofhoming and om.get_value(obj.name,"canhome"):
-                        if vec == None:
-                            vec = obj
+                        if selected_obj== None:
+                            selected_obj= obj
                             closeness = 1 - distvec.dot(enaxis) 
                         else:
                             if 1-distvec.dot(enaxis) < closeness:
-                                vec = obj
+                                selected_obj= obj
                                 closeness = 1 - distvec.dot(enaxis) 
-        if vec == None:
+        if selected_obj== None:
             om.objects["enemyzoom"]["rendercond"] = 0
         else:
-            om.objects["enemyzoom"]["pos"] = vec.info["pos"]
-            om.objects["enemyzoom"]["sizen"] = self.listadd((vec.info["sizen"],[0.5,0.5]))
+            om.objects["enemyzoom"]["pos"] = selected_obj.info["pos"]
+            om.objects["enemyzoom"]["sizen"] = self.listadd((selected_obj.info["sizen"],[0.5,0.5]))
 
 
 
@@ -164,7 +166,7 @@ def main(self):
     
 
         if self.gp("homing") == 2:
-            vec = self.gp("target")
+            selected_obj= self.gp("target")
 
     else:
         om.objects["enemyzoom"]["rendercond"] = 0
@@ -181,13 +183,13 @@ def main(self):
     
     logic_dashbar.main(self,ground,rail)
     logic_spindash.main(self,collisionbox["inst"],ground)
-    logic_homingattack.main(self,collisionlisttype,vec,axis,ground)
+    logic_homingattack.main(self,collisionlisttype,selected_obj,axis,ground)
     logic_trick.main(self,collisionbox,ground)
     logic_airdash.main(self,ground,axis)
 
 
     #MAIN
-    player_movement_core.main(self,collisionbox,slanted,rail,collision,collisionlisttype,axis,vec,instlist,collisionboxtype,smallcollisionbox,ground)
+    player_movement_core.main(self,collisionbox,slanted,rail,collision,collisionlisttype,axis,selected_obj,instlist,collisionboxtype,smallcollisionbox,ground)
 
 
     
@@ -242,5 +244,5 @@ def main(self):
     if self.ondone("show-score"):
         um.state = "maingame"
         # self.wait()
-        self.initialiseplayer([0,60])
+        player_init.main([0,60])
 

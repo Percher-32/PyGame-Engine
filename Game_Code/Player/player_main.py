@@ -7,6 +7,7 @@ import math
 
 
 import Game_Code.Player.player_movement as player_movement
+import Game_Code.Player.player_init as player_init
 
 
 
@@ -51,7 +52,7 @@ def main(self):
         player_movement.main(self)
 
         if em.controller["options"]:
-            self.initialiseplayer([0,60])
+            player_init.main([0,60])
             self.qrcondHL()
 
  

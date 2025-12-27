@@ -28,11 +28,11 @@ def main(self,collisionbox,rail,collisionboxtype) :
     raildir = "r"
     rail = 0
     if "rail" in collisionboxtype:
-        self.sp("homing",0)
+        # self.sp("homing",0)
         self.bailable = 0
         om.speed = univars.func.lerp(om.speed,1,5,roundto=2)
         self.sp("slinging",0)
-        # self.sp("jumpable",True)
+        self.sp("jumpable",True)
         self.killtimer("rotate")
         self.sp("rotoffset",0)
         
@@ -50,71 +50,13 @@ def main(self,collisionbox,rail,collisionboxtype) :
             railrot = railpiece.rot + 45
             
             
-        #Rail Transitision 
-        # print( self.lastrail  == self.rail)
-        if not self.lastrail  == rail or not self.lastdirrail == railrot:
-            
-            # self.print("WWWWAAAAAA")
-            #entervel = magnitude of current vel
-            self.sp("entervel",univars.func.dist([0,0],self.gp("act_vel")) )
-
-
-            
-            #get players joystick direction as VECTOR2
-            axisvec = pygame.math.Vector2(self.key["x"],self.key["y"])
-            if axisvec.length() == 0:
-                axisvec = pygame.math.Vector2(self.gp("des_vel",0),self.gp("des_vel",1))
-            if axisvec.length() == 0:
-                axisvec = pygame.math.Vector2(1,0)
-            axisvec = axisvec.normalize()
-
-
-
-            # get rail direction as VECTOR2
-            railvec = pygame.Vector2()
-            railvec.from_polar((1,railrot))
-
-
-
-            #See if direction is "L"  or  "R"   using dot-product
-            if axisvec.dot(railvec) > 0:
-                raildir = 1
-                self.sp("dirforrail","l")
-            else:
-                raildir = -1
-                self.sp("dirforrail","r")
-
-
-
-
-            #Go to right postition based on wether its rail-diag or rail
-            if railpiece.name == "rail":
-                om.objects["player"]["pos"] = [
-                                                collisionbox["inst"][collisionboxtype.index("rail")].realpos[0]  -  (math.sin((railrot/180) * math.pi) * 5) ,
-                                                collisionbox["inst"][collisionboxtype.index("rail")].realpos[1]  -  (math.cos((railrot/180) * math.pi) * 5) 
-                                            ]
-            elif railpiece.name == "rail-diag":
-                om.objects["player"]["pos"] = [
-                                                collisionbox["inst"][collisionboxtype.index("rail")].realpos[0]  -  (math.sin((railrot/180) * math.pi) * 20) ,
-                                                collisionbox["inst"][collisionboxtype.index("rail")].realpos[1]  -  (math.cos((railrot/180) * math.pi) * 20) 
-                                            ]
-                
-                
-                
-            #BOOST IN THE RAIL DIRECTION
-            motivate = [  300 * math.cos((railrot/180) * math.pi) * raildir,300   * math.sin((railrot/180) * math.pi) * raildir ]
-            self.print("MOTIVATE")
-            om.translate(self,"player",motivate,usedt=1)
-
-        
+        if not self.gp("lastontherail"):
+            # print()
+            self.sp("entervel",univars.func.dist([0,0],self.gp("act_vel")))
         
         
         #increase speed
         self.sp("entervel",abs(self.gp("entervel") + (2*self.dt) ))
-        # self.sp("entervel",self.gp("entervel") + (2*self.dt) )
-        
-        
-        # self.sp("entervel",1)
 
         
         playerpos = om.objects["player"]["pos"]
@@ -146,8 +88,6 @@ def main(self,collisionbox,rail,collisionboxtype) :
         #LIMIT THE SPEED
         if self.gp("entervel") > 220:
             self.sp("entervel",220)
-        # if self.gp("entervel") < -220:
-        #     self.sp("entervel",-220)
 
 
 
@@ -164,46 +104,46 @@ def main(self,collisionbox,rail,collisionboxtype) :
 
         
         
-        # if not self.key["jump"]:
-        #     if not railrot == 0:
-        #         playerpos[1] = -1 * (     ( (railrot/45)*playerpos[0] )  + (  (railpiece.realpos[0]*(railrot/45)) + railpiece.realpos[1]          )                      )
-        #     else:
-        #         playerpos[1] = railpiece.realpos[1]
+        if not self.key["jump"]:
+            if not (railrot == 0 or railrot == 90 or railrot == -90 or railrot == 180 or railrot == -180):
+                playerpos[1] = -1 * (     ( (railrot/45)*playerpos[0] )  + (   (-1* railpiece.realpos[1]) -    (railpiece.realpos[0]*(railrot/45))       )                      )
+            elif railrot == 0:
+                playerpos[1] = railpiece.realpos[1]
+            elif railrot == 90:
+                playerpos[0] = railpiece.realpos[0]
+            elif railrot == -90:
+                playerpos[0] = railpiece.realpos[0]
+            elif railrot == 180:
+                playerpos[1] = railpiece.realpos[1]
+            elif railrot == -180:
+                playerpos[1] = railpiece.realpos[1]
+                
                 
                 
             
                 
-        #     om.objects["player"]["pos"] = playerpos
+            om.objects["player"]["pos"] = playerpos
             
             
-        #     # if railpiece.name == "rail":
-        #     #     om.translate(
-        #     #             self,"player",vector=
-        #     #                                 [
-        #     #                                       -1 * (math.sin((railrot/180) * math.pi) * 5) ,
-        #     #                                       -1 * (math.cos((railrot/180) * math.pi) * 5) 
-        #     #                                 ],
-        #     #                                 usedt=0
-        #     #                 )
+            if railpiece.name == "rail":
+                om.translate(
+                        self,"player",vector=
+                                            [
+                                                  -1 * (math.sin((railrot/180) * math.pi) * 5) ,
+                                                  -1 * (math.cos((railrot/180) * math.pi) * 5) 
+                                            ],
+                                            usedt=0
+                            )
                 
-        #     # elif railpiece.name == "rail-diag":
-        #     #     om.translate(
-        #     #             self,"player",vector=
-        #     #                                 [
-        #     #                                       -1 * (math.sin((railrot/180) * math.pi) * 20) ,
-        #     #                                       -1 * (math.cos((railrot/180) * math.pi) * 20) 
-        #     #                                 ],
-        #     #                                 usedt=0
-        #     #                 )
-                
-        #     #     print("??//////")
-        #     #     print([
-        #     #                                       -1 * (math.sin((railrot/180) * math.pi) * 20) ,
-        #     #                                       -1 * (math.cos((railrot/180) * math.pi) * 20) 
-        #     #          ])
-        #     #     print(om.objects["player"]["pos"])
-        #     #     print("??//////")
-
+            elif railpiece.name == "rail-diag":
+                om.translate(
+                        self,"player",vector=
+                                            [
+                                                  -1 * (math.sin((railrot/180) * math.pi) * 50) ,
+                                                  1 * (math.cos((railrot/180) * math.pi) * 50) 
+                                            ],
+                                            usedt=0
+                            )
 
 
         if self.key["jump"]:
@@ -245,5 +185,6 @@ def main(self,collisionbox,rail,collisionboxtype) :
         
         
         self.railrot = railrot
-        self.raildir = raildir
         self.lastrail = rail
+        self.raildir = raildir
+        

@@ -119,11 +119,11 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "railworld"
+map = "finale"
 startstate = "debugame"
 startshaderstate = 0
 bakeonreload = 0
-showdebugonstart = 1
+showdebugonstart = 0
 profile = 0
 safemode = 0
 startuistate = "def"
