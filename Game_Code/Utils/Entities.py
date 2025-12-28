@@ -219,13 +219,6 @@ def qrcond(id, info,self):
     """
         Runs compiled edit.py file
     """
-    
-
-
-
-
-
-        
     if info["type"] in self.entity_type:
 
 

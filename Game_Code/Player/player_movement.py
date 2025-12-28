@@ -192,7 +192,7 @@ def main(self):
 
     
     
-    for ty in ["HURT:laser"]:
+    for ty in ["HURT_laser"]:
         if ty in [ i.info["type"] for i in smallcollisionbox["obj"]]:
             if self.gp("homing") == 0:
                 if not self.isthere("inv"):

@@ -356,11 +356,19 @@ class GameManager():
 		self.publicvariables["showallhidden"] = sm.showall
 		self.smstate = sm.state
 
-	def send(self,header,message):
+
+
+
+
+	def send(self,header,message,frames = 1):
 		"""
-			sends a message only lasts on that frame
+			sends a message 
+
+			:param header: message name
+			:param message: info
+			:param frame: def = 1,how long it lasts (1) = gone by frame end
       	"""
-		self.messages[header] = message
+		self.messages[header] = {"message":message,"frame":frames}
 
   
 		if header in self.reactions.keys():
@@ -565,10 +573,49 @@ class GameManager():
 
 	def update(self):			
 		pass
-				
+			
+	def initial(self):
+		"""
+			calles the in - engine and in game reload funcions
+		"""
+		self.defs()
+		
+		self.onreload()
+		
+	def isthere(self,name):
+		"""
+			if timer is currently there
+		"""
+		return name in self.timers.keys()
+
+	def deltimer(self,name):
+		"""
+			removes a timer if it exists
+		"""
+		if name in self.timers.keys():
+			self.timers.pop(name)
+
+	def onreload(self):
+		pass
+
+	
+   
+   
+   
+   
+   
+   
+   	
 	def end(self):
 		renderwid = (((((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983)) * 1980) + 200
-		self.messages = {}
+  
+  
+		keys = list(self.messages.keys())
+		for message in keys:
+			self.messages[message]["frame"] -= 1
+			if self.messages[message]["frame"] < 1:
+				self.messages.pop(message)
+				
 		
 		self.clock.tick(self.publicvariables["maxfps"])
 		# univars.screen.blit(pm.screen,(univars.screen_w/2,univars.screen_h/2))
@@ -611,38 +658,6 @@ class GameManager():
 		
 		# bgframe_tex.release()
 
-	def initial(self):
-		"""
-			calles the in - engine and in game reload funcions
-		"""
-		self.defs()
-		
-		self.onreload()
-		
-	def isthere(self,name):
-		"""
-			if timer is currently there
-		"""
-		return name in self.timers.keys()
-
-	def deltimer(self,name):
-		"""
-			removes a timer if it exists
-		"""
-		if name in self.timers.keys():
-			self.timers.pop(name)
-
-	def onreload(self):
-		pass
-
-	
-   
-   
-   
-   
-   
-   
-   
    
    
    
