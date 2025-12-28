@@ -68,21 +68,76 @@ def main(self,collisionbox,ground):
         self.key["jump"] = 1
         self.sp("act_vel",100,1)
         self.sp("des_vel",100,1)
-        
+     
+            
+    
+    #BAIL LOGIC
+    if len(collisionbox["inst"] ) >0:
+        if self.isthere("VULNERABLE"):
+            self.bailable = 1
+            self.prevtricks = []
+            self.deltimer("VULNERABLE")
+   
     if ground:
         if self.bailable:
             self.wait("BAIL",0.6)
             self.sp("dashmeter",0)
             self.bailable = 0
             
-            
     
+    
+    #TRICK LOOKS
+    if self.isthere("trick1")and self.isthere("VULNERABLE"):
+        om.objects["playersprite"]["sn"] = 12
+        # self.boardoffset[0] = self.unilerp(self.boardoffset[0],math.sin((rot/180) * math.pi) * 0,4)
+        self.boardoffset[1] += 10 * self.dt
+        self.playeroffset[1] -= 10 * self.dt
+        om.objects["skateboard"]["rot"] = 0
+    if self.isthere("trick2")and self.isthere("VULNERABLE"):
+        om.objects["playersprite"]["sn"] = 0
+        
+        self.playeroffset[1] = self.unilerp(self.playeroffset[1],-40,8)
+        om.objects["playersprite"]["sn"] = 13
+        
+        if self.key["x"] > 0:
+            om.objects["skateboard"]["rot"] = 45
+            self.boardoffset[0] = self.unilerp(self.boardoffset[0],10,3)
+        elif self.key["x"] < 0:
+            om.objects["skateboard"]["rot"] = -45
+            self.boardoffset[0] = self.unilerp(self.boardoffset[0],-10,3)
+        else:
+            self.boardoffset[1] = self.unilerp(self.boardoffset[1],10,5)
+            self.playeroffset[1] = self.unilerp(self.playeroffset[1],-10,5)
 
-    if len(collisionbox["inst"] ) >0:
-        if self.isthere("VULNERABLE"):
-            self.bailable = 1
-            self.prevtricks = []
-            self.deltimer("VULNERABLE")
+        om.playanim(self.dt,"skateboard","kickflip",1,speed=3)
+        # om.objects["playersprite"]["rot"] = 180
+    elif self.isthere("trick3")and self.isthere("VULNERABLE"):
+        
+        om.playanim(self.dt,"skateboard","kickflip",1,speed=3)
+        om.objects["playersprite"]["sn"] = 13
+        
+        self.playeroffset[1] = self.unilerp(self.playeroffset[1],-50,8)
+        self.boardoffset[1] = self.unilerp(self.boardoffset[1],50,8)
+        
+        if self.key["x"] > 0:
+            om.objects["skateboard"]["rot"] = 0
+            # self.playeroffset[0] = self.unilerp(self.playeroffset[0],30,3)
+            
+            # self.boardoffset[0] = self.unilerp(self.boardoffset[0],30,3)
+        else :
+            om.objects["skateboard"]["rot"] =0
+            # self.playeroffset[0] = self.unilerp(self.playeroffset[0],-30,3)
+            
+            # self.boardoffset[0] = self.unilerp(self.playeroffset[0],-30,3)
+
+        # om.playanim(self.dt,"skateboard","kickflip",1,speed=3)
+        # om.objects["playersprite"]["rot"] = 180
+    else:
+        
+        self.boardoffset[0] = self.unilerp(self.boardoffset[0],0,4)
+        self.boardoffset[1] = self.unilerp(self.boardoffset[1],0,4)
+        self.playeroffset[0] = self.unilerp(self.playeroffset[0],0,4)
+        self.playeroffset[1] = self.unilerp(self.playeroffset[1],0,4)
 
         
     

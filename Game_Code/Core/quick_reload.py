@@ -4,7 +4,6 @@ import Managers.univars as univars
 
 
 
-
 em = Gamemananager.em
 tm = Gamemananager.tm
 fm = Gamemananager.fm
@@ -18,11 +17,13 @@ um = Gamemananager.um
 bg = Gamemananager.bg
 pm = Gamemananager.pm
 
-def main(val:str,index=None):
-    """
-    gets the value a players variable
-    """
-    if index == None:
-        return om.get_value("player",val)
-    else:
-        return om.get_value("player",val)[index]
+
+def main(self,Player):
+    # self.qrcond()
+    if "game" == self.states:
+        Player.init(self,cm.getcam("def","pos"))
+    if "Editor" == self.states:
+        om.removeid("enemyzoom")
+        cm.setcond("def","pos",cm.getcam("playercam","pos"))
+        cm.setcond("def","size",cm.getcam("playercam","size"))
+

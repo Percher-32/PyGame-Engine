@@ -11,6 +11,12 @@ for joystick in joysticks:
 with open(os.path.join("Saved/ps4_keys.json"), "r+") as file:
     button_keys = json.load(file)
 analog_keys =  {0:0,1:0,2:0,3:0,4:0,5:0}
+
+
+
+
+
+
 class event_manager:
 	def __init__(self):
 		self.code = 0
@@ -117,7 +123,6 @@ class event_manager:
 				self.running = False
 				with open("Saved/Spritecache.json","w") as file:
 					json.dump(inst.dataspritecache,file)
-				exit()
 
 
 			if event.type == pygame.KEYDOWN:

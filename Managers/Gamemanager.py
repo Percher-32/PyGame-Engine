@@ -2,11 +2,13 @@ import pygame
 import Managers.Cameramod as Cameramod
 import Managers.Textmanager as Textmanager
 import Managers.Cammanager as Cammanager
+import cProfile
 import Managers.event_manager as event_manager
 import Managers.funcs as funcs
 import math
 import Managers.framemanager as framemanager
 import Managers.objectmanager as objectmanager
+import pstats
 import Managers.Tiled as Tiled
 import copy
 import Managers.univars as univars
@@ -385,23 +387,22 @@ class GameManager():
     
    
    
-   
+	def func_run(self):
+		if univars.safemode:
+			try:
+				self.act_run()
+			except Exception as error:
+				print(error)
+				pygame.quit()
+		else:
+			self.act_run()
 
-
-
-
-
-	def Run(self):
+    
+	def act_run(self):
 		self.commence()
 		self.initial()
-		# inumthread = threading.Process(target=self.inum)
-		# backgroundthread = threading.Thread(target=self.backgroundupdate)
-		# uithread = threading.Thread(target=self.uiunpdate)
-		# backgroundthread.start()
-		# uithread.start()
 		self.dt = 1
 		
-		# inumthread.start()
 		while em.running: 
 			self.start()   
 			if not Tiled.loadingmap:
@@ -605,7 +606,8 @@ class GameManager():
 		self.dt = fm.dt
 		
 		self.inputdetect()
-		self.frame_manager.next(self.publicvariables["maxfps"])
+		if em.running:
+			self.frame_manager.next(self.publicvariables["maxfps"])
 		
 		# bgframe_tex.release()
 
@@ -633,3 +635,28 @@ class GameManager():
 	def onreload(self):
 		pass
 
+	
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+
+	def Run(self):
+		if univars.profile == 1:
+			with cProfile.Profile() as profile:
+				self.func_run()
+    
+			results = pstats.Stats(profile)
+			results.sort_stats(pstats.SortKey.TIME)
+			results.print_stats()
+				
+		else:
+			self.func_run()
+			
+    
