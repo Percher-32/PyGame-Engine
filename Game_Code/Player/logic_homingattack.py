@@ -116,6 +116,7 @@ def main(self,collisionlisttype,selected_obj,axis,ground):
 
 
                     om.set_value(self.gp("target").name,"throwvel",actmult)
+                    self.print("SET")
                     self.wait("#Throwing" + self.gp("target").name,3,0)
                     self.sp("dashmeter",self.gp("dashmeter") + 30)
 
@@ -161,6 +162,9 @@ def main(self,collisionlisttype,selected_obj,axis,ground):
                     self.sp("des_vel",0,0)
                     self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
                     self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
+                    
+                    
+                    
         if self.gp("target").info["type"] == "goal":
             if not self.isthere("show-score"):
                 # self.print(    "attempt" + str(self.timesdone) + ":" + um.elements["Speed-timer"]["text"]     )
@@ -178,6 +182,7 @@ def main(self,collisionlisttype,selected_obj,axis,ground):
 
                 self.wait("show-score",7)
             self.sp("homing",0)
+            
         if self.gp("target").info["type"] in ["omnispring","turret"]:
             if self.key["secondary"]:
                 self.sp("des_vel",[0,0])

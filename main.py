@@ -141,7 +141,7 @@ class Game(Gamemananager.GameManager):
 		self.boardoffset = [0,0]
 		self.playeroffset = [0,0]
 		self.camzoom = 0.3
-		self.objrange = 6000
+		self.objrange = 1000
 		self.bailable = 0
 		self.skatedetach = 0
 		self.lookaheady = 0

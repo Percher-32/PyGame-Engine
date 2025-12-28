@@ -31,6 +31,7 @@ def main(self,collisionboxtype,collisionbox,slanted):
             # if not ground:
             index = collisionboxtype.index("slantr")
             om.objects["player"]["pos"] = [collisionbox["inst"][index].realpos[0] - 20,collisionbox["inst"][index].realpos[1] - 20]
+            # self.sp("des_vel",abs(self.gp("des_vel",1)) * -0.3,0)
             self.sp("act_vel",[  self.gp("act_vel")[0]    ,    self.gp("act_vel")[0]   ])
             self.sp("des_vel",[  self.gp("des_vel")[0]    ,    self.gp("des_vel")[0]   ])
             self.slantspeed = abs(self.gp("des_vel",0))
@@ -65,6 +66,7 @@ def main(self,collisionboxtype,collisionbox,slanted):
             index = collisionboxtype.index("slantl")
             # if not ground2:
             om.objects["player"]["pos"] = [collisionbox["inst"][index].realpos[0] +16,collisionbox["inst"][index].realpos[1] -20]
+            # self.sp("des_vel",-1 * abs(self.gp("des_vel",1)) * -0.3,0)
             self.sp("act_vel",[  self.gp("act_vel")[0] * 1.1    ,    -1 * self.gp("act_vel")[0] * 1.1   ])
             self.sp("des_vel",[  self.gp("des_vel")[0] * 1.1    ,    -1 * self.gp("des_vel")[0] * 1.1   ])
             self.slantspeed = abs(self.gp("des_vel",0))

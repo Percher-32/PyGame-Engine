@@ -65,7 +65,7 @@ def logic_movement():
         moves the entity
     """
     if not self.isthere("#Throwing" + str(id)):      
-        om.translate(self,id,[om.get_value(id,"act_vel")[0]*st * om.speed,om.get_value(id,"act_vel")[1]*st * om.speed],usedt=0)
+        om.translate(self,id,[get("act_vel",0)*st * om.speed,get("act_vel",1)*st * om.speed],usedt=0)
 
         rotvec = pygame.Vector2()
         set("orbitrot",om.get_value(id,"orbitrot") + om.get_value(id,"rotspeed")/20)
@@ -97,12 +97,14 @@ def logic_throwing():
         if not get("throwvel") == 0:
             # print(self.gp("throwaxis"))
             set("act_vel",get("throwvel"))
-            set("HP",get("HP") - (10*st)/10)
             set("des_vel",get("throwvel"))
+            om.translate(self,id,[get("act_vel",0)*st * om.speed,get("act_vel",1)*st * om.speed],usedt=0)
+            set("HP",get("HP") - (10*st)/10)
 
 
 
             set("throwvel",[get("throwvel")[0]/1.0000005,get("throwvel")[1]/1.0000005 - 1])
+        
 
 
         col = om.collide(id,0,cam,extrax=500,extray=500)["obj"]
@@ -161,6 +163,7 @@ def logic_vel_update():
         move act_vel closer to des_vel by using var:speed
     """
     set("act_vel",self.customunilerp(get("act_vel"),get("des_vel"),get("speed"),om.speed,st))
+    self.println(get("act_vel"),10)
 
 def logic_hp():
     """
@@ -179,8 +182,13 @@ def logic_damage():
     """
     self.damageable(id,20,functhrow=partial(skated,id = id)  ,func=partial(hit,id = id)    )
 
-
-
+def logic_out_of_bounds():
+    if id in om.objects.keys():
+        if not univars.func.dist(om.objects[id]["pos"],om.objects["player"]["pos"]) < 1600:
+            if not self.isthere("#Throwing" + str(id)):
+                om.objects[id]["pos"] = get("master_pos")
+            else:
+                om.removeid(id)
 
 
 
@@ -208,32 +216,29 @@ def main(self,id,info,st):
     
     if "player" in om.values.keys():
         if id in om.values.keys() and "act_vel" in om.values["player"].keys():
-           
-            
-            
-            
-            if univars.func.dist(om.objects[id]["pos"],om.objects["player"]["pos"]) < 1600:
+            in_range = univars.func.dist(om.objects[id]["pos"],om.objects["player"]["pos"]) < 1600 
+            if in_range:
                 logic_water()
+                
+                logic_laser()
                 
                 logic_movement()
                 
-                logic_throwing()
-
                 logic_damage()
 
                 logic_flash()
 
                 logic_knock()
-
-                logic_laser()
+                
+                logic_throwing()
+                
+                logic_vel_update()
 
                 logic_hp()
+            else:
+                logic_out_of_bounds()
 
 
-
-
-            elif  not self.isthere("#Throwing" + str(id)):
-                om.objects[id]["pos"] = get("master_pos")
                 
                 
                 
