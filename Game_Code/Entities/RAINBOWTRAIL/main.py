@@ -19,9 +19,12 @@ bg = Gamemananager.bg
 pm = Gamemananager.pm
 
 def main(self,id,info,st):
-    pass
-
-
+    if om.objects[id]["alpha"] < 10:
+        om.removeid(id)
+    else:
+        om.objects[id]["alpha"] -= 5 * st
+        # om.lights.pop(id + "[obj-light]"+ "FIREBALL")
+        om.lighttoenemy(id,"l1",color=om.get_value(id,"col"),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=om.objects[id]["alpha"]/10)
 
 
 

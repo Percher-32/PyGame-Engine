@@ -18,17 +18,19 @@ um = Gamemananager.um
 bg = Gamemananager.bg
 pm = Gamemananager.pm
 
-def main(self,id,info):
-    om.objects[id]["type"] = "omnispring"
-    info["type"] = "omnispring"
-    
-    
-    
-    
+def main(self,id,info,st):
+    pass
+
+
+
 self = "<REMOVE>"
 id = "<REMOVE>"
 info = "<REMOVE>"
+st = "<REMOVE>"
 
 
 
-main(self,id,info)
+main(self,id,info,st)
+
+
+FLAG = "<PASS>"

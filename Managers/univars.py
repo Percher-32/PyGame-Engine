@@ -76,6 +76,12 @@ func = funcs.func(grandim)
 
 lumptype = {"grass":"ground","dirt":"ground","slantl":"slantl","slantr":"slantr","slantdecor":"ground","rail":"rail","rail-diag":"rail"}
 
+swaptypes = {"target":"omnispring","enemy":"enemy-L"}
+"""
+    all objects with the name (key)
+    will have thier type set to type (Vale)
+"""
+
 sizeoffsets = {}
 
 instables = ["dirt","grass","def","slantl","slantr","slantlbot","slantrbot","rail","rail-diag"]
@@ -128,7 +134,7 @@ profile = 0
 safemode = 0
 startuistate = "def"
 showinput = 0
-dontsavevar = ["player","easybot","HURT:laser","HURT:biglaser"]
+dontsavevar = ["player","easybot","HURT_laser","HURT_biglaser"]
 dontsaveobjtype = ["HPBAR"]
 
 

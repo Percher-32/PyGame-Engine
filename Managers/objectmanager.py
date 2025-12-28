@@ -950,6 +950,9 @@ class object_manager:
 				self.tracker = ''.join(random.choices(string.ascii_letters + string.digits, k=20))
 
 			self.tracker = str(self.tracker)
+   
+			if sprites in univars.swaptypes.keys():
+				type = univars.swaptypes[sprites]
 
 
 			
