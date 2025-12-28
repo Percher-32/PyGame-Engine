@@ -59,4 +59,12 @@ def main(self,id,info):
     self.createhpbar(id,1,[0,30])
     
     
-main("<self>","<id>","<info>")
+    
+    
+self = "<REMOVE>"
+id = "<REMOVE>"
+info = "<REMOVE>"
+
+
+
+main(self,id,info)

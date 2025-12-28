@@ -22,4 +22,13 @@ def main(self,id,info):
     pass
     
     
-main("<self>","<id>","<info>")
+    
+    
+    
+self = "<REMOVE>"
+id = "<REMOVE>"
+info = "<REMOVE>"
+
+
+
+main(self,id,info)

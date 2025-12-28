@@ -220,4 +220,14 @@ def main(self,id,info,st):
                 
                 
                 
-main("<self>","<id>","<info>","<st>")
+                
+                
+
+self = "<REMOVE>"
+id = "<REMOVE>"
+info = "<REMOVE>"
+st = "<REMOVE>"
+
+
+
+main(self,id,info,st)

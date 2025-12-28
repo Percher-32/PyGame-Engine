@@ -40,4 +40,15 @@ def main(self,id,info):
     om.set_value(id,"sr",om.objects[id]["rot"])
     
     
-main("<self>","<id>","<info>")
+    
+    
+    
+    
+    
+self = "<REMOVE>"
+id = "<REMOVE>"
+info = "<REMOVE>"
+
+
+
+main(self,id,info)

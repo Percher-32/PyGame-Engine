@@ -1,6 +1,7 @@
 import Managers.Gamemanager as Gamemananager
 import Managers.univars as univars
 import math
+import random
 
 
 
@@ -34,14 +35,13 @@ def main(self,id,info,st):
                     (64 * math.cos(om.objects[id]["rot"]/180 * math.pi)) ]
 
         addon = [-40,-40]
-        # self.println(om.objects[id]["rot"],10)
         pm.particlespawnbluprint([om.objects[id]["pos"][0] + addon[0],om.objects[id]["pos"][1] + addon[1] ],"exp2",initvel=[  math.cos(om.objects[id]["rot"]/180 * math.pi) * om.get_value(id,"vel") * 0 , math.sin(om.objects[id]["rot"]/180 * math.pi) * om.get_value(id,"vel") * 0 ])
         om.objects[id]["rot"] += om.get_value(id,"rad")
         om.set_value(id,"vel",om.get_value(id,"vel") + (om.get_value(id,"accel")) * st)
         if om.get_value(id,"vel") > om.get_value(id,"top"):
             om.set_value(id,"vel",om.get_value(id,"top"))
-        om.objects[id]["pos"][0] += math.cos(om.objects[id]["rot"]/180 * math.pi) * om.get_value(id,"vel") * st
-        om.objects[id]["pos"][1] -= math.sin(om.objects[id]["rot"]/180 * math.pi) * om.get_value(id,"vel") * st
+        om.objects[id]["pos"][0] += math.cos(om.objects[id]["rot"]/180 * math.pi) * om.get_value(id,"vel") * st + random.randint(-20,20)
+        om.objects[id]["pos"][1] -= math.sin(om.objects[id]["rot"]/180 * math.pi) * om.get_value(id,"vel") * st + random.randint(-20,20)
 
 
         if len(col["inst"]) > 0 and om.get_value(id,"timeon") > 50 or om.get_value(id,"timer") < 0:
@@ -60,4 +60,14 @@ def main(self,id,info,st):
 
 
 
-main("<self>","<id>","<info>","<st>")
+
+
+
+self = "<REMOVE>"
+id = "<REMOVE>"
+info = "<REMOVE>"
+st = "<REMOVE>"
+
+
+
+main(self,id,info,st)

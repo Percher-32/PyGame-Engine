@@ -23,4 +23,12 @@ def main(self,id,info):
     info["type"] = "omnispring"
     
     
-main("<self>","<id>","<info>")
+    
+    
+self = "<REMOVE>"
+id = "<REMOVE>"
+info = "<REMOVE>"
+
+
+
+main(self,id,info)
