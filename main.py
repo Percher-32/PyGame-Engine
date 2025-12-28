@@ -84,7 +84,13 @@ class Game(Gamemananager.GameManager):
 		it inherits the in-engine properties
 	"""
 	def __init__(self,screen,fm):
+     
+  
+   
+   
+		
 		super().__init__(screen,fm)
+		self.publicvariables["mood"] = "sunset"
 		self.attackerbox = {"obj":[]}
 		self.typesofhoming = ["enemy-L","omnispring","goal","turret","rocket","easybot","HURT:biglaser","spring"]
 		self.ingametime = 0
@@ -95,7 +101,6 @@ class Game(Gamemananager.GameManager):
 		self.bailable = 0
 		self.skatedetach = 0
 		self.publicvariables["gamespeed"] = 1
-		self.publicvariables["mood"] = "sunset"
 		self.publicvariables["showater"] = 1
 		self.publicvariables["waterh"] = -(64 * 0.4)
 		self.lookaheady = 0
@@ -113,20 +118,6 @@ class Game(Gamemananager.GameManager):
   
   
   
-  
-		self.entity_type = os.listdir("Game_Code/Entities")
-		self.entity_type = [entity for entity in self.entity_type if not ".py" in entity]
-  
-		self.entity_codes = {}
-		for entity in self.entity_type:
-			init_code = None
-			main_code = None
-			with open(f"Game_Code/Entities/{entity}/init.py","r") as init:
-				init_code = init.read()
-			with open(f"Game_Code/Entities/{entity}/main.py","r") as main:
-				main_code = main.read()
-
-			self.entity_codes[entity] = {"init":init_code,"main":main_code}
   
 
 
@@ -452,12 +443,35 @@ class Game(Gamemananager.GameManager):
 
 			om.set_value(id,"birds",birbs)
 
-	def parse(self,sr:str,id,info):
-		sr.replace("id",id)
-		sr.replace("info",str(info))
+	def parse_init(self,sr:str,id,info):
+		sr = sr.replace('"<id>"',f"'{id}'")
+		sr = sr.replace('"<info>"',str(info))
+		sr = sr.replace('"<self>"',"self")
 		return sr
 
+	def parse_main(self,sr:str,id,info,st):
+		sr = sr.replace('"<id>"',f"'{id}'")
+		sr = sr.replace('"<info>"',str(info))
+		sr = sr.replace('"<st>"',str(st))
+		sr = sr.replace('"<self>"',"self")
+		return sr
+
+	def entity_list_create(self):
 		
+		self.entity_type = os.listdir("Game_Code/Entities")
+		self.entity_type = [entity for entity in self.entity_type if not ".py" in entity]
+
+  
+		self.entity_codes = {}
+		for entity in self.entity_type:
+			init_code = None
+			main_code = None
+			with open(f"Game_Code/Entities/{entity}/init.py","r") as init:
+				init_code = init.read()
+			with open(f"Game_Code/Entities/{entity}/main.py","r") as main:
+				main_code = main.read()
+
+			self.entity_codes[entity] = {"init":init_code,"main":main_code}
 
 	def oncreate(self,id,info):
 		if info["name"] == "target":
@@ -468,46 +482,6 @@ class Game(Gamemananager.GameManager):
 		if info["name"] == "enemy":
 			om.objects[id]["type"] = "enemy-L"
 			info["type"] = "enemy-L"
-
-		# if info["type"] == "enemy-L":
-		# 	# om.objects["sizen"] = 0.5
-		# 	# om.rescale(id,sizen=[0.5,0.5])
-		# 	om.objects[id]["sizen"] = [0.8,0.8]
-
-		# 	om.set_value(id,"master_pos",info["pos"])
-		# 	om.set_value(id,"canhome",1)
-		# 	om.set_value(id,"state","idle")
-		# 	om.set_value(id,"HP",100)
-		# 	om.set_value(id,"des_vel",[0,0])
-		# 	om.set_value(id,"act_vel",[0,0])
-		# 	om.set_value(id,"rotspeed",random.randint(30,60))
-		# 	pl0 = random.randint(15,40)
-		# 	om.set_value(id,"pl0",pl0)
-		# 	om.set_value(id,"side",random.randint(0,1))
-		# 	om.set_value(id,"pl1",pl0 + random.randint(40,80) )
-		# 	om.set_value(id,"level",0 )
-		# 	om.set_value(id,"speed",random.randint(2,10))
-		# 	om.set_value(id,"superspeed",random.randint(5,5))
-		# 	om.set_value(id,"yfac",random.randint(-100,0))
-		# 	om.set_value(id,"spacing",random.randint(200,200))
-		# 	om.set_value(id,"orbitrot",0)
-		# 	om.set_value(id,"lasttogoto",info["pos"])
-		# 	om.set_value(id,"act_vel",[0,0])
-		# 	om.set_value(id,"vel",[0,0])
-		# 	om.set_value(id,"tarvel",[0,0])
-		# 	om.set_value(id,"clipspeed",5)
-		# 	om.set_value(id,"timer",5)
-		# 	om.set_value(id,"maxtimer",random.randint(10 * 2,15 * 2))
-		# 	om.set_value(id,"flashtimer",0)
-
-
-		# 	if self.publicvariables["mood"] == "night":
-		# 		om.lighttoenemy(id,"l1",color=(255,0,255),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=20)
-		# 	elif self.publicvariables["mood"] == "sunset":
-		# 		om.lighttoenemy(id,"l1",color=(255,0,255),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=10)
-
-
-		# 	self.createhpbar(id,1,[0,30])
 
 		if info["type"] == "omnispring":
 			om.set_value(id,"canhome",1)
@@ -536,27 +510,27 @@ class Game(Gamemananager.GameManager):
 			om.objects[id]["layer"] = 0
 			om.objects[id]["alpha"] = 100
 
-		if info["type"] == "rocket":
+		# if info["type"] == "rocket":
 
-			om.objects[id]["sizen"] = [2,2]
+		# 	om.objects[id]["sizen"] = [2,2]
 
-			if not id in om.values.keys():
-				om.set_value(id,"vel",1)
-				om.set_value(id,"accel",1)
-				om.set_value(id,"top",40)
+		# 	if not id in om.values.keys():
+		# 		om.set_value(id,"vel",1)
+		# 		om.set_value(id,"accel",1)
+		# 		om.set_value(id,"top",40)
 
-				om.set_value(id,"rad",-0.2)
-				om.set_value(id,"maxtimer",20)
+		# 		om.set_value(id,"rad",-0.2)
+		# 		om.set_value(id,"maxtimer",20)
 
 
 
-			om.set_value(id,"canhome",1)
-			om.set_value(id,"timer",om.get_value(id,"maxtimer"))
-			om.set_value(id,"timeon",0)
-			om.set_value(id,"active",0)
-			om.set_value(id,"exp",0)
-			om.set_value(id,"sp",om.objects[id]["pos"])
-			om.set_value(id,"sr",om.objects[id]["rot"])
+		# 	om.set_value(id,"canhome",1)
+		# 	om.set_value(id,"timer",om.get_value(id,"maxtimer"))
+		# 	om.set_value(id,"timeon",0)
+		# 	om.set_value(id,"active",0)
+		# 	om.set_value(id,"exp",0)
+		# 	om.set_value(id,"sp",om.objects[id]["pos"])
+		# 	om.set_value(id,"sr",om.objects[id]["rot"])
 
 		if info["type"] == "cluster":
 
@@ -599,24 +573,25 @@ class Game(Gamemananager.GameManager):
 			om.set_value(id,"active",0)
 			om.set_value(id,"vel",[0,0])
 
-		for entity in self.entity_type:
-			parsed = self.parse(self.entity_codes[entity]["init"],id,info)
-			print(parsed)
-			exec(parsed)
-			# main(id,info)
 
+
+  
+
+		if not hasattr(self,"entity_type"):
+			self.entity_list_create()
+   
+		if info["type"] in self.entity_type:
+			parsed = self.parse_init(self.entity_codes[info["type"]]["init"],id,info)
+			exec(parsed)
 
 	def cond(self,id,info,st):
 		"""id -> the id   info -> the info for the id"""
-		if info["type"] == "enemy-L" and "player" in om.values.keys():
-			self.trianglebot(id,info,st)
 
 		if info["type"] == "HURT:laser":
 			self.laserbeam(id,info,st)
 
 		if info["type"] == "HURT:biglaser":
 			self.biglaserbeam(id,info,st)
-
 
 		if info["type"] == "HPBAR":
 			self.hpbar(id,info)
@@ -650,9 +625,6 @@ class Game(Gamemananager.GameManager):
 				# om.lights.pop(id + "[obj-light]"+ "FIREBALL")
 				om.lighttoenemy(id,"l1",color=om.get_value(id,"col"),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=om.objects[id]["alpha"]/10)
 
-		if info["type"] == "rocket":
-			self.rocket(id,info,st)
-
 		if info["type"] == "easybot":
 			self.easybot(id,info,st)
 
@@ -664,6 +636,10 @@ class Game(Gamemananager.GameManager):
 		if info["type"] == "bird":
 			self.bird(id,info,st)
 			# self.print("WERTYUI")
+
+		if info["type"] in self.entity_type:
+			parsed = self.parse_main(self.entity_codes[info["type"]]["main"],id,info,st)
+			exec(parsed)
 
 
 	def bird(self,id,info,st):

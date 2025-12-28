@@ -50,7 +50,6 @@ def main(self,id,info):
     om.set_value(id,"maxtimer",random.randint(10 * 2,15 * 2))
     om.set_value(id,"flashtimer",0)
 
-
     if self.publicvariables["mood"] == "night":
         om.lighttoenemy(id,"l1",color=(255,0,255),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=20)
     elif self.publicvariables["mood"] == "sunset":
@@ -58,3 +57,6 @@ def main(self,id,info):
 
 
     self.createhpbar(id,1,[0,30])
+    
+    
+main("<self>","<id>","<info>")

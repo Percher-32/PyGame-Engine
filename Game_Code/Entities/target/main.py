@@ -18,5 +18,8 @@ um = Gamemananager.um
 bg = Gamemananager.bg
 pm = Gamemananager.pm
 
-def main(self):
+def main(self,id,info,st):
     pass
+
+
+main("<self>","<id>","<info>","<st>")

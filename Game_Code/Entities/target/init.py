@@ -21,3 +21,6 @@ pm = Gamemananager.pm
 def main(self,id,info):
     om.objects[id]["type"] = "omnispring"
     info["type"] = "omnispring"
+    
+    
+main("<self>","<id>","<info>")

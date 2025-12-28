@@ -119,7 +119,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "slant"
+map = "ent_test"
 startstate = "debugame"
 startshaderstate = 0
 bakeonreload = 0

@@ -49,7 +49,7 @@ class GameManager():
 		self.event_manager = em
 		self.objrange = 2000
 		self.em = em
-		self.publicvariables = {"showinput":univars.showinput,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":univars.screencol   ,"cammove":False  ,"shaderstate":univars.startshaderstate ,"showallhidden":1 }
+		self.publicvariables = {"showinput":univars.showinput,"leveledit":True,"showdata":True,"debug-mode":False,"showfps":True,"maxfps":univars.maxfps,"printdebug":True,    "screencol":univars.screencol   ,"cammove":False  ,"shaderstate":univars.startshaderstate ,"showallhidden":1 ,"mood":"sunset"}
 		self.timers = {}
 		self.timerswdt = []
 		self.dt = 1
@@ -74,6 +74,8 @@ class GameManager():
 		Tiled.extra(univars.extras)
 		om.loadtilemap(self,univars.map)
 		self.clock = pygame.time.Clock()
+  
+  
 
 
 	def print(self,string):
