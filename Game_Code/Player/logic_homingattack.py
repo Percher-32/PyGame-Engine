@@ -66,7 +66,7 @@ def main(self,collisionlisttype,selected_obj,axis,ground):
             nenvec = envec.normalize()
             nenvec = [nenvec.x,nenvec.y * -1]
             ground = 0
-            if self.gp("target").info["type"] in ["enemy-L","omnispring","goal","turret","rocket","easybot","HURT:biglaser","spring"]:
+            if self.gp("target").info["type"] in ["enemy-L","omnispring","goal","turret","rocket","easybot","HURT:biglaser","spring","rolly"]:
                 if envec.length() > 40:
                     a = (380 + (abs(envec.length()/3)))/2
                     d = (380 + (abs(envec.length()/3)))/2
@@ -116,7 +116,6 @@ def main(self,collisionlisttype,selected_obj,axis,ground):
 
 
                     om.set_value(self.gp("target").name,"throwvel",actmult)
-                    self.print("SET")
                     self.wait("#Throwing" + self.gp("target").name,3,0)
                     self.sp("dashmeter",self.gp("dashmeter") + 30)
 
@@ -183,7 +182,7 @@ def main(self,collisionlisttype,selected_obj,axis,ground):
                 self.wait("show-score",7)
             self.sp("homing",0)
             
-        if self.gp("target").info["type"] in ["omnispring","turret"]:
+        if self.gp("target").info["type"] in ["omnispring","turret","rolly"]:
             if self.key["secondary"]:
                 self.sp("des_vel",[0,0])
                 self.sp("act_vel",[0,0])

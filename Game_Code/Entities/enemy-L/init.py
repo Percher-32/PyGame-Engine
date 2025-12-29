@@ -1,8 +1,28 @@
 import Managers.Gamemanager as Gamemananager
 import Managers.univars as univars
 import random
+import Game_Code.Utils.Entities as Entities
 
 
+
+def get(var_name,index = None):
+    if index == None:
+        return om.get_value(id,var_name)
+    else:
+        return om.get_value(id,var_name)[index]
+    
+def set(var_name,to,index = None):
+    if index == None:
+        return om.set_value(id,var_name,to)
+    else:
+        newlist = get(var_name)
+        listtype = type(newlist)
+        newlist = list(newlist)
+        newlist[index] = to
+        
+        newlist = listtype(newlist)
+        return om.set_value(id,var_name,newlist)
+    
 
 
 
@@ -57,7 +77,7 @@ def main(self,id,info):
         om.lighttoenemy(id,"l1",color=(255,0,255),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=10)
 
 
-    self.createhpbar(id,1,[0,30])
+    Entities.createhpbar(id,1,[0,30])
     
     
     

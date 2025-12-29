@@ -3,6 +3,7 @@ import Managers.univars as univars
 import pygame
 import random
 from functools import partial
+import Game_Code.Utils.Entities as Entities
 
 
 
@@ -133,7 +134,7 @@ def logic_laser():
     if  abs(vectoplayer.length()) > 300:
         if get("timer") < 0 :
             rot = vectoplayer.angle * -1 + random.randint(-1 * abs(int(self.gp("des_vel")[0]/100)),1 * abs(int(self.gp("des_vel")[0]/100)))
-            self.spawnlaser(om.objects[id]["pos"],40,rot,id,3,extraspeed=self.listdiv(om.get_value("player","act_vel"),2))
+            self.spawnlaser(info["pos"],40,rot,id,3,extraspeed=self.listdiv(self.gp("act_vel"),2))
             set("timer",get("maxtimer"))
 
 def logic_flash():
@@ -163,8 +164,7 @@ def logic_vel_update():
         move act_vel closer to des_vel by using var:speed
     """
     set("act_vel",self.customunilerp(get("act_vel"),get("des_vel"),get("speed"),om.speed,st))
-    self.println(get("act_vel"),10)
-
+    
 def logic_hp():
     """
         kills entity if hp is below 0
@@ -173,14 +173,14 @@ def logic_hp():
         om.removeid(id)
     
 def logic_water():
-    if om.objects[id]["pos"][1] > 64 * 10:
-            om.objects[id]["pos"][1] = 64 * 10
+    if info["pos"][1] > 64 * 10:
+            info["pos"][1] = 64 * 10
                      
 def logic_damage():
     """
         allows the entity to be damaged by player
     """
-    self.damageable(id,20,functhrow=partial(skated,id = id)  ,func=partial(hit,id = id)    )
+    Entities.damageable(id,20,functhrow=partial(skated,id = id)  ,func=partial(hit,id = id)   , )
 
 def logic_out_of_bounds():
     if id in om.objects.keys():

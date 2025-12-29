@@ -94,9 +94,22 @@ def customunilerp(val,max,sm,gamespeed,deltatime,roundto = 2):
     """
     return univars.func.lerp(val,max,              (  (sm/gamespeed) / deltatime)*1.5              ,roundto = roundto)
 
-
-
+def dist(pos1,pos2):
+    """
+        distance between 2 points
     
+    :param pos1: list/tuple
+    :param pos2: list/tuple
+    """
+    return univars.func.dist(pos1,pos2)
+
+def magnitude(vec):
+    """
+        magnitude of a list/pos/vector
+    
+    :param vec: list/tuple
+    """
+    return univars.func.dist([0,0],vec)
     
     
     

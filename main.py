@@ -108,14 +108,12 @@ class Game(Gamemananager.GameManager):
    
 		self.spawnbiglaser        =   partial(Game_Code.Utils.Entities.spawnbiglaser       ,self = self)
 		self.spawnlaser           =   partial(Game_Code.Utils.Entities.spawnlaser          ,self = self)
-		self.createhpbar          =   partial(Game_Code.Utils.Entities.createhpbar         ,self = self)
-		self.damageable           =   partial(Game_Code.Utils.Entities.damageable          ,self = self)
 		self.entity_list_create   =   partial(Game_Code.Utils.Entities.entity_list_create  ,self = self)
 		self.oncreate             =   partial(Game_Code.Utils.Entities.oncreate            ,self = self)
 		self.cond                 =   partial(Game_Code.Utils.Entities.cond                ,self = self)
 		self.qrcond               =   partial(Game_Code.Utils.Entities.qrcond              ,self = self)
   
-  
+	
          
 		self.sp                   =   Game_Code.Utils.Player.sp
 		self.gp                   =   Game_Code.Utils.Player.gp
@@ -136,7 +134,7 @@ class Game(Gamemananager.GameManager):
   
 		
 		self.attackerbox = {"obj":[]}
-		self.typesofhoming = ["enemy-L","omnispring","goal","turret","rocket","easybot","HURT_biglaser","spring"]
+		self.typesofhoming = ["enemy-L","omnispring","goal","turret","rocket","easybot","HURT_biglaser","spring","rolly"]
 		self.ingametime = 0
 		self.boardoffset = [0,0]
 		self.playeroffset = [0,0]
@@ -180,6 +178,7 @@ class Game(Gamemananager.GameManager):
 
 	def update(self):
 		Game_Code.Core.Update.main(self,Player)
+
 
 
 

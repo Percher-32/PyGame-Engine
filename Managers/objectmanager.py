@@ -364,7 +364,6 @@ class object_manager:
 		
 
 
-
 	def playanim(self,dt,id,name,forceplay = False,speed=1):
 		"""
 			plays an animation in a sprite\n
@@ -681,6 +680,29 @@ class object_manager:
 
 		return {"obj":noninst,"inst":inst,"all":noninst + inst,"if":len(noninst + inst) > 0}
 
+	def is_inst_at_pos(self,pos):
+		pos = (math.floor(pos[0]/univars.grandim)*univars.grandim,math.floor(pos[1]/univars.grandim)*univars.grandim)
+		chunk = (int(round((pos[0] - 16)/(univars.grandim * self.renderdist[0]))),int(round((pos[1] - 16)/(univars.grandim * self.renderdist[1]))))
+  
+  
+		insts = []
+		
+		if chunk in self.instances.keys():
+			for inst in self.instances[chunk]:
+				if inst.realpos == pos:
+
+					insts.append(inst)
+     
+		# if chunk in self.noncolinstances.keys():
+		# 	for inst in self.noncolinstances[chunk]:
+		# 		if inst.realpos == pos:
+		# 			insts.append(inst)
+     
+		return insts
+		
+  
+  
+  
 	def collidep(self,pos,show,dim,pointsize=5,basecolor = (255,0,0),instcol = (0,225,0),noninstcol=(0,225,150),ignore_id = None,camera = Cameramod.cam,ignore = []) -> dict: 
 		"""collisions for non-instanciates -> "obj" .  collisions for instanciates -> "inst" . all collisions -> "all" . if collision -> "if" """
 		#coll for non-inst
@@ -688,9 +710,6 @@ class object_manager:
 		r1 = pygame.Rect(pos[0],pos[1],1,1)
 		ghcolsprite =  Ghostcollinst(r1.x,r1.y,r1.width,r1.height)
 		noninst = pygame.sprite.spritecollide(ghcolsprite,self.objghostgroup,dokill=False)
-		# for obj in noninst:
-		# 	if obj.name in ignore or obj.name == ignore_id:
-		# 		noninst.remove(obj)
 		noninst = [self.objfromid(ghost.id) for ghost in noninst]
 
 		#coll for inst
@@ -707,7 +726,10 @@ class object_manager:
 				a = [ghost.inst for ghost in a]
 
 			inst += a
-		# print(inst)
+   
+   
+   
+   
 		#render the collpoint
 		if show:
 			num = max(0.6,1/camera.size)

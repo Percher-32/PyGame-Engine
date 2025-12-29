@@ -125,16 +125,16 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "ent_test"
+map = "slant"
 startstate = "debugame"
 startshaderstate = 0
 bakeonreload = 0
-showdebugonstart = 1
+showdebugonstart = 0
 profile = 0
 safemode = 0
 startuistate = "def"
 showinput = 0
-dontsavevar = ["player","easybot","HURT_laser","HURT_biglaser"]
+dontsavevar = ["player","easybot","HURT_laser","HURT_biglaser","rolly"]
 dontsaveobjtype = ["HPBAR"]
 
 

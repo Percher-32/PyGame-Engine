@@ -12,6 +12,7 @@ import Game_Code.Player.logic_dashbar as logic_dashbar
 import Game_Code.Player.logic_airdash as logic_airdash
 
 import Game_Code.Player.player_init as player_init
+import Game_Code.Player.attack as attack
 
 
 
@@ -41,7 +42,7 @@ def main(self):
     collisionbox = om.collide("player",0,cam,extra=20)
     smallcollisionbox = om.collide("player",1,cam,extra=-60)
     bigcollisionbox = om.collide("player",0,cam,extra=600)
-    attackbox = om.colliderect([cm.getcam("playercam","pos")[0] +(self.lookahead*0),cm.getcam("playercam","pos")[1] + (self.lookaheady*0)],[1300,700],0,cam)
+    attackbox = om.colliderect([cm.getcam("playercam","pos")[0] +(self.lookahead*0),cm.getcam("playercam","pos")[1] + (self.lookaheady*0)],[1300,700],1,cam)
 
     ground1 = len(collision["botmid"]["inst"]) > 0
     ground2 = len(collision["botleft"]["inst"]) > 0    and not (len(collision["topleft"]["inst"])  > 0  ) and not (len(collision["midleft"]["inst"])  > 0  )
@@ -96,7 +97,7 @@ def main(self):
     if not self.key["attack"] and self.lastkey["attack"] and not self.isthere("cooldownattack"):
         if self.attackheld < 10:
             self.wait("attack",0.4)
-            self.wait("cooldownattack",0.5)
+            self.wait("cooldownattack",0.2)
             
             self.spin(30,0.3)
         else:
@@ -125,6 +126,10 @@ def main(self):
 
     
     selected_obj= None
+    
+    
+    
+    
     #HOMING ATTACK SELECT
     if len(attackbox["obj"]):
         om.objects["enemyzoom"]["rendercond"] = 1
@@ -181,6 +186,7 @@ def main(self):
     
     logic_dashbar.main(self,ground,rail)
     logic_spindash.main(self,collisionbox["inst"],ground)
+    attack.main(self)
     logic_homingattack.main(self,collisionlisttype,selected_obj,axis,ground)
     logic_trick.main(self,collisionbox,ground)
     logic_airdash.main(self,ground,axis)

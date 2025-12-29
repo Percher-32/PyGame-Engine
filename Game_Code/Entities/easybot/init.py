@@ -1,5 +1,6 @@
 import Managers.Gamemanager as Gamemananager
 import Managers.univars as univars
+import Game_Code.Utils.Entities as Entities
 
 
 
@@ -32,7 +33,7 @@ def main(self,id,info):
 
 
     om.objects[id]["sizen"] = [2,2]
-    self.createhpbar(id,1.7,[0,80])
+    Entities.createhpbar(id,1.7,[0,80])
     om.set_value(id,"sp",om.objects[id]["pos"])
     om.set_value(id,"gotimer",0)
     om.set_value(id,"randpos",om.objects[id]["pos"])

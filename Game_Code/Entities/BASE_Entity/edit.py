@@ -1,6 +1,27 @@
 import Managers.Gamemanager as Gamemananager
 import Managers.univars as univars
+import Game_Code.Utils.Entities as Entities
 
+
+
+def get(var_name,index = None):
+    if index == None:
+        return om.get_value(id,var_name)
+    else:
+        return om.get_value(id,var_name)[index]
+    
+def set(var_name,to,index = None):
+    if index == None:
+        return om.set_value(id,var_name,to)
+    else:
+        newlist = get(var_name)
+        listtype = type(newlist)
+        newlist = list(newlist)
+        newlist[index] = to
+        
+        newlist = listtype(newlist)
+        return om.set_value(id,var_name,newlist)
+    
 
 
 

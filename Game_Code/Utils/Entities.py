@@ -86,7 +86,7 @@ def damageable(id,dm,self,range = 200,functhrow = None,func = None):
     :param dm: damage
     :param self: Game_manager
     :param range: IDK
-    :param functhrow: functions to run when player throws object
+    :param functhrow: functions to run when player hits wit board
     :param func: functions to run when player damages object
     """
     if self.flowstate:
@@ -96,6 +96,7 @@ def damageable(id,dm,self,range = 200,functhrow = None,func = None):
             if id in [i.name for i in self.attackerbox["obj"]]:
                 if self.isthere("attack"):
                     if not self.isthere("damf" + id):
+                        
                         om.set_value(id,"HP",om.get_value(id,"HP") - dm)
                         self.wait("damf" + id,1)
                         om.set_value("player","dashmeter",om.get_value(id,"dashmeter") + 50)
