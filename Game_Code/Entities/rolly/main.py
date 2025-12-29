@@ -38,34 +38,40 @@ def hit():
     set("des_knock_back",[self.key["x"] * 400 , self.key["y"] * 200])
     set("downvel",0)
     
-    
 def update():
-    
     if get("yeet_timer") > 0:
         inc("yeet_timer",-1 * st)
         set("act_vel",get("knock_back"))
     
     set("act_vel",util_math.customunilerp(get("act_vel"),get("des_vel"),10,om.speed,st))
     
+    # univars.println(get("last"))
+    
+    
     if not get("inst_type") == 0:
         if get("inst_type") == "slantr":
             set("act_vel",get("act_vel",0),1)
         if get("inst_type") == "slantl":
             set("act_vel",get("act_vel",0) * -1,1)
+            
     
-        # if not get("last_frame_slope"):
-        #     if get("inst_type") == "slantl":
-        #         self.print("INIT")
-        #         om.objects["player"]["pos"] = [get("inst").realpos[0] +16,get("inst").realpos[1] -20]
-        #     elif get("inst_type") == "slantr":
-        #         self.print("INIT")
-        #         om.objects["player"]["pos"] = [get("inst").realpos[0] -20,get("inst").realpos[1] -20]
+    if get("last_frame_slope") and not get("slope"):
+        if get("last_frame_inst_type") == "slantl":
+            if get("des_vel",0) > 0:
+                om.translate(self,id,[
+                    +100 +  abs(get("des_vel",0) * 1),
+                    50 + abs(get("des_vel",0) * 2)
+                    
+                ])
             
     om.translate(self,id,get("act_vel"),usedt=1)
     
+    if get("jump_timer") > 0:
+        inc("jump_timer",-1 * st)
+        set("des_vel",get("jump_h"),1)
     
     set("last_frame_slope",get("slope"))
-    
+    set("last_frame_inst_type",get("inst_type"))
     
 def gravity():
     if not get("ground"):
@@ -74,8 +80,7 @@ def gravity():
         
             if get("downvel") > -70:
                 inc("downvel",-1*st)
-        
-        
+            
 def ground_col():
     
     insts = om.is_inst_at_pos([info["pos"][0],info["pos"][1] + univars.grandim])
@@ -87,21 +92,54 @@ def ground_col():
     curinst = None
     if len(curinsts):
         curinst = curinsts[0]
+        
+        
+    linsts = om.is_inst_at_pos([info["pos"][0] - univars.grandim,info["pos"][1] ])
+    linst = None
+    if len(linsts):
+        linst = linsts[0]
+        
+        
+    rinsts = om.is_inst_at_pos([info["pos"][0] + univars.grandim,info["pos"][1] ])
+    rinst = None
+    if len(rinsts):
+        rinst = rinsts[0]
     
         
     if len(insts) > 0:
         set("ground",1)
         set("slope",inst.type == "slantr" or inst.type == "slantl")
-        if not get("slope"):
-            if len(curinsts):
-                set("slope",curinst.type == "slantr" or curinst.type == "slantl")
         set("inst",inst)
+        set("des_vel",0,1)
         set("inst_type",inst.type)
     else:
         set("ground",0)
         set("slope",0)
         set("inst_type",0)
         set("inst",0)
+        
+        
+    
+    if not get("slope"):
+        if len(curinsts):
+            set("slope",curinst.type == "slantr" or curinst.type == "slantl")
+            set("inst",curinst)
+            set("inst_type",curinst.type)
+    if not get("slope"):
+        if len(linsts):
+            set("slope",linst.type == "slantr" or linst.type == "slantl")
+            set("inst",linst)
+            set("inst_type",linst.type)
+    if not get("slope"):
+        if len(rinsts):
+            set("slope",rinst.type == "slantr" or rinst.type == "slantl")
+            set("inst",rinst)
+            set("inst_type",rinst.type)
+    
+    if not ( len(curinsts) or len(linsts) or len(rinsts) or len(insts)):
+        set("inst_type",0)
+        set("inst",0)
+        
         
         
     if get("ground"):
@@ -125,6 +163,17 @@ def ground_col():
     set("last_frame_ground",get("ground"))
         
     
+    
+    
+    
+def jump():
+    if get("ground") and not get("jump_h") > 0:
+        set("jump_timer",1)
+        univars.print("JUMP")
+        set("jump_h",200)
+    
+    
+    
 
 
 em = Gamemananager.em
@@ -141,13 +190,23 @@ bg = Gamemananager.bg
 pm = Gamemananager.pm
 
 def main(self,id,info,st):
-    set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/2,250]),0)
+    set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/2,300]),0)
     set("canhome",1)
     gravity()
-    Entities.damageable(id,20,self,func = hit,range=(  400 + util_math.magnitude(self.gp("act_vel"))/10  )      )
+    Entities.damageable(id,20,self,func = hit     )
+    
+    if om.objects["player"]["pos"][1] - info["pos"][1]  > 10:
+        jump()
+    
     ground_col()
+    
+    
+    # if self.key["jump"]:
+    jump()
+    
+    
     update()
-
+ 
 
 
 self = "<REMOVE>"

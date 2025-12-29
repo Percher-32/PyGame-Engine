@@ -70,7 +70,6 @@ bg = Gamemananager.bg
 pm = Gamemananager.pm
 
 
-
 class PlayerClass:
 	def __init__(self):
 		self.state_rail              =      Game_Code.Player.state_rail.main
