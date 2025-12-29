@@ -46,7 +46,25 @@ def update():
         set("act_vel",get("knock_back"))
     
     set("act_vel",util_math.customunilerp(get("act_vel"),get("des_vel"),10,om.speed,st))
+    
+    if not get("inst_type") == 0:
+        if get("inst_type") == "slantr":
+            set("act_vel",get("act_vel",0),1)
+        if get("inst_type") == "slantl":
+            set("act_vel",get("act_vel",0) * -1,1)
+    
+        # if not get("last_frame_slope"):
+        #     if get("inst_type") == "slantl":
+        #         self.print("INIT")
+        #         om.objects["player"]["pos"] = [get("inst").realpos[0] +16,get("inst").realpos[1] -20]
+        #     elif get("inst_type") == "slantr":
+        #         self.print("INIT")
+        #         om.objects["player"]["pos"] = [get("inst").realpos[0] -20,get("inst").realpos[1] -20]
+            
     om.translate(self,id,get("act_vel"),usedt=1)
+    
+    
+    set("last_frame_slope",get("slope"))
     
     
 def gravity():
@@ -64,92 +82,43 @@ def ground_col():
     inst = None
     if len(insts):
         inst = insts[0]
-    linsts = om.is_inst_at_pos([info["pos"][0] - univars.grandim,info["pos"][1]])
-    linst = None
-    if len(linsts):
-        linst = linsts[0]
-    rinsts = om.is_inst_at_pos([info["pos"][0] + univars.grandim,info["pos"][1]])
-    rinst = None
-    if len(rinsts):
-        rinst = rinsts[0]
+        
+    curinsts = om.is_inst_at_pos([info["pos"][0],info["pos"][1] ])
+    curinst = None
+    if len(curinsts):
+        curinst = curinsts[0]
     
         
     if len(insts) > 0:
         set("ground",1)
+        set("slope",inst.type == "slantr" or inst.type == "slantl")
+        if not get("slope"):
+            if len(curinsts):
+                set("slope",curinst.type == "slantr" or curinst.type == "slantl")
+        set("inst",inst)
+        set("inst_type",inst.type)
     else:
         set("ground",0)
+        set("slope",0)
+        set("inst_type",0)
+        set("inst",0)
         
         
     if get("ground"):
         
         if inst.type == "ground":
             set("des_vel",0,1)
-            set("des_vel",20,0)
+            set("yeet_timer",-1)
+            set("knock_back",0,1)
             set("downvel",0)
             om.objects[id]["pos"][1] = inst.realpos[1] - (univars.grandim*1)
+            # if not curinst == None:
+            #     while not 
             
-        if inst.type == "slantr":
-            # print("R")
-            # mag = util_math.magnitude(get("des_vel"))
-            
-            # newx = mag * math.cos(math.pi)
-            # newy = mag * math.sin(math.pi)
-            
-            
-            # set("des_vel",[newx,newy])
-            # set("act_vel",[newx,newy])
-            
-            rot = 45
-            item = inst
-            om.objects[id][1] = -1 * (     ( (rot/45)*info["pos"][0] )  + (   (-1* item.realpos[1]) -    (item.realpos[0]*(rot/45))       )                      )
-                
-        if inst.type == "slantl":
-            # print("L")
-            # mag = util_math.magnitude(get("des_vel"))
-            
-            # newx = mag * math.cos(math.pi) * -1
-            # newy = mag * math.sin(math.pi)
-            
-            
-            
-            # set("des_vel",[newx,newy])
-            # set("act_vel",[newx,newy])
-            
-            rot = -45
-            item = inst
-            om.objects[id][1] = -1 * (     ( (rot/45)*info["pos"][0] )  + (   (-1* item.realpos[1]) -    (item.realpos[0]*(rot/45))       )                      )
-            
-            
-    if not linst == None:
-        # mag = util_math.magnitude(get("des_vel"))
-        
-        # newx = mag * math.cos(math.pi)
-        # newy = mag * math.sin(math.pi)
-        
-        
-        # set("des_vel",[newx,newy])
-        # set("act_vel",[newx,newy])
-        
-        rot = 45
-        item = linst
-        om.objects[id][1] = -1 * (     ( (rot/45)*info["pos"][0] )  + (   (-1* item.realpos[1]) -    (item.realpos[0]*(rot/45))       )                      )
-            
-    if not rinst == None:
-        if rinst.type == "slantl":
-            # mag = util_math.magnitude(get("des_vel"))
-            
-            # newx = mag * math.cos(math.pi) * -1
-            # newy = mag * math.sin(math.pi)
-            
-            
-            # set("des_vel",[newx,newy])
-            # set("act_vel",[newx,newy])
-            
-            rot = 45
-            item = rinst
-            om.objects[id][1] = -1 * (     ( (rot/45)*info["pos"][0] )  + (   (-1* item.realpos[1]) -    (item.realpos[0]*(rot/45))       )                      )
             
     
+            
+        
     
     
     
@@ -172,10 +141,11 @@ bg = Gamemananager.bg
 pm = Gamemananager.pm
 
 def main(self,id,info,st):
+    set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/2,250]),0)
     set("canhome",1)
     gravity()
-    ground_col()
     Entities.damageable(id,20,self,func = hit,range=(  400 + util_math.magnitude(self.gp("act_vel"))/10  )      )
+    ground_col()
     update()
 
 

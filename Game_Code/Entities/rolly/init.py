@@ -49,6 +49,8 @@ def main(self,id,info):
     set("ground",0)
     set("yeet_timer",0)
     set("last_frame_ground",0)
+    set("slope",0)
+    set("knock_back",[0,0])
     
     
     

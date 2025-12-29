@@ -39,6 +39,7 @@ pm = Gamemananager.pm
 
 def main(self,id,info):
     om.objects[id]["pos"] = list(get("master_pos"))
+    set("slope",0)
     pass
     
     
