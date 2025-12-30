@@ -67,6 +67,8 @@ sd = Gamemananager.sd
 sm = Gamemananager.sm
 um = Gamemananager.um
 bg = Gamemananager.bg
+
+
 pm = Gamemananager.pm
 
 

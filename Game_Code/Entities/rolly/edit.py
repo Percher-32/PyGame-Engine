@@ -1,5 +1,6 @@
 import Managers.Gamemanager as Gamemananager
 import Managers.univars as univars
+import Game_Code.Utils.Entities as Entities
 
 
 
@@ -39,7 +40,7 @@ pm = Gamemananager.pm
 
 def main(self,id,info):
     om.objects[id]["pos"] = list(get("master_pos"))
-    set("slope",0)
+    Entities.oncreate(id,info,self)
     pass
     
     

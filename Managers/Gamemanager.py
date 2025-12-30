@@ -437,14 +437,15 @@ class GameManager():
 		# um.loadalluielements()
 		pm.loadallbluprints()
 
-	def setbosh(self,state):
+	def setbosh(self,state,qrcond = True):
 		sm.state = state
 		sm.update()
 		self.bosh()
 		self.smstate = sm.state
 		# print(f"bosh to {state}")
 		self.quickrel()
-		self.qrcondHL()
+		if qrcond:
+			self.qrcondHL()
 
 	def quickrel(self):
 		pass

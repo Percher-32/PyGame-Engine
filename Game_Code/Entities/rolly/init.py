@@ -41,6 +41,7 @@ pm = Gamemananager.pm
 
 def main(self,id,info):
     set("HP",100)
+    self.print("INITITNTINTIN")
     set("master_pos",info["pos"])
     set("act_vel",[0,0])
     set("des_vel",[0,0])

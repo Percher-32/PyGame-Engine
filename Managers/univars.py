@@ -74,7 +74,7 @@ func = funcs.func(grandim)
 
 
 
-lumptype = {"grass":"ground","dirt":"ground","slantl":"slantl","slantr":"slantr","slantlbot":"slantl","slantrbot":"slantr","slantdecor":"ground","rail":"rail","rail-diag":"rail"}
+lumptype = {"grass":"ground","dirt":"ground","slantl":"slantl","slantr":"slantr","slantdecor":"ground","rail":"rail","rail-diag":"rail"}
 
 swaptypes = {"target":"omnispring","enemy":"enemy-L"}
 """
@@ -125,7 +125,7 @@ with open(f"Saved/sizeoffsets.json","w") as file:
 
 
 
-map = "slant"
+map = "wallslope"
 startstate = "debugame"
 startshaderstate = 0
 bakeonreload = 0

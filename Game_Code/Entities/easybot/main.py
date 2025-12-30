@@ -3,6 +3,7 @@ import Managers.univars as univars
 import pygame
 import math
 import random
+import Utils.Entities as Entities
 
 
 
@@ -90,7 +91,7 @@ def main(self,id,info,st):
 			self.wait("easybotmove" + id,0.5)
 
 
-		self.damageable(id,100,func = hit,functhrow=skatehit)
+		Entities.damageable(id,100,self,func = hit,functhrow=skatehit)
 
 
 

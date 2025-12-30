@@ -158,10 +158,11 @@ class TiledSoftwre:
 		if work:
 			if GameManager.states == "Editor":
 				Cammanager.camager.setcam("def")
+    
 			if self.placable <= 0 and GameManager.event_manager.key[pygame.K_0] and GameManager.event_manager.key[pygame.K_LCTRL] or self.placable <= 0 and GameManager.event_manager.controller["touchpad"]:
-				self.placable = 5
+				self.placable = 20
 				if GameManager.smstate == "edit":
-					GameManager.setbosh("debugame")
+					GameManager.setbosh("debugame",qrcond = False)
 				else:
 					GameManager.setbosh("edit")
 

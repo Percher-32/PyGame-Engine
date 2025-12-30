@@ -33,20 +33,14 @@ def inc(var_name,inc,index = None):
 
 def hit():
     self.print("HIT")
-    set("yeet_timer",4)
+    set("yeet_timer",30)
     set("knock_back",[self.key["x"] * 400 , self.key["y"] * 200])
     set("des_knock_back",[self.key["x"] * 400 , self.key["y"] * 200])
     set("downvel",0)
     
-def update():
-    if get("yeet_timer") > 0:
-        inc("yeet_timer",-1 * st)
-        set("act_vel",get("knock_back"))
     
-    set("act_vel",util_math.customunilerp(get("act_vel"),get("des_vel"),10,om.speed,st))
     
-    # univars.println(get("last"))
-    
+def slope():
     
     if not get("inst_type") == 0:
         if get("inst_type") == "slantr":
@@ -64,21 +58,45 @@ def update():
                     
                 ])
             
+            
+    if get("slope") and not get("last_frame_slope"):
+        if get("inst_type") == "slantr":
+            om.objects[id]["pos"] = [get("inst").realpos[0] - 0,get("inst").realpos[1] - 0]
+        if get("inst_type") == "slantl":
+            om.objects[id]["pos"] = [get("inst").realpos[0] - 0,get("inst").realpos[1] - 0]
+            
+            
+    
+    set("last_frame_slope",get("slope"))
+    set("last_frame_inst_type",get("inst_type"))
+    
+    
+def update():
+    if get("yeet_timer") > 0:
+        inc("yeet_timer",-1 * st)
+        set("act_vel",get("knock_back"))
+        set("des_vel",0,0)
+        
+    
+    set("act_vel",util_math.customunilerp(get("act_vel"),get("des_vel"),10,om.speed,st))
+    
+    
+    slope()
+    
+
     om.translate(self,id,get("act_vel"),usedt=1)
     
     if get("jump_timer") > 0:
         inc("jump_timer",-1 * st)
         set("des_vel",get("jump_h"),1)
     
-    set("last_frame_slope",get("slope"))
-    set("last_frame_inst_type",get("inst_type"))
     
 def gravity():
     if not get("ground"):
         if not get("yeet_timer" ) > 0:
             set("des_vel",get("downvel"),1)
         
-            if get("downvel") > -70:
+            if get("downvel") > -200:
                 inc("downvel",-1*st)
             
 def ground_col():
@@ -106,55 +124,55 @@ def ground_col():
         rinst = rinsts[0]
     
         
-    if len(insts) > 0:
+    
+        
+    #GROUND
+    if len(insts):
         set("ground",1)
-        set("slope",inst.type == "slantr" or inst.type == "slantl")
-        set("inst",inst)
-        set("des_vel",0,1)
-        set("inst_type",inst.type)
     else:
         set("ground",0)
-        set("slope",0)
-        set("inst_type",0)
+        
+        
+    if len(insts):
+        # univars.print("INST")
+        set("inst",inst)
+        set("inst_type",inst.type)
+    elif len(curinsts):
+        univars.print("CURINST")
+        set("inst",curinst)
+        set("inst_type",curinst.type)
+    elif len(linsts):
+        univars.print("LINST")
+        set("inst",linst)
+        set("inst_type",linst.type)
+    elif len(rinsts):
+        univars.print("RINST")
+        set("inst",rinst)
+        set("inst_type",rinst.type)
+    else:
         set("inst",0)
+        set("inst_type",0)
         
         
     
-    if not get("slope"):
-        if len(curinsts):
-            set("slope",curinst.type == "slantr" or curinst.type == "slantl")
-            set("inst",curinst)
-            set("inst_type",curinst.type)
-    if not get("slope"):
-        if len(linsts):
-            set("slope",linst.type == "slantr" or linst.type == "slantl")
-            set("inst",linst)
-            set("inst_type",linst.type)
-    if not get("slope"):
-        if len(rinsts):
-            set("slope",rinst.type == "slantr" or rinst.type == "slantl")
-            set("inst",rinst)
-            set("inst_type",rinst.type)
-    
-    if not ( len(curinsts) or len(linsts) or len(rinsts) or len(insts)):
-        set("inst_type",0)
-        set("inst",0)
+    set("slope",get("inst_type") == "slantr" or get("inst_type") == "slantl")
+        
         
         
         
     if get("ground"):
         
         if inst.type == "ground":
-            set("des_vel",0,1)
+            set("des_vel",abs(get("des_vel",1))/3,1)
             set("yeet_timer",-1)
-            set("knock_back",0,1)
+            set("knock_back",abs(get("knock_back",1))/3,1)
             set("downvel",0)
             om.objects[id]["pos"][1] = inst.realpos[1] - (univars.grandim*1)
             # if not curinst == None:
             #     while not 
             
             
-    
+    wall_col(linsts,rinsts)
             
         
     
@@ -162,15 +180,29 @@ def ground_col():
     
     set("last_frame_ground",get("ground"))
         
+def wall_col(linsts,rinsts):
+    if not get("slope"):
+        if len(linsts):
+            linst = linsts[0]
+            if linst.type == "ground":
+                set("des_vel",1 * abs(get("des_vel",0)),0)
+                set("act_vel",1 * abs(get("act_vel",0)),0)
+                
+        if len(rinsts):
+            rinst = rinsts[0]
+            if rinst.type == "ground":
+                set("des_vel",-1 * abs(get("des_vel",0)),0)
+                set("act_vel",-1 * abs(get("act_vel",0)),0)
+    
     
     
     
     
 def jump():
-    if get("ground") and not get("jump_h") > 0:
+    if get("ground") and not get("jump_timer") > 0:
         set("jump_timer",1)
-        univars.print("JUMP")
-        set("jump_h",200)
+        # univars.print("JUMP")
+        set("jump_h",500)
     
     
     
