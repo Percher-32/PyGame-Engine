@@ -33,9 +33,9 @@ def inc(var_name,inc,index = None):
 
 def hit():
     self.print("HIT")
-    set("yeet_timer",30)
-    set("knock_back",[self.key["x"] * 400 , self.key["y"] * 200])
-    set("des_knock_back",[self.key["x"] * 400 , self.key["y"] * 200])
+    set("yeet_timer",10)
+    set("knock_back",[self.key["x"] * 400 , self.key["y"] * 300])
+    set("des_knock_back",[self.key["x"] * 400 , self.key["y"] * 300])
     set("downvel",0)
     
     
@@ -75,7 +75,7 @@ def update():
     if get("yeet_timer") > 0:
         inc("yeet_timer",-1 * st)
         set("act_vel",get("knock_back"))
-        set("des_vel",0,0)
+        set("des_vel",get("act_vel"))
         
     
     set("act_vel",util_math.customunilerp(get("act_vel"),get("des_vel"),10,om.speed,st))
@@ -222,7 +222,10 @@ bg = Gamemananager.bg
 pm = Gamemananager.pm
 
 def main(self,id,info,st):
-    set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/2,300]),0)
+    if get("ground") or get("slope"):
+        set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/2,300]),0)
+    else:
+        set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/3,200]),0)
     set("canhome",1)
     gravity()
     Entities.damageable(id,20,self,func = hit     )

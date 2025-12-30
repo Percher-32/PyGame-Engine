@@ -40,9 +40,16 @@ bg = Gamemananager.bg
 pm = Gamemananager.pm
 
 def main(self,id,info):
+    set_all()
+    if not "master_pos" in om.values[id]:
+        set("master_pos",info["pos"])
+    
+
+    Entities.createhpbar(id,1,[0,30],self)
+    
+    
+def set_all():
     set("HP",100)
-    self.print("INITITNTINTIN")
-    set("master_pos",info["pos"])
     set("act_vel",[0,0])
     set("des_vel",[0,0])
     set("canhome",True)
@@ -52,12 +59,6 @@ def main(self,id,info):
     set("last_frame_ground",0)
     set("slope",0)
     set("knock_back",[0,0])
-    
-    
-    
-    
-    
-    Entities.createhpbar(id,1,[0,30],self)
     
     
     

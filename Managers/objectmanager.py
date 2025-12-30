@@ -474,7 +474,7 @@ class object_manager:
 			allinst = json.load(file)
 			for inst in allinst[0]:
 				self.datatoinst(inst[1],inst[0])
-		self.tracker = "0"
+		# self.tracker = "0"
 
 		
 		if univars.bakeonreload:

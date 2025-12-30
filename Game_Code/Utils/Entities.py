@@ -61,7 +61,7 @@ def createhpbar(id,size,offset,self):
         offset has y up = +\n
         Y axis FIXED
     """
-    hpid = om.add(self,(0,0),"laser",0,"HPBAR",[size,size],univars.grandim,keepprev=1,layer=5)
+    hpid = om.add(self,(0,-1000),"laser",0,"HPBAR",[size,size],univars.grandim,keepprev=1,layer=5)
     om.objects[hpid]["type"] = "HPBAR"
     om.objects[hpid]["rendercond"] = 0
 

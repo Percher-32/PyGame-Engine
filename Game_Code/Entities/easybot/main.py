@@ -3,7 +3,7 @@ import Managers.univars as univars
 import pygame
 import math
 import random
-import Utils.Entities as Entities
+import Game_Code.Utils.Entities as Entities
 
 
 
