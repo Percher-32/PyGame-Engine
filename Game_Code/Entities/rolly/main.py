@@ -34,35 +34,45 @@ def inc(var_name,inc,index = None):
 def hit():
     self.print("HIT")
     set("yeet_timer",10)
-    set("knock_back",[self.key["x"] * 400 , self.key["y"] * 300])
-    set("des_knock_back",[self.key["x"] * 400 , self.key["y"] * 300])
+    set("knock_back",[self.key["x"] * 400 , self.key["y"] * 200])
+    set("des_knock_back",[self.key["x"] * 400 , self.key["y"] * 200])
     set("downvel",0)
     
     
     
 def slope():
     
-    if not get("inst_type") == 0:
-        if get("inst_type") == "slantr":
+    if  get("slope"):
+        if get("inst_type") == "slantr" or (get("inst_type") == "rail-diag" and (get("inst").rot%180 == 0 )):
             set("act_vel",get("act_vel",0),1)
-        if get("inst_type") == "slantl":
+        if get("inst_type") == "slantl" or (get("inst_type") == "rail-diag" and ((get("inst").rot+90)%180 == 0 )):
             set("act_vel",get("act_vel",0) * -1,1)
             
     
     if get("last_frame_slope") and not get("slope"):
-        if get("last_frame_inst_type") == "slantl":
+        if get("last_frame_inst_type") == "slantl" or (get("inst_type") == "rail-diag" and ((get("inst").rot+90)%180 == 0 )):
             if get("des_vel",0) > 0:
                 om.translate(self,id,[
-                    +100 +  abs(get("des_vel",0) * 1),
-                    50 + abs(get("des_vel",0) * 2)
-                    
+                    abs((abs(get("des_vel",0)) * st * 1) + univars.grandim),
+                    abs((abs(get("des_vel",1)) * st * 1) + univars.grandim)
                 ])
-            
+                set("des_vel",0,1)
+                set("act_vel",0,1)
+    
+        if get("last_frame_inst_type") == "slantr" or (get("inst_type") == "rail-diag" and (get("inst").rot%180 == 0 )):
+            if get("des_vel",0) < 0:
+                om.translate(self,id,[
+                    abs((abs(get("des_vel",0)) * st * 1) + univars.grandim) * -1,
+                    abs((abs(get("des_vel",1)) * st * 1) + univars.grandim)
+                ])
+                set("des_vel",0,1)
+                set("act_vel",0,1)
             
     if get("slope") and not get("last_frame_slope"):
-        if get("inst_type") == "slantr":
+        if get("inst_type") == "slantr" or (get("inst_type") == "rail-diag" and (get("inst").rot%180 == 0 )):
             om.objects[id]["pos"] = [get("inst").realpos[0] - 0,get("inst").realpos[1] - 0]
-        if get("inst_type") == "slantl":
+            
+        if get("inst_type") == "slantl" or (get("inst_type") == "rail-diag" and ((get("inst").rot+90)%180 == 0 )):
             om.objects[id]["pos"] = [get("inst").realpos[0] - 0,get("inst").realpos[1] - 0]
             
             
@@ -78,7 +88,7 @@ def update():
         set("des_vel",get("act_vel"))
         
     
-    set("act_vel",util_math.customunilerp(get("act_vel"),get("des_vel"),10,om.speed,st))
+    set("act_vel",    util_math.customunilerp(get("act_vel"),get("des_vel"),10,om.speed,st)        )
     
     
     slope()
@@ -88,7 +98,7 @@ def update():
     
     if get("jump_timer") > 0:
         inc("jump_timer",-1 * st)
-        set("des_vel",get("jump_h"),1)
+        
     
     
 def gravity():
@@ -100,6 +110,10 @@ def gravity():
                 inc("downvel",-1*st)
             
 def ground_col():
+    
+    univars.println(f"SLOPE:{get("slope")}",14)
+    if get("slope"):
+        univars.print("SLOPELPSW")
     
     insts = om.is_inst_at_pos([info["pos"][0],info["pos"][1] + univars.grandim])
     inst = None
@@ -137,39 +151,50 @@ def ground_col():
         # univars.print("INST")
         set("inst",inst)
         set("inst_type",inst.type)
+        set("inst_name",inst.name)
     elif len(curinsts):
-        univars.print("CURINST")
         set("inst",curinst)
         set("inst_type",curinst.type)
+        set("inst_name",curinst.name)
     elif len(linsts):
-        univars.print("LINST")
         set("inst",linst)
         set("inst_type",linst.type)
+        set("inst_name",linst.name)
     elif len(rinsts):
-        univars.print("RINST")
         set("inst",rinst)
         set("inst_type",rinst.type)
+        set("inst_name",rinst.name)
     else:
         set("inst",0)
         set("inst_type",0)
+        set("inst_name",0)
         
         
     
-    set("slope",get("inst_type") == "slantr" or get("inst_type") == "slantl")
+    set("slope",get("inst_type") == "slantr" or get("inst_type") == "slantl" or (get("inst_name") == "rail-diag") )
         
         
         
         
     if get("ground"):
-        
-        if inst.type == "ground":
+        if inst.type == "ground" or (inst.name == "rail" and inst.rot == 0):
             set("des_vel",abs(get("des_vel",1))/3,1)
             set("yeet_timer",-1)
             set("knock_back",abs(get("knock_back",1))/3,1)
-            set("downvel",0)
+            set("downvel",-120)
             om.objects[id]["pos"][1] = inst.realpos[1] - (univars.grandim*1)
-            # if not curinst == None:
-            #     while not 
+            if not curinst == None:
+                while len(curinsts):
+                    if curinst.type == "ground" or (inst.name == "rail" and inst.rot == 0):
+                        om.objects[id]["pos"][1] = curinst.realpos[1] - (univars.grandim*1)
+                        curinsts = om.is_inst_at_pos([info["pos"][0],info["pos"][1] ])
+                        curinst = None
+                        if len(curinsts):
+                            curinst = curinsts[0]
+                    else:
+                        break
+                    
+                    
             
             
     wall_col(linsts,rinsts)
@@ -181,32 +206,49 @@ def ground_col():
     set("last_frame_ground",get("ground"))
         
 def wall_col(linsts,rinsts):
-    if not get("slope"):
+    if not get("slope") and not get("last_frame_slope"):
         if len(linsts):
             linst = linsts[0]
             if linst.type == "ground":
                 set("des_vel",1 * abs(get("des_vel",0)),0)
                 set("act_vel",1 * abs(get("act_vel",0)),0)
+                # set("des_vel",100,1)
                 
         if len(rinsts):
             rinst = rinsts[0]
             if rinst.type == "ground":
                 set("des_vel",-1 * abs(get("des_vel",0)),0)
                 set("act_vel",-1 * abs(get("act_vel",0)),0)
+                # set("des_vel",100,1)
+
     
-    
-    
-    
-    
-def jump():
+def jump(power):
     if get("ground") and not get("jump_timer") > 0:
-        set("jump_timer",1)
-        # univars.print("JUMP")
-        set("jump_h",500)
+        set("jump_timer",60)
+        set("jump_h",power)
+        set("des_vel",get("jump_h"),1)
+        set("act_vel",get("jump_h"),1)
+        # set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0]),500]),0)
+        # set("act_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * 400,0)
+        set("knock_back",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * 400,0)
+        set("yeet_timer",1)
+        set("downvel",0)
     
-    
+def player_track():
+    if get("ground") or get("slope"):
+        set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/2,300]),0)
+    else:
+        set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/3,200]),0)
+        
+    univars.println(om.objects["player"]["pos"][1] - info["pos"][1],12)
+    if om.objects["player"]["pos"][1] - info["pos"][1] < -200:
+        jump( min(abs(om.objects["player"]["pos"][1] - info["pos"][1]) * 1 ,500) )
+        
     
 
+def damageable():
+    Entities.damageable(id,20,self,func = hit     )
+    
 
 em = Gamemananager.em
 tm = Gamemananager.tm
@@ -222,22 +264,17 @@ bg = Gamemananager.bg
 pm = Gamemananager.pm
 
 def main(self,id,info,st):
-    if get("ground") or get("slope"):
-        set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/2,300]),0)
-    else:
-        set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/3,200]),0)
-    set("canhome",1)
-    gravity()
-    Entities.damageable(id,20,self,func = hit     )
+    univars.println(f'JUMPTIMER:{get("jump_timer")}',13)
+    player_track()
     
-    if om.objects["player"]["pos"][1] - info["pos"][1]  > 10:
-        jump()
+    
+    gravity()
     
     ground_col()
     
+    damageable()
     
-    # if self.key["jump"]:
-    jump()
+    
     
     
     update()

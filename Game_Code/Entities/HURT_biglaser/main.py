@@ -1,5 +1,6 @@
 import Managers.Gamemanager as Gamemananager
-import Managers.univars as univars
+import Managers.univars as univars 
+import Game_Code.Utils.Entities as Entities
 import math
 import random
 import pygame
@@ -34,7 +35,7 @@ def main(self,id,info,st):
 
 
 
-    self.damageable(id,20,range=600)
+    Entities.damageable(id,20,range=600)
 
 
 

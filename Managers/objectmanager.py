@@ -687,12 +687,11 @@ class object_manager:
   
 		insts = []
 		
-		if chunk in self.instances.keys():
-			for inst in self.instances[chunk]:
-				if inst.realpos == pos:
-
-					insts.append(inst)
-     
+		if chunk in self.ghostinstances.keys():
+			for ghostinst in self.ghostinstances[chunk]:
+				if ghostinst.inst.realpos == pos:
+					
+					insts.append(ghostinst.inst)
 		if chunk in self.noncolinstances.keys():
 			for inst in self.noncolinstances[chunk]:
 				if inst.realpos == pos:
