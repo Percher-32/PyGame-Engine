@@ -19,7 +19,7 @@ bg = Gamemananager.bg
 pm = Gamemananager.pm
 
 def main(self,id,info):
-    pass
+    om.set_value(id,"col",(0,0,0))
     
     
     

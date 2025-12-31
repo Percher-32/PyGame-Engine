@@ -93,30 +93,39 @@ def update():
         set("act_vel",get("knock_back"))
         set("des_vel",get("act_vel"))
         
-    if get("flash_timer") > 0:
+    
+    
+    
+    
+    if get("cdb"):
+        if get("bomb_timer") > 0:
+            if round(fm.frame)%(math.ceil(get("flash_frq"))) == 0:
+                if om.objects[id]["sn"] == 0:
+                    om.objects[id]["sn"] = 1
+                elif om.objects[id]["sn"] == 1:
+                    om.objects[id]["sn"] = 2
+                elif om.objects[id]["sn"] == 2:
+                    om.objects[id]["sn"] = 1
+                
+                
+    elif get("flash_timer") > 0:
         inc("flash_timer",-1 * st)
         if round(fm.frame)%(math.ceil(get("flash_frq"))) == 0:
             if om.objects[id]["sn"] == 1:
                 om.objects[id]["sn"] = 0
             elif om.objects[id]["sn"] == 0:
                 om.objects[id]["sn"] = 1
-        
-        
-        
+                
+                
     else:
         om.objects[id]["sn"] = 0
+    
 
-        
     if get("stunned") > -10:
         inc("stunned",-1 * st)
     
     
-    if not get("bomb_timer") == "DISABLED":
-        if get("bomb_timer") > -10:
-            inc("bomb_timer",-1 * st)
-            if get("bomb_timer") < 0:
-                univars.print("BOOM")
-                boom()
+    inc("bomb_timer",-1 * st)
     
     
     
@@ -131,28 +140,23 @@ def update():
     if get("jump_timer") > 0:
         inc("jump_timer",-1 * st)
         
-def bomb_init():
-    if not get("bomb_timer") == "DISABLED":
-        if not get("bomb_timer") > 0:
-            set("bomb_timer",20)
-            set("flash_frq",10)
     
 def bomb_diffuse():
-    set("bomb_timer",20)
+    set("cdb",0)
+    set("bomb_timer",50)
+    om.objects[id]["sn"] = 0
     
 def bomb_logic():
+    set("cdb",1)
     if get("bomb_timer") > 0:
-        intensity = max([(200 - get("bomb_timer") )/20 * 20,0])
-        set("flash_frq", get("bomb_timer")/1)
-        if round(fm.frame)%(math.ceil(get("flash_frq"))) == 0:
-            if om.objects[id]["sn"] == 0:
-                om.objects[id]["sn"] = 1
-            elif om.objects[id]["sn"] == 1:
-                om.objects[id]["sn"] = 2
-            elif om.objects[id]["sn"] == 2:
-                om.objects[id]["sn"] = 1
+        intensity = max([(50 - get("bomb_timer") )/50 * 20,0])
+        set("flash_frq", get("bomb_timer")/10)
         om.objects[id]["pos"][1] += random.randint(-1 * int(intensity),int(intensity))
         om.objects[id]["pos"][0] += random.randint(-1 * int(intensity),int(intensity))
+        # self.print("WERTYUI")
+        
+    else:
+        boom()
         
 def boom():
     if not get("boom"):
@@ -296,9 +300,9 @@ def jump(power,lungepow,jumprem):
 def player_track():
     if not get("stunned") > 0:
         if get("ground") or get("slope"):
-            set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/1.5,300]),0)
+            set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/1.2,300]),0)
         else:
-            set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/3,260]),0)
+            set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/2,260]),0)
             
         if om.objects["player"]["pos"][1] - info["pos"][1] < -200:
             lungepow = 400
@@ -311,10 +315,12 @@ def player_track():
                 
             jump( min(abs(om.objects["player"]["pos"][1] - info["pos"][1]) * 1 ,500),lungepow ,jumprem)
         
-        if util_math.dist(om.objects["player"]["pos"],info["pos"]) < 600:
-            bomb_init()
+        if util_math.dist(om.objects["player"]["pos"],info["pos"]) < 400:
+            bomb_logic()
         else:
             bomb_diffuse()
+            
+            
 
 def damageable():
     Entities.damageable(id,20,self,func = hit     )
@@ -337,8 +343,12 @@ bg = Gamemananager.bg
 pm = Gamemananager.pm
 
 def main(self,id,info,st):
-    univars.println(f'JUMPTIMER:{get("jump_timer")}',13)
+    
+    
+    
     player_track()
+    
+    
     
     
     gravity()
@@ -351,8 +361,6 @@ def main(self,id,info,st):
     
     update()
     
-    
-    bomb_logic()
     
     if not get("HP") > 0 or util_math.dist(om.objects["player"]["pos"],info["pos"]) > 6000:
         die()

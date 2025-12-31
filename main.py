@@ -114,6 +114,7 @@ class Game(Gamemananager.GameManager):
 		self.cond                 =   partial(Game_Code.Utils.Entities.cond                ,self = self)
 		self.qrcond               =   partial(Game_Code.Utils.Entities.qrcond              ,self = self)
   
+  
 	
          
 		self.sp                   =   Game_Code.Utils.Player.sp
