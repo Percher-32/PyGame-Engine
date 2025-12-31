@@ -21,8 +21,8 @@ pm = Gamemananager.pm
 
 def main(self):
     rot = om.objects["playersprite"]["rot"]
-    om.objects["playersprite"]["pos"][0] = om.objects["player"]["pos"][0] - math.sin((rot/180) * math.pi) * 20
-    om.objects["playersprite"]["pos"][1] = om.objects["player"]["pos"][1] - math.cos((rot/180) * math.pi) * 20
+    om.objects["playersprite"]["pos"][0] = om.objects["player"]["pos"][0] - math.sin((rot/180) * math.pi) * 40
+    om.objects["playersprite"]["pos"][1] = om.objects["player"]["pos"][1] - math.cos((rot/180) * math.pi) * 40
     
     if self.gp("des_vel")[0] > 0:
             om.flip("playersprite","right")

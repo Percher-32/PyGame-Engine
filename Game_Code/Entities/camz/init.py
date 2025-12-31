@@ -22,6 +22,10 @@ def main(self,id,info):
     om.objects[id]["layer"] = 0
     om.objects[id]["alpha"] = 100
     
+    if not id in om.values.keys():
+        om.set_value(id,"zoom",0.24)
+    
+    
     
     
     

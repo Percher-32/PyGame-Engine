@@ -125,8 +125,6 @@ def update():
         inc("stunned",-1 * st)
     
     
-    inc("bomb_timer",-1 * st)
-    
     
     
     set("act_vel",    util_math.customunilerp(get("act_vel"),get("des_vel"),10,om.speed,st)        )
@@ -143,17 +141,17 @@ def update():
     
 def bomb_diffuse():
     set("cdb",0)
-    set("bomb_timer",50)
+    set("bomb_timer",800)
     om.objects[id]["sn"] = 0
     
 def bomb_logic():
     set("cdb",1)
+    inc("bomb_timer",-1 * st)
     if get("bomb_timer") > 0:
-        intensity = max([(50 - get("bomb_timer") )/50 * 20,0])
-        set("flash_frq", get("bomb_timer")/10)
+        intensity = max([(800 - get("bomb_timer") )/800 * 20,0])
+        set("flash_frq", get("bomb_timer")/80)
         om.objects[id]["pos"][1] += random.randint(-1 * int(intensity),int(intensity))
         om.objects[id]["pos"][0] += random.randint(-1 * int(intensity),int(intensity))
-        # self.print("WERTYUI")
         
     else:
         boom()
@@ -299,26 +297,26 @@ def jump(power,lungepow,jumprem):
     
 def player_track():
     if not get("stunned") > 0:
-        if get("ground") or get("slope"):
-            set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/1.2,300]),0)
-        else:
-            set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/2,260]),0)
-            
-        if om.objects["player"]["pos"][1] - info["pos"][1] < -200:
-            lungepow = 400
-            jumprem = 0
-            if abs(om.objects["player"]["pos"][1] - info["pos"][1]) > 400:
-                lungepow = 600
-                
-            if om.objects["player"]["pos"][1] - info["pos"][1] < -500:
-                jumprem = 500
-                
-            jump( min(abs(om.objects["player"]["pos"][1] - info["pos"][1]) * 1 ,500),lungepow ,jumprem)
-        
         if util_math.dist(om.objects["player"]["pos"],info["pos"]) < 400:
+            set("activated",1)
+        if get("activated"):
             bomb_logic()
-        else:
-            bomb_diffuse()
+            if get("ground") or get("slope"):
+                set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/1.2,300]),0)
+            else:
+                set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/2,260]),0)
+                
+            if om.objects["player"]["pos"][1] - info["pos"][1] < -200:
+                lungepow = 400
+                jumprem = 0
+                if abs(om.objects["player"]["pos"][1] - info["pos"][1]) > 400:
+                    lungepow = 600
+                    
+                if om.objects["player"]["pos"][1] - info["pos"][1] < -500:
+                    jumprem = 500
+                    
+                jump( min(abs(om.objects["player"]["pos"][1] - info["pos"][1]) * 1 ,500),lungepow ,jumprem)
+            
             
             
 
@@ -362,7 +360,7 @@ def main(self,id,info,st):
     update()
     
     
-    if not get("HP") > 0 or util_math.dist(om.objects["player"]["pos"],info["pos"]) > 6000:
+    if not get("HP") > 0 or (util_math.dist(om.objects["player"]["pos"],info["pos"]) > 6000 and get("activated")):
         die()
         
  

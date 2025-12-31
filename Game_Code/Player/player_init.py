@@ -47,7 +47,7 @@ def main(self,pos):
 
     self.sp("dashcooldown",0)
     self.sp("deshrem",0)
-    sc = 1.4
+    sc = 2
     #creates the player sprite you actually see
     om.adds(self,"playersprite",[-1400,400],"player","player",0,[sc,sc],400,5)
     om.objects["playersprite"]["rendercond"] = True

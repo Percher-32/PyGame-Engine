@@ -60,10 +60,11 @@ def set_all():
     set("slope",0)
     set("knock_back",[0,0])
     set("stunned",0)
-    set("bomb_timer",50)
+    set("bomb_timer",800)
     set("can_exp",0)
     set("flash_frq",10)
     set("boom",0)
+    set("activated",0)
     
     
     

@@ -268,7 +268,7 @@ class object_manager:
 					try:
 						self.values = pk.load(file)
 					except:
-						print("LOAD FAIL")
+						print("VAR LOAD FAIL")
 			GM.roster()
 		else:
 			self.__init__(self.realscreen,self.screen,univars.grandim,self.aplhainst,self.renderinst)
@@ -300,7 +300,7 @@ class object_manager:
 					try:
 						pk.dump(todump,file)
 					except:
-						print("VAR FAIL")
+						print("VAR SAVE FAIL")
 				self.loadtilemap(GM,name)
 				return "True"
 		else:
