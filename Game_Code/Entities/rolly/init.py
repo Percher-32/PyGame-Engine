@@ -45,7 +45,8 @@ def main(self,id,info):
         set("master_pos",info["pos"])
     
     om.objects[id]["rendercond"] = 1
-    Entities.createhpbar(id,1,[0,30],self)
+    om.objects[id]["sizen"] = [3,3]
+    Entities.createhpbar(id,1.8,[0,100],self)
     
     
 def set_all():
@@ -60,7 +61,8 @@ def set_all():
     set("slope",0)
     set("knock_back",[0,0])
     set("stunned",0)
-    set("bomb_timer",800)
+    set("start_boom",800)
+    set("bomb_timer",get("start_boom"))
     set("can_exp",0)
     set("flash_frq",10)
     set("boom",0)

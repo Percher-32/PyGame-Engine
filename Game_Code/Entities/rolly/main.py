@@ -101,11 +101,11 @@ def update():
         if get("bomb_timer") > 0:
             if round(fm.frame)%(math.ceil(get("flash_frq"))) == 0:
                 if om.objects[id]["sn"] == 0:
-                    om.objects[id]["sn"] = 1
+                    om.objects[id]["sn"] = 2
                 elif om.objects[id]["sn"] == 1:
                     om.objects[id]["sn"] = 2
                 elif om.objects[id]["sn"] == 2:
-                    om.objects[id]["sn"] = 1
+                    om.objects[id]["sn"] = 0
                 
                 
     elif get("flash_timer") > 0:
@@ -141,15 +141,15 @@ def update():
     
 def bomb_diffuse():
     set("cdb",0)
-    set("bomb_timer",800)
+    set("bomb_timer",get("start_boom"))
     om.objects[id]["sn"] = 0
     
 def bomb_logic():
     set("cdb",1)
     inc("bomb_timer",-1 * st)
     if get("bomb_timer") > 0:
-        intensity = max([(800 - get("bomb_timer") )/800 * 20,0])
-        set("flash_frq", get("bomb_timer")/80)
+        intensity = max([(get("start_boom") - get("bomb_timer") )/get("start_boom") * 30,0])
+        set("flash_frq", get("bomb_timer")/(get("start_boom")/10))
         om.objects[id]["pos"][1] += random.randint(-1 * int(intensity),int(intensity))
         om.objects[id]["pos"][0] += random.randint(-1 * int(intensity),int(intensity))
         
@@ -159,8 +159,6 @@ def bomb_logic():
 def boom():
     if not get("boom"):
         set("boom",1)
-        for _ in range(3):
-            pm.particlespawnbluprint([om.objects[id]["pos"][0],om.objects[id]["pos"][1] ],"exp2",initvel=[(get("des_vel")[0]/20) * 0 ,(get("des_vel")[1]/20) * 0 ])
         die()
     
     
@@ -175,24 +173,24 @@ def gravity():
 def ground_col():
     
     
-    insts = om.is_inst_at_pos([info["pos"][0],info["pos"][1] + univars.grandim])
+    insts = om.is_inst_at_pos([info["pos"][0],info["pos"][1] + univars.grandim  + univars.grandim ])
     inst = None
     if len(insts):
         inst = insts[0]
         
-    curinsts = om.is_inst_at_pos([info["pos"][0],info["pos"][1] ])
+    curinsts = om.is_inst_at_pos([info["pos"][0],info["pos"][1] + univars.grandim  ])
     curinst = None
     if len(curinsts):
         curinst = curinsts[0]
         
         
-    linsts = om.is_inst_at_pos([info["pos"][0] - univars.grandim,info["pos"][1] ])
+    linsts = om.is_inst_at_pos([info["pos"][0] - univars.grandim,info["pos"][1] + univars.grandim  ])
     linst = None
     if len(linsts):
         linst = linsts[0]
         
         
-    rinsts = om.is_inst_at_pos([info["pos"][0] + univars.grandim,info["pos"][1] ])
+    rinsts = om.is_inst_at_pos([info["pos"][0] + univars.grandim,info["pos"][1]  + univars.grandim ])
     rinst = None
     if len(rinsts):
         rinst = rinsts[0]
@@ -242,12 +240,12 @@ def ground_col():
             set("yeet_timer",-1)
             set("knock_back",abs(get("knock_back",1))/3,1)
             set("downvel",-120)
-            om.objects[id]["pos"][1] = inst.realpos[1] - (univars.grandim*1)
+            om.objects[id]["pos"][1] = inst.realpos[1] - (univars.grandim*2)
             if not curinst == None:
                 while len(curinsts):
                     if curinst.type == "ground" or (inst.name == "rail" and inst.rot == 0):
-                        om.objects[id]["pos"][1] = curinst.realpos[1] - (univars.grandim*1)
-                        curinsts = om.is_inst_at_pos([info["pos"][0],info["pos"][1] ])
+                        om.objects[id]["pos"][1] = curinst.realpos[1] - (univars.grandim*2)
+                        curinsts = om.is_inst_at_pos([info["pos"][0],info["pos"][1] + univars.grandim  ])
                         curinst = None
                         if len(curinsts):
                             curinst = curinsts[0]
@@ -326,6 +324,11 @@ def damageable():
 def die():
     om.objects[id]["rendercond"] = 0
     set("canhome",0)
+    for _ in range(3):
+        pm.particlespawnbluprint([om.objects[id]["pos"][0],om.objects[id]["pos"][1] ],"rollyexp" ,initvel=[(get("des_vel")[0]/5) * 1 ,(get("des_vel")[1]/5) * 1])
+        pm.particlespawnbluprint([om.objects[id]["pos"][0],om.objects[id]["pos"][1] ],"rollyexp2",initvel=[(get("des_vel")[0]/5) * 1 ,(get("des_vel")[1]/5) * 1])
+        pm.particlespawnbluprint([om.objects[id]["pos"][0],om.objects[id]["pos"][1] ],"rollyexp3",initvel=[(get("des_vel")[0]/5) * 1 ,(get("des_vel")[1]/5) * 1])
+        pm.particlespawnbluprint([om.objects[id]["pos"][0],om.objects[id]["pos"][1] ],"exp2"     ,initvel=[(get("des_vel")[0]/5) * 1 ,(get("des_vel")[1]/5) * 1])
 
 em = Gamemananager.em
 tm = Gamemananager.tm

@@ -188,5 +188,5 @@ class Game(Gamemananager.GameManager):
 
 
 
-rm = Game(univars.screencol,fm)
+rm = Game(univars.screencol,fm )
 rm.Run()
