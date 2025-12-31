@@ -35,7 +35,7 @@ def main(self,id,info,st):
 
 
 
-    Entities.damageable(id,20,range=600)
+    Entities.damageable(id,20,range=600,self=self)
 
 
 

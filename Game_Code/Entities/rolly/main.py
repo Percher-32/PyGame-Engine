@@ -3,6 +3,7 @@ import Managers.univars as univars
 import Game_Code.Utils.Entities as Entities
 import math
 import Game_Code.Utils.math as util_math
+import random
 
 
 def get(var_name,index = None):
@@ -32,25 +33,30 @@ def inc(var_name,inc,index = None):
     
 
 def hit():
-    self.print("HIT")
+    set("flash_timer",30)
     set("yeet_timer",10)
+    set("flash_timer",30)
+    set("stunned",30)
     set("knock_back",[self.key["x"] * 400 , self.key["y"] * 200])
     set("des_knock_back",[self.key["x"] * 400 , self.key["y"] * 200])
     set("downvel",0)
     
-    
+
     
 def slope():
+    slantr = get("inst_type") == "slantr" or (get("inst_name") == "rail-diag" and (get("inst").rot%180 == 0 ))
+    slantl = get("inst_type") == "slantl" or (get("inst_name") == "rail-diag" and ((get("inst").rot+90)%180 == 0 ))
+    
     
     if  get("slope"):
-        if get("inst_type") == "slantr" or (get("inst_type") == "rail-diag" and (get("inst").rot%180 == 0 )):
+        if slantr:
             set("act_vel",get("act_vel",0),1)
-        if get("inst_type") == "slantl" or (get("inst_type") == "rail-diag" and ((get("inst").rot+90)%180 == 0 )):
+        if slantl:
             set("act_vel",get("act_vel",0) * -1,1)
             
     
     if get("last_frame_slope") and not get("slope"):
-        if get("last_frame_inst_type") == "slantl" or (get("inst_type") == "rail-diag" and ((get("inst").rot+90)%180 == 0 )):
+        if slantl:
             if get("des_vel",0) > 0:
                 om.translate(self,id,[
                     abs((abs(get("des_vel",0)) * st * 1) + univars.grandim),
@@ -59,7 +65,7 @@ def slope():
                 set("des_vel",0,1)
                 set("act_vel",0,1)
     
-        if get("last_frame_inst_type") == "slantr" or (get("inst_type") == "rail-diag" and (get("inst").rot%180 == 0 )):
+        if slantr:
             if get("des_vel",0) < 0:
                 om.translate(self,id,[
                     abs((abs(get("des_vel",0)) * st * 1) + univars.grandim) * -1,
@@ -69,10 +75,10 @@ def slope():
                 set("act_vel",0,1)
             
     if get("slope") and not get("last_frame_slope"):
-        if get("inst_type") == "slantr" or (get("inst_type") == "rail-diag" and (get("inst").rot%180 == 0 )):
+        if slantr:
             om.objects[id]["pos"] = [get("inst").realpos[0] - 0,get("inst").realpos[1] - 0]
             
-        if get("inst_type") == "slantl" or (get("inst_type") == "rail-diag" and ((get("inst").rot+90)%180 == 0 )):
+        if slantl:
             om.objects[id]["pos"] = [get("inst").realpos[0] - 0,get("inst").realpos[1] - 0]
             
             
@@ -80,13 +86,39 @@ def slope():
     set("last_frame_slope",get("slope"))
     set("last_frame_inst_type",get("inst_type"))
     
-    
 def update():
     if get("yeet_timer") > 0:
+        pm.particlespawnbluprint(self.listadd((om.objects[id]["pos"],(-32,-32))),"exp")
         inc("yeet_timer",-1 * st)
         set("act_vel",get("knock_back"))
         set("des_vel",get("act_vel"))
         
+    if get("flash_timer") > 0:
+        inc("flash_timer",-1 * st)
+        if round(fm.frame)%(math.ceil(get("flash_frq"))) == 0:
+            if om.objects[id]["sn"] == 1:
+                om.objects[id]["sn"] = 0
+            elif om.objects[id]["sn"] == 0:
+                om.objects[id]["sn"] = 1
+        
+        
+        
+    else:
+        om.objects[id]["sn"] = 0
+
+        
+    if get("stunned") > -10:
+        inc("stunned",-1 * st)
+    
+    
+    if not get("bomb_timer") == "DISABLED":
+        if get("bomb_timer") > -10:
+            inc("bomb_timer",-1 * st)
+            if get("bomb_timer") < 0:
+                univars.print("BOOM")
+                boom()
+    
+    
     
     set("act_vel",    util_math.customunilerp(get("act_vel"),get("des_vel"),10,om.speed,st)        )
     
@@ -99,6 +131,35 @@ def update():
     if get("jump_timer") > 0:
         inc("jump_timer",-1 * st)
         
+def bomb_init():
+    if not get("bomb_timer") == "DISABLED":
+        if not get("bomb_timer") > 0:
+            set("bomb_timer",20)
+            set("flash_frq",10)
+    
+def bomb_diffuse():
+    set("bomb_timer",20)
+    
+def bomb_logic():
+    if get("bomb_timer") > 0:
+        intensity = max([(200 - get("bomb_timer") )/20 * 20,0])
+        set("flash_frq", get("bomb_timer")/1)
+        if round(fm.frame)%(math.ceil(get("flash_frq"))) == 0:
+            if om.objects[id]["sn"] == 0:
+                om.objects[id]["sn"] = 1
+            elif om.objects[id]["sn"] == 1:
+                om.objects[id]["sn"] = 2
+            elif om.objects[id]["sn"] == 2:
+                om.objects[id]["sn"] = 1
+        om.objects[id]["pos"][1] += random.randint(-1 * int(intensity),int(intensity))
+        om.objects[id]["pos"][0] += random.randint(-1 * int(intensity),int(intensity))
+        
+def boom():
+    if not get("boom"):
+        set("boom",1)
+        for _ in range(3):
+            pm.particlespawnbluprint([om.objects[id]["pos"][0],om.objects[id]["pos"][1] ],"exp2",initvel=[(get("des_vel")[0]/20) * 0 ,(get("des_vel")[1]/20) * 0 ])
+        die()
     
     
 def gravity():
@@ -111,9 +172,6 @@ def gravity():
             
 def ground_col():
     
-    univars.println(f"SLOPE:{get("slope")}",14)
-    if get("slope"):
-        univars.print("SLOPELPSW")
     
     insts = om.is_inst_at_pos([info["pos"][0],info["pos"][1] + univars.grandim])
     inst = None
@@ -177,7 +235,7 @@ def ground_col():
         
         
     if get("ground"):
-        if inst.type == "ground" or (inst.name == "rail" and inst.rot == 0):
+        if inst.type == "ground" or (inst.type == "rail" and inst.rot == 0):
             set("des_vel",abs(get("des_vel",1))/3,1)
             set("yeet_timer",-1)
             set("knock_back",abs(get("knock_back",1))/3,1)
@@ -222,33 +280,48 @@ def wall_col(linsts,rinsts):
                 # set("des_vel",100,1)
 
     
-def jump(power):
-    if get("ground") and not get("jump_timer") > 0:
+def jump(power,lungepow,jumprem):
+    if not get("jump_timer") > 0:
         set("jump_timer",60)
         set("jump_h",power)
         set("des_vel",get("jump_h"),1)
         set("act_vel",get("jump_h"),1)
         # set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0]),500]),0)
         # set("act_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * 400,0)
-        set("knock_back",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * 400,0)
+        set("knock_back",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * lungepow,0)
+        set("knock_back",jumprem,1)
         set("yeet_timer",1)
         set("downvel",0)
     
 def player_track():
-    if get("ground") or get("slope"):
-        set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/2,300]),0)
-    else:
-        set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/3,200]),0)
+    if not get("stunned") > 0:
+        if get("ground") or get("slope"):
+            set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/1.5,300]),0)
+        else:
+            set("des_vel",util_math.valsign(om.objects["player"]["pos"][0] - info["pos"][0]) * min([abs(om.objects["player"]["pos"][0] - info["pos"][0])/3,260]),0)
+            
+        if om.objects["player"]["pos"][1] - info["pos"][1] < -200:
+            lungepow = 400
+            jumprem = 0
+            if abs(om.objects["player"]["pos"][1] - info["pos"][1]) > 400:
+                lungepow = 600
+                
+            if om.objects["player"]["pos"][1] - info["pos"][1] < -500:
+                jumprem = 500
+                
+            jump( min(abs(om.objects["player"]["pos"][1] - info["pos"][1]) * 1 ,500),lungepow ,jumprem)
         
-    univars.println(om.objects["player"]["pos"][1] - info["pos"][1],12)
-    if om.objects["player"]["pos"][1] - info["pos"][1] < -200:
-        jump( min(abs(om.objects["player"]["pos"][1] - info["pos"][1]) * 1 ,500) )
-        
-    
+        if util_math.dist(om.objects["player"]["pos"],info["pos"]) < 600:
+            bomb_init()
+        else:
+            bomb_diffuse()
 
 def damageable():
     Entities.damageable(id,20,self,func = hit     )
-    
+        
+def die():
+    om.objects[id]["rendercond"] = 0
+    set("canhome",0)
 
 em = Gamemananager.em
 tm = Gamemananager.tm
@@ -276,8 +349,14 @@ def main(self,id,info,st):
     
     
     
-    
     update()
+    
+    
+    bomb_logic()
+    
+    if not get("HP") > 0 or util_math.dist(om.objects["player"]["pos"],info["pos"]) > 6000:
+        die()
+        
  
 
 

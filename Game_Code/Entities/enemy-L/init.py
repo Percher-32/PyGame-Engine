@@ -77,7 +77,7 @@ def main(self,id,info):
         om.lighttoenemy(id,"l1",color=(255,0,255),colorinc=(0,0,0),nits=10,sizeinc=5,size=20,alphadec=3,alpha=10)
 
 
-    Entities.createhpbar(id,1,[0,30])
+    Entities.createhpbar(id,1,[0,30],self=self)
     
     
     

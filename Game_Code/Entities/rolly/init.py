@@ -44,7 +44,7 @@ def main(self,id,info):
     if not "master_pos" in om.values[id]:
         set("master_pos",info["pos"])
     
-
+    om.objects[id]["rendercond"] = 1
     Entities.createhpbar(id,1,[0,30],self)
     
     
@@ -59,8 +59,11 @@ def set_all():
     set("last_frame_ground",0)
     set("slope",0)
     set("knock_back",[0,0])
-    
-    
+    set("stunned",0)
+    set("bomb_timer",20)
+    set("can_exp",0)
+    set("flash_frq",10)
+    set("boom",0)
     
     
     

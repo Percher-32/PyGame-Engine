@@ -180,7 +180,7 @@ def logic_damage():
     """
         allows the entity to be damaged by player
     """
-    Entities.damageable(id,20,functhrow=partial(skated,id = id)  ,func=partial(hit,id = id)   , )
+    Entities.damageable(id,20,functhrow=partial(skated,id = id)  ,func=partial(hit,id = id)   , self=self)
 
 def logic_out_of_bounds():
     if id in om.objects.keys():
