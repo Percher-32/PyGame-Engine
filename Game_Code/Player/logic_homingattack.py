@@ -89,6 +89,8 @@ def main(self,collisionlisttype,selected_obj,axis,ground):
 
     #DISMOUNT
     if self.gp("homing") == 2:
+        
+        
         if self.gp("target").info["type"] == "enemy-L":
             if self.key["secondary"]:
                 # self.sp("des_vel",[0,0])
@@ -162,7 +164,7 @@ def main(self,collisionlisttype,selected_obj,axis,ground):
                     self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
                     self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
                     
-                    
+         
                     
         if self.gp("target").info["type"] == "goal":
             if not self.isthere("show-score"):
@@ -182,7 +184,7 @@ def main(self,collisionlisttype,selected_obj,axis,ground):
                 self.wait("show-score",7)
             self.sp("homing",0)
             
-        if self.gp("target").info["type"] in ["omnispring","turret","rolly"]:
+        if self.gp("target").info["type"] in ["omnispring","turret"]:
             if self.key["secondary"]:
                 self.sp("des_vel",[0,0])
                 self.sp("act_vel",[0,0])
@@ -206,6 +208,41 @@ def main(self,collisionlisttype,selected_obj,axis,ground):
 
                 self.sp("dashav",self.listdiv(actvel,16))
                 self.sp("dashdv",self.listdiv(desvel,16))
+
+                self.sp("act_vel",0,1)
+                self.sp("des_vel",0,1)
+                self.sp("act_vel",0,0)
+                self.sp("des_vel",0,0)
+                self.sp("act_vel",self.listadd((self.gp("act_vel"),actvel)))
+                self.sp("des_vel",self.listadd((self.gp("des_vel"),desvel)))
+
+        if self.gp("target").info["type"] in "rolly":
+            if self.key["secondary"]:
+                self.sp("des_vel",[0,0])
+                self.sp("act_vel",[0,0])
+                self.sp("wantime",0.5)
+                om.objects["player"]["pos"] = om.objects[self.gp("target").name]["pos"]
+            else:
+                self.sp("dashmeter",self.gp("dashmeter") + 30)
+                self.sp("jumpable",1)
+                self.sp("homing",0)
+                self.wait("bouncerem",3)
+                # cm.setcond("playercam","shake",6)
+                actmult = [150,150]
+                actvel = [  axis[0] * actmult[0] , axis[1] * actmult[1] ]
+                desmult = [150,150]
+                desvel = [  axis[0] * desmult[0] , axis[1] * desmult[1] ]
+
+                if actmult == [0,0]:
+                    actmult = [160,50]
+                    desmult = [160,50]
+                # self.spin(23,0.4,0.1)
+
+                self.sp("dashav",self.listdiv(actvel,16))
+                self.sp("dashdv",self.listdiv(desvel,16))
+                
+                om.set_value(self.gp("target").name,"thrown",1)
+                om.set_value(self.gp("target").name,"throw_vel",[self.key["x"] * 400,self.key["y"] * 400])
 
                 self.sp("act_vel",0,1)
                 self.sp("des_vel",0,1)

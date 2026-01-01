@@ -45,47 +45,48 @@ def hit():
 
     
 def slope():
-    slantr = get("inst_type") == "slantr" or (get("inst_name") == "rail-diag" and (get("inst").rot%180 == 0 ))
-    slantl = get("inst_type") == "slantl" or (get("inst_name") == "rail-diag" and ((get("inst").rot+90)%180 == 0 ))
-    
-    
-    if  get("slope"):
-        if slantr:
-            set("act_vel",get("act_vel",0),1)
-        if slantl:
-            set("act_vel",get("act_vel",0) * -1,1)
-            
-    
-    if get("last_frame_slope") and not get("slope"):
-        if slantl:
-            if get("des_vel",0) > 0:
-                om.translate(self,id,[
-                    abs((abs(get("des_vel",0)) * st * 1) + univars.grandim),
-                    abs((abs(get("des_vel",1)) * st * 1) + univars.grandim)
-                ])
-                set("des_vel",0,1)
-                set("act_vel",0,1)
-    
-        if slantr:
-            if get("des_vel",0) < 0:
-                om.translate(self,id,[
-                    abs((abs(get("des_vel",0)) * st * 1) + univars.grandim) * -1,
-                    abs((abs(get("des_vel",1)) * st * 1) + univars.grandim)
-                ])
-                set("des_vel",0,1)
-                set("act_vel",0,1)
-            
-    if get("slope") and not get("last_frame_slope"):
-        if slantr:
-            om.objects[id]["pos"] = [get("inst").realpos[0] - 0,get("inst").realpos[1] - 0]
-            
-        if slantl:
-            om.objects[id]["pos"] = [get("inst").realpos[0] - 0,get("inst").realpos[1] - 0]
-            
-            
-    
-    set("last_frame_slope",get("slope"))
-    set("last_frame_inst_type",get("inst_type"))
+    if not get("thrown"):
+        slantr = get("inst_type") == "slantr" or (get("inst_name") == "rail-diag" and (get("inst").rot%180 == 0 ))
+        slantl = get("inst_type") == "slantl" or (get("inst_name") == "rail-diag" and ((get("inst").rot+90)%180 == 0 ))
+        
+        
+        if  get("slope"):
+            if slantr:
+                set("act_vel",get("act_vel",0),1)
+            if slantl:
+                set("act_vel",get("act_vel",0) * -1,1)
+                
+        
+        if get("last_frame_slope") and not get("slope"):
+            if slantl:
+                if get("des_vel",0) > 0:
+                    om.translate(self,id,[
+                        abs((abs(get("des_vel",0)) * st * 1) + univars.grandim),
+                        abs((abs(get("des_vel",1)) * st * 1) + univars.grandim)
+                    ])
+                    set("des_vel",0,1)
+                    set("act_vel",0,1)
+        
+            if slantr:
+                if get("des_vel",0) < 0:
+                    om.translate(self,id,[
+                        abs((abs(get("des_vel",0)) * st * 1) + univars.grandim) * -1,
+                        abs((abs(get("des_vel",1)) * st * 1) + univars.grandim)
+                    ])
+                    set("des_vel",0,1)
+                    set("act_vel",0,1)
+                
+        if get("slope") and not get("last_frame_slope"):
+            if slantr:
+                om.objects[id]["pos"] = [get("inst").realpos[0] - 0,get("inst").realpos[1] - 0]
+                
+            if slantl:
+                om.objects[id]["pos"] = [get("inst").realpos[0] - 0,get("inst").realpos[1] - 0]
+                
+                
+        
+        set("last_frame_slope",get("slope"))
+        set("last_frame_inst_type",get("inst_type"))
     
 def update():
     if get("yeet_timer") > 0:
@@ -168,8 +169,9 @@ def bomb_logic():
 def boom():
     if not get("boom"):
         set("boom",1)
-        haid = om.add(self,info["pos"],"hurt_area",0,"hurt_area",[3.4,3.4],univars.grandim,keepprev=1,layer=2,info={"damage":50})
-        om.objects[haid]["rendercond"] = 0
+        if get("expdam"):
+            haid = om.add(self,info["pos"],"hurt_area",0,"hurt_area",[3.4,3.4],univars.grandim,keepprev=1,layer=2,info={"damage":50})
+            om.objects[haid]["rendercond"] = 0
         die()
     
     
@@ -292,6 +294,8 @@ def wall_col(linsts,rinsts):
 
     
 def jump(power,lungepow,jumprem):
+    lungepow += random.randint(-100,100)
+    power += random.randint(-100,100)
     if not get("jump_timer") > 0:
         set("jump_timer",60)
         set("jump_h",power)
@@ -327,7 +331,20 @@ def player_track():
                 jump( min(abs(om.objects["player"]["pos"][1] - info["pos"][1]) * 1 ,500),lungepow ,jumprem)
             
             
-            
+def logic_thrown():
+    if get("thrown") and not get("boom"):
+        inc("bomb_timer",-5 * st)
+        inc("HP",-5 * st)
+        set("flash_timer",30)
+        set("expdam",0)
+        vec = get("throw_vel")
+        # pm.particlespawnbluprint(self.listadd((om.objects[id]["pos"],(-32,-32))),"exp")
+        pm.particlespawnbluprint(self.listadd((om.objects[id]["pos"],(-32,-32))),"rollyexp")
+        # pm.particlespawnbluprint(self.listadd((om.objects[id]["pos"],(-32,-32))),"rollyexp2")
+        # pm.particlespawnbluprint(self.listadd((om.objects[id]["pos"],(-32,-32))),"rollyexp3")
+        
+        set("des_vel",vec)
+        set("act_vel",vec)
 
 def damageable():
     Entities.damageable(id,get("hit_dam"),self,func = hit,functhrow=hit     )
@@ -370,6 +387,9 @@ def main(self,id,info,st):
     ground_col()
     
     damageable()
+    
+    
+    logic_thrown()
     
     
     
