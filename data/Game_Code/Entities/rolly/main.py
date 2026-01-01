@@ -1,8 +1,8 @@
-import Managers.Gamemanager as Gamemananager
-import Managers.univars as univars
-import Game_Code.Utils.Entities as Entities
+import data.Managers.Gamemanager as Gamemananager
+import data.Managers.univars as univars
+import data.Game_Code.Utils.Entities as Entities
 import math
-import Game_Code.Utils.math as util_math
+import data.Game_Code.Utils.math as util_math
 import random
 
 

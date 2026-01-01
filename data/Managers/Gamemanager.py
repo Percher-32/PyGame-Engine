@@ -1,31 +1,31 @@
 import pygame
-import Managers.Cameramod as Cameramod
-import Managers.Textmanager as Textmanager
-import Managers.Cammanager as Cammanager
+import data.Managers.Cameramod as Cameramod
+import data.Managers.Textmanager as Textmanager
+import data.Managers.Cammanager as Cammanager
 import cProfile
-import Managers.event_manager as event_manager
-import Managers.funcs as funcs
+import data.Managers.event_manager as event_manager
+import data.Managers.funcs as funcs
 import math
-import Managers.framemanager as framemanager
-import Managers.objectmanager as objectmanager
+import data.Managers.framemanager as framemanager
+import data.Managers.objectmanager as objectmanager
 import pstats
-import Managers.Tiled as Tiled
+import data.Managers.Tiled as Tiled
 import copy
-import Managers.univars as univars
-import Managers.statemanager as statemanager
-import Managers.Uimanager as Uimanager
-import Managers.inst as inst
+import data.Managers.univars as univars
+import data.Managers.statemanager as statemanager
+import data.Managers.Uimanager as Uimanager
+import data.Managers.inst as inst
 import copy
 import moderngl
-import Managers.backgroundmanager as backgroundmanager
+import data.Managers.backgroundmanager as backgroundmanager
 import os
-import Managers.Shader as shader
+import data.Managers.Shader as shader
 import threading
 import multiprocessing
 import json
 import time
 import random
-import Managers.Particlesytem
+import data.Managers.Particlesytem
 pygame.init()
 pygame.joystick.init()
 
@@ -40,7 +40,7 @@ sm = statemanager.sm(univars.startstate)
 um = Uimanager.ingame
 bg = backgroundmanager.bg
 sd = shader
-pm = Managers.Particlesytem.pm
+pm = data.Managers.Particlesytem.pm
 
 
 class GameManager():
@@ -550,9 +550,9 @@ class GameManager():
 		univars.update()
 
 	def loadanims(self):
-		for filename in os.listdir("Saved/animations"):
+		for filename in os.listdir("data/Saved/animations"):
 			if  not filename ==  "None":
-				objfile = "Saved/animations" + "/" + filename
+				objfile = "data/Saved/animations" + "/" + filename
 				for anim in os.listdir(objfile):
 					anim = anim.replace(".json","")
 					om.loadanim(filename,anim)

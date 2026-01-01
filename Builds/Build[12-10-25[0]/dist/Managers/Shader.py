@@ -1,5 +1,5 @@
 import pygame
-import Managers.univars as univars
+import data.Managers.univars as univars
 import moderngl
 from array import array
 import random
@@ -37,7 +37,7 @@ void main() {
 """
 
 
-with open("Shadercode.fs","r") as code:
+with open("data/shadercode.fs","r") as code:
     frag_shader = code.read()
 
 

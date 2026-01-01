@@ -1,11 +1,11 @@
-import Managers.Gamemanager as Gamemananager
-import Managers.univars as univars
+import data.Managers.Gamemanager as Gamemananager
+import data.Managers.univars as univars
 import math
 
 
-import Game_Code.Player.state_rail as state_rail
-import Game_Code.Player.state_slope as state_slope
-import Game_Code.Player.state_main as state_main
+import data.Game_Code.Player.state_rail as state_rail
+import data.Game_Code.Player.state_slope as state_slope
+import data.Game_Code.Player.state_main as state_main
 
 
 

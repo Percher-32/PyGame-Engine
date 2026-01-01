@@ -5,7 +5,7 @@ import json
 
 gscache = {}
 
-with open(f"Saved/sizeoffsets.json","r") as file:
+with open(f"data/Saved/sizeoffsets.json","r") as file:
     sizeoffsets = json.load(file)
 class func:
     def __init__(self,granddim):
@@ -19,9 +19,9 @@ class func:
             offset = [0,0]
             if name in sizeoffsets:
                 offset = sizeoffsets[name]
-            folder_dir = f"Graphics/sprites/{name}"
+            folder_dir = f"data/Graphics/sprites/{name}"
             for images in os.listdir(folder_dir):
-                frame = pygame.transform.scale_by(pygame.image.load(f"Graphics/sprites/{name}/" + images).convert_alpha(),[(self.grandim/32) + offset[0] ,(self.grandim/32) + offset[1]  ])
+                frame = pygame.transform.scale_by(pygame.image.load(f"data/Graphics/sprites/{name}/" + images).convert_alpha(),[(self.grandim/32) + offset[0] ,(self.grandim/32) + offset[1]  ])
                 sprites.append(frame)
             self.getspritescache[name] = sprites
             return sprites
@@ -31,19 +31,19 @@ class func:
     def getspritesscale(self,name:str,scale):
         if not str((name,scale)) in self.getspritesscalecache.keys():
             sprites = []
-            folder_dir = f"Graphics/sprites/{name}"
+            folder_dir = f"data/Graphics/sprites/{name}"
             offset = [0,0]
             if name in sizeoffsets:
                 offset = sizeoffsets[name]
             for images in os.listdir(folder_dir):
-                frame = pygame.transform.scale_by(pygame.transform.scale(pygame.image.load(f"Graphics/sprites/{name}/" + images).convert_alpha(), [scale[0] + offset[0],scale[1] + offset[1]]),[1,1])
+                frame = pygame.transform.scale_by(pygame.transform.scale(pygame.image.load(f"data/Graphics/sprites/{name}/" + images).convert_alpha(), [scale[0] + offset[0],scale[1] + offset[1]]),[1,1])
                 sprites.append(frame)
             self.getspritesscalecache[str((name,scale))] = sprites
             return sprites 
         else:
             return self.getspritesscalecache[str((name,scale))]
     def allsprites(self):
-        return os.listdir("Graphics/sprites")
+        return os.listdir("data/Graphics/sprites")
     def dist(self,pos1:list,pos2:list):
         return ((((pos1[0] - pos2[0]) ** 2) + ((pos1[1] - pos2[1]) ** 2)) ** 0.5)
     def rectblit(self,pos,width,col,camera,dim,screen):
@@ -60,12 +60,12 @@ class func:
     def intersect(self,a:dict,b:dict):
         return list(set(a) & set(b))
     def allsprites(self):
-        return os.listdir("Graphics/sprites")
+        return os.listdir("data/Graphics/sprites")
     def allnone(self):
-        n = ["none" for i in os.listdir("Graphics/sprites")]
+        n = ["none" for i in os.listdir("data/Graphics/sprites")]
         return n
     def allones(self):
-        n = [[1,1] for i in os.listdir("Graphics/sprites")]
+        n = [[1,1] for i in os.listdir("data/Graphics/sprites")]
         return n
     def blitui(self,surf,pos,size,realscreeen):
         a = surf

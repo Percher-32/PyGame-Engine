@@ -2,7 +2,7 @@
 import time
 import pygame
 import math
-import Managers.univars as univars
+import data.Managers.univars as univars
 
 class frame_manager:
 	def __init__(self,tm):

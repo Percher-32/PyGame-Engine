@@ -1,7 +1,7 @@
 #Cammanager
 import random
-import Managers.univars as univars
-import Managers.Cameramod as Cameramod
+import data.Managers.univars as univars
+import data.Managers.Cameramod as Cameramod
 class Cammanager:
 	def __init__(self,cam):
 		self.cameras = {"def":[[0,0],1,0]}

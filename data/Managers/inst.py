@@ -1,6 +1,6 @@
 import pygame
-import Managers.Cameramod as Cameramod
-import Managers.univars as univars
+import data.Managers.Cameramod as Cameramod
+import data.Managers.univars as univars
 import json
 import math
 cam = Cameramod.cam
@@ -8,7 +8,7 @@ cam = Cameramod.cam
 
 spritecache = {}
 dataspritecache = []
-with open("Saved/Spritecache.json") as file:
+with open("data/Saved/Spritecache.json") as file:
 	fakespritecache = json.load(file)
 dataspritecache = fakespritecache
 for i in fakespritecache:

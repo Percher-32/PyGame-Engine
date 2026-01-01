@@ -1,16 +1,16 @@
-import Managers.Gamemanager as Gamemananager
-import Managers.univars as univars
-import Game_Code.Player.state_rail as state_rail
-import Game_Code.Player.player_update as player_update
-import Game_Code.Player.logic_homingattack as logic_homingattack
-import Game_Code.Player.logic_wall as logic_wall
-import Game_Code.Player.logic_airdash as logic_airdash
-import Game_Code.Player.logic_x_cont as logic_x_cont
-import Game_Code.Player.logic_fallin as logic_fallin
-import Game_Code.Player.logic_col as logic_col
-import Game_Code.Player.logic_jump as logic_jump
+import data.Managers.Gamemanager as Gamemananager
+import data.Managers.univars as univars
+import data.Game_Code.Player.state_rail as state_rail
+import data.Game_Code.Player.player_update as player_update
+import data.Game_Code.Player.logic_homingattack as logic_homingattack
+import data.Game_Code.Player.logic_wall as logic_wall
+import data.Game_Code.Player.logic_airdash as logic_airdash
+import data.Game_Code.Player.logic_x_cont as logic_x_cont
+import data.Game_Code.Player.logic_fallin as logic_fallin
+import data.Game_Code.Player.logic_col as logic_col
+import data.Game_Code.Player.logic_jump as logic_jump
 
-import Game_Code.Player.flare as flare
+import data.Game_Code.Player.flare as flare
 
 
 em = Gamemananager.em

@@ -1,8 +1,8 @@
 import pygame
-import Managers.event_manager as event_manager
-import Managers.Textmanager as Textmanager
-import Managers.Uielement as Uielement
-import Managers.univars as univars
+import data.Managers.event_manager as event_manager
+import data.Managers.Textmanager as Textmanager
+import data.Managers.Uielement as Uielement
+import data.Managers.univars as univars
 import json
 tm = Textmanager.Textmanager(univars.realscreeen)
 em = event_manager.event_manager()
@@ -44,7 +44,7 @@ class Uimanager:
 		if not name in self.elements.keys():
 			if not surf == None:
 				if not usesprite:
-					surf = pygame.image.load(f"Graphics/ui/{surf}.png").convert_alpha()
+					surf = pygame.image.load(f"data/Graphics/ui/{surf}.png").convert_alpha()
 				else:
 					surf = univars.func.getsprites(surf)[sn]
 			ui = Uielement.Uirect(dimensions,states,pos,name,surf = surf,fromstart = fromstart)
@@ -59,7 +59,7 @@ class Uimanager:
 		if not name in self.elements.keys():
 			if not surf == None:
 				if not usesprite:
-					surf = pygame.image.load(f"Graphics/ui/{surf}.png").convert_alpha()
+					surf = pygame.image.load(f"data/Graphics/ui/{surf}.png").convert_alpha()
 				else:
 					surf = univars.func.getsprites(surf)[sn]
 			ui = Uielement.Uibutton(dimensions,states,pos,name,surf = surf)
@@ -210,14 +210,14 @@ class Uimanager:
 
 	# def savealluielements(self):
 	# 	# todump = [self.elements[i].pop("surf").pop("cache") for i in self.elements.keys()  ]
-	# 	with open("Saved/Ui.json","w") as file:
+	# 	with open("data/Saved/Ui.json","w") as file:
 	# 		json.dump({"metadata":self.metadata,"binds":self.binds,"glidens":self.glidens},file)
 			
 		
 
 
 	# def loadalluielements(self):
-	# 	with open("Saved/Ui.json","r") as file:
+	# 	with open("data/Saved/Ui.json","r") as file:
 	# 		elements = json.load(file)
 	# 	self.metadata = {"element":[],"rect":[],"button":[],"text":[]}
 	# 	self.binds = []

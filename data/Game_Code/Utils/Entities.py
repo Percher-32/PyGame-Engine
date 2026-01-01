@@ -1,5 +1,5 @@
-import Managers.Gamemanager as Gamemananager
-import Managers.univars as univars
+import data.Managers.Gamemanager as Gamemananager
+import data.Managers.univars as univars
 import random
 import pygame
 import os
@@ -136,7 +136,7 @@ def entity_list_create(self):
         Compiles all the enemy code and stres it in a dictionary
     """
     
-    self.entity_type = os.listdir("Game_Code/Entities")
+    self.entity_type = os.listdir("data/Game_Code/Entities")
     self.entity_type = [entity for entity in self.entity_type if not ".py" in entity]
 
 
@@ -145,9 +145,9 @@ def entity_list_create(self):
         init_code = "NONE"
         main_code = "NONE"
         edit_code = "NONE"
-        with open(f"Game_Code/Entities/{entity}/init.py","r") as init:
+        with open(f"data/Game_Code/Entities/{entity}/init.py","r") as init:
             init_code = init.read()
-        with open(f"Game_Code/Entities/{entity}/main.py","r") as main:
+        with open(f"data/Game_Code/Entities/{entity}/main.py","r") as main:
             main_code = main.read()
             
             
@@ -168,8 +168,8 @@ def entity_list_create(self):
         
         
         
-        if os.path.exists(f"Game_Code/Entities/{entity}/edit.py"):
-            with open(f"Game_Code/Entities/{entity}/edit.py","r") as edit:
+        if os.path.exists(f"data/Game_Code/Entities/{entity}/edit.py"):
+            with open(f"data/Game_Code/Entities/{entity}/edit.py","r") as edit:
                 edit_code = edit.read()
             
             edit_code = edit_code.replace('self = "<REMOVE>"'," ")

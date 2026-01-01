@@ -1,14 +1,14 @@
 import pygame
-import Managers.Cameramod as Cameramod
-import Managers.Cammanager as Cammanager
-import Managers.Textmanager as Textmanager
-import Managers.funcs as funcs
-import Managers.univars as univars
-import Managers.backgroundmanager as backgroundmanager
-import Managers.Uimanager as Uimanager
-import Managers.Cammanager as Cammanager
-import Managers.objectmanager as objectmanager
-import Managers.Particlesytem as particlesystem
+import data.Managers.Cameramod as Cameramod
+import data.Managers.Cammanager as Cammanager
+import data.Managers.Textmanager as Textmanager
+import data.Managers.funcs as funcs
+import data.Managers.univars as univars
+import data.Managers.backgroundmanager as backgroundmanager
+import data.Managers.Uimanager as Uimanager
+import data.Managers.Cammanager as Cammanager
+import data.Managers.objectmanager as objectmanager
+import data.Managers.Particlesytem as particlesystem
 import os
 um = Uimanager.ingame
 cam = Cameramod.cam
@@ -19,8 +19,8 @@ pm = particlesystem.pm
 
 spritesnlen = {}
 
-for spritefolder in os.listdir("Graphics/sprites"):
-	folder_dir = f"Graphics/sprites/{spritefolder}"
+for spritefolder in os.listdir("data/Graphics/sprites"):
+	folder_dir = f"data/Graphics/sprites/{spritefolder}"
 	spritesnlen[spritefolder] = len(os.listdir(folder_dir))
 
 

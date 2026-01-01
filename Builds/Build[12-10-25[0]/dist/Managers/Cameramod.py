@@ -1,6 +1,6 @@
 import random
 import pygame
-import Managers.univars as univars
+import data.Managers.univars as univars
 class camera:
 	def __init__(self,pos,size):
 		self.x = pos[0]

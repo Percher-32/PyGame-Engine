@@ -1,14 +1,14 @@
 import pickle as pk
 import json
-import Managers.funcs as funcs
+import data.Managers.funcs as funcs
 import pygame
-import Managers.Textmanager as Textmanager
+import data.Managers.Textmanager as Textmanager
 import random
 import itertools
-import Managers.inst as inst
+import data.Managers.inst as inst
 import time
-import Managers.Cameramod as Cameramod
-import Managers.univars as univars
+import data.Managers.Cameramod as Cameramod
+import data.Managers.univars as univars
 import os
 import math
 
@@ -215,9 +215,9 @@ class object_manager:
 
 
 	def loadanims(self):
-		for filename in os.listdir("Saved/animations"):
+		for filename in os.listdir("data/Saved/animations"):
 			if  not filename ==  "None":
-				objfile = "Saved/animations" + "/" + filename
+				objfile = "data/Saved/animations" + "/" + filename
 				for anim in os.listdir(objfile):
 					anim = anim.replace(".json","")
 					self.loadanim(filename,anim)
@@ -256,7 +256,7 @@ class object_manager:
 	# 	self.speed = 0
 
 	def loadtilemap(self,GM,name):
-		if not name == "null" and os.path.exists(f"Saved/tilemaps/{name}"):
+		if not name == "null" and os.path.exists(f"data/Saved/tilemaps/{name}"):
 			self.__init__(self.realscreen,self.screen,univars.grandim,self.aplhainst,self.renderinst)
 			self.loadedmap = name
 			self.decodeinst()
@@ -267,15 +267,15 @@ class object_manager:
 
 	def savetilemap(self,GM,name,check = False):
 		if not self.baked:
-			if os.path.exists(f"Saved/tilemaps/{name}") and not check:
+			if os.path.exists(f"data/Saved/tilemaps/{name}") and not check:
 				return "No"
 			else:
 				if not check:
-					os.mkdir(f"Saved/tilemaps/{name}")
-				with open(f"Saved/tilemaps/{name}/inst.json","w") as file:
+					os.mkdir(f"data/Saved/tilemaps/{name}")
+				with open(f"data/Saved/tilemaps/{name}/inst.json","w") as file:
 					todump = self.encodeinst()
 					json.dump(todump,file)
-				with open(f"Saved/tilemaps/{name}/non-inst.json","w") as file:
+				with open(f"data/Saved/tilemaps/{name}/non-inst.json","w") as file:
 					todump = self.objects
 					json.dump(todump,file)
 				self.loadtilemap(GM,name)
@@ -408,16 +408,16 @@ class object_manager:
 
 	def saveanim(self,name:str,animname:str,anim:dict):
 		""""obj -> name of object   animname -> animation name  , anim -> actual animation"""
-		if not os.path.exists(f"Saved/animations/{name}"):
-			os.mkdir(f"Saved/animations/{name}")
-		with open(f"Saved/animations/{name}/{animname}.json","w") as file:
+		if not os.path.exists(f"data/Saved/animations/{name}"):
+			os.mkdir(f"data/Saved/animations/{name}")
+		with open(f"data/Saved/animations/{name}/{animname}.json","w") as file:
 			json.dump(anim,file)
 			
 
 
 	def loadanim(self,name,animname):
 		"""obj -> name   , animname -> animation name"""
-		with open(f"Saved/animations/{name}/{animname}.json","r") as file:
+		with open(f"data/Saved/animations/{name}/{animname}.json","r") as file:
 			anim = json.load(file)
 		
 		if name in self.animations.keys():
@@ -430,7 +430,7 @@ class object_manager:
 
 
 	def deleteanim(self,obj,animname):
-		anim = f"Saved/animations/{obj}/{animname}.json"
+		anim = f"data/Saved/animations/{obj}/{animname}.json"
 		if os.path.exists(anim):
 			os.remove(anim)
 
@@ -447,7 +447,7 @@ class object_manager:
 		return [insts,self.tracker]
 
 	def decodeinst(self):
-		with open(f"Saved/tilemaps/{self.loadedmap}/inst.json","r") as file:
+		with open(f"data/Saved/tilemaps/{self.loadedmap}/inst.json","r") as file:
 			allinst = json.load(file)
 			for inst in allinst[0]:
 				self.datatoinst(inst[1],inst[0])
@@ -457,7 +457,7 @@ class object_manager:
 			om.BAKE()
 		
 	def decodeobj(self):
-		with open(f"Saved/tilemaps/{self.loadedmap}/non-inst.json","r") as file:
+		with open(f"data/Saved/tilemaps/{self.loadedmap}/non-inst.json","r") as file:
 			allobj = json.load(file)
 			for obj in allobj.keys():
 				self.datatoobj(obj,allobj[obj])

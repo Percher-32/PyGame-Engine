@@ -1,7 +1,7 @@
 import pygame
-import Managers.event_manager as event_manager
-import Managers.Textmanager as Textmanager
-import Managers.univars as univars
+import data.Managers.event_manager as event_manager
+import data.Managers.Textmanager as Textmanager
+import data.Managers.univars as univars
 tm = Textmanager.Textmanager(univars.realscreeen)
 
 
@@ -107,7 +107,7 @@ class Uitext(pygame.sprite.Sprite):
         self.col = col
         self.center = center
         self.states = states
-        self.realfont = pygame.font.Font(f"Graphics/Fonts/{font}",100)
+        self.realfont = pygame.font.Font(f"data/Graphics/Fonts/{font}",100)
         self.bart = self.realfont.render(text,1,col)
         self.image = self.realfont.render(text,1,col)
         self.rect = self.image.get_rect(center = (self.pos[0] * univars.realscreeen.get_width()//2 + univars.realscreeen.get_width()//2, -1 * self.pos[1] * univars.realscreeen.get_height()//2 + univars.realscreeen.get_height()//2))

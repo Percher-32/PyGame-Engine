@@ -1,7 +1,7 @@
 import pygame
 import json
-import Managers.funcs as funcs
-import Managers.statemanager as sm
+import data.Managers.funcs as funcs
+import data.Managers.statemanager as sm
 
 
 pygame.display.init()
@@ -100,7 +100,7 @@ hideentypes = ["camz"]
 aplhatypes = {}
 
 
-with open(f"Saved/sizeoffsets.json","w") as file:
+with open(f"data/Saved/sizeoffsets.json","w") as file:
     json.dump(sizeoffsets,file)
 
 

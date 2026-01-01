@@ -1,9 +1,9 @@
-import Managers.Gamemanager as Gamemananager
-import Managers.univars as univars
+import data.Managers.Gamemanager as Gamemananager
+import data.Managers.univars as univars
 import pygame
 import random
 from functools import partial
-import Game_Code.Utils.Entities as Entities
+import data.Game_Code.Utils.Entities as Entities
 
 
 

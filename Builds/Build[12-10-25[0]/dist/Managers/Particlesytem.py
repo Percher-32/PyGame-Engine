@@ -1,6 +1,6 @@
 import pygame
-import Managers.Cameramod as Cameramod
-import  Managers.univars as univars
+import data.Managers.Cameramod as Cameramod
+import  data.Managers.univars as univars
 import random
 import json
 import os
@@ -50,7 +50,7 @@ class Particlemanager:
 			
 		"""
 		tosave = {"type":type,"divergence":divergence,"color":color,"initvel":initvel,"force":force,"size":size,"sizedec":sizedec,"dim":dim,"alpha":alpha,"alphadec":alphadec,"colordec":colordec,"quality":quality,"divergenceforce":divergenceforce,"divergencepos":divergencepos,"ntimes":ntimes,"speed":speed}
-		with open(f"Saved/particles/{name}.json","w") as file:
+		with open(f"data/Saved/particles/{name}.json","w") as file:
 			json.dump(tosave,file)
 		self.bluprints[name] = tosave
 
@@ -59,8 +59,8 @@ class Particlemanager:
 		"""
 			loads all saved particle bluprints
 		"""
-		for i in os.listdir("Saved/particles"):
-			with open(f"Saved/particles/{i}") as file:
+		for i in os.listdir("data/Saved/particles"):
+			with open(f"data/Saved/particles/{i}") as file:
 				self.bluprints[i.replace(".json","")] = json.load(file)
 
 

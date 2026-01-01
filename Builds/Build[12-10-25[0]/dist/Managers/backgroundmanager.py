@@ -1,7 +1,7 @@
 import pygame
-import Managers.univars as univars
+import data.Managers.univars as univars
 import json
-import Managers.Cameramod as Cameramod
+import data.Managers.Cameramod as Cameramod
 import os
 
 tol = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]
@@ -24,7 +24,7 @@ class Item(pygame.sprite.Sprite):
             surf.fill(color)
             surf.set_alpha(alpha)
         else:
-            surf = pygame.image.load(f"Graphics/background/{surf}.png").convert_alpha()
+            surf = pygame.image.load(f"data/Graphics/background/{surf}.png").convert_alpha()
             surf = pygame.transform.scale(surf,dimensions)
         
         self.pos = pos
@@ -140,16 +140,16 @@ class Backgroundmanager:
         """
         for item in self.items.keys():
             todump = [  [i.name,i.pos,i.alpha,i.surf,i.color,i.dimensions,i.layerip,i.infiniscroll,i.zdep]  for i in self.items[item]]
-            with open (f"Saved/backgrounds/{item}.json","w") as file:
+            with open (f"data/Saved/backgrounds/{item}.json","w") as file:
                 json.dump(todump,file)
             
 
     def loadbg(self):
         self.items = {}
-        for item in os.listdir("Saved/backgrounds"):
-            ground = "Saved/backgrounds" + "/" + item
+        for item in os.listdir("data/Saved/backgrounds"):
+            ground = "data/Saved/backgrounds" + "/" + item
             self.addbackground(item.replace(".json",""))
-            with open ("Saved/backgrounds" + "/" + item,"r") as thing:
+            with open ("data/Saved/backgrounds" + "/" + item,"r") as thing:
                 things = json.load(thing)
                 for elem in things:
                     self.addbackgrounditem(elem[0],item.replace(".json",""),elem[1],alpha= elem[2],surf=elem[3],color = elem[4],dimensions=elem[5],layer = elem[6],infiniscroll=elem[7],zdep=elem[8])

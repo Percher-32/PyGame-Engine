@@ -1,14 +1,14 @@
 #event_manager
 import pygame
 import json
-import Managers.inst as inst
+import data.Managers.inst as inst
 import os
-import Managers.univars as univars
+import data.Managers.univars as univars
 pygame.joystick.init()
 joysticks = [pygame.joystick.Joystick(i) for i in range (pygame.joystick.get_count())] 
 for joystick in joysticks:
     joystick.init()
-with open(os.path.join("Saved/ps4_keys.json"), "r+") as file:
+with open(os.path.join("data/Saved/ps4_keys.json"), "r+") as file:
     button_keys = json.load(file)
 analog_keys =  {0:0,1:0,2:0,3:0,4:0,5:0}
 
@@ -121,7 +121,7 @@ class event_manager:
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				self.running = False
-				with open("Saved/Spritecache.json","w") as file:
+				with open("data/Saved/Spritecache.json","w") as file:
 					json.dump(inst.dataspritecache,file)
 
 
@@ -177,7 +177,7 @@ class event_manager:
 	def close(self):
 		pygame.quit()
 		self.running = False
-		with open("Saved/Spritecache.json","w") as file:
+		with open("data/Saved/Spritecache.json","w") as file:
 			json.dump(inst.dataspritecache,file)
 		exit()
 

@@ -1,19 +1,19 @@
-import Managers.Gamemanager as Gamemananager
-import Managers.univars as univars
+import data.Managers.Gamemanager as Gamemananager
+import data.Managers.univars as univars
 import pygame
 
 
 
-import Game_Code.Player.player_movement_core as player_movement_core
-import Game_Code.Player.logic_spindash as logic_spindash
-import Game_Code.Player.logic_homingattack as logic_homingattack
-import Game_Code.Player.logic_trick as logic_trick
-import Game_Code.Player.logic_dashbar as logic_dashbar
-import Game_Code.Player.logic_airdash as logic_airdash
-import Game_Code.Player.logic_damage as logic_damage
+import data.Game_Code.Player.player_movement_core as player_movement_core
+import data.Game_Code.Player.logic_spindash as logic_spindash
+import data.Game_Code.Player.logic_homingattack as logic_homingattack
+import data.Game_Code.Player.logic_trick as logic_trick
+import data.Game_Code.Player.logic_dashbar as logic_dashbar
+import data.Game_Code.Player.logic_airdash as logic_airdash
+import data.Game_Code.Player.logic_damage as logic_damage
 
-import Game_Code.Player.player_init as player_init
-import Game_Code.Player.attack as attack
+import data.Game_Code.Player.player_init as player_init
+import data.Game_Code.Player.attack as attack
 
 
 

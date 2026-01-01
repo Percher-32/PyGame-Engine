@@ -1,12 +1,12 @@
-import Managers.Gamemanager as Gamemananager
-import Managers.univars as univars
+import data.Managers.Gamemanager as Gamemananager
+import data.Managers.univars as univars
 import math
 
 
-import Game_Code.Player.player_movement as player_movement
-import Game_Code.Player.player_init as player_init
-import Game_Code.Player.player_anim as player_anim
-import Game_Code.Player.logic_skateboard as logic_skateboard
+import data.Game_Code.Player.player_movement as player_movement
+import data.Game_Code.Player.player_init as player_init
+import data.Game_Code.Player.player_anim as player_anim
+import data.Game_Code.Player.logic_skateboard as logic_skateboard
 
 
 
@@ -25,7 +25,7 @@ pm = Gamemananager.pm
 
 
 
-import Game_Code.Camera.player_cam_cont as player_cam_cont
+import data.Game_Code.Camera.player_cam_cont as player_cam_cont
 
 
 
