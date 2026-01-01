@@ -62,7 +62,7 @@ def main(self,collisionbox,slanted,rail,collision,collisionlisttype,axis,selecte
 
 
 
-
+    
     if not slanted:
         state_main.main(self,slanted,collision,collisionbox,axis,collisionlisttype,selected_obj,instlist,collisionboxtype,smallcollisionbox,ground)
     else:                                                                                                                               

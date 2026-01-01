@@ -29,6 +29,11 @@ def main(self,pos):
     cm.setcam("playercam")
 
     om.speed = 1
+    
+    
+    
+    
+    self.sp("HP",100)
 
 
     #create player

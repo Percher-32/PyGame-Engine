@@ -40,6 +40,7 @@ def hit():
     set("knock_back",[self.key["x"] * 400 , self.key["y"] * 200])
     set("des_knock_back",[self.key["x"] * 400 , self.key["y"] * 200])
     set("downvel",0)
+    self.sp("dashmeter",self.gp("dashmeter") + 100)
     
 
     
@@ -100,12 +101,20 @@ def update():
     if get("cdb"):
         if get("bomb_timer") > 0:
             if round(fm.frame)%(math.ceil(get("flash_frq"))) == 0:
-                if om.objects[id]["sn"] == 0:
-                    om.objects[id]["sn"] = 2
-                elif om.objects[id]["sn"] == 1:
-                    om.objects[id]["sn"] = 2
-                elif om.objects[id]["sn"] == 2:
-                    om.objects[id]["sn"] = 0
+                if get("bomb_timer")/get("start_boom")  > 0.25:
+                    if om.objects[id]["sn"] == 0:
+                        om.objects[id]["sn"] = 2
+                    elif om.objects[id]["sn"] == 1:
+                        om.objects[id]["sn"] = 2
+                    elif om.objects[id]["sn"] == 2:
+                        om.objects[id]["sn"] = 0
+                else:
+                    if om.objects[id]["sn"] == 0:
+                        om.objects[id]["sn"] = 1
+                    elif om.objects[id]["sn"] == 1:
+                        om.objects[id]["sn"] = 2
+                    elif om.objects[id]["sn"] == 2:
+                        om.objects[id]["sn"] = 1
                 
                 
     elif get("flash_timer") > 0:
@@ -159,6 +168,8 @@ def bomb_logic():
 def boom():
     if not get("boom"):
         set("boom",1)
+        haid = om.add(self,info["pos"],"hurt_area",0,"hurt_area",[3.4,3.4],univars.grandim,keepprev=1,layer=2,info={"damage":50})
+        om.objects[haid]["rendercond"] = 0
         die()
     
     
@@ -319,16 +330,18 @@ def player_track():
             
 
 def damageable():
-    Entities.damageable(id,20,self,func = hit     )
+    Entities.damageable(id,get("hit_dam"),self,func = hit,functhrow=hit     )
         
 def die():
     om.objects[id]["rendercond"] = 0
     set("canhome",0)
-    for _ in range(3):
-        pm.particlespawnbluprint([om.objects[id]["pos"][0],om.objects[id]["pos"][1] ],"rollyexp" ,initvel=[(get("des_vel")[0]/5) * 1 ,(get("des_vel")[1]/5) * 1])
-        pm.particlespawnbluprint([om.objects[id]["pos"][0],om.objects[id]["pos"][1] ],"rollyexp2",initvel=[(get("des_vel")[0]/5) * 1 ,(get("des_vel")[1]/5) * 1])
-        pm.particlespawnbluprint([om.objects[id]["pos"][0],om.objects[id]["pos"][1] ],"rollyexp3",initvel=[(get("des_vel")[0]/5) * 1 ,(get("des_vel")[1]/5) * 1])
-        pm.particlespawnbluprint([om.objects[id]["pos"][0],om.objects[id]["pos"][1] ],"exp2"     ,initvel=[(get("des_vel")[0]/5) * 1 ,(get("des_vel")[1]/5) * 1])
+    if not get("hasboomed"):
+        for _ in range(3):
+            set("hasboomed",1)
+            pm.particlespawnbluprint([om.objects[id]["pos"][0],om.objects[id]["pos"][1] ],"rollyexp" ,initvel=[(get("des_vel")[0]/10) * 1 ,(get("des_vel")[1]/5) * 0.2])
+            pm.particlespawnbluprint([om.objects[id]["pos"][0],om.objects[id]["pos"][1] ],"rollyexp2",initvel=[(get("des_vel")[0]/10) * 1 ,(get("des_vel")[1]/5) * 0.2])
+            pm.particlespawnbluprint([om.objects[id]["pos"][0],om.objects[id]["pos"][1] ],"rollyexp3",initvel=[(get("des_vel")[0]/10) * 1 ,(get("des_vel")[1]/5) * 0.2])
+            pm.particlespawnbluprint([om.objects[id]["pos"][0],om.objects[id]["pos"][1] ],"exp2"     ,initvel=[(get("des_vel")[0]/10) * 1 ,(get("des_vel")[1]/5) * 0.2])
 
 em = Gamemananager.em
 tm = Gamemananager.tm

@@ -43,6 +43,8 @@ def main(self,id,info):
     set_all()
     if not "master_pos" in om.values[id]:
         set("master_pos",info["pos"])
+    if not "hit_dam" in om.values[id]:
+        set("hit_dam",40)
     
     om.objects[id]["rendercond"] = 1
     om.objects[id]["sizen"] = [3,3]
@@ -67,6 +69,7 @@ def set_all():
     set("flash_frq",10)
     set("boom",0)
     set("activated",0)
+    set("hasboomed",0)
     
     
     

@@ -10,6 +10,7 @@ import Game_Code.Player.logic_homingattack as logic_homingattack
 import Game_Code.Player.logic_trick as logic_trick
 import Game_Code.Player.logic_dashbar as logic_dashbar
 import Game_Code.Player.logic_airdash as logic_airdash
+import Game_Code.Player.logic_damage as logic_damage
 
 import Game_Code.Player.player_init as player_init
 import Game_Code.Player.attack as attack
@@ -190,6 +191,7 @@ def main(self):
     logic_homingattack.main(self,collisionlisttype,selected_obj,axis,ground)
     logic_trick.main(self,collisionbox,ground)
     logic_airdash.main(self,ground,axis)
+    logic_damage.main(self,collisionbox)
 
 
     #MAIN
