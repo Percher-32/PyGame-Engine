@@ -15,10 +15,13 @@ pixelscale = 1
 screen_w = pygame.display.get_desktop_sizes()[0][0]/scaledown
 screen_h = pygame.display.get_desktop_sizes()[0][1]/scaledown
 # print()
-oldnum = 2202.9071700822983
-rw = (((((screen_w**2 +  screen_h**2)**0.5)/oldnum)))
-startdims = (screen_w,screen_h)
+oldnum = (pygame.display.get_desktop_sizes()[0][0]**2 +  pygame.display.get_desktop_sizes()[0][1]**2)**0.5
+rw = ((screen_w**2 +  screen_h**2)**0.5)/oldnum
+startdims = (screen_w*scaledown,screen_h*scaledown)
 
+
+
+ui_screen_size =  startdims
 camchange = True
 
 
@@ -51,6 +54,7 @@ sizes = {
 
 
 minsize = (screen_w/pixelscale,screen_h/pixelscale)
+
 
 screen = pygame.Surface(minsize,pygame.SCALED)
 fakescreen = pygame.Surface((screen_w*1,screen_h*1))

@@ -242,7 +242,7 @@ class Uimanager:
 			returns wether a button has been clicked
 		"""
 		if self.mode == "arrow":
-			return (self.selectedbutton == button) and (em.mouse[0] or em.controller["x"])
+			return (self.selectedbutton == button) and (em.mouse[0] or em.controller["A"] or em.controller["SELECT"] or em.key[pygame.K_RETURN])
 		else:
 			return self.elements[button]["click"]
 			

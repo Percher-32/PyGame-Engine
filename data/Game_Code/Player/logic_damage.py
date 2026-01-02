@@ -29,3 +29,4 @@ def main(self,collisionbox):
                 self.sp("HP",self.gp("HP") - om.get_value(obj.name,"damage"))
                 om.removeid(obj.name)
                 
+                

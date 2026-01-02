@@ -19,4 +19,6 @@ pm = Gamemananager.pm
 
 
 def main(self):
+    um.changestate("start_menu","start_button")
+    univars.startshaderstate = 1
     pass

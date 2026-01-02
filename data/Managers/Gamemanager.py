@@ -67,6 +67,7 @@ class GameManager():
 		self.pausebackground = False
 		self.pauseui = False
 		self.key = {"x":0,"y":0,"jump":0,"secondary":0,"attack":0,"throw":0,"axis":[0,0],"option":0,"alt-x":0,"tert":0,"trick":0}
+		self.fakekey = {"x":0,"y":0,"jump":0,"secondary":0,"attack":0,"throw":0,"axis":[0,0],"option":0,"alt-x":0,"tert":0,"trick":0}
 		self.dim = univars.grandim
 		self.fpsmax = univars.maxfps
 		self.leveledit = True
@@ -118,80 +119,132 @@ class GameManager():
 
 	def keybind(self):
 		self.lastkey = self.key.copy()
-		#main 5 inputs
-		if em.controller["x"] or em.key[pygame.K_SPACE] or em.key[pygame.K_RETURN]:
-			self.key["jump"] = True
-		else:
-			self.key["jump"] = False
-		if em.controller["triangle"] or em.controller["R1"] or em.key[pygame.K_z] or em.key[pygame.K_p]:
-			self.key["secondary"] = True
-		else:
-			self.key["secondary"] = False
-		if em.controller["square"] or em.key[pygame.K_o] or em.key[pygame.K_x]:
-			self.key["attack"] = True
-		else:
-			self.key["attack"] = False
-		if em.controller["circle"] or em.key[pygame.K_i] or em.key[pygame.K_c]:
-			self.key["throw"] = True
-		else:
-			self.key["throw"] = False
-		if em.controller["options"] or em.key[pygame.K_ESCAPE]:
-			self.key["option"] = True
-		else:
-			self.key["option"] = False
-		# if em.controller["L1"] or em.key[pygame.K_LCTRL] or em.key[pygame.K_RCTRL]:
-		# 	self.key["tert"] = True
-		# else:
-		# 	self.key["tert"] = False
-		if em.controller["L1"] or em.key[pygame.K_LCTRL] or em.key[pygame.K_RCTRL]:
-			self.key["trick"] = True
-		else:
-			self.key["trick"] = False
+  
 
+
+  
+		#main 4 inputs
+		if em.controller["A"] or em.key[pygame.K_SPACE] or em.key[pygame.K_RETURN]:
+			self.fakekey["jump"] = True
+		else:
+			self.fakekey["jump"] = False
+		if em.controller["Y"] or em.key[pygame.K_z] or em.key[pygame.K_p]:
+			self.fakekey["secondary"] = True
+		else:
+			self.fakekey["secondary"] = False
+		if em.controller["X"] or em.key[pygame.K_o] or em.key[pygame.K_x]:
+			self.fakekey["attack"] = True
+		else:
+			self.fakekey["attack"] = False
+		if em.controller["B"] or em.key[pygame.K_i] or em.key[pygame.K_c]:
+			self.fakekey["throw"] = True
+		else:
+			self.fakekey["throw"] = False
+   
+   
+   
+		if em.controller["OPT"] or em.key[pygame.K_ESCAPE]:
+			self.fakekey["option"] = True
+		else:
+			self.fakekey["option"] = False
+		if em.controller["START"] or em.key[pygame.K_RETURN]:
+			self.fakekey["START"] = True
+		else:
+			self.fakekey["START"] = False
+
+		if em.controller["B"] or em.key[pygame.K_ESCAPE] or em.controller["BACK"]:
+			self.fakekey["back"] = True
+		else:
+			self.fakekey["back"] = False
+   
+   
+   
+   
+   
+		if em.controller["LB"]or em.controller["RB"] or em.key[pygame.K_LCTRL] or em.key[pygame.K_RCTRL]:
+			self.fakekey["bumper"] = True
+		else:
+			self.fakekey["bumper"] = False
+		if em.controller["LB"] or em.key[pygame.K_LCTRL]:
+			self.fakekey["LB"] = True
+		else:
+			self.fakekey["LB"] = False
+		if em.controller["RB"] or em.key[pygame.K_RCTRL]:
+			self.fakekey["RB"] = True
+		else:
+			self.fakekey["RB"] = False
+
+
+
+		if em.controller["SHARE"]:
+			self.fakekey["share"] = 1
+		else:
+			self.fakekey["share"] = 0
 
 		#joyaxis
 		if abs(em.analog_keys[0]) > 0.3:
-			self.key["x"] = round(em.analog_keys[0],2)
+			self.fakekey["x"] = round(em.analog_keys[0],2)
 		elif em.key[pygame.K_RIGHT] or em.key[pygame.K_d] or em.controller["right_arrow"]:
-			self.key["x"] = 1
+			self.fakekey["x"] = 1
 		elif em.key[pygame.K_LEFT] or em.key[pygame.K_a] or em.controller["left_arrow"]:
-			self.key["x"] = -1
+			self.fakekey["x"] = -1
 		else:
-			self.key["x"] = 0
+			self.fakekey["x"] = 0
 		if abs(em.analog_keys[1]) > 0.3:
-			self.key["y"] = round(-1 * em.analog_keys[1],2)
+			self.fakekey["y"] = round(-1 * em.analog_keys[1],2)
 		elif em.key[pygame.K_UP] or em.key[pygame.K_w] or em.controller["up_arrow"]:
-			self.key["y"] = 1
+			self.fakekey["y"] = 1
 		elif em.key[pygame.K_DOWN] or em.key[pygame.K_s] or em.controller["down_arrow"]:
-			self.key["y"] = -1
+			self.fakekey["y"] = -1
 		else:
-			self.key["y"] = 0
+			self.fakekey["y"] = 0
 
 		if em.key[pygame.K_RIGHT] or em.controller["right_arrow"]:
-			self.key["alt - x"] = 1
+			self.fakekey["alt - x"] = 1
 		if em.key[pygame.K_LEFT] or em.controller["left_arrow"]:
-			self.key["alt - x"] = -1
+			self.fakekey["alt - x"] = -1
 
 
 		#ui axis
 		if abs(em.analog_keys[0]) > 0.3:
-			self.key["axis"][0] = round(em.analog_keys[0])
+			self.fakekey["axis"][0] = round(em.analog_keys[0])
 		elif em.key[pygame.K_RIGHT] or em.key[pygame.K_d] or em.controller["right_arrow"]:
-			self.key["axis"][0] = 1
+			self.fakekey["axis"][0] = 1
 		elif em.key[pygame.K_LEFT] or em.key[pygame.K_a] or em.controller["left_arrow"]:
-			self.key["axis"][0] = -1
+			self.fakekey["axis"][0] = -1
 		else:
-			self.key["axis"][0] = 0
+			self.fakekey["axis"][0] = 0
 		if abs(em.analog_keys[1]) > 0.3:
-			self.key["axis"][1] = round(-1 * em.analog_keys[1])
+			self.fakekey["axis"][1] = round(-1 * em.analog_keys[1])
 		elif em.key[pygame.K_UP] or em.key[pygame.K_w] or em.controller["up_arrow"]:
-			self.key["axis"][1] = 1
+			self.fakekey["axis"][1] = 1
 		elif em.key[pygame.K_DOWN] or em.key[pygame.K_s] or em.controller["down_arrow"]:
-			self.key["axis"][1] = -1
+			self.fakekey["axis"][1] = -1
 		else:
-			self.key["axis"][1] = 0
+			self.fakekey["axis"][1] = 0
+   
+   
 
-
+		
+		swapinp = [("share","LB")]
+		swapinp = []
+  
+		key = self.fakekey.copy()
+  
+		for swaps in swapinp:
+			key.pop(swaps[0])
+			key.pop(swaps[1])
+			key[swaps[0]] = self.fakekey[swaps[1]]
+			key[swaps[1]] = self.fakekey[swaps[0]]
+   
+   
+   
+		self.key = key
+   
+		# for key in key_1.keys():
+		# 	if "<UNP>" in key:
+				
+		
 
 
 	def blit(self,surf,rect,rot,camera):
@@ -474,6 +527,9 @@ class GameManager():
 	def start(self):
 		"""run at the start of every frame"""
 		if self.dt == 0:
+			self.dt = 1
+   
+		if self.dt == 0 or self.dt > 10:
 			self.dt = 1
 		self.inum()
 		self.fps = round(60/ self.dt,3)

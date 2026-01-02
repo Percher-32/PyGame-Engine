@@ -1282,9 +1282,9 @@ class TiledSoftwre:
 			self.rectable -= 1 * GameManager.frame_manager.dt
 			self.showdatable -= 1 * GameManager.frame_manager.dt
 			if movecam:
-				if GameManager.event_manager.key[pygame.K_q] or GameManager.event_manager.controller["L1"]:
+				if GameManager.event_manager.key[pygame.K_q] or GameManager.event_manager.controller["LB"]:
 					cam[1] += (camera.size)/speed * GameManager.frame_manager.dt 
-				if GameManager.event_manager.key[pygame.K_e] or GameManager.event_manager.controller["R1"]:
+				if GameManager.event_manager.key[pygame.K_e] or GameManager.event_manager.controller["RB"]:
 					cam[1] -= (camera.size)/speed * GameManager.frame_manager.dt 
 				cam[0][0] += speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/pygame.display.get_desktop_sizes()[0][0] * GameManager.key["x"]
 				cam[0][1] -= speed * (1/camera.size) * GameManager.frame_manager.dt  * self.screen.get_width()/pygame.display.get_desktop_sizes()[0][0]* GameManager.key["y"]

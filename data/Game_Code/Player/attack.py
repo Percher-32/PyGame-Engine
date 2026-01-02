@@ -34,4 +34,4 @@ def main(self):
             dtg = -1
             
             
-        self.attackerbox = om.colliderect([om.objects["player"]["pos"][0],om.objects["player"]["pos"][1]],diam,1,cam)
+        self.attackerbox = om.colliderect([om.objects["player"]["pos"][0],om.objects["player"]["pos"][1]],diam,0,cam)

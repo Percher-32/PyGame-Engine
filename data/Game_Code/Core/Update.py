@@ -23,8 +23,6 @@ def main(self,Player):
     # self.print(self.reactions,20)
     bg.background = "test2"
 
-    if self.dt == 0 or self.dt > 10:
-        self.dt = 1
     # print/
     # print(self.dt * 60)
     # om.speed = 0.8
@@ -46,27 +44,6 @@ def main(self,Player):
             um.elements["Victory-lap"]["text"] = self.storedscore + "    " + str(int(self.timers["show-score"]/60) + 1) + "\n\n"  + f"Lowest - time:{self.highest}  on-attempt:{self.highestatt}"
 
         
-
-    if "veiw" == self.states:
-        if um.hover("but1"):
-            um.elements["but1"]["color"] = univars.theme["bright"]
-        else:
-            um.elements["but1"]["color"] = univars.theme["dark"]
-
-        if um.hover("but2"):
-            um.elements["but2"]["color"] = univars.theme["bright"]
-        else:
-            um.elements["but2"]["color"] = univars.theme["dark"]
-
-        if um.hover("but3"):
-            um.elements["but3"]["color"] = univars.theme["bright"]
-        else:
-            um.elements["but3"]["color"] = univars.theme["dark"]
-
-        if um.hover("but4"):
-            um.elements["but4"]["color"] = univars.theme["bright"]
-        else:
-            um.elements["but4"]["color"] = univars.theme["dark"]
 
 
 

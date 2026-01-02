@@ -20,7 +20,7 @@ pm = Gamemananager.pm
 def main(self,collisionbox,ground):
     
     #styles
-    if self.key["trick"] and not len(collisionbox["inst"] ) >0:
+    if self.key["bumper"] and not len(collisionbox["inst"] ) >0:
         times = 0.7
         self.wait("inv",times)
         if not self.isthere("tcd"):

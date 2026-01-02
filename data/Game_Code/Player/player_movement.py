@@ -43,7 +43,7 @@ def main(self):
     collisionbox = om.collide("player",0,cam,extra=20)
     smallcollisionbox = om.collide("player",1,cam,extra=-60)
     bigcollisionbox = om.collide("player",0,cam,extra=600)
-    attackbox = om.colliderect([cm.getcam("playercam","pos")[0] +(self.lookahead*0),cm.getcam("playercam","pos")[1] + (self.lookaheady*0)],[1300,700],1,cam)
+    attackbox = om.colliderect([cm.getcam("playercam","pos")[0] +(self.lookahead*0),cm.getcam("playercam","pos")[1] + (self.lookaheady*0)],[1300,700],0,cam)
 
     ground1 = len(collision["botmid"]["inst"]) > 0
     ground2 = len(collision["botleft"]["inst"]) > 0    and not (len(collision["topleft"]["inst"])  > 0  ) and not (len(collision["midleft"]["inst"])  > 0  )

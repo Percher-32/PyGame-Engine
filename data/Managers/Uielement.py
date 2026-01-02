@@ -32,7 +32,7 @@ class Ui(pygame.sprite.Sprite):
                 self.states = elements[self.name]["states"]
 
 
-                realscale = [int(round(elements[self.name]["dimensions"][0] * ((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983)),int(round(elements[self.name]["dimensions"][1] * ((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983))]
+                realscale = [int(round(elements[self.name]["dimensions"][0] * ((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/univars.oldnum)),int(round(elements[self.name]["dimensions"][1] * ((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/univars.oldnum))]
                 if not str([realscale,elements[self.name]["alpha"]]) in elements[self.name]["cache"]:
                     self.baseimg.set_alpha(elements[self.name]["alpha"])
                     baseimg1 = pygame.transform.scale(self.baseimg,   realscale   )
@@ -86,10 +86,10 @@ class Uibutton(Uirect):
         self.hover = 0
 
     def extra(self,em,elements,state):
-        if em.controller["x"] or em.mouse:
+        if em.controller["A"] or em.mouse:
             if self.rect.collidepoint([pygame.mouse.get_pos()[0]/univars.scaledown,pygame.mouse.get_pos()[1]/univars.scaledown]):
                 self.hover = True
-                if em.mouse[0] or em.controller["x"]:
+                if em.mouse[0] or em.controller["A"] or em.controller["SELECT"] or em.key[pygame.K_RETURN]:
                     self.click = True
                 else:
                     self.click = False

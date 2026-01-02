@@ -47,7 +47,7 @@ def main(self):
         player_cam_cont.main(self)
         
         
-        if em.controller["options"]:
+        if em.controller["OPT"]:
             player_init.main(self,[0,60])
             self.qrcondHL()
 

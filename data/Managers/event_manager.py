@@ -1,5 +1,6 @@
 #event_manager
 import pygame
+import copy
 import json
 import data.Managers.inst as inst
 import os
@@ -8,13 +9,35 @@ pygame.joystick.init()
 joysticks = [pygame.joystick.Joystick(i) for i in range (pygame.joystick.get_count())] 
 for joystick in joysticks:
     joystick.init()
-with open(os.path.join("data/Saved/ps4_keys.json"), "r+") as file:
+with open(os.path.join("data/Saved/controller-binds/ps.json"), "r+") as file:
     button_keys = json.load(file)
 analog_keys =  {0:0,1:0,2:0,3:0,4:0,5:0}
 
 
 
 
+init_dict = {
+  "A": 0,
+  "B": 0,
+  "X": 0,
+  "Y": 0,
+  "START": 0,
+  "BACK": 0,
+  "OPT" : 0,
+  "LSK": 0,
+  "RSK": 0,
+  "LB": 0,
+  "RB": 0,
+  "MAIN": 0,
+  "SHARE":0,
+  "SELECT":0,
+
+  "up_arrow": 0,
+  "down_arrow": 0,
+  "left_arrow": 0,
+  "right_arrow": 0,
+  "touchpad": 0
+  }
 
 
 class event_manager:
@@ -33,65 +56,9 @@ class event_manager:
 		self.keyb = False
 		self.keyr = False
 		self.analog_keys =  {0:0,1:0,2:0,3:0,4:0,5:0}
-		self.controller = {
-							"x": False,
-							"circle": False,
-							"square": False,
-							"triangle": False,
-							"share": False,
-							"PS": False,
-							"options": False,
-							"left_stick_click": False,
-							"right_stick_click": False,
-							"L1": False,
-							"R1": False,
-							"up_arrow": False,
-							"down_arrow": False,
-							"left_arrow": False,
-							"right_arrow": False,
-							"touchpad": False
-
-							}
-		self.controllerrel = {
-							"x": False,
-							"circle": False,
-							"square": False,
-							"triangle": False,
-							"share": False,
-							"PS": False,
-							"options": False,
-							"left_stick_click": False,
-							"right_stick_click": False,
-							"L1": False,
-							"R1": False,
-							"up_arrow": False,
-							"down_arrow": False,
-							"left_arrow": False,
-							"right_arrow": False,
-							"touchpad": False
-
-							}
-							
-
-		self.controllerjab = {
-							"x": False,
-							"circle": False,
-							"square": False,
-							"triangle": False,
-							"share": False,
-							"PS": False,
-							"options": False,
-							"left_stick_click": False,
-							"right_stick_click": False,
-							"L1": False,
-							"R1": False,
-							"up_arrow": False,
-							"down_arrow": False,
-							"left_arrow": False,
-							"right_arrow": False,
-							"touchpad": False
-
-							}
+		self.controller = copy.deepcopy(init_dict)
+		self.controllerrel = copy.deepcopy(init_dict)
+		self.controllerjab = copy.deepcopy(init_dict)
 		"""
 			contains values for wether a button has just been pressed
 		"""
@@ -109,12 +76,13 @@ class event_manager:
 		self.keyb = False
 		self.keyr = False
 		self.keydown = False
-
-		for i in self.controllerrel.keys():
-			self.controllerrel[i] = False
-
-		for i in self.controllerjab.keys():
-			self.controllerjab[i] = False
+#   
+# 
+		# for i in self.controllerrel.keys():
+			# self.controllerrel[i] = False
+# 
+		# for i in self.controllerjab.keys():
+			# self.controllerjab[i] = False
 
 
 		for event in pygame.event.get():
