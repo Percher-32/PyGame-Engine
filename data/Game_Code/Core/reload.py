@@ -30,8 +30,14 @@ def main(self,Player):
     # Ui.init_all(self)
     Player.init(self,[0,60])
     
-    if sm.state == "debugame":
+    if "game" in self.states:
         um.changestate("maingame",None)
+    
+    if "menu" in self.states:
+        um.changestate("start_menu","start_button")
+        
+    if "test" in self.states:
+        um.changestate("level_select",None)
     
 
     if sm.state == "game":

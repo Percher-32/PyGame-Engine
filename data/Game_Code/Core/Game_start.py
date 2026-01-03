@@ -22,8 +22,8 @@ pm = Gamemananager.pm
 
 
 def main(self):
-    um.changestate("level_select",None)
-    # um.changestate("start_menu","start_button")
+    if "menu" in self.states:
+        um.changestate("start_menu","start_button")
     self.playablelevels =   os.listdir("data/Saved/tilemaps")
     self.publicvariables["shaderstate"] = 1
     Ui.init_all(self)

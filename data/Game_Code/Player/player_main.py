@@ -38,6 +38,7 @@ def main(self):
     if "player" in om.objects.keys() and "skateboard" in om.objects.keys() and "playersprite" in om.objects.keys():
     # self.println(self.gp("dashmeter") > 0,20)
         #move player
+        um.changestate("maingame",None)
         player_anim.main(self)
         
         logic_skateboard.main(self)

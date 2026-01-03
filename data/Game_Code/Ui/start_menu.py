@@ -51,6 +51,10 @@ def main(self):
     if um.clicked(em,"start_button"):
         self.wait("transition:LEVEL_SELECT",0)
         
+    if um.clicked(em,"quit_button"):
+        self.wait("transition:LEVEL_SELECT",0)
+        em.close()
+        
     if self.ondone("transition:LEVEL_SELECT"):
         um.changestate("level_select",None)
     

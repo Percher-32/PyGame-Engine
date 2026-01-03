@@ -1177,8 +1177,10 @@ class TiledSoftwre:
 				self.mode = 0
 			elif "state:" in self.commmandtring.rstrip():
 				self.cht = self.commmandtring.rstrip().replace("state:", "")
+				GameManager.setbosh(self.cht)
 				self.comm = True
 				self.mode = 0
+				self.commmandtring = ""
 			elif "find:" in self.commmandtring.rstrip():
 				self.cht = self.commmandtring.rstrip().replace("find:", "")
 				self.dostring = object_manager.objfromid(self.cht)
