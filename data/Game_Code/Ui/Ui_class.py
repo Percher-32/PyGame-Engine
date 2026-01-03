@@ -16,9 +16,14 @@ class Uiclass:
         
     def main(self,GM):
         if um.state == "start_menu":
+            GM.publicvariables["shaderstate"] = 1
             self.start_menu.main(GM)
         if um.state == "level_select":
+            GM.publicvariables["shaderstate"] = 1
             self.level_select.main(GM)
+            
+        if um.state == "maingame":
+            GM.publicvariables["shaderstate"] = 0
             
     def init_all(self,GM):
         self.start_menu.init(GM)

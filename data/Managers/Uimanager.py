@@ -16,12 +16,15 @@ class Uimanager:
 		"""
 		self.elements = {}
 		self.binds = []
+		self.enterpress = 0
+		self.enterpressnull = 0
+		self.enterheld = 0
 		self.lastaxis = [0,0]
 		self.glidens = []
 		self.addedcounter = 0
 		self.sprites = pygame.sprite.LayeredUpdates()
 		self.state = "default"
-
+		self.manroutes = {}
 		self.selectedbutton = None
 		self.selectedbuttonclass = None
 		self.canshowvar = True
@@ -50,7 +53,7 @@ class Uimanager:
 				else:
 					surf = univars.func.getsprites(surf)[sn]
 			ui = Uielement.Uirect(dimensions,states,pos,name,surf = surf,fromstart = fromstart)
-			self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"pos":pos,"states":states,"surf":surf,"type":"rect","cache":{}}
+			self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"pos":pos,"states":states,"surf":surf,"type":"rect","cache":{},"command":[]}
 			self.sprites.add(ui,layer = layer)
 
 	def addbutton(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = 0,usesprite = False,layer = 0):
@@ -131,7 +134,7 @@ class Uimanager:
 
   
 		if size == None:
-			size = self.elements["rect"]["dimensions"]
+			size = self.elements[rect]["dimensions"]
 		if glidesize == None:
 			glidesize = size
   
@@ -205,8 +208,35 @@ class Uimanager:
 
 		
 		self.elements[button]["dir"] = {"up":up,"down":down,"left":left,"right":right}
+		if button in self.manroutes.keys():
+			for direction in self.manroutes[button].keys():
+				self.elements[button][direction] = self.manroutes[button][direction]
 		self.elements[button]["routed"] = True
 
+	def setroute(self,button,dir,buttonname):
+		"""
+			ovveriders an direction for the buttons route
+		
+		:param button: button-id
+		:param dir: ["up","down","left","right"]
+		:param buttonname: destination button id
+		"""
+		if dir == "down":
+			dir = "up"
+		elif dir == "up":
+			dir = "down"
+		# elif dir == "left":
+		# 	dir = "right"
+		# elif dir == "right":
+		# 	dir = "left"
+		self.elements[button]["dir"][dir] = buttonname
+  
+		
+   
+		if not button in self.manroutes.keys():
+			self.manroutes[button] = {}
+   
+		self.manroutes[button][dir] = buttonname
 
 	def addglide(self,button,glidenorm,glidehov):
 		"""
@@ -233,7 +263,7 @@ class Uimanager:
 				text["glidehov"] = rbase
     
 			if "rect" in self.elements[button].keys():
-				self.elements[button]["rect"]["command"].append("glide")
+				self.elements[self.elements[button]["text"]]["command"].append("glide")
 
 
 
@@ -242,9 +272,9 @@ class Uimanager:
 			returns wether a button has been clicked
 		"""
 		if self.mode == "arrow":
-			return (self.selectedbutton == button) and (em.mouse[0] or em.controller["A"] or em.controller["SELECT"] or em.key[pygame.K_RETURN])
+			return (self.selectedbutton == button) and ( em.controllerjab["A"] or em.controllerjab["SELECT"] or self.enterpress  ) and self.state in self.elements[button]["states"]
 		else:
-			return self.elements[button]["click"]
+			return (self.elements[button]["click"] and self.state in self.elements[button]["states"])
 			
 	def hover(self,button):
 		"""
@@ -267,6 +297,24 @@ class Uimanager:
 	def update(self,em,pubvar,axis,dt):
 		self.canshowvar = pubvar["debug-mode"]
 		self.sprites.update(self.state, self.elements,em)
+  
+		# if em.key[pygame.K_RETURN] and not self.enterpress == 1:
+		self.enterpressnull = em.key[pygame.K_RETURN]
+  
+		if self.enterpressnull:
+			if self.enterheld  == 0:
+				self.enterpress = 1
+				self.enterheld = 1
+			else:
+				self.enterpress = 0
+		else:
+			self.enterheld = 0
+			self.enterpress = 0
+
+  
+
+
+
 
 		if not self.toroute == None:
 			self.route(self.toroute)
@@ -296,6 +344,8 @@ class Uimanager:
 					self.selectedbutton = self.elements[self.selectedbutton]["dir"]["down"]
 				if not self.selectedbutton in self.elements.keys():
 					self.selectedbutton = old
+
+
 				self.route(self.selectedbutton)
 
 
@@ -312,6 +362,8 @@ class Uimanager:
 
 					if a.click or a.hover:
 						self.mode = "mouse"
+
+
 
 					if self.mode == "mouse":
 						if self.elements[a.name]["hover"]:

@@ -1,7 +1,7 @@
 import data.Managers.Gamemanager as Gamemananager
 import data.Managers.univars as univars
 import data.Game_Code.Ui.Ui_class
-
+import os
 
 
 
@@ -22,8 +22,9 @@ pm = Gamemananager.pm
 
 
 def main(self):
-    um.changestate("start_menu","start_button")
-    self.playablelevels = ["finale","demo10"]
+    um.changestate("level_select",None)
+    # um.changestate("start_menu","start_button")
+    self.playablelevels =   os.listdir("data/Saved/tilemaps")
     self.publicvariables["shaderstate"] = 1
     Ui.init_all(self)
     pass

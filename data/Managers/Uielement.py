@@ -89,7 +89,7 @@ class Uibutton(Uirect):
         if em.controller["A"] or em.mouse:
             if self.rect.collidepoint([pygame.mouse.get_pos()[0]/univars.scaledown,pygame.mouse.get_pos()[1]/univars.scaledown]):
                 self.hover = True
-                if em.mouse[0] or em.controller["A"] or em.controller["SELECT"] or em.key[pygame.K_RETURN]:
+                if em.Mouseb or em.controllerjab["A"] or em.controllerjab["SELECT"] or em.key[pygame.K_RETURN]:
                     self.click = True
                 else:
                     self.click = False

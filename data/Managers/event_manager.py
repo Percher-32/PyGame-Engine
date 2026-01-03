@@ -78,11 +78,11 @@ class event_manager:
 		self.keydown = False
 #   
 # 
-		# for i in self.controllerrel.keys():
-			# self.controllerrel[i] = False
-# 
-		# for i in self.controllerjab.keys():
-			# self.controllerjab[i] = False
+		for i in self.controllerrel.keys():
+			self.controllerrel[i] = False
+
+		for i in self.controllerjab.keys():
+			self.controllerjab[i] = False
 
 
 		for event in pygame.event.get():
@@ -95,6 +95,7 @@ class event_manager:
 
 			if event.type == pygame.KEYDOWN:
 				self.code = event.unicode
+				self.keydown = 1
 				self.releasekey = 0
 
 			if event.type == pygame.JOYAXISMOTION:

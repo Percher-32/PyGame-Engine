@@ -179,6 +179,7 @@ class Game(Gamemananager.GameManager):
 		data.Game_Code.Core.Game_start.main(self)
 
 	def update(self):
+		# print(em.keyb)
 		data.Game_Code.Core.Update.main(self,Player)
 
 
