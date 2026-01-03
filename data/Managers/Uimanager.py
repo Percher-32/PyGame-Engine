@@ -263,7 +263,7 @@ class Uimanager:
 				text["glidehov"] = rbase
     
 			if "rect" in self.elements[button].keys():
-				self.elements[self.elements[button]["text"]]["command"].append("glide")
+				self.elements[self.elements[button]["rect"]]["command"].append("glide")
 
 
 
@@ -285,6 +285,9 @@ class Uimanager:
 		else:
 			return self.elements[button]["hover"]
 
+	def conthover(self,button):
+		return (self.selectedbutton == button) and (self.mode == "arrow")
+
 	def changestate(self,state,startbutton):
 		self.state = state
 		self.mode = "arrow"
@@ -304,6 +307,7 @@ class Uimanager:
 		if self.enterpressnull:
 			if self.enterheld  == 0:
 				self.enterpress = 1
+				print("ENETR HIT")
 				self.enterheld = 1
 			else:
 				self.enterpress = 0
@@ -398,20 +402,21 @@ class Uimanager:
 						self.elements[a.name]["pos"][0] = self.elements[self.elements[a.name]["button"]]["pos"][0] + self.elements[a.name]["offset"][0] 
 						self.elements[a.name]["pos"][1] = self.elements[self.elements[a.name]["button"]]["pos"][1] + self.elements[a.name]["offset"][1] 
 						self.elements[a.name]["states"] = self.elements[self.elements[a.name]["button"]]["states"]
+						self.elements[a.name]["alpha"] = self.elements[self.elements[a.name]["button"]]["alpha"]	
 
 				if a.__class__.__name__ == "Uirect":
 					if "button" in self.elements[a.name].keys():
 						if "glide" in self.elements[a.name]["command"]:
 							if self.mode == "arrow":
 								if self.selectedbutton == self.elements[a.name]["button"]:
-									self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["normsize"],4)
+									self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["glidesize"],4)
 								else:
-									self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["gidesize"],4)
+									self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["normsize"],4)
 							else:
 								if self.elements[self.elements[a.name]["button"]]["hover"]:
-									self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["normsize"],4)
+									self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["glidesize"],4)
 								else:
-									self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["gidesize"],4)
+									self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["normsize"],4)
 						self.elements[a.name]["pos"][0] = self.elements[self.elements[a.name]["button"]]["pos"][0] + self.elements[a.name]["offset"][0] 
 						self.elements[a.name]["pos"][1] = self.elements[self.elements[a.name]["button"]]["pos"][1] + self.elements[a.name]["offset"][1] 
 						self.elements[a.name]["states"] = self.elements[self.elements[a.name]["button"]]["states"]

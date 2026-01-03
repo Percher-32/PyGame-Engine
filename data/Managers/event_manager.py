@@ -122,7 +122,8 @@ class event_manager:
 				
 
 			if event.type == pygame.MOUSEBUTTONDOWN:
-				self.Mouseb = True
+				if pygame.mouse.get_pressed()[0]:
+					self.Mouseb = True
 				self.mouse = pygame.mouse.get_pressed()
 
 			if event.type == pygame.MOUSEBUTTONUP:

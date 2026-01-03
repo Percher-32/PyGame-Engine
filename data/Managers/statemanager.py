@@ -34,7 +34,7 @@ class sm:
             self.leveledit = False
             self.speed = 1
             self.showui = 1
-            self.work = 1
+            self.work = 0
             self.showall = False
             self.cammove = False
         if self.state == "debumenu":
@@ -45,6 +45,14 @@ class sm:
             self.work = 1
             self.showall = False
             self.cammove = False
+        if self.state == "uitest":
+            self.states = "test"
+            self.leveledit = False
+            self.speed = 1
+            self.showui = False
+            self.work = True
+            self.showall = False
+            self.cammove = True
         if self.state == "editgame":
             self.states = "game"
             self.leveledit = True
@@ -62,14 +70,7 @@ class sm:
             self.showui = True
             self.showall = True
             self.cammove = True
-        if self.state == "uitest":
-            self.states = "test"
-            self.leveledit = False
-            self.speed = 1
-            self.showui = False
-            self.work = True
-            self.showall = False
-            self.cammove = True
+
         if self.state == "featest":
             self.mainmenu = 0
             self.states = "test"

@@ -97,7 +97,11 @@ class PlayerClass:
 Player = PlayerClass()
 
 
+
 class Game(Gamemananager.GameManager):
+    
+    
+    
 	"""
 		this class handles the actual game code and not the game engine code.\n
 		it inherits the in-engine properties
