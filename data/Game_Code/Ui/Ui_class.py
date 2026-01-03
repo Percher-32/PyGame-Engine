@@ -1,5 +1,6 @@
 import data.Game_Code.Ui.start_menu
 import data.Game_Code.Ui.level_select
+import data.Game_Code.Ui.level_select_big
 import data.Managers.Gamemanager as Gamemananager
 um = Gamemananager.um
 
@@ -12,6 +13,7 @@ class Uiclass:
     def __init__(self):
         self.start_menu = data.Game_Code.Ui.start_menu
         self.level_select = data.Game_Code.Ui.level_select
+        self.level_select_big = data.Game_Code.Ui.level_select_big
         
         
     def main(self,GM):
@@ -21,6 +23,9 @@ class Uiclass:
         if um.state == "level_select":
             GM.publicvariables["shaderstate"] = 1
             self.level_select.main(GM)
+        if um.state == "level_select_big":
+            GM.publicvariables["shaderstate"] = 1
+            self.level_select_big.main(GM)
             
         if um.state == "maingame":
             GM.publicvariables["shaderstate"] = 0

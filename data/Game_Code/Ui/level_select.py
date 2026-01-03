@@ -20,7 +20,7 @@ pm = Gamemananager.pm
 
 def init(self):
     inc = 0
-    um.addrect([univars.ui_screen_size[0],univars.ui_screen_size[1]],["level_select"],pos = [0,0],name="background2",color=(20,0,20),layer=0)
+    um.addrect([univars.ui_screen_size[0],univars.ui_screen_size[1]],["level_select","level_select_big"],pos = [0,0],name="background2",color=(20,0,20),layer=0)
     um.addtext("level_select_header","LEVEL SELECT",univars.defont,[0,0.8],col=univars.theme["semibright"],size=80,states=["level_select"])
     
     um.addbutton(univars.sizes["smallbutton"],["level_select"],[-0.8,-0.8],"back_button",color=univars.theme["dark"],layer=1)
@@ -60,7 +60,7 @@ def main(self):
     if um.selectedbutton == None:
         um.changestate("level_select",self.playablelevels[0] + "button")
         
-    if um.clicked(em,"back_button") or self.key["back"]:
+    if um.clicked(em,"back_button") or (self.key["back"] and not self.lastkey["back"]):
         um.changestate("start_menu","start_button")
         
         
@@ -69,6 +69,9 @@ def main(self):
         
         
     for button in self.level_buttons:
+        # um.addglide(button,[250,250/2],[350,200])
+        if "level_select_big" in um.elements[button]["states"]:
+            um.elements[button]["states"].remove("level_select_big")
         um.setroute(button,"up",self.level_buttons[self.level_buttons.index(button) - 1])
         
         um.setroute(button,"down",self.level_buttons[(self.level_buttons.index(button) + 1)%len(self.level_buttons)])
@@ -76,10 +79,12 @@ def main(self):
         
         
         if um.clicked(em,button):
-            self.setbosh("debugame")
-            um.changestate("maingame",None)
-            om.loadtilemap(self,button.replace("button",""))
-            player_init.main(self,[0,60])
+            # self.setbosh("debugame")
+            # um.changestate("maingame",None)
+            # om.loadtilemap(self,button.replace("button",""))
+            # player_init.main(self,[0,60])
+            self.leveldo = button.replace("button","")
+            um.changestate("level_select_big",button)
             
         if um.conthover(button):
             # if abs(self.level_buttons_slider - self.level_buttons_incs[button]) > 1:
