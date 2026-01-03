@@ -33,6 +33,7 @@ class Uiclass:
     def init_all(self,GM):
         self.start_menu.init(GM)
         self.level_select.init(GM)
+        self.level_select_big.init(GM)
             
     
         
