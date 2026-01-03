@@ -50,6 +50,8 @@ sizes = {
     "mediumbutton": (200,100),
     "semilargebutton":(250,250/2),
     "largebutton": (300,150),
+    "display": (400,200),
+    "display_select": (400+25,200+25 )
 }
 
 
@@ -130,7 +132,7 @@ with open(f"data/Saved/sizeoffsets.json","w") as file:
 
 
 map = "finale"
-startstate = "debugame"
+startstate = "uitest"
 startshaderstate = 0
 bakeonreload = 1
 showdebugonstart = 0

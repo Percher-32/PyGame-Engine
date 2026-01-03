@@ -16,10 +16,12 @@ class Uimanager:
 		"""
 		self.elements = {}
 		self.binds = []
+		self.lastaxis = [0,0]
 		self.glidens = []
 		self.addedcounter = 0
 		self.sprites = pygame.sprite.LayeredUpdates()
 		self.state = "default"
+
 		self.selectedbutton = None
 		self.selectedbuttonclass = None
 		self.canshowvar = True
@@ -115,11 +117,26 @@ class Uimanager:
 		self.deleleelem(str(name) + "tex")
 
 
-	def bindtobutton(self,text,button):
+	def bindtobutton(self,text,button,offset = [0,0]):
 		self.elements[text]["button"] = button
 		self.elements[button]["text"] = text
+		self.elements[text]["offset"] = offset
 		self.binds.append([text,button])
 
+	def bindtorect(self,rect,button,offset = [0,0],size = None,glidesize=None):
+		self.binds.append([rect,button])
+		self.elements[rect]["button"] = button
+		self.elements[button]["rect"] = rect
+		self.elements[rect]["offset"] = offset
+
+  
+		if size == None:
+			size = self.elements["rect"]["dimensions"]
+		if glidesize == None:
+			glidesize = size
+  
+		self.elements[rect]["normsize"] = size
+		self.elements[rect]["glidesize"] = glidesize
 
 	def lerpval(self,elem,val,max,sm):
 		self.elements[elem][val] =   univars.func.lerp(self.elements[elem][val],max,sm,roundto=4)
@@ -192,6 +209,13 @@ class Uimanager:
 
 
 	def addglide(self,button,glidenorm,glidehov):
+		"""
+			Makes a buttton chane size when hovered over
+		
+		:param button: buttton-id
+		:param glidenorm: normal size
+		:param glidehov: hover size
+		"""
 		if [button,glidenorm,glidehov] in self.glidens:
 			self.glidens.remove([button,glidenorm,glidehov])
 		self.glidens.append([button,glidenorm,glidehov])
@@ -207,34 +231,10 @@ class Uimanager:
 				text["command"].append("glide")
 				text["glidenorm"] = base
 				text["glidehov"] = rbase
+    
+			if "rect" in self.elements[button].keys():
+				self.elements[button]["rect"]["command"].append("glide")
 
-	# def savealluielements(self):
-	# 	# todump = [self.elements[i].pop("surf").pop("cache") for i in self.elements.keys()  ]
-	# 	with open("data/Saved/Ui.json","w") as file:
-	# 		json.dump({"metadata":self.metadata,"binds":self.binds,"glidens":self.glidens},file)
-			
-		
-
-
-	# def loadalluielements(self):
-	# 	with open("data/Saved/Ui.json","r") as file:
-	# 		elements = json.load(file)
-	# 	self.metadata = {"element":[],"rect":[],"button":[],"text":[]}
-	# 	self.binds = []
-	# 	self.glidens = []
-	# 	for i in elements["metadata"]["element"]:
-	# 		self.addelement(i[0],i[1],i[2],i[3],i[4])
-	# 	for i in elements["metadata"]["rect"]:
-	# 		self.addrect(i[0],i[1],i[2],i[3],color = i[4],alpha=i[5],surf = i[6],sn = i[7],usesprite=i[8])
-	# 	for i in elements["metadata"]["button"]:
-	# 		self.addbutton(i[0],i[1],i[2],i[3],color = i[4],alpha=i[5],surf = i[6],sn = i[7],usesprite=i[8])
-	# 	for i in elements["metadata"]["text"]:
-	# 		self.addtext(i[0],i[1],i[2],i[3],i[4],i[5],i[6],center=i[7])
-	# 	for i in elements["binds"]:
-	# 		self.bindtobutton(i[0],i[1])
-	# 	for i in elements["glidens"]:
-	# 		self.addglide(i[0],i[1],i[2])
-		
 
 
 	def clicked(self,em,button):
@@ -272,10 +272,11 @@ class Uimanager:
 			self.route(self.toroute)
 			self.toroute = None
 
-		if self.timetillnextswap <= 0:
-			self.timetillnextswap = 0
+		# if self.timetillnextswap <= 0:
+			# self.timetillnextswap = 0
+		if not self.lastaxis == axis:
 			if self.selectedbutton in self.elements.keys():
-				self.timetillnextswap = 10
+				self.timetillnextswap = 5
 				old = self.selectedbutton
 				if axis[0] < 0:
 					self.mode = "arrow"
@@ -297,6 +298,8 @@ class Uimanager:
 					self.selectedbutton = old
 				self.route(self.selectedbutton)
 
+
+		self.lastaxis = [axis[0],axis[1]]
 		self.timetillnextswap -= dt
 
 
@@ -327,20 +330,40 @@ class Uimanager:
 							if "glide" in self.elements[a.name]["command"]:
 								self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["glidenorm"],4)
 
-
-
-
 				if a.__class__.__name__ == "Uitext":
 					if "button" in self.elements[a.name].keys():
 						if "glide" in self.elements[a.name]["command"]:
-							if self.elements[self.elements[a.name]["button"]]["hover"]:
-								self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidehov"],4)
+							if self.mode == "arrow":
+								if self.selectedbutton == self.elements[a.name]["button"]:
+									self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidehov"],4)
+								else:
+									self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidenorm"],4)
 							else:
-								self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidenorm"],4)
-						self.elements[a.name]["pos"] = self.elements[self.elements[a.name]["button"]]["pos"]
+								if self.elements[self.elements[a.name]["button"]]["hover"]:
+									self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidehov"],4)
+								else:
+									self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidenorm"],4)
+						self.elements[a.name]["pos"][0] = self.elements[self.elements[a.name]["button"]]["pos"][0] + self.elements[a.name]["offset"][0] 
+						self.elements[a.name]["pos"][1] = self.elements[self.elements[a.name]["button"]]["pos"][1] + self.elements[a.name]["offset"][1] 
 						self.elements[a.name]["states"] = self.elements[self.elements[a.name]["button"]]["states"]
 
-		
+				if a.__class__.__name__ == "Uirect":
+					if "button" in self.elements[a.name].keys():
+						if "glide" in self.elements[a.name]["command"]:
+							if self.mode == "arrow":
+								if self.selectedbutton == self.elements[a.name]["button"]:
+									self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["normsize"],4)
+								else:
+									self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["gidesize"],4)
+							else:
+								if self.elements[self.elements[a.name]["button"]]["hover"]:
+									self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["normsize"],4)
+								else:
+									self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["gidesize"],4)
+						self.elements[a.name]["pos"][0] = self.elements[self.elements[a.name]["button"]]["pos"][0] + self.elements[a.name]["offset"][0] 
+						self.elements[a.name]["pos"][1] = self.elements[self.elements[a.name]["button"]]["pos"][1] + self.elements[a.name]["offset"][1] 
+						self.elements[a.name]["states"] = self.elements[self.elements[a.name]["button"]]["states"]
+
 			
 
 ingame = Uimanager()

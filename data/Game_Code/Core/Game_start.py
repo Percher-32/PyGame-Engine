@@ -1,9 +1,12 @@
 import data.Managers.Gamemanager as Gamemananager
 import data.Managers.univars as univars
+import data.Game_Code.Ui.Ui_class
 
 
 
 
+
+Ui = data.Game_Code.Ui.Ui_class.Uiclass()
 em = Gamemananager.em
 tm = Gamemananager.tm
 fm = Gamemananager.fm
@@ -20,5 +23,7 @@ pm = Gamemananager.pm
 
 def main(self):
     um.changestate("start_menu","start_button")
-    univars.startshaderstate = 1
+    self.playablelevels = ["finale","demo10"]
+    self.publicvariables["shaderstate"] = 1
+    Ui.init_all(self)
     pass
