@@ -145,6 +145,7 @@ def main(self):
         
         um.lerpval(button                                     ,"pos"      ,despos       ,4)  
         um.lerpval(button.replace("button","") + "text_backer","glidesize",[1000,200]   ,4)  
+        um.lerpval(button.replace("button","") + "text_backer","color",univars.theme["mid"]   ,4) 
         um.lerpval(button.replace("button","") + "text_backer","offset"   ,[0,0]        ,4)  
         um.lerpval(button.replace("button","") + "text_backer","normsize" ,[0,0]        ,4)  
         um.lerpval(button.replace("button","") + "text_backer","alpha"    ,desalph      ,4) 

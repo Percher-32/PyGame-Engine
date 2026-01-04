@@ -143,7 +143,7 @@ class Uimanager:
 		self.elements[rect]["glidesize"] = glidesize
 
 	def lerpval(self,elem,val,max,sm):
-		self.elements[elem][val] =   univars.func.lerp(self.elements[elem][val],max,sm,roundto=4)
+		self.elements[elem][val] =   univars.func.lerp(self.elements[elem][val],max,sm,roundto=40)
  
 	def route(self,button):
 		"""
@@ -239,7 +239,7 @@ class Uimanager:
    
 		self.manroutes[button][dir] = buttonname
 
-	def addglide(self,button,glidenorm,glidehov):
+	def addglide(self,button,glidenorm,glidehov,col = None,hcol = None):
 		"""
 			Makes a buttton chane size when hovered over
 		
@@ -251,6 +251,13 @@ class Uimanager:
 			self.glidens.remove([button,glidenorm,glidehov])
 		self.glidens.append([button,glidenorm,glidehov])
 		if button in self.elements.keys():
+			if col == None:
+				col = self.elements[button]["color"]
+			if hcol == None:
+				hcol = self.elements[button]["color"]
+			self.elements[button]["hcolor"] =   hcol
+			self.elements[button]["ncolor"]  =   col
+
 			self.elements[button]["command"].append("glide")
 			self.elements[button]["glidenorm"] = glidenorm
 			self.elements[button]["glidehov"] = glidehov
@@ -417,17 +424,21 @@ class Uimanager:
 							self.selectedbutton = a.name
 							if "glide" in self.elements[a.name]["command"]:
 								self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["glidehov"],4)
+								self.elements[a.name]["color"]      = univars.func.lerp(self.elements[a.name]["color"]     ,self.elements[a.name]["hcolor"],4)
 						else:
 							if "glide" in self.elements[a.name]["command"]:
 								self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["glidenorm"],4)
+								self.elements[a.name]["color"]      = univars.func.lerp(self.elements[a.name]["color"]     ,self.elements[a.name]["ncolor"],4)
 
 					if self.mode == "arrow":
 						if self.selectedbutton == a.name:
 							if "glide" in self.elements[a.name]["command"]:
 								self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["glidehov"],4)
+								self.elements[a.name]["color"]      = univars.func.lerp(self.elements[a.name]["color"]     ,self.elements[a.name]["hcolor"],4)
 						else:
 							if "glide" in self.elements[a.name]["command"]:
 								self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["glidenorm"],4)
+								self.elements[a.name]["color"]      = univars.func.lerp(self.elements[a.name]["color"]     ,self.elements[a.name]["ncolor"],4)
 
 				if a.__class__.__name__ == "Uitext":
 					if "button" in self.elements[a.name].keys():
