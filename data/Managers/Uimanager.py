@@ -52,6 +52,7 @@ class Uimanager:
 					surf = pygame.image.load(f"data/Graphics/ui/{surf}.png").convert_alpha()
 				else:
 					surf = univars.func.getsprites(surf)[sn]
+			
 			ui = Uielement.Uirect(dimensions,states,pos,name,surf = surf,fromstart = fromstart)
 			self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"pos":pos,"states":states,"surf":surf,"rot":rot,"type":"rect","cache":{},"command":[]}
 			self.sprites.add(ui,layer = layer)

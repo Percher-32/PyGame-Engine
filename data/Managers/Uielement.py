@@ -14,6 +14,7 @@ class Ui(pygame.sprite.Sprite):
         self.name = name
         self.baseimg = surf
         self.rot = rot
+        self.baseimg  = pygame.transform.rotate(self.baseimg,self.rot)
         self.fromstart = fromstart
         self.rect = self.baseimg.get_rect(center = pos)
         self.states = states
@@ -24,24 +25,26 @@ class Ui(pygame.sprite.Sprite):
     def update(self,state,elements,em):
         if self.name in elements.keys():
             if state in self.states or "all" in self.states:
+                self.rot = elements[self.name]["rot"]
                 if self.cando:
                     self.baseimg.fill(elements[self.name]["color"])
                 else:
                     self.baseimg = elements[self.name]["surf"]
+                    
+                    
+                self.baseimg.set_colorkey((1,1,1))
 
 
                 self.states = elements[self.name]["states"]
-                self.rot = elements[self.name]["rot"]
 
 
                 realscale = [int(round(elements[self.name]["dimensions"][0] * ((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/univars.oldnum)),int(round(elements[self.name]["dimensions"][1] * ((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/univars.oldnum))]
-                if not str(    [   realscale,elements[self.name]["alpha"],self.rot    ]       ) in elements[self.name]["cache"]:
+                if not str(    [   realscale,elements[self.name]["alpha"]    ]       ) in elements[self.name]["cache"]:
                     self.baseimg.set_alpha(elements[self.name]["alpha"])
                     baseimg1 = pygame.transform.scale(self.baseimg,   realscale   )
-                    baseimg1  = pygame.transform.rotate(baseimg1,self.rot)
-                    elements[self.name]["cache"][str([realscale,elements[self.name]["alpha"],self.rot])] = baseimg1
+                    elements[self.name]["cache"][str([realscale,elements[self.name]["alpha"]])] = baseimg1
                 else:
-                    baseimg1 = elements[self.name]["cache"][str(      [   realscale,elements[self.name]["alpha"],self.rot   ]        )]
+                    baseimg1 = elements[self.name]["cache"][str(      [   realscale,elements[self.name]["alpha"]   ]        )]
 
 
 
@@ -49,7 +52,7 @@ class Ui(pygame.sprite.Sprite):
 
                 self.baseimg = baseimg1
                 self.pos = elements[self.name]["pos"]
-                self.image = self.baseimg
+                self.image = pygame.transform.rotate(self.baseimg,self.rot)
                 pos = self.pos
                 if not self.fromstart:
                     self.rect = self.baseimg.get_rect(center = (pos[0] * univars.realscreeen.get_width()//2  + univars.realscreeen.get_width()//2 ,-1 * pos[1] * univars.realscreeen.get_height()//2  + univars.realscreeen.get_height()//2 ))
@@ -71,7 +74,8 @@ class Ui(pygame.sprite.Sprite):
 class Uirect(Ui):
     def __init__(self,dimensions,states,pos,name,surf = None,fromstart = 0):
         if not surf == None:
-            img = surf
+            img = surf.set_colorkey((0,0,0))
+		
             cd = 0
         else:
             img = pygame.Surface(dimensions)
