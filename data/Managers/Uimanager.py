@@ -272,7 +272,7 @@ class Uimanager:
 			returns wether a button has been clicked
 		"""
 		if self.mode == "arrow":
-			return (self.selectedbutton == button) and ( em.controllerjab["A"] or em.controllerjab["SELECT"] or self.enterpress  ) and self.state in self.elements[button]["states"]
+			return (self.selectedbutton == button) and ( self.enterpress  ) and self.state in self.elements[button]["states"]
 		else:
 			return (self.elements[button]["click"] and self.state in self.elements[button]["states"])
 			
@@ -296,17 +296,21 @@ class Uimanager:
 			self.route(startbutton)
 		else:
 			self.toroute = startbutton
+		self.enterpress = 0
+		self.enterpressnull = 0
+		self.enterheld = 1
 
 	def update(self,em,pubvar,axis,dt):
 		self.canshowvar = pubvar["debug-mode"]
 		self.sprites.update(self.state, self.elements,em)
   
 		# if em.key[pygame.K_RETURN] and not self.enterpress == 1:
-		self.enterpressnull = em.key[pygame.K_RETURN]
+		self.enterpressnull = em.key[pygame.K_RETURN] or em.controller["SELECT"] or em.controller["A"]
   
 		if self.enterpressnull:
 			if self.enterheld  == 0:
 				self.enterpress = 1
+				# print("ENTERJAB")
 				self.enterheld = 1
 			else:
 				self.enterpress = 0

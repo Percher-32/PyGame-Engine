@@ -42,6 +42,7 @@ def main(self):
     
     
     
+    um.elements["level_text2"]["text"] = f"Time of day : {self.publicvariables["mood"]}"
     
     
     
