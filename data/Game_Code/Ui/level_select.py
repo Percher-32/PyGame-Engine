@@ -21,13 +21,14 @@ pm = Gamemananager.pm
 
 def init(self):
     inc = 0
-    um.addrect([univars.ui_screen_size[0],univars.ui_screen_size[1]],["level_select","level_select_big"],pos = [0,0],name="background2",color=(20,0,20),layer=0)
+    um.addrect([univars.ui_screen_size[0],univars.ui_screen_size[1]],["level_select","level_select_big"],pos = [0,0],name="background2",color=(20,0,20),layer=-2)
     um.addtext("level_select_header","LEVEL SELECT",univars.defont,[0,0.8],col=univars.theme["semibright"],size=80,states=["level_select","level_select_big"])
     
     um.addbutton(univars.sizes["smallbutton"],["level_select","level_select_big"],[-0.8,-0.8],"back_button",color=univars.theme["dark"],layer=1)
     um.addtext("back_button_text","BACK",univars.defont,[0,-0.5],col=univars.theme["bright"],states=["level_select","level_select_big"],layer = 2,size=50)
     um.bindtobutton("back_button_text","back_button")
     um.addglide("back_button",univars.sizes["smallbutton"],univars.sizes["mediumbutton"])
+    um.addoutline("back_button",0,hoverthickness=20)
     
     self.level_buttons = []
     self.level_buttons_initpos = {}
@@ -48,6 +49,7 @@ def init(self):
         # um.bindtorect(level + "text_backer2",level + "button",offset=[0,0],glidesize=[800,200],size=[800,250/2])
         
         um.addtext(level + "text",level,univars.defont,[0,0.1],col=univars.theme["bright"],states=["level_select"],layer = 2,size=50,center=0)
+        # um.addoutline(level + "button",0,hoverthickness=20)
         um.bindtobutton(level + "text",level + "button",offset=[0.3,0.05])
         
         

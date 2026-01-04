@@ -41,7 +41,7 @@ class sm:
             self.states = "menu"
             self.leveledit = False
             self.speed = 1
-            self.showui = 1
+            self.showui = 0
             self.work = 1
             self.showall = False
             self.cammove = False

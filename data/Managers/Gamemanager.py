@@ -663,6 +663,7 @@ class GameManager():
    
    	
 	def end(self):
+		um.update_after(em,self.publicvariables,self.key["axis"],self.dt)
 		renderwid = (((((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983)) * 1980) + 200
   
   

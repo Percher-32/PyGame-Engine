@@ -35,13 +35,13 @@ class Uimanager:
 		self.toroute = None
 		self.timetillnextswap = 1
 
-	def addelement(self,surf,states,pos,name,type=None,layer = 0):
+	def addelement(self,surf,states,pos,name,type=None,layer = 0,rot = 0):
 		self.metadata["element"].append([surf,states,pos,name,type])
 		ui = self.Uielement.Ui(surf,states,pos,name)
-		self.elements[name] = {"name":name,"pos":pos,"type":type,"cache":{}}
+		self.elements[name] = {"name":name,"pos":pos,"type":type,"cache":{},"rot":rot}
 		self.sprites.add(ui,layer = layer)
 		
-	def addrect(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = 0,usesprite = False,fromstart = False,layer = 0):
+	def addrect(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = 0,usesprite = False,fromstart = False,layer = 0,rot = 0):
 		key = [dimensions,states,pos,name,color,alpha,surf,sn,usesprite]
 		if key in self.metadata["rect"]:
 			self.metadata["rect"].remove(key)
@@ -53,10 +53,10 @@ class Uimanager:
 				else:
 					surf = univars.func.getsprites(surf)[sn]
 			ui = Uielement.Uirect(dimensions,states,pos,name,surf = surf,fromstart = fromstart)
-			self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"pos":pos,"states":states,"surf":surf,"type":"rect","cache":{},"command":[]}
+			self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"pos":pos,"states":states,"surf":surf,"rot":rot,"type":"rect","cache":{},"command":[]}
 			self.sprites.add(ui,layer = layer)
 
-	def addbutton(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = 0,usesprite = False,layer = 0):
+	def addbutton(self,dimensions,states,pos,name,color=(0,0,0),alpha=255,surf = None,sn = 0,usesprite = False,layer = 0,rot = 0):
 		key = [dimensions,states,pos,name,color,alpha,surf,sn,usesprite]
 		if key in self.metadata["button"]:
 			self.metadata["button"].remove(key)
@@ -68,7 +68,7 @@ class Uimanager:
 				else:
 					surf = univars.func.getsprites(surf)[sn]
 			ui = Uielement.Uibutton(dimensions,states,pos,name,surf = surf)
-			self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"click":0,"hover":0,"command":[],"pos":pos,"states":states,"surf":surf,"type":"button","dir":{"up":None,"down":None,"left":None,"right":None},"cache":{}}
+			self.elements[name] = {"name":name,"dimensions":dimensions,"color":color,"alpha":alpha,"click":0,"hover":0,"command":[],"rot":rot,"pos":pos,"states":states,"surf":surf,"type":"button","dir":{"up":None,"down":None,"left":None,"right":None},"cache":{}}
 			self.sprites.add(ui,layer = layer)
 
 	def addtext(self,name, text, font, pos, col, size,states,center = True,layer = 0):
@@ -265,7 +265,46 @@ class Uimanager:
 			if "rect" in self.elements[button].keys():
 				self.elements[self.elements[button]["rect"]]["command"].append("glide")
 
+	def addoutline(self,button,thickness,color=(255,255,255),alpha = 255,hoverthickness =  None,states = None,layer = None):
+		"""
+			Adds an outline to a button
+		
+		:param button: button id
+		:param thickness: outline thickness
+		:param color: outline color
+		:param alpha: outline transprency
+		:param hoverthickness: thickness added when hovering. ps the hoverthickness scales with the hoversize increase
+		:param states: the states it is present it . 
+		"""
+  
+		buttonelem : dict = self.elements[button] 
+		if states == None:
+			states = buttonelem["states"]
 
+		if hoverthickness == None:
+			hoverthickness = thickness
+   
+		if layer == None:
+			layer = -1
+   
+
+		self.addrect(buttonelem["dimensions"],states,[0,0],button + "outline",color=color,alpha=alpha,layer=layer)
+
+  
+		print(buttonelem["dimensions"])
+  
+		
+  
+		# print(normsize)
+		if "glidehov" in buttonelem.keys():
+			self.elements[button + "outline"]["command"].append("glide")
+			normsize  = [buttonelem["glidenorm"][0] + thickness     ,buttonelem["glidenorm"][1] + thickness]
+			glidesize = [buttonelem["glidehov"][0] + hoverthickness,buttonelem["glidehov"][1] + hoverthickness]
+		else:
+			normsize  = [buttonelem["dimensions"][0] + thickness     ,buttonelem["dimensions"][1] + thickness]
+			glidesize = [buttonelem["dimensions"][0] + hoverthickness,buttonelem["dimensions"][1] + hoverthickness]
+			
+		self.bindtorect(button+"outline",button,[0,0],size=normsize,glidesize=glidesize)
 
 	def clicked(self,em,button):
 		"""
@@ -424,7 +463,43 @@ class Uimanager:
 						self.elements[a.name]["pos"][1] = self.elements[self.elements[a.name]["button"]]["pos"][1] + self.elements[a.name]["offset"][1] 
 						self.elements[a.name]["states"] = self.elements[self.elements[a.name]["button"]]["states"]
 
-			
+	def update_after(self,em,pubvar,axis,dt):
+		for a in self.sprites:
+			if a.name in self.elements.keys():
+				if a.__class__.__name__ == "Uitext":
+					if "button" in self.elements[a.name].keys():
+						if "glide" in self.elements[a.name]["command"]:
+							if self.mode == "arrow":
+								if self.selectedbutton == self.elements[a.name]["button"]:
+									self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidehov"],4)
+								else:
+									self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidenorm"],4)
+							else:
+								if self.elements[self.elements[a.name]["button"]]["hover"]:
+									self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidehov"],4)
+								else:
+									self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidenorm"],4)
+						self.elements[a.name]["pos"][0] = self.elements[self.elements[a.name]["button"]]["pos"][0] + self.elements[a.name]["offset"][0] 
+						self.elements[a.name]["pos"][1] = self.elements[self.elements[a.name]["button"]]["pos"][1] + self.elements[a.name]["offset"][1] 
+						self.elements[a.name]["states"] = self.elements[self.elements[a.name]["button"]]["states"]
+						self.elements[a.name]["alpha"] = self.elements[self.elements[a.name]["button"]]["alpha"]	
+
+				if a.__class__.__name__ == "Uirect":
+					if "button" in self.elements[a.name].keys():
+						if "glide" in self.elements[a.name]["command"]:
+							if self.mode == "arrow":
+								if self.selectedbutton == self.elements[a.name]["button"]:
+									self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["glidesize"],4)
+								else:
+									self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["normsize"],4)
+							else:
+								if self.elements[self.elements[a.name]["button"]]["hover"]:
+									self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["glidesize"],4)
+								else:
+									self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["normsize"],4)
+						self.elements[a.name]["pos"][0] = self.elements[self.elements[a.name]["button"]]["pos"][0] + self.elements[a.name]["offset"][0] 
+						self.elements[a.name]["pos"][1] = self.elements[self.elements[a.name]["button"]]["pos"][1] + self.elements[a.name]["offset"][1] 
+						self.elements[a.name]["states"] = self.elements[self.elements[a.name]["button"]]["states"]
 
 ingame = Uimanager()
 	

@@ -7,12 +7,13 @@ tm = Textmanager.Textmanager(univars.realscreeen)
 
 
 class Ui(pygame.sprite.Sprite):
-    def __init__(self,surf,states,pos,name,cando = True,fromstart = 0):
+    def __init__(self,surf,states,pos,name,cando = True,fromstart = 0,rot = 0):
         pygame.sprite.Sprite.__init__(self)
         self.image = surf
         self.pos = pos
         self.name = name
         self.baseimg = surf
+        self.rot = rot
         self.fromstart = fromstart
         self.rect = self.baseimg.get_rect(center = pos)
         self.states = states
@@ -30,15 +31,17 @@ class Ui(pygame.sprite.Sprite):
 
 
                 self.states = elements[self.name]["states"]
+                self.rot = elements[self.name]["rot"]
 
 
                 realscale = [int(round(elements[self.name]["dimensions"][0] * ((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/univars.oldnum)),int(round(elements[self.name]["dimensions"][1] * ((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/univars.oldnum))]
-                if not str([realscale,elements[self.name]["alpha"]]) in elements[self.name]["cache"]:
+                if not str(    [   realscale,elements[self.name]["alpha"],self.rot    ]       ) in elements[self.name]["cache"]:
                     self.baseimg.set_alpha(elements[self.name]["alpha"])
                     baseimg1 = pygame.transform.scale(self.baseimg,   realscale   )
-                    elements[self.name]["cache"][str([realscale,elements[self.name]["alpha"]])] = baseimg1
+                    baseimg1  = pygame.transform.rotate(baseimg1,self.rot)
+                    elements[self.name]["cache"][str([realscale,elements[self.name]["alpha"],self.rot])] = baseimg1
                 else:
-                    baseimg1 = elements[self.name]["cache"][str([realscale,elements[self.name]["alpha"]])]
+                    baseimg1 = elements[self.name]["cache"][str(      [   realscale,elements[self.name]["alpha"],self.rot   ]        )]
 
 
 
