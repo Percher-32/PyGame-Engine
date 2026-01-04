@@ -307,7 +307,6 @@ class Uimanager:
 		if self.enterpressnull:
 			if self.enterheld  == 0:
 				self.enterpress = 1
-				print("ENETR HIT")
 				self.enterheld = 1
 			else:
 				self.enterpress = 0
@@ -401,7 +400,7 @@ class Uimanager:
 									self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidenorm"],4)
 						self.elements[a.name]["pos"][0] = self.elements[self.elements[a.name]["button"]]["pos"][0] + self.elements[a.name]["offset"][0] 
 						self.elements[a.name]["pos"][1] = self.elements[self.elements[a.name]["button"]]["pos"][1] + self.elements[a.name]["offset"][1] 
-						# self.elements[a.name]["states"] = self.elements[self.elements[a.name]["button"]]["states"]
+						self.elements[a.name]["states"] = self.elements[self.elements[a.name]["button"]]["states"]
 						self.elements[a.name]["alpha"] = self.elements[self.elements[a.name]["button"]]["alpha"]	
 
 				if a.__class__.__name__ == "Uirect":
@@ -419,7 +418,7 @@ class Uimanager:
 									self.elements[a.name]["dimensions"] = univars.func.lerp(self.elements[a.name]["dimensions"],self.elements[a.name]["normsize"],4)
 						self.elements[a.name]["pos"][0] = self.elements[self.elements[a.name]["button"]]["pos"][0] + self.elements[a.name]["offset"][0] 
 						self.elements[a.name]["pos"][1] = self.elements[self.elements[a.name]["button"]]["pos"][1] + self.elements[a.name]["offset"][1] 
-						# self.elements[a.name]["states"] = self.elements[self.elements[a.name]["button"]]["states"]
+						self.elements[a.name]["states"] = self.elements[self.elements[a.name]["button"]]["states"]
 
 			
 

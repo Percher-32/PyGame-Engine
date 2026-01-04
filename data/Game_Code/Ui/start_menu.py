@@ -1,5 +1,6 @@
 import data.Managers.Gamemanager as Gamemananager
 import data.Managers.univars as univars
+import data.Game_Code.Ui.level_select as level_select
 
 
 
@@ -48,14 +49,32 @@ def init(self):
     
     
 def main(self):
+    
+    
+    
     if um.clicked(em,"start_button"):
-        self.wait("transition:LEVEL_SELECT",0)
+        self.wait("transition:LEVEL_SELECT",0.2)
+        
+        
+    if self.isthere("transition:LEVEL_SELECT"):
+        um.lerpval("start_button","pos",[0 - 1.4,-0.2],4)
+        um.lerpval("settings_button","pos",[0 - 1.4,-0.5],4)
+        um.lerpval("quit_button","pos",[0 - 1.4,-0.8],4)
+        um.lerpval("banner","pos",[0 - 2,0.5],4)
+        
+    else:
+        # print(um.elements["settings_button"]["pos"])
+        um.lerpval("start_button","pos",[0,-0.2],4)
+        um.lerpval("settings_button","pos",[0,-0.5],4)
+        um.lerpval("quit_button","pos",[0,-0.8],4)
+        um.lerpval("banner","pos",[0,0.5],4)
         
     if um.clicked(em,"quit_button"):
         self.wait("transition:LEVEL_SELECT",0)
         em.close()
         
     if self.ondone("transition:LEVEL_SELECT"):
+        level_select.rel(self)
         um.changestate("level_select",None)
     
     
