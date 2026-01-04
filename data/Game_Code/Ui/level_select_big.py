@@ -79,23 +79,23 @@ def main(self):
     if not "level_select_big" in um.elements[buttonid]["states"]:
         um.elements[buttonid]["states"].append("level_select_big")
     # um.d
-    um.lerpval(buttonid,"pos",[-0.5,-0.1],4)
-    um.lerpval(buttonid,"dimensions",[750,750/2],4)
+    um.lerpval(buttonid,"pos",[-0.5 + 0.05,-0.1 + 0.2],4)
+    um.lerpval(buttonid,"dimensions",[920,920/2],4)
     # um.addglide(buttonid,[750,750/2],[750,750/2])
     
     if self.key["back"] and not self.lastkey["back"] or um.clicked(em,"back_button"):
         um.changestate("level_select",buttonid)
         
         
-    um.lerpval("back_button","pos",[-0.8,-0.8],4)
+    um.lerpval("back_button","pos",[-0.8,-0.55],4)
     um.lerpval("level_select_header","pos",[0,1.2],4)
     
     
-    um.lerpval(buttonid.replace("button","") + "text"       ,"offset",[0.4,1],4)
+    um.lerpval(buttonid.replace("button","") + "text"       ,"offset",[0.4,1-0.2],4)
     um.elements[buttonid.replace("button","") + "text"]["size"] = 80
     
     backersize = [500,500]
-    backeroffset = [0.6,0]
+    backeroffset = [0.6 - 0.05,0 - 0.2]
     
     
     

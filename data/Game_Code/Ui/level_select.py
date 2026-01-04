@@ -2,7 +2,7 @@ import data.Managers.Gamemanager as Gamemananager
 import data.Managers.univars as univars
 import data.Game_Code.Player.player_init as player_init
 import data.Game_Code.Ui.level_select_big as level_select_big
-
+import random
 
 
 
@@ -36,7 +36,10 @@ def init(self):
     self.level_buttons_slider = 0
     for level in self.playablelevels:
         pos = [-0.3,-0.1-(inc*0.5)]
-        um.addbutton([400,200],["level_select","level_select_big"],pos,level + "button",color=univars.theme["accent"],layer=1)
+        
+        paths = [f"test_level_pic{i}" for i in range(0,7)]
+        
+        um.addbutton([400,200],["level_select","level_select_big"],pos,level + "button",color=univars.theme["accent"],layer=1,surf=paths[random.randint(0,6)])
         self.level_buttons.append(level + "button")
         self.level_buttons_initpos[level + "button"] = pos.copy()
         self.level_buttons_incs[level + "button"] = inc

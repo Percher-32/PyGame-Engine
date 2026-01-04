@@ -24,7 +24,7 @@ pm = Gamemananager.pm
 
 def init(self):
     #BACKGROUND
-    um.addrect([univars.ui_screen_size[0],univars.ui_screen_size[1]],["start_menu"],pos = [0,0],name="background",color=(0,0,0),layer=-2)
+    um.addrect([univars.ui_screen_size[0],univars.ui_screen_size[1]],["start_menu"],pos = [0,0],name="background",color=(20,0,20),layer=-2)
     
     #BANNER
     um.addrect([univars.ui_screen_size[0]/2,univars.ui_screen_size[1]*2],["start_menu"],[-0.5,0],"banner",color=(40,0,40),rot=15,alpha=150)

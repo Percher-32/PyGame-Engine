@@ -132,7 +132,7 @@ with open(f"data/Saved/sizeoffsets.json","w") as file:
 
 
 map = "finale"
-startstate = "debumenu"
+startstate = "uitest"
 startshaderstate = 0
 bakeonreload = 1
 showdebugonstart = 0

@@ -299,8 +299,6 @@ class Uimanager:
 		self.addrect(buttonelem["dimensions"],states,[0,0],button + "outline",color=color,alpha=alpha,layer=layer)
 
   
-		print(buttonelem["dimensions"])
-  
 		
   
 		# print(normsize)

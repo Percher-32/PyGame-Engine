@@ -14,7 +14,6 @@ class Ui(pygame.sprite.Sprite):
         self.name = name
         self.baseimg = surf
         self.rot = rot
-        self.baseimg  = pygame.transform.rotate(self.baseimg,self.rot)
         self.fromstart = fromstart
         self.rect = self.baseimg.get_rect(center = pos)
         self.states = states
@@ -74,7 +73,7 @@ class Ui(pygame.sprite.Sprite):
 class Uirect(Ui):
     def __init__(self,dimensions,states,pos,name,surf = None,fromstart = 0):
         if not surf == None:
-            img = surf.set_colorkey((0,0,0))
+            img = surf
 		
             cd = 0
         else:
