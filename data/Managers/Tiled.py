@@ -153,8 +153,11 @@ class TiledSoftwre:
 	def Run(self,work,speed,GameManager,camera,dim,debug,cm,smate):
 		self.showdata = GameManager.publicvariables["showdata"]
 		movecam = GameManager.publicvariables["cammove"]
+		self.loadingmap = False
+		self.comm = False
 		
 	
+		# self.loadingmap = False
 		if work:
 			if GameManager.states == "Editor":
 				Cammanager.camager.setcam("def")

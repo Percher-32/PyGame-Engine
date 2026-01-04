@@ -305,7 +305,7 @@ class Uimanager:
 		self.sprites.update(self.state, self.elements,em)
   
 		# if em.key[pygame.K_RETURN] and not self.enterpress == 1:
-		self.enterpressnull = em.key[pygame.K_RETURN] or em.controller["SELECT"] or em.controller["A"]
+		self.enterpressnull = em.key[pygame.K_RETURN] or em.controller["SELECT"] or em.controller["A"] or em.key[pygame.K_SPACE]
   
 		if self.enterpressnull:
 			if self.enterheld  == 0:

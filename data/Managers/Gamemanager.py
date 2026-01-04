@@ -495,7 +495,6 @@ class GameManager():
 		sm.update()
 		self.bosh()
 		self.smstate = sm.state
-		# print(f"bosh to {state}")
 		self.quickrel()
 		if qrcond:
 			self.qrcondHL()
@@ -579,20 +578,20 @@ class GameManager():
 		univars.realscreeen.blit(pygame.transform.scale_by(univars.screen,univars.pixelscale),(univars.realscreeen.width//2 - (univars.pixelscale * univars.screen.size[0])//2,univars.realscreeen.height//2 - (univars.pixelscale * univars.screen.size[1])//2))
 		
 
-		#runs editor
-		Tiled.Run(self.publicvariables["debug-mode"],univars.camspeeed,self,cam,self.dim,self.publicvariables["leveledit"],cm,sm.state)
-
-		
-		if fm.showfps:
-			if self.dt > 0:
-				tm.drawtext(f"fps = {round(60/ self.dt)}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.9,-0.9)
-
-
 		#renders ui
 		self.pauseui = True
 		um.update(em,self.publicvariables,self.key["axis"],self.dt)
 		um.sprites.draw(univars.realscreeen)
 		self.pauseui = False
+
+
+		#runs editor
+		Tiled.Run(self.publicvariables["debug-mode"],univars.camspeeed,self,cam,self.dim,self.publicvariables["leveledit"],cm,sm.state)
+		
+		if fm.showfps:
+			if self.dt > 0:
+				tm.drawtext(f"fps = {round(60/ self.dt)}","pixel2.ttf",40,0,0,0,univars.theme["semibright"],-0.9,-0.9)
+
 
 
 
