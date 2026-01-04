@@ -27,7 +27,7 @@ def init(self):
     um.addrect([univars.ui_screen_size[0],univars.ui_screen_size[1]],["start_menu"],pos = [0,0],name="background",color=(0,0,0),layer=-2)
     
     #BANNER
-    um.addrect([univars.ui_screen_size[0]/4,univars.ui_screen_size[1]],["start_menu"],[-0.5,0],"banner",color=(40,0,40))
+    um.addrect([univars.ui_screen_size[0]/4,univars.ui_screen_size[1]],["start_menu"],[-0.5,0],"banner",color=(40,0,40),rot=45)
     
     
     #START BUTTON
