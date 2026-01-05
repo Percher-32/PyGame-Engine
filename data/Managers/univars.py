@@ -6,18 +6,26 @@ import data.Managers.statemanager as sm
 
 pygame.display.init()
 
-scaledown = 2
+scaledown = 2.5
+scaledowny =2.5
 
 
 pixelscale = 1
 
 
-screen_w = pygame.display.get_desktop_sizes()[0][0]/scaledown
-screen_h = pygame.display.get_desktop_sizes()[0][1]/scaledown
+ogsize = pygame.display.get_desktop_sizes()[0]
+
+# ogsize = [400,200]
+
+screen_w = ogsize[0]/scaledown
+screen_h = ogsize[1]/scaledowny
+
+
+
 # print()
-oldnum = (pygame.display.get_desktop_sizes()[0][0]**2 +  pygame.display.get_desktop_sizes()[0][1]**2)**0.5
+oldnum = (ogsize[0]**2 + ogsize[1]**2)**0.5
 rw = ((screen_w**2 +  screen_h**2)**0.5)/oldnum
-startdims = (screen_w*scaledown,screen_h*scaledown)
+startdims = (screen_w*scaledown,screen_h*scaledowny)
 
 
 
@@ -132,7 +140,7 @@ with open(f"data/Saved/sizeoffsets.json","w") as file:
 
 
 map = "finale"
-startstate = "uitest"
+startstate = "menu"
 startshaderstate = 0
 bakeonreload = 1
 showdebugonstart = 0

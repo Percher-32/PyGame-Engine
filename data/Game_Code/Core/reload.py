@@ -37,7 +37,7 @@ def main(self,Player):
         um.changestate("start_menu","start_button")
         
     if "test" in self.states:
-        um.changestate("level_select",None)
+        um.changestate("settings",None)
     
 
     if sm.state == "game":

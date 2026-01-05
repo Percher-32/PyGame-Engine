@@ -121,10 +121,16 @@ class Uimanager:
 		self.deleleelem(str(name) + "tex")
 
 
-	def bindtobutton(self,text,button,offset = [0,0]):
+	def bindtobutton(self,text,button,offset = [0,0],col = None,hcol = None):
 		self.elements[text]["button"] = button
 		self.elements[button]["text"] = text
 		self.elements[text]["offset"] = offset
+		if col == None:
+			col = self.elements[text]["color"]
+		if hcol == None:
+			hcol = self.elements[text]["color"]
+		self.elements[text]["col"] = col
+		self.elements[text]["hcol"] = hcol
 		self.binds.append([text,button])
 
 	def bindtorect(self,rect,button,offset = [0,0],size = None,glidesize=None):
@@ -255,6 +261,8 @@ class Uimanager:
 				col = self.elements[button]["color"]
 			if hcol == None:
 				hcol = self.elements[button]["color"]
+
+    
 			self.elements[button]["hcolor"] =   hcol
 			self.elements[button]["ncolor"]  =   col
 
@@ -444,13 +452,19 @@ class Uimanager:
 							if self.mode == "arrow":
 								if self.selectedbutton == self.elements[a.name]["button"]:
 									self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidehov"],4)
+									self.elements[a.name]["color"] = univars.func.lerp(self.elements[a.name]["color"],self.elements[a.name]["hcol"],4)
 								else:
 									self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidenorm"],4)
+									self.elements[a.name]["color"] = univars.func.lerp(self.elements[a.name]["color"],self.elements[a.name]["col"],4)
 							else:
 								if self.elements[self.elements[a.name]["button"]]["hover"]:
 									self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidehov"],4)
+									self.elements[a.name]["color"] = univars.func.lerp(self.elements[a.name]["color"],self.elements[a.name]["hcol"],4)
 								else:
 									self.elements[a.name]["size"] = univars.func.lerp(self.elements[a.name]["size"],self.elements[a.name]["glidenorm"],4)
+									self.elements[a.name]["color"] = univars.func.lerp(self.elements[a.name]["color"],self.elements[a.name]["col"],4)
+         
+         
 						self.elements[a.name]["pos"][0] = self.elements[self.elements[a.name]["button"]]["pos"][0] + self.elements[a.name]["offset"][0] 
 						self.elements[a.name]["pos"][1] = self.elements[self.elements[a.name]["button"]]["pos"][1] + self.elements[a.name]["offset"][1] 
 						self.elements[a.name]["states"] = self.elements[self.elements[a.name]["button"]]["states"]

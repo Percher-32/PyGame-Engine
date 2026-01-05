@@ -1,6 +1,7 @@
 import data.Managers.Gamemanager as Gamemananager
 import data.Managers.univars as univars
 import data.Game_Code.Ui.level_select as level_select
+import data.Game_Code.Ui.settings as settings
 
 
 
@@ -95,7 +96,9 @@ def main(self):
         level_select.rel(self)
         um.changestate("level_select",None)
     
-            
+    if self.ondone("transition:SETTINGS"):
+        settings.rel(self)
+        um.changestate("settings",None)
         
     if self.isthere("transition:LEVEL_SELECT"):
         um.lerpval("start_button","pos",[0 - 1.4,-0.2],4)

@@ -25,7 +25,7 @@ def init(self):
     
     um.addbutton(univars.sizes["smallbutton"],["level_select_big","level_select"],[0,-0.5],"start_level",univars.theme["dark"],layer=1)
     um.addtext("start_level_text","START",univars.defont,[0,0],univars.theme["bright"],60,["level_select_big"],layer=2)
-    um.bindtobutton("start_level_text","start_level")
+    um.bindtobutton("start_level_text","start_level",col=univars.theme["bright"],hcol=(255,255,255))
     
     startsize = [180 + 25,60 + 25]
     

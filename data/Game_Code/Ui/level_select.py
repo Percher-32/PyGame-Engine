@@ -21,7 +21,7 @@ pm = Gamemananager.pm
 
 def init(self):
     inc = 0
-    um.addrect([univars.ui_screen_size[0],univars.ui_screen_size[1]],["level_select","level_select_big"],pos = [0,0],name="background2",color=(20,0,20),layer=-2)
+    um.addrect([univars.ui_screen_size[0],univars.ui_screen_size[1]],["level_select","level_select_big","settings"],pos = [0,0],name="background2",color=(20,0,20),layer=-2)
     um.addtext("level_select_header","LEVEL SELECT",univars.defont,[0,0.8],col=univars.theme["semibright"],size=80,states=["level_select","level_select_big"])
     
     um.addbutton(univars.sizes["smallbutton"],["level_select","level_select_big"],[-0.8,-0.8],"back_button",color=univars.theme["dark"],layer=1)
