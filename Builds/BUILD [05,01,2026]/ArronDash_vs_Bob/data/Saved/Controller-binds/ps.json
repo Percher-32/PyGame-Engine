@@ -1,0 +1,27 @@
+{
+  "A": 0,
+  "B": 1,
+  "X": 2,
+  "Y": 3,
+
+  "OPT": 6,
+  "START": 6,
+  "BACK": 1,
+  "SHARE": 4,
+
+
+  "LSK": 7,
+  "RSK": 8,
+  "LB": 9,
+  "RB": 10,
+
+
+  "MAIN": 5,
+
+
+  "up_arrow": 11,
+  "down_arrow": 12,
+  "left_arrow": 13,
+  "right_arrow": 14,
+  "touchpad": 15
+  }
