@@ -50,6 +50,11 @@ tex.swizzle = 'BGRA'
 
 
 def surf_to_texture(surf):
+    global tex
+    if univars.change:
+        tex = ctx.texture(univars.realscreeen.get_size(), int(4))
+        tex.filter = (moderngl.NEAREST, moderngl.NEAREST)
+        tex.swizzle = 'BGRA'
     tex.write(surf.get_view('1'))
     return tex
 

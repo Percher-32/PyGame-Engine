@@ -98,7 +98,7 @@ def main(self):
     
     if self.ondone("transition:SETTINGS"):
         settings.rel(self)
-        um.changestate("settings",None)
+        um.changestate("settings","video_settings_button")
         
     if self.isthere("transition:LEVEL_SELECT"):
         um.lerpval("start_button","pos",[0 - 1.4,-0.2],4)

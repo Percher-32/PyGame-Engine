@@ -524,6 +524,7 @@ class GameManager():
 
 
 	def start(self):
+		univars.change = 0
 		"""run at the start of every frame"""
 		if self.dt == 0:
 			self.dt = 1
@@ -697,7 +698,6 @@ class GameManager():
 		# shader.bgprogram['time'] = fm.frame
 		# shader.bgprogram['state'] = self.publicvariables["shaderstate"]
 		# shader.bgrender_object.render(mode=moderngl.TRIANGLE_STRIP)
-
 
 		frame_tex = shader.surf_to_texture(univars.realscreeen)
 		frame_tex.use(0)

@@ -6,62 +6,26 @@ import data.Managers.statemanager as sm
 
 pygame.display.init()
 
-scaledown = 2.5
-scaledowny =2.5
+
+    
+sameol = 2.5
+
+scaledown = sameol
+scaledowny =sameol
 
 
 pixelscale = 1
 
-
 ogsize = pygame.display.get_desktop_sizes()[0]
-
-# ogsize = [400,200]
 
 screen_w = ogsize[0]/scaledown
 screen_h = ogsize[1]/scaledowny
 
-
-
-# print()
 oldnum = (ogsize[0]**2 + ogsize[1]**2)**0.5
 rw = ((screen_w**2 +  screen_h**2)**0.5)/oldnum
 startdims = (screen_w*scaledown,screen_h*scaledowny)
 
-
-
 ui_screen_size =  startdims
-camchange = True
-
-
-
-grandim = 32
-
-
-name = "Project ender"
-
-maxfps = 60
-
-
-
-
-theme = {
-"dark" :       (40, 41, 83)                              ,
-"mid" :        (75, 63, 114)                             ,
-"bright" :     (220, 214, 247)                           ,
-"accent" :     (242, 140, 84)                            ,
-"semibright":  (163, 173, 225)
-}
-
-
-sizes = {
-    "smallbutton": (150,75),
-    "mediumbutton": (200,100),
-    "semilargebutton":(250,250/2),
-    "largebutton": (300,150),
-    "display": (400,200),
-    "display_select": (400+25,200+25 )
-}
-
 
 minsize = (screen_w/pixelscale,screen_h/pixelscale)
 
@@ -71,17 +35,91 @@ fakescreen = pygame.Surface((screen_w*1,screen_h*1))
 fakescreen.set_colorkey((0,0,0))
 
 
+
+realscreeen = pygame.Surface((screen_w,screen_h))
+
 uiscreen = pygame.Surface((screen_w,screen_h))
 try:
     finalscreen = pygame.display.set_mode((screen_w,screen_h),pygame.OPENGL|pygame.DOUBLEBUF|pygame.SCALED|pygame.FULLSCREEN,vsync=1)
 except:
     finalscreen = pygame.display.set_mode((screen_w,screen_h),pygame.OPENGL|pygame.DOUBLEBUF|pygame.SCALED|pygame.FULLSCREEN,vsync=0)
-realscreeen = pygame.Surface((screen_w,screen_h))
-pygame.display.set_caption(name)
+    
+change = 0
+    
+
+
+def resize(scale):
+    global screen_w
+    global screen_h
+    global scaledown
+    global scaledowny
+    global oldnum
+    global rw
+    global startdims
+    global ui_screen_size
+    global screen
+    global realscreeen
+    global finalscreen
+    global uiscreen
+    global fakescreen
+    global change
+    
+    
+    sameol = scale
+    change = 1
+
+
+    scaledown = sameol
+    scaledowny =sameol
+
+
+    pixelscale = 1
+
+    ogsize = pygame.display.get_desktop_sizes()[0]
+
+    screen_w = ogsize[0]/scaledown
+    screen_h = ogsize[1]/scaledowny
+
+    oldnum = (ogsize[0]**2 + ogsize[1]**2)**0.5
+    rw = ((screen_w**2 +  screen_h**2)**0.5)/oldnum
+    startdims = (screen_w*scaledown,screen_h*scaledowny)
+
+    ui_screen_size =  startdims
+
+    minsize = (screen_w/pixelscale,screen_h/pixelscale)
+
+
+    screen = pygame.Surface(minsize,pygame.SCALED)
+    fakescreen = pygame.Surface((screen_w*1,screen_h*1))
+    fakescreen.set_colorkey((0,0,0))
+
+    
+    screen = pygame.Surface(minsize,pygame.SCALED)
+    fakescreen = pygame.Surface((screen_w*1,screen_h*1))
+    fakescreen.set_colorkey((0,0,0))
+
+
+
+    realscreeen = pygame.Surface((screen_w,screen_h))
+
+    uiscreen = pygame.Surface((screen_w,screen_h))
+    try:
+        finalscreen = pygame.display.set_mode((screen_w,screen_h),pygame.OPENGL|pygame.DOUBLEBUF|pygame.SCALED|pygame.FULLSCREEN,vsync=1)
+    except:
+        finalscreen = pygame.display.set_mode((screen_w,screen_h),pygame.OPENGL|pygame.DOUBLEBUF|pygame.SCALED|pygame.FULLSCREEN,vsync=0)
+        
+        
+
+
+
+
+
+
+
+
 
 screen_rect = screen.get_rect(center = (0,0))
 
-func = funcs.func(grandim)
 """
     Use this one
 """
@@ -131,16 +169,50 @@ with open(f"data/Saved/sizeoffsets.json","w") as file:
 
 
 
+camchange = True
+
+
+
+grandim = 32
+
+func = funcs.func(grandim)
 
 
 
 
+name = "Project ender"
+
+maxfps = 60
 
 
+
+
+theme = {
+"dark" :       (40, 41, 83)                              ,
+"mid" :        (75, 63, 114)                             ,
+"bright" :     (220, 214, 247)                           ,
+"accent" :     (242, 140, 84)                            ,
+"semibright":  (163, 173, 225)
+}
+
+
+sizes = {
+    "smallbutton": (150,75),
+    "mediumbutton": (200,100),
+    "semilargebutton":(250,250/2),
+    "largebutton": (300,150),
+    "display": (400,200),
+    "display_select": (400+25,200+25 )
+}
+
+
+
+
+pygame.display.set_caption(name)
 
 
 map = "finale"
-startstate = "menu"
+startstate = "debumenu"
 startshaderstate = 0
 bakeonreload = 1
 showdebugonstart = 0
@@ -206,7 +278,6 @@ def update():
     # screen_h = pygame.display.get_window_size()[1]
     # realscreeen = pygame.transform.scale(realscreeen,[screen_w,screen_h])
     # print(realscreeen.get_size())
-
 
 
 
