@@ -67,8 +67,7 @@ sd = Gamemananager.sd
 sm = Gamemananager.sm
 um = Gamemananager.um
 bg = Gamemananager.bg
-
-
+am = Gamemananager.am
 pm = Gamemananager.pm
 
 
@@ -174,6 +173,7 @@ class Game(Gamemananager.GameManager):
 
 	#CORE FUNCTIONS
 	def onreload(self):
+		am.play_song("debug3")
 		data.Game_Code.Core.reload.main(self,Player)
      
 	def quickrel(self):
@@ -183,7 +183,14 @@ class Game(Gamemananager.GameManager):
 		data.Game_Code.Core.Game_start.main(self)
 
 	def update(self):
-		# print(em.keyb)
+		self.wait("switchsong",1)
+
+		if self.ondone("switchsong"):
+			if am.current_song == "debug3":
+				am.swapcont("debug4")
+			else:
+				am.swapcont("debug3")
+				
 		data.Game_Code.Core.Update.main(self,Player)
 
 

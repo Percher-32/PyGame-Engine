@@ -26,6 +26,12 @@ import json
 import time
 import random
 import data.Managers.Particlesytem
+import data.Managers.audiomanager
+
+
+
+
+
 pygame.init()
 pygame.joystick.init()
 
@@ -41,6 +47,7 @@ um = Uimanager.ingame
 bg = backgroundmanager.bg
 sd = shader
 pm = data.Managers.Particlesytem.pm
+am = data.Managers.audiomanager.am
 
 
 class GameManager():
@@ -550,6 +557,9 @@ class GameManager():
 			
 		bg.update(self.publicvariables["screencol"])
 		univars.screen.blit(bg.backlayer,(0,0))
+  
+  
+  
 
 
 
@@ -664,6 +674,7 @@ class GameManager():
    
    	
 	def end(self):
+		am.update(self.dt)
 		um.update_after(em,self.publicvariables,self.key["axis"],self.dt)
 		renderwid = (((((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983)) * 1980) + 200
   
