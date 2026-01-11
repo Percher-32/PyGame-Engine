@@ -4,8 +4,12 @@ import data.Managers.Textmanager as Textmanager
 import data.Managers.Uielement as Uielement
 import data.Managers.univars as univars
 import json
+import data.Managers.audiomanager
+
+
 tm = Textmanager.Textmanager(univars.realscreeen)
 em = event_manager.event_manager()
+am = data.Managers.audiomanager.am
 
 
 class Uimanager:
@@ -354,6 +358,8 @@ class Uimanager:
 		self.enterheld = 1
 
 	def update(self,em,pubvar,axis,dt):
+     
+     
 		self.canshowvar = pubvar["debug-mode"]
 		self.sprites.update(self.state, self.elements,em)
   
@@ -384,6 +390,8 @@ class Uimanager:
 			# self.timetillnextswap = 0
 		if not self.lastaxis == axis:
 			if self.selectedbutton in self.elements.keys():
+       
+				am.play_sound("NAV")
 				self.timetillnextswap = 5
 				old = self.selectedbutton
 				if axis[0] < 0:

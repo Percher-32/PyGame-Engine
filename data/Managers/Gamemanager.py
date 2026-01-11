@@ -485,8 +485,11 @@ class GameManager():
 		"""
 		sm.update()
 		self.bosh()
+
 		bg.loadbg()
 		om.instables = univars.instables
+  
+		am.init_sounds()
 		
 		cm.setcam("def")
 		self.debug = True
@@ -560,6 +563,7 @@ class GameManager():
   
   
   
+		am.update(self.dt)
 
 
 
@@ -674,7 +678,6 @@ class GameManager():
    
    	
 	def end(self):
-		am.update(self.dt)
 		um.update_after(em,self.publicvariables,self.key["axis"],self.dt)
 		renderwid = (((((univars.realscreeen.width**2 +  univars.realscreeen.height**2)**0.5)/2202.9071700822983)) * 1980) + 200
   
