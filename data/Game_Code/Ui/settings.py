@@ -16,12 +16,15 @@ sm = Gamemananager.sm
 um = Gamemananager.um
 bg = Gamemananager.bg
 pm = Gamemananager.pm
+am = Gamemananager.am
 
 
 def main(self):
     
     if um.clicked(em,"back_button") or (self.key["back"] and not self.lastkey["back"]):
         um.changestate("start_menu","start_button")
+        am.play_sound("OUT")
+        
     
     
         

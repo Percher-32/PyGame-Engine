@@ -328,11 +328,17 @@ class Uimanager:
 		"""
 			returns wether a button has been clicked
 		"""
+		a = False
 		if self.mode == "arrow":
-			return (self.selectedbutton == button) and ( self.enterpress  ) and self.state in self.elements[button]["states"]
+			a =  (self.selectedbutton == button) and ( self.enterpress  ) and self.state in self.elements[button]["states"]
 		else:
-			return (self.elements[button]["click"] and self.state in self.elements[button]["states"])
-			
+			a =  (self.elements[button]["click"] and self.state in self.elements[button]["states"])
+
+		if a:
+			am.play_sound("IN")
+		return a
+
+
 	def hover(self,button):
 		"""
 			returns wether a button has been hovered over

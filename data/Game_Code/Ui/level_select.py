@@ -90,7 +90,8 @@ def main(self):
         
     if um.clicked(em,"back_button") or (self.key["back"] and not self.lastkey["back"]):
         um.changestate("start_menu","start_button")
-        am.play_sound("NAV")
+        
+        am.play_sound("OUT")
         
         
     # if 

@@ -17,6 +17,7 @@ sm = Gamemananager.sm
 um = Gamemananager.um
 bg = Gamemananager.bg
 pm = Gamemananager.pm
+am = Gamemananager.am
 
 def init(self):
     str = "BRIEF: \n Arron Dash has just \n done some crazy stuff which\n im sure ill actually plan out \n but for now this \n is just some \n flavour text."
@@ -85,6 +86,7 @@ def main(self):
     
     if self.key["back"] and not self.lastkey["back"] or um.clicked(em,"back_button"):
         um.changestate("level_select",buttonid)
+        am.play_sound("OUT")
         
         
     um.lerpval("back_button","pos",[-0.8,-0.55],4)

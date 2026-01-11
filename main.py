@@ -184,7 +184,7 @@ class Game(Gamemananager.GameManager):
 		data.Game_Code.Core.Game_start.main(self)
 
 	def update(self):
-				
+		am.play_song("debug")
 		data.Game_Code.Core.Update.main(self,Player)
 
 
