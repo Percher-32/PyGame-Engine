@@ -23,7 +23,6 @@ def main(self):
     
     if um.clicked(em,"back_button") or (self.key["back"] and not self.lastkey["back"]):
         um.changestate("start_menu","start_button")
-        am.play_sound("OUT")
         
     
     
@@ -37,7 +36,7 @@ def main(self):
     # um.addbutton([600,200],["settings"],[-1,0.7],"audio_settings_button",univars.theme["dark"])
 
 def rel(self):
-    um.changestate("settings","video_settings_button")
+    um.changestate("settings","video_settings_button",sound=None)
     
     um.elements["video_settings_button"]["pos"]    = [-0.7 -0.1/3 -1,0.7]
     um.elements["audio_settings_button"]["pos"]    =  [-0.7 + 0.1/2 -1,0.7 - 0.5]

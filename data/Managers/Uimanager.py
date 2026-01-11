@@ -38,6 +38,8 @@ class Uimanager:
 		self.mode = "arrow"
 		self.toroute = None
 		self.timetillnextswap = 1
+		self.thisframehover = 0
+		self.lastframehover = 0
 
 	def addelement(self,surf,states,pos,name,type=None,layer = 0,rot = 0):
 		self.metadata["element"].append([surf,states,pos,name,type])
@@ -324,7 +326,7 @@ class Uimanager:
 			
 		self.bindtorect(button+"outline",button,[0,0],size=normsize,glidesize=glidesize)
 
-	def clicked(self,em,button):
+	def clicked(self,em,button,sound = "IN"):
 		"""
 			returns wether a button has been clicked
 		"""
@@ -334,8 +336,8 @@ class Uimanager:
 		else:
 			a =  (self.elements[button]["click"] and self.state in self.elements[button]["states"])
 
-		if a:
-			am.play_sound("IN")
+		if a and not sound == None:
+			am.play_sound(sound)
 		return a
 
 
@@ -343,15 +345,22 @@ class Uimanager:
 		"""
 			returns wether a button has been hovered over
 		"""
+		a = 0
 		if self.mode == "arrow":
-			return  self.selectedbutton == button
+			a =  self.selectedbutton == button
 		else:
-			return self.elements[button]["hover"]
+			a = self.elements[button]["hover"]
+
+
+		return a
+
 
 	def conthover(self,button):
 		return (self.selectedbutton == button) and (self.mode == "arrow")
 
-	def changestate(self,state,startbutton):
+	def changestate(self,state,startbutton,sound = "OUT"):
+		if state == "maingame" and sound == "OUT":
+			sound = None
 		self.state = state
 		self.mode = "arrow"
 		self.selectedbutton = startbutton
@@ -362,6 +371,13 @@ class Uimanager:
 		self.enterpress = 0
 		self.enterpressnull = 0
 		self.enterheld = 1
+		if not sound == None:
+			univars.print(sound)
+			am.play_sound(sound)
+		else:
+			univars.print("IN THE NONE")
+
+
 
 	def update(self,em,pubvar,axis,dt):
      
@@ -369,7 +385,6 @@ class Uimanager:
 		self.canshowvar = pubvar["debug-mode"]
 		self.sprites.update(self.state, self.elements,em)
   
-		# if em.key[pygame.K_RETURN] and not self.enterpress == 1:
 		self.enterpressnull = em.key[pygame.K_RETURN] or em.controller["SELECT"] or em.controller["A"] or em.key[pygame.K_SPACE]
   
 		if self.enterpressnull:
@@ -383,7 +398,16 @@ class Uimanager:
 			self.enterheld = 0
 			self.enterpress = 0
 
+
+		if univars.func.dist(pygame.mouse.get_rel(),[0,0]) > 0:
+			self.mode = "mouse"
   
+
+		if self.mode == "arrow":
+			pygame.mouse.set_visible(0)
+		else:
+			pygame.mouse.set_visible(1)
+			
 
 
 
@@ -392,12 +416,14 @@ class Uimanager:
 			self.route(self.toroute)
 			self.toroute = None
 
-		# if self.timetillnextswap <= 0:
-			# self.timetillnextswap = 0
+
+
+
+
+
 		if not self.lastaxis == axis:
 			if self.selectedbutton in self.elements.keys():
        
-				am.play_sound("NAV")
 				self.timetillnextswap = 5
 				old = self.selectedbutton
 				if axis[0] < 0:
@@ -427,17 +453,18 @@ class Uimanager:
 		self.timetillnextswap -= dt
 
 
-
+		self.thisframehover = 0
 		for a in self.sprites:
 			if a.name in self.elements.keys():
 				if a.__class__.__name__ == "Uibutton":
 					self.elements[a.name]["click"] = a.click
 					self.elements[a.name]["hover"] = a.hover
 
-					if a.click or a.hover:
-						self.mode = "mouse"
+					# if a.click or a.hover:
+					# 	self.mode = "mouse"
 
-
+					if self.hover(a.name):
+						self.thisframehover = a.name
 
 					if self.mode == "mouse":
 						if self.elements[a.name]["hover"]:
@@ -500,6 +527,14 @@ class Uimanager:
 						self.elements[a.name]["pos"][0] = self.elements[self.elements[a.name]["button"]]["pos"][0] + self.elements[a.name]["offset"][0] 
 						self.elements[a.name]["pos"][1] = self.elements[self.elements[a.name]["button"]]["pos"][1] + self.elements[a.name]["offset"][1] 
 						self.elements[a.name]["states"] = self.elements[self.elements[a.name]["button"]]["states"]
+
+
+		if not self.lastframehover == self.thisframehover and not (self.thisframehover == 0):
+			am.play_sound("NAV")
+
+
+		self.lastframehover = self.thisframehover
+
 
 	def update_after(self,em,pubvar,axis,dt):
 		for a in self.sprites:

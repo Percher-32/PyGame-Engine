@@ -86,7 +86,6 @@ def main(self):
     
     if self.key["back"] and not self.lastkey["back"] or um.clicked(em,"back_button"):
         um.changestate("level_select",buttonid)
-        am.play_sound("OUT")
         
         
     um.lerpval("back_button","pos",[-0.8,-0.55],4)
@@ -110,7 +109,7 @@ def main(self):
     
     if um.clicked(em,"start_level"):
         self.setbosh("debugame")
-        um.changestate("maingame",None)
+        um.changestate("maingame",None,None)
         om.loadtilemap(self,self.leveldo)
         player_init.main(self,[0,60])
     

@@ -86,12 +86,11 @@ def main(self):
     
     
     if um.selectedbutton == None:
-        um.changestate("level_select",self.playablelevels[0] + "button")
+        um.changestate("level_select",self.playablelevels[0] + "button",sound=None)
         
     if um.clicked(em,"back_button") or (self.key["back"] and not self.lastkey["back"]):
         um.changestate("start_menu","start_button")
         
-        am.play_sound("OUT")
         
         
     # if 
@@ -108,14 +107,10 @@ def main(self):
         um.setroute(button,"left","back_button")
         
         
-        if um.clicked(em,button):
-            # self.setbosh("debugame")
-            # um.changestate("maingame",None)
-            # om.loadtilemap(self,button.replace("button",""))
-            # player_init.main(self,[0,60])
+        if um.clicked(em,button,sound="IN"):
             self.leveldo = button.replace("button","")
             level_select_big.rel(self)
-            um.changestate("level_select_big","start_level")
+            um.changestate("level_select_big","start_level",sound=None)
             
             
         if um.conthover(button):

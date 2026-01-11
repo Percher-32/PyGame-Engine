@@ -31,8 +31,8 @@ def init(self):
     um.addrect([univars.ui_screen_size[0]/2,univars.ui_screen_size[1]*2],["start_menu"],[-0.5,0],"banner",color=(40,0,40),rot=15,alpha=150)
     
     
-    um.addtext("header_text","AARON DASH \n VS \n BOB",univars.defont       ,[-0.4       ,0.5       ],univars.theme["bright"],120,["start_menu"],1,layer=3)
-    um.addtext("header_text_shadow","AARON DASH \n VS \n BOB",univars.defont,[-0.4 - 0.01,0.5 - 0.03],univars.theme["dark"],120,["start_menu"],1,layer=2)
+    um.addtext("header_text","AARON DASH \n VS \n BOB ",univars.defont       ,[-0.4       ,0.5       ],univars.theme["bright"],120,["start_menu"],1,layer=3)
+    um.addtext("header_text_shadow","AARON DASH \n VS \n BOB ",univars.defont,[-0.4 - 0.01,0.5 - 0.03],univars.theme["dark"],120,["start_menu"],1,layer=2)
     
     
     um.addrect([univars.ui_screen_size[0]/2,univars.ui_screen_size[1]*2],["start_menu"],[-0.5,0],"banner2",color=(40,0,40),rot=15,alpha=150)
@@ -82,23 +82,22 @@ def main(self):
     
     
     
-    if um.clicked(em,"start_button"):
+    if um.clicked(em,"start_button",sound=None):
         self.wait("transition:LEVEL_SELECT",0.2)
 
-    if um.clicked(em,"settings_button"):
+    if um.clicked(em,"settings_button",sound=None):
         self.wait("transition:SETTINGS",0.2)
 
     if um.clicked(em,"quit_button"):
-        self.wait("transition:LEVEL_SELECT",0)
         em.close()
         
     if self.ondone("transition:LEVEL_SELECT"):
         level_select.rel(self)
-        um.changestate("level_select",None)
+        um.changestate("level_select",None,sound="IN")
     
     if self.ondone("transition:SETTINGS"):
         settings.rel(self)
-        um.changestate("settings","video_settings_button")
+        um.changestate("settings","video_settings_button",sound="IN")
         
     if self.isthere("transition:LEVEL_SELECT"):
         um.lerpval("start_button","pos",[0 - 1.4,-0.2],4)

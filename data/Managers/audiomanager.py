@@ -28,6 +28,7 @@ class Music_Manager:
     def init_sounds(self):
         for sfx in os.listdir("data/audio/SFX"):
             self.sounds[sfx] = pygame.mixer.Sound(f"data/audio/SFX/{sfx}")
+            
         
             
     def play_song(self,song,start_seconds=0):

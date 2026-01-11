@@ -22,7 +22,7 @@ sm = Gamemananager.sm
 um = Gamemananager.um
 bg = Gamemananager.bg
 pm = Gamemananager.pm
-
+am = Gamemananager.am
 
 
 import data.Game_Code.Camera.player_cam_cont as player_cam_cont
@@ -51,6 +51,13 @@ def main(self):
         if em.controller["OPT"]:
             player_init.main(self,[0,60])
             self.qrcondHL()
+            
+            
+            
+        if self.flowstate:
+            am.swapcont("menu")
+        else:
+            am.swapcont("menuless")
 
         
         
